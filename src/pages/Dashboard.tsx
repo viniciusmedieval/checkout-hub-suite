@@ -1,118 +1,19 @@
 
-import { useState, useEffect } from "react";
-import { Users, Package, DollarSign, PercentCircle, CreditCard, Zap } from "lucide-react";
-import { StatCard } from "@/components/dashboard/StatCard";
-import { ChartCard } from "@/components/dashboard/ChartCard";
-import { supabase } from "@/lib/supabase";
-import { 
-  Area, 
-  AreaChart, 
-  Bar, 
-  BarChart, 
-  CartesianGrid, 
-  Legend, 
-  Line, 
-  LineChart as RechartsLineChart, 
-  Pie, 
-  PieChart, 
-  ResponsiveContainer, 
-  Tooltip, 
-  XAxis, 
-  YAxis 
-} from "recharts";
-
-// Mock data for charts
-const salesVsCustomersData = [
-  { name: "Jan", clientes: 40, vendas: 24 },
-  { name: "Fev", clientes: 30, vendas: 13 },
-  { name: "Mar", clientes: 20, vendas: 18 },
-  { name: "Abr", clientes: 27, vendas: 24 },
-  { name: "Mai", clientes: 18, vendas: 12 },
-  { name: "Jun", clientes: 23, vendas: 19 },
-  { name: "Jul", clientes: 34, vendas: 29 },
-];
-
-const topProductsData = [
-  { name: "Produto A", valor: 4000 },
-  { name: "Produto B", valor: 3000 },
-  { name: "Produto C", valor: 2000 },
-  { name: "Produto D", valor: 2780 },
-  { name: "Produto E", valor: 1890 },
-];
-
-const cardCaptureData = [
-  { name: "Jan", cartoes: 4 },
-  { name: "Fev", cartoes: 3 },
-  { name: "Mar", cartoes: 2 },
-  { name: "Abr", cartoes: 7 },
-  { name: "Mai", cartoes: 8 },
-  { name: "Jun", cartoes: 5 },
-  { name: "Jul", cartoes: 9 },
-];
-
-const pixGeneratedData = [
-  { name: "Jan", pix: 40 },
-  { name: "Fev", pix: 30 },
-  { name: "Mar", pix: 20 },
-  { name: "Abr", pix: 27 },
-  { name: "Mai", pix: 18 },
-  { name: "Jun", pix: 23 },
-  { name: "Jul", pix: 34 },
-];
+import { StatsCards } from "@/components/dashboard/StatsCards";
+import { SalesVsCustomersChart } from "@/components/dashboard/SalesVsCustomersChart";
+import { TopProductsChart } from "@/components/dashboard/TopProductsChart";
+import { CardCaptureChart } from "@/components/dashboard/CardCaptureChart";
+import { PixGeneratedChart } from "@/components/dashboard/PixGeneratedChart";
+import { useDashboardData } from "@/hooks/useDashboardData";
 
 const Dashboard = () => {
-  const [totalClientes, setTotalClientes] = useState<number>(0);
-  const [produtosAtivos, setProdutosAtivos] = useState<number>(0);
-  const [receitaTotal, setReceitaTotal] = useState<number>(0);
-  const [taxaConversao, setTaxaConversao] = useState<number>(0);
-  const [isLoading, setIsLoading] = useState<boolean>(true);
-
-  useEffect(() => {
-    const fetchResumoDashboard = async () => {
-      setIsLoading(true);
-      try {
-        // Buscar clientes
-        const { data: clientes, error: clientesError } = await supabase.from('clientes').select('*');
-        if (clientesError) throw clientesError;
-        setTotalClientes(clientes?.length || 0);
-
-        // Buscar produtos ativos
-        const { data: produtos, error: produtosError } = await supabase.from('produtos').select('*').eq('ativo', true);
-        if (produtosError) throw produtosError;
-        setProdutosAtivos(produtos?.length || 0);
-
-        // Buscar vendas para calcular receita total
-        const { data: vendas, error: vendasError } = await supabase.from('vendas').select('*').eq('status', 'aprovado');
-        if (vendasError) throw vendasError;
-        
-        // Calcular receita total
-        const receita = vendas?.reduce((acc, venda) => acc + (venda.valor || 0), 0) || 0;
-        setReceitaTotal(receita);
-
-        // Calcular taxa de conversão (vendas / clientes)
-        if (clientes?.length > 0) {
-          const taxa = (vendas?.length || 0) / clientes.length * 100;
-          setTaxaConversao(parseFloat(taxa.toFixed(1)));
-        } else {
-          setTaxaConversao(0);
-        }
-      } catch (error) {
-        console.error('Erro ao buscar dados do dashboard:', error);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    fetchResumoDashboard();
-  }, []);
-
-  // Formatar valor monetário
-  const formatCurrency = (value: number) => {
-    return new Intl.NumberFormat('pt-BR', {
-      style: 'currency',
-      currency: 'BRL',
-    }).format(value);
-  };
+  const { 
+    totalClientes, 
+    produtosAtivos, 
+    receitaTotal, 
+    taxaConversao, 
+    isLoading 
+  } = useDashboardData();
 
   return (
     <div className="space-y-6 animate-fade-in">
@@ -120,133 +21,19 @@ const Dashboard = () => {
         <h1 className="text-3xl font-bold tracking-tight">Dashboard</h1>
       </div>
       
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-        <StatCard 
-          title="Total de Clientes" 
-          value={isLoading ? "..." : totalClientes.toString()} 
-          icon={<Users />} 
-          trend={{ value: 12, isPositive: true }}
-        />
-        <StatCard 
-          title="Produtos Ativos" 
-          value={isLoading ? "..." : produtosAtivos.toString()} 
-          icon={<Package />} 
-          trend={{ value: 4, isPositive: true }}
-        />
-        <StatCard 
-          title="Receita Total" 
-          value={isLoading ? "..." : formatCurrency(receitaTotal)} 
-          icon={<DollarSign />} 
-          trend={{ value: 8, isPositive: true }}
-        />
-        <StatCard 
-          title="Taxa de Conversão" 
-          value={isLoading ? "..." : `${taxaConversao}%`} 
-          icon={<PercentCircle />} 
-          trend={{ value: 1.2, isPositive: false }}
-        />
-      </div>
+      <StatsCards 
+        totalClientes={totalClientes}
+        produtosAtivos={produtosAtivos}
+        receitaTotal={receitaTotal}
+        taxaConversao={taxaConversao}
+        isLoading={isLoading}
+      />
 
       <div className="grid gap-4 md:grid-cols-2">
-        <ChartCard title="Vendas vs Clientes" description="Comparativo mensal">
-          <ResponsiveContainer width="100%" height={300}>
-            <RechartsLineChart data={salesVsCustomersData}>
-              <CartesianGrid strokeDasharray="3 3" stroke="#333" />
-              <XAxis dataKey="name" stroke="#888" />
-              <YAxis stroke="#888" />
-              <Tooltip 
-                contentStyle={{ 
-                  backgroundColor: 'rgba(15, 15, 15, 0.9)', 
-                  border: '1px solid rgba(255, 255, 255, 0.1)' 
-                }}
-              />
-              <Legend />
-              <Line 
-                type="monotone" 
-                dataKey="vendas" 
-                name="Vendas" 
-                stroke="#3b82f6" 
-                strokeWidth={2} 
-                dot={{ r: 4 }} 
-                activeDot={{ r: 6, stroke: '#FFF', strokeWidth: 2 }}
-              />
-              <Line 
-                type="monotone" 
-                dataKey="clientes" 
-                name="Clientes" 
-                stroke="#10b981" 
-                strokeWidth={2} 
-                dot={{ r: 4 }} 
-                activeDot={{ r: 6, stroke: '#FFF', strokeWidth: 2 }}
-              />
-            </RechartsLineChart>
-          </ResponsiveContainer>
-        </ChartCard>
-
-        <ChartCard title="Produtos Mais Vendidos" description="Top produtos por receita">
-          <ResponsiveContainer width="100%" height={300}>
-            <BarChart data={topProductsData}>
-              <CartesianGrid strokeDasharray="3 3" stroke="#333" />
-              <XAxis dataKey="name" stroke="#888" />
-              <YAxis stroke="#888" />
-              <Tooltip 
-                contentStyle={{ 
-                  backgroundColor: 'rgba(15, 15, 15, 0.9)', 
-                  border: '1px solid rgba(255, 255, 255, 0.1)' 
-                }}
-              />
-              <Bar dataKey="valor" name="Valor (R$)" fill="#3b82f6" radius={[4, 4, 0, 0]} />
-            </BarChart>
-          </ResponsiveContainer>
-        </ChartCard>
-
-        <ChartCard title="Cartões Capturados" description="Evolução mensal">
-          <ResponsiveContainer width="100%" height={300}>
-            <AreaChart data={cardCaptureData}>
-              <CartesianGrid strokeDasharray="3 3" stroke="#333" />
-              <XAxis dataKey="name" stroke="#888" />
-              <YAxis stroke="#888" />
-              <Tooltip 
-                contentStyle={{ 
-                  backgroundColor: 'rgba(15, 15, 15, 0.9)', 
-                  border: '1px solid rgba(255, 255, 255, 0.1)' 
-                }}
-              />
-              <Area 
-                type="monotone" 
-                dataKey="cartoes" 
-                name="Cartões" 
-                stroke="#f97316" 
-                fill="rgba(249, 115, 22, 0.2)" 
-                strokeWidth={2}
-              />
-            </AreaChart>
-          </ResponsiveContainer>
-        </ChartCard>
-
-        <ChartCard title="PIX Gerados" description="Evolução mensal">
-          <ResponsiveContainer width="100%" height={300}>
-            <AreaChart data={pixGeneratedData}>
-              <CartesianGrid strokeDasharray="3 3" stroke="#333" />
-              <XAxis dataKey="name" stroke="#888" />
-              <YAxis stroke="#888" />
-              <Tooltip 
-                contentStyle={{ 
-                  backgroundColor: 'rgba(15, 15, 15, 0.9)', 
-                  border: '1px solid rgba(255, 255, 255, 0.1)' 
-                }}
-              />
-              <Area 
-                type="monotone" 
-                dataKey="pix" 
-                name="PIX" 
-                stroke="#8b5cf6" 
-                fill="rgba(139, 92, 246, 0.2)" 
-                strokeWidth={2}
-              />
-            </AreaChart>
-          </ResponsiveContainer>
-        </ChartCard>
+        <SalesVsCustomersChart />
+        <TopProductsChart />
+        <CardCaptureChart />
+        <PixGeneratedChart />
       </div>
     </div>
   );
