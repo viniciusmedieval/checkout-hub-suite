@@ -1,8 +1,23 @@
 
-import { Users, Package, DollarSign, PercentCircle, LineChart, BarChart3, CreditCard, Zap } from "lucide-react";
+import { Users, Package, DollarSign, PercentCircle, CreditCard, Zap } from "lucide-react";
 import { StatCard } from "@/components/dashboard/StatCard";
 import { ChartCard } from "@/components/dashboard/ChartCard";
-import { Area, AreaChart, Bar, BarChart, CartesianGrid, Legend, Line, LineChart, Pie, PieChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
+import { 
+  Area, 
+  AreaChart, 
+  Bar, 
+  BarChart, 
+  CartesianGrid, 
+  Legend, 
+  Line, 
+  LineChart as RechartsLineChart, 
+  Pie, 
+  PieChart, 
+  ResponsiveContainer, 
+  Tooltip, 
+  XAxis, 
+  YAxis 
+} from "recharts";
 
 // Mock data for charts
 const salesVsCustomersData = [
@@ -80,7 +95,7 @@ const Dashboard = () => {
       <div className="grid gap-4 md:grid-cols-2">
         <ChartCard title="Vendas vs Clientes" description="Comparativo mensal">
           <ResponsiveContainer width="100%" height={300}>
-            <LineChart data={salesVsCustomersData}>
+            <RechartsLineChart data={salesVsCustomersData}>
               <CartesianGrid strokeDasharray="3 3" stroke="#333" />
               <XAxis dataKey="name" stroke="#888" />
               <YAxis stroke="#888" />
@@ -109,7 +124,7 @@ const Dashboard = () => {
                 dot={{ r: 4 }} 
                 activeDot={{ r: 6, stroke: '#FFF', strokeWidth: 2 }}
               />
-            </LineChart>
+            </RechartsLineChart>
           </ResponsiveContainer>
         </ChartCard>
 
