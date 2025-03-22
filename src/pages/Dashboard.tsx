@@ -1,7 +1,9 @@
 
+import { useState, useEffect } from "react";
 import { Users, Package, DollarSign, PercentCircle, CreditCard, Zap } from "lucide-react";
 import { StatCard } from "@/components/dashboard/StatCard";
 import { ChartCard } from "@/components/dashboard/ChartCard";
+import { supabase } from "@/lib/supabase";
 import { 
   Area, 
   AreaChart, 
@@ -59,6 +61,59 @@ const pixGeneratedData = [
 ];
 
 const Dashboard = () => {
+  const [totalClientes, setTotalClientes] = useState<number>(0);
+  const [produtosAtivos, setProdutosAtivos] = useState<number>(0);
+  const [receitaTotal, setReceitaTotal] = useState<number>(0);
+  const [taxaConversao, setTaxaConversao] = useState<number>(0);
+  const [isLoading, setIsLoading] = useState<boolean>(true);
+
+  useEffect(() => {
+    const fetchResumoDashboard = async () => {
+      setIsLoading(true);
+      try {
+        // Buscar clientes
+        const { data: clientes, error: clientesError } = await supabase.from('clientes').select('*');
+        if (clientesError) throw clientesError;
+        setTotalClientes(clientes?.length || 0);
+
+        // Buscar produtos ativos
+        const { data: produtos, error: produtosError } = await supabase.from('produtos').select('*').eq('ativo', true);
+        if (produtosError) throw produtosError;
+        setProdutosAtivos(produtos?.length || 0);
+
+        // Buscar vendas para calcular receita total
+        const { data: vendas, error: vendasError } = await supabase.from('vendas').select('*').eq('status', 'aprovado');
+        if (vendasError) throw vendasError;
+        
+        // Calcular receita total
+        const receita = vendas?.reduce((acc, venda) => acc + (venda.valor || 0), 0) || 0;
+        setReceitaTotal(receita);
+
+        // Calcular taxa de conversão (vendas / clientes)
+        if (clientes?.length > 0) {
+          const taxa = (vendas?.length || 0) / clientes.length * 100;
+          setTaxaConversao(parseFloat(taxa.toFixed(1)));
+        } else {
+          setTaxaConversao(0);
+        }
+      } catch (error) {
+        console.error('Erro ao buscar dados do dashboard:', error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchResumoDashboard();
+  }, []);
+
+  // Formatar valor monetário
+  const formatCurrency = (value: number) => {
+    return new Intl.NumberFormat('pt-BR', {
+      style: 'currency',
+      currency: 'BRL',
+    }).format(value);
+  };
+
   return (
     <div className="space-y-6 animate-fade-in">
       <div className="flex justify-between items-center">
@@ -68,25 +123,25 @@ const Dashboard = () => {
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
         <StatCard 
           title="Total de Clientes" 
-          value="2,543" 
+          value={isLoading ? "..." : totalClientes.toString()} 
           icon={<Users />} 
           trend={{ value: 12, isPositive: true }}
         />
         <StatCard 
           title="Produtos Ativos" 
-          value="12" 
+          value={isLoading ? "..." : produtosAtivos.toString()} 
           icon={<Package />} 
           trend={{ value: 4, isPositive: true }}
         />
         <StatCard 
           title="Receita Total" 
-          value="R$ 154.234,00" 
+          value={isLoading ? "..." : formatCurrency(receitaTotal)} 
           icon={<DollarSign />} 
           trend={{ value: 8, isPositive: true }}
         />
         <StatCard 
           title="Taxa de Conversão" 
-          value="5.2%" 
+          value={isLoading ? "..." : `${taxaConversao}%`} 
           icon={<PercentCircle />} 
           trend={{ value: 1.2, isPositive: false }}
         />
