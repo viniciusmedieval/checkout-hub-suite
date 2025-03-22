@@ -9,20 +9,38 @@ import {
   YAxis 
 } from "recharts";
 import { ChartCard } from "./ChartCard";
+import { ChartData } from "@/hooks/useDashboardData";
+import { Skeleton } from "@/components/ui/skeleton";
 
-const topProductsData = [
-  { name: "Produto A", valor: 4000 },
-  { name: "Produto B", valor: 3000 },
-  { name: "Produto C", valor: 2000 },
-  { name: "Produto D", valor: 2780 },
-  { name: "Produto E", valor: 1890 },
-];
+interface TopProductsChartProps {
+  data: ChartData[];
+  isLoading: boolean;
+}
 
-export function TopProductsChart() {
+export function TopProductsChart({ data, isLoading }: TopProductsChartProps) {
+  if (isLoading) {
+    return (
+      <ChartCard title="Produtos Mais Vendidos" description="Top produtos por receita">
+        <Skeleton className="w-full h-[300px]" />
+      </ChartCard>
+    );
+  }
+
+  // If no data is available
+  if (data.length === 0) {
+    return (
+      <ChartCard title="Produtos Mais Vendidos" description="Top produtos por receita">
+        <div className="flex items-center justify-center h-[300px] text-muted-foreground">
+          Nenhum dado disponível para o período selecionado
+        </div>
+      </ChartCard>
+    );
+  }
+
   return (
     <ChartCard title="Produtos Mais Vendidos" description="Top produtos por receita">
       <ResponsiveContainer width="100%" height={300}>
-        <BarChart data={topProductsData}>
+        <BarChart data={data}>
           <CartesianGrid strokeDasharray="3 3" stroke="#333" />
           <XAxis dataKey="name" stroke="#888" />
           <YAxis stroke="#888" />

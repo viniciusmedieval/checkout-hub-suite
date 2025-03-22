@@ -10,23 +10,27 @@ import {
   YAxis 
 } from "recharts";
 import { ChartCard } from "./ChartCard";
+import { ChartData } from "@/hooks/useDashboardData";
+import { Skeleton } from "@/components/ui/skeleton";
 
-// Mock data for charts
-const salesVsCustomersData = [
-  { name: "Jan", clientes: 40, vendas: 24 },
-  { name: "Fev", clientes: 30, vendas: 13 },
-  { name: "Mar", clientes: 20, vendas: 18 },
-  { name: "Abr", clientes: 27, vendas: 24 },
-  { name: "Mai", clientes: 18, vendas: 12 },
-  { name: "Jun", clientes: 23, vendas: 19 },
-  { name: "Jul", clientes: 34, vendas: 29 },
-];
+interface SalesVsCustomersChartProps {
+  data: ChartData[];
+  isLoading: boolean;
+}
 
-export function SalesVsCustomersChart() {
+export function SalesVsCustomersChart({ data, isLoading }: SalesVsCustomersChartProps) {
+  if (isLoading) {
+    return (
+      <ChartCard title="Vendas vs Clientes" description="Comparativo mensal">
+        <Skeleton className="w-full h-[300px]" />
+      </ChartCard>
+    );
+  }
+
   return (
     <ChartCard title="Vendas vs Clientes" description="Comparativo mensal">
       <ResponsiveContainer width="100%" height={300}>
-        <RechartsLineChart data={salesVsCustomersData}>
+        <RechartsLineChart data={data}>
           <CartesianGrid strokeDasharray="3 3" stroke="#333" />
           <XAxis dataKey="name" stroke="#888" />
           <YAxis stroke="#888" />
