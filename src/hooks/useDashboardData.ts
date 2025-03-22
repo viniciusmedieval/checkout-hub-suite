@@ -23,25 +23,29 @@ export type DateRange = {
   to: Date | undefined;
 };
 
+// Format currency helper
+export const formatCurrency = (value: number): string => {
+  return new Intl.NumberFormat('pt-BR', {
+    style: 'currency',
+    currency: 'BRL'
+  }).format(value);
+};
+
 // Custom hook for dashboard data
 export function useDashboardData() {
-  const [stats, setStats] = useState<DashboardStats>({
-    totalClientes: 0,
-    produtosAtivos: 0,
-    totalVendas: 0,
-    taxaConversao: 0,
-    loading: true,
-  });
+  const [totalClientes, setTotalClientes] = useState(0);
+  const [produtosAtivos, setProdutosAtivos] = useState(0);
+  const [receitaTotal, setReceitaTotal] = useState(0);
+  const [taxaConversao, setTaxaConversao] = useState(0);
+  const [isLoading, setIsLoading] = useState(true);
 
   const [salesVsCustomersData, setSalesVsCustomersData] = useState<ChartData[]>([]);
   const [topProductsData, setTopProductsData] = useState<ChartData[]>([]);
   const [pixGeneratedData, setPixGeneratedData] = useState<ChartData[]>([]);
   const [cardCaptureData, setCardCaptureData] = useState<ChartData[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [dateRange, setDateRange] = useState<DateRange>({
-    from: startOfMonth(subMonths(new Date(), 1)),
-    to: new Date(),
-  });
+  
+  const [startDate, setStartDate] = useState<Date>(startOfMonth(subMonths(new Date(), 1)));
+  const [endDate, setEndDate] = useState<Date>(new Date());
 
   // Function to fetch dashboard summary stats
   const fetchDashboardStats = async () => {
@@ -77,17 +81,15 @@ export function useDashboardData() {
         : 0;
       
       // Update stats state
-      setStats({
-        totalClientes: clientesData.length || 0,
-        produtosAtivos: produtosData.length || 0,
-        totalVendas: totalVendasValor || 0,
-        taxaConversao: parseFloat(conversao.toFixed(2)) || 0,
-        loading: false,
-      });
+      setTotalClientes(clientesData.length || 0);
+      setProdutosAtivos(produtosData.length || 0);
+      setReceitaTotal(totalVendasValor || 0);
+      setTaxaConversao(parseFloat(conversao.toFixed(2)) || 0);
+      setIsLoading(false);
       
     } catch (error) {
       console.error('Error fetching dashboard stats:', error);
-      setStats(prev => ({ ...prev, loading: false }));
+      setIsLoading(false);
     }
   };
 
@@ -95,8 +97,8 @@ export function useDashboardData() {
   const fetchSalesVsCustomersData = async () => {
     try {
       // Format the date range for query
-      const fromDate = dateRange.from ? format(dateRange.from, 'yyyy-MM-dd') : format(startOfMonth(subMonths(new Date(), 1)), 'yyyy-MM-dd');
-      const toDate = dateRange.to ? format(dateRange.to, 'yyyy-MM-dd') : format(new Date(), 'yyyy-MM-dd');
+      const fromDate = startDate ? format(startDate, 'yyyy-MM-dd') : format(startOfMonth(subMonths(new Date(), 1)), 'yyyy-MM-dd');
+      const toDate = endDate ? format(endDate, 'yyyy-MM-dd') : format(new Date(), 'yyyy-MM-dd');
       
       // Fetch sales data for the date range
       const { data: vendasData, error: vendasError } = await supabase
@@ -163,8 +165,8 @@ export function useDashboardData() {
   const fetchTopProductsData = async () => {
     try {
       // Format the date range for query
-      const fromDate = dateRange.from ? format(dateRange.from, 'yyyy-MM-dd') : format(startOfMonth(subMonths(new Date(), 1)), 'yyyy-MM-dd');
-      const toDate = dateRange.to ? format(dateRange.to, 'yyyy-MM-dd') : format(new Date(), 'yyyy-MM-dd');
+      const fromDate = startDate ? format(startDate, 'yyyy-MM-dd') : format(startOfMonth(subMonths(new Date(), 1)), 'yyyy-MM-dd');
+      const toDate = endDate ? format(endDate, 'yyyy-MM-dd') : format(new Date(), 'yyyy-MM-dd');
       
       // Fetch sales and join with products to get product names
       const { data, error } = await supabase
@@ -183,7 +185,8 @@ export function useDashboardData() {
       
       data.forEach(venda => {
         if (venda.produtos) {
-          const produto = venda.produtos as Produto;
+          // Fix: properly cast the produtos property to handle the array or single object
+          const produto = venda.produtos as any;
           const productId = produto.id;
           const productName = produto.nome;
           
@@ -219,33 +222,62 @@ export function useDashboardData() {
     }
   };
 
+  // Mock data for PIX and Card Capture charts for now
+  const generateMockData = () => {
+    const mockPixData: ChartData[] = [];
+    const mockCardData: ChartData[] = [];
+    
+    // Generate some mock data for the last 10 days
+    for (let i = 9; i >= 0; i--) {
+      const date = format(subDays(new Date(), i), 'dd/MM');
+      mockPixData.push({
+        name: date,
+        valor: Math.floor(Math.random() * 50) + 10,
+      });
+      
+      mockCardData.push({
+        name: date,
+        valor: Math.floor(Math.random() * 30) + 5,
+      });
+    }
+    
+    setPixGeneratedData(mockPixData);
+    setCardCaptureData(mockCardData);
+  };
+
   // Use Effects to load data
   useEffect(() => {
     fetchDashboardStats();
+    generateMockData();
   }, []);
 
   useEffect(() => {
     const fetchAllChartData = async () => {
-      setLoading(true);
+      setIsLoading(true);
       await Promise.all([
         fetchSalesVsCustomersData(),
         fetchTopProductsData(),
         // Add other chart data fetching functions here
       ]);
-      setLoading(false);
+      setIsLoading(false);
     };
 
     fetchAllChartData();
-  }, [dateRange]);
+  }, [startDate, endDate]);
 
   return {
-    stats,
+    totalClientes,
+    produtosAtivos,
+    receitaTotal,
+    taxaConversao,
+    isLoading,
     salesVsCustomersData,
     topProductsData,
     pixGeneratedData,
     cardCaptureData,
-    loading,
-    dateRange,
-    setDateRange
+    startDate,
+    endDate,
+    setStartDate,
+    setEndDate
   };
 }
