@@ -39,10 +39,14 @@ export function CheckoutHeader({ produto, configCheckout }: CheckoutHeaderProps)
   // Get the top message bar color from config
   const topMessageColor = configCheckout?.cor_topo || "#000000";
   
+  // Get the top message text color from config (novo campo)
+  const topMessageTextColor = configCheckout?.cor_texto_topo || "#FFFFFF";
+  
   console.log('CheckoutHeader - Rendering with:', { 
     configCheckout,
     showTopMessage,
     topMessageColor,
+    topMessageTextColor,
     bannerColor,
     finalBannerUrl
   });
@@ -52,8 +56,11 @@ export function CheckoutHeader({ produto, configCheckout }: CheckoutHeaderProps)
       {/* Top message bar */}
       {showTopMessage && (
         <div 
-          className="text-center py-3 text-sm text-white font-medium"
-          style={{ backgroundColor: topMessageColor }}
+          className="text-center py-3 text-sm font-medium"
+          style={{ 
+            backgroundColor: topMessageColor,
+            color: topMessageTextColor 
+          }}
         >
           <p>{configCheckout?.mensagem_topo}</p>
         </div>

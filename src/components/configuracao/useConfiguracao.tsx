@@ -8,12 +8,13 @@ export function useConfiguracao() {
     id: 0,
     mensagem_topo: "Oferta especial por tempo limitado! Aproveite agora.",
     cor_topo: "#3b82f6",
+    cor_texto_topo: "#FFFFFF", // Valor padrão: branco
     ativa_banner: true,
     banner_url: "https://placehold.co/1200x300/3b82f6/FFFFFF/png?text=Banner+Desktop",
     banner_mobile_url: "https://placehold.co/600x400/3b82f6/FFFFFF/png?text=Banner+Mobile",
     cor_banner: "#3b82f6",
     cor_fundo: "#FFFFFF",
-    cor_titulo: "#000000", // Default title color
+    cor_titulo: "#000000",
     texto_botao: "GARANTIR AGORA",
     rodape_texto: "Todos os direitos reservados.",
     rodape_empresa: "Minha Empresa LTDA",
@@ -89,12 +90,13 @@ export function useConfiguracao() {
       const configToSave = {
         mensagem_topo: config.mensagem_topo,
         cor_topo: validateHex(config.cor_topo) ? config.cor_topo : "#3b82f6",
+        cor_texto_topo: validateHex(config.cor_texto_topo) ? config.cor_texto_topo : "#FFFFFF", // Validação para a nova cor
         ativa_banner: config.ativa_banner,
         banner_url: config.banner_url,
         banner_mobile_url: config.banner_mobile_url,
         cor_banner: validateHex(config.cor_banner) ? config.cor_banner : "#3b82f6",
         cor_fundo: validateHex(config.cor_fundo) ? config.cor_fundo : "#FFFFFF",
-        cor_titulo: validateHex(config.cor_titulo) ? config.cor_titulo : "#000000", // Validate title color
+        cor_titulo: validateHex(config.cor_titulo) ? config.cor_titulo : "#000000",
         texto_botao: config.texto_botao,
         rodape_texto: config.rodape_texto,
         rodape_empresa: config.rodape_empresa,

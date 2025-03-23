@@ -48,12 +48,13 @@ export type ConfigCheckout = {
   id: number;
   mensagem_topo: string;
   cor_topo: string;
+  cor_texto_topo: string; // Nova propriedade para a cor do texto da mensagem de topo
   ativa_banner: boolean;
   banner_url: string;
   banner_mobile_url: string;
   cor_banner: string;
   cor_fundo: string;
-  cor_titulo: string; // New field for title text color
+  cor_titulo: string;
   texto_botao: string;
   rodape_texto: string;
   rodape_empresa: string;

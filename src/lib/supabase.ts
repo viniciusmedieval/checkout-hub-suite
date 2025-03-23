@@ -1,4 +1,3 @@
-
 import { createClient, SupabaseClient } from '@supabase/supabase-js';
 import { createMockClient } from './mock/mock-client';
 
@@ -35,5 +34,24 @@ if (supabaseUrl && supabaseAnonKey) {
   // Create a mock client
   supabase = createMockClient();
 }
+
+export type ConfigCheckout = {
+  id: number;
+  mensagem_topo: string;
+  cor_topo: string;
+  cor_texto_topo: string; // Novo campo para a cor do texto da mensagem de topo
+  ativa_banner: boolean;
+  banner_url: string;
+  banner_mobile_url: string;
+  cor_banner: string;
+  cor_fundo: string;
+  cor_titulo: string;
+  texto_botao: string;
+  rodape_texto: string;
+  rodape_empresa: string;
+  rodape_ano: string;
+  mostrar_seguro: boolean;
+  mensagem_rodape: string;
+};
 
 export { supabase };
