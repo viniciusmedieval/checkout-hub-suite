@@ -1,6 +1,6 @@
 
 import { Input } from "@/components/ui/input";
-import { User, Phone, Mail, FileText } from "lucide-react";
+import { User, Phone, Mail, FileText, Flag } from "lucide-react";
 import { ChangeEvent } from "react";
 import { formatPhoneNumber, formatCPF } from "@/utils/formatters";
 import { FormData } from "@/hooks/useCheckout";
@@ -55,6 +55,13 @@ export function FormIdentificacao({ formData, errors, onChange }: FormIdentifica
       parseInt(cleanCPF.charAt(9)) === digit1 &&
       parseInt(cleanCPF.charAt(10)) === digit2
     );
+  };
+
+  // Mobile phone validation
+  const validateMobilePhone = (phone: string): boolean => {
+    const cleanPhone = phone.replace(/\D/g, '');
+    // Brazilian mobile phones have 11 digits (with DDD)
+    return cleanPhone.length === 11;
   };
 
   return (
@@ -124,8 +131,8 @@ export function FormIdentificacao({ formData, errors, onChange }: FormIdentifica
             </label>
             <div className="relative">
               <div className="absolute left-3 top-1/2 -translate-y-1/2">
-                <div className="flex items-center">
-                  <span className="mr-1">🇧🇷</span>
+                <div className="flex items-center gap-1">
+                  <Flag className="h-4 w-4 text-blue-500 fill-blue-100" />
                   <span className="text-sm text-gray-500">+55</span>
                 </div>
               </div>
@@ -138,7 +145,11 @@ export function FormIdentificacao({ formData, errors, onChange }: FormIdentifica
                 className={`pl-16 h-11 text-sm rounded-lg ${errors.telefone ? 'border-red-500' : 'border-gray-200'} bg-white text-black`}
               />
             </div>
-            {errors.telefone && <p className="text-red-500 text-xs mt-1">Celular inválido</p>}
+            {errors.telefone && <p className="text-red-500 text-xs mt-1">
+              {formData.telefone && !validateMobilePhone(formData.telefone.replace(/\D/g, ''))
+                ? "Celular deve ter 11 dígitos (com DDD)"
+                : "Celular inválido"}
+            </p>}
           </div>
         </div>
       </div>

@@ -71,13 +71,29 @@ export const useCheckout = () => {
     );
   };
 
+  // Mobile phone validation function
+  const validateMobilePhone = (phone: string): boolean => {
+    const cleanPhone = phone.replace(/\D/g, '');
+    // Brazilian mobile phones have 11 digits (with DDD)
+    return cleanPhone.length === 11;
+  };
+
   // Validate form
   const validateForm = () => {
     const errors: Record<string, boolean> = {};
     
     if (!formData.nome.trim()) errors.nome = true;
     if (!formData.email.trim() || !validateEmail(formData.email)) errors.email = true;
-    if (!formData.telefone.trim() || formData.telefone.replace(/\D/g, '').length < 10) errors.telefone = true;
+    
+    // Enhanced mobile phone validation
+    if (!formData.telefone.trim()) {
+      errors.telefone = true;
+    } else {
+      const telefoneDigits = formData.telefone.replace(/\D/g, '');
+      if (!validateMobilePhone(telefoneDigits)) {
+        errors.telefone = true;
+      }
+    }
     
     // Enhanced document validation with CPF check
     if (!formData.documento.trim()) {
@@ -168,6 +184,7 @@ export const useCheckout = () => {
     setPaymentMethod,
     submitOrder,
     validateForm,
-    validateCPF
+    validateCPF,
+    validateMobilePhone
   };
 };
