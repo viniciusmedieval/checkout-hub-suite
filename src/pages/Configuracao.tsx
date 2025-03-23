@@ -16,7 +16,8 @@ const Configuracao = () => {
     handleConfigChange,
     handleSwitchChange,
     handleSaveConfig,
-    handleDeleteTestimonial
+    handleDeleteTestimonial,
+    handleAddTestimonial
   } = useConfiguracao();
 
   if (loading) {
@@ -58,6 +59,7 @@ const Configuracao = () => {
             depoimentos={depoimentos}
             depoimentosSaving={depoimentosSaving}
             handleDeleteTestimonial={handleDeleteTestimonial}
+            handleAddTestimonial={handleAddTestimonial}
           />
         </TabsContent>
       </Tabs>

@@ -105,6 +105,13 @@ export function CheckoutTestimonials({ produto_id }: CheckoutTestimonialsProps) 
             texto: "Melhor compra que fiz este ano. O suporte é excelente e o material é completo e atualizado.",
             estrelas: 5,
             foto_url: "https://randomuser.me/api/portraits/women/44.jpg"
+          },
+          {
+            id: 3,
+            nome: "Roberto Almeida",
+            texto: "Já estou aplicando o conhecimento e vendo resultados. Recomendo fortemente!",
+            estrelas: 4,
+            foto_url: "https://randomuser.me/api/portraits/men/22.jpg"
           }
         ]);
       } finally {
@@ -162,7 +169,7 @@ export function CheckoutTestimonials({ produto_id }: CheckoutTestimonialsProps) 
               <div className="flex gap-3">
                 <div className="flex-shrink-0">
                   <img 
-                    src={testimonial.foto_url || `https://randomuser.me/api/portraits/${Math.random() > 0.5 ? 'men' : 'women'}/${Math.floor(Math.random() * 70)}.jpg`} 
+                    src={testimonial.foto_url || `https://ui-avatars.com/api/?name=${encodeURIComponent(testimonial.nome)}&background=random`} 
                     alt={testimonial.nome} 
                     className="w-10 h-10 rounded-full object-cover"
                     onError={(e) => {

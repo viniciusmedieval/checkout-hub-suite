@@ -152,6 +152,29 @@ export function useConfiguracao() {
     }
   };
 
+  // Function to handle adding new testimonials
+  const handleAddTestimonial = async (depoimento: Omit<Depoimento, "id" | "criado_em">) => {
+    setDepoimentosSaving(true);
+    try {
+      const { data, error } = await supabase
+        .from("depoimentos")
+        .insert([depoimento])
+        .select();
+        
+      if (error) throw error;
+      
+      if (data && data.length > 0) {
+        setDepoimentos(prev => [data[0] as Depoimento, ...prev]);
+        toast.success("Depoimento adicionado com sucesso!");
+      }
+    } catch (error) {
+      console.error("Erro ao adicionar depoimento:", error);
+      toast.error("Erro ao adicionar depoimento. Tente novamente.");
+    } finally {
+      setDepoimentosSaving(false);
+    }
+  };
+
   return {
     config,
     loading,
@@ -160,6 +183,7 @@ export function useConfiguracao() {
     handleConfigChange,
     handleSwitchChange,
     handleSaveConfig,
-    handleDeleteTestimonial
+    handleDeleteTestimonial,
+    handleAddTestimonial
   };
 }
