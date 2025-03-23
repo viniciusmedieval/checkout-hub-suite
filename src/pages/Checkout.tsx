@@ -42,7 +42,7 @@ const Checkout = () => {
   }
 
   // Determinar a cor de fundo a ser usada
-  const backgroundColor = produto.background_color || configCheckout?.cor_fundo || "#FFFFFF";
+  const backgroundColor = produto.background_color || configCheckout?.cor_fundo || "#F9F9F9";
 
   return (
     <div 
@@ -61,6 +61,6 @@ const Checkout = () => {
       <CheckoutFooter configCheckout={configCheckout} />
     </div>
   );
-};
+}
 
 export default Checkout;

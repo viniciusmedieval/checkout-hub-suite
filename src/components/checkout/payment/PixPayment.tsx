@@ -1,7 +1,7 @@
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
-import { Copy, ClipboardCheck, QrCode } from "lucide-react";
+import { Copy, ClipboardCheck, QrCode, Timer } from "lucide-react";
 import { toast } from "sonner";
 
 interface PixPaymentProps {
@@ -10,10 +10,34 @@ interface PixPaymentProps {
     chave_pix: string;
     nome_beneficiario: string;
   } | null;
+  countdown: number; // seconds
 }
 
-export function PixPayment({ pixConfig }: PixPaymentProps) {
+export function PixPayment({ pixConfig, countdown: initialCountdown }: PixPaymentProps) {
   const [copied, setCopied] = useState(false);
+  const [countdown, setCountdown] = useState(initialCountdown);
+
+  useEffect(() => {
+    if (countdown <= 0) return;
+    
+    const timer = setInterval(() => {
+      setCountdown(prev => {
+        if (prev <= 1) {
+          clearInterval(timer);
+          return 0;
+        }
+        return prev - 1;
+      });
+    }, 1000);
+    
+    return () => clearInterval(timer);
+  }, [countdown]);
+
+  const formatTime = (seconds: number) => {
+    const mins = Math.floor(seconds / 60);
+    const secs = seconds % 60;
+    return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+  };
 
   const copyPixCode = () => {
     if (pixConfig?.chave_pix) {
@@ -29,8 +53,13 @@ export function PixPayment({ pixConfig }: PixPaymentProps) {
       <div className="bg-white rounded-full p-4 w-20 h-20 mx-auto mb-4 flex items-center justify-center">
         <QrCode size={48} className="text-blue-600" />
       </div>
-      <h4 className="text-lg font-semibold text-gray-800 mb-2">Chave Pix</h4>
-      <p className="text-sm text-gray-600 mb-3">{pixConfig?.nome_beneficiario || 'Loja Digital'}</p>
+      <h4 className="text-lg font-semibold text-gray-800 mb-2">Pagamento via Pix</h4>
+      <p className="text-sm text-gray-600 mb-1">{pixConfig?.nome_beneficiario || 'Loja Digital'}</p>
+      
+      <div className="flex items-center justify-center mb-3 text-sm">
+        <Timer size={16} className="text-orange-500 mr-1" />
+        <span className="font-medium">Expira em: <strong className="text-orange-500">{formatTime(countdown)}</strong></span>
+      </div>
       
       <div className="bg-white border border-gray-200 rounded-md p-3 mb-4 flex items-center justify-between">
         <span className="text-sm text-gray-800 font-medium truncate mr-2">

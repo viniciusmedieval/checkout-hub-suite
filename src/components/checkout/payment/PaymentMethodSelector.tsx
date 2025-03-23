@@ -1,4 +1,5 @@
 
+import { useState } from "react";
 import { CreditCard, QrCode } from "lucide-react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { CardPaymentForm } from "./CardPaymentForm";
@@ -24,6 +25,8 @@ export function PaymentMethodSelector({
   onPaymentMethodChange,
   produto
 }: PaymentMethodSelectorProps) {
+  const [countdown, setCountdown] = useState(15 * 60); // 15 minutes in seconds
+  
   return (
     <div className="space-y-4">
       <Tabs 
@@ -31,17 +34,17 @@ export function PaymentMethodSelector({
         className="w-full" 
         onValueChange={(value) => onPaymentMethodChange(value as 'card' | 'pix')}
       >
-        <TabsList className="grid w-full grid-cols-2 mb-4 bg-gray-100">
+        <TabsList className="grid w-full grid-cols-2 mb-4 bg-gray-100 rounded-md">
           <TabsTrigger 
             value="card" 
-            className="data-[state=active]:bg-white data-[state=active]:text-gray-900 text-sm py-2"
+            className="data-[state=active]:bg-white data-[state=active]:text-gray-900 data-[state=active]:shadow-sm text-sm py-2 rounded-md"
           >
             <CreditCard size={14} className="mr-2" />
-            Cartão
+            Cartão de Crédito
           </TabsTrigger>
           <TabsTrigger 
             value="pix" 
-            className="data-[state=active]:bg-white data-[state=active]:text-gray-900 text-sm py-2"
+            className="data-[state=active]:bg-white data-[state=active]:text-gray-900 data-[state=active]:shadow-sm text-sm py-2 rounded-md"
           >
             <QrCode size={14} className="mr-2" />
             Pix
@@ -53,7 +56,7 @@ export function PaymentMethodSelector({
         </TabsContent>
         
         <TabsContent value="pix" className="mt-0">
-          <PixPayment pixConfig={pixConfig} />
+          <PixPayment pixConfig={pixConfig} countdown={countdown} />
         </TabsContent>
       </Tabs>
     </div>

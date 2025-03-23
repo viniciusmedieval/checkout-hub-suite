@@ -47,7 +47,7 @@ export function CheckoutTestimonials({ produto_id }: CheckoutTestimonialsProps) 
     <div className="p-4">
       <div className="flex items-center gap-2 mb-3">
         <MessageSquare size={16} className="text-gray-500" />
-        <h3 className="text-base font-medium">Depoimentos</h3>
+        <h3 className="text-base font-semibold">Depoimentos</h3>
         {!loading && (
           <span className="ml-auto text-xs text-gray-500">
             {testimonials.length} comentário{testimonials.length !== 1 ? 's' : ''}
@@ -58,7 +58,7 @@ export function CheckoutTestimonials({ produto_id }: CheckoutTestimonialsProps) 
       {loading ? (
         <TestimonialSkeleton />
       ) : (
-        <div className="space-y-3">
+        <div className="space-y-4">
           {testimonials.map((testimonial) => (
             <TestimonialItem key={testimonial.id} testimonial={testimonial} />
           ))}

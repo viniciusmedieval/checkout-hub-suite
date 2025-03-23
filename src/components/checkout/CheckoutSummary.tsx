@@ -2,8 +2,9 @@
 import { useState } from "react";
 import { Produto, ConfigCheckout } from "@/lib/supabase";
 import { toast } from "sonner";
-import { LockIcon, Shield } from "lucide-react";
+import { LockIcon } from "lucide-react";
 import { supabase } from "@/lib/supabase";
+import { formatCurrency } from "@/utils/formatters";
 
 interface CheckoutSummaryProps {
   produto: Produto;
@@ -14,7 +15,7 @@ export function CheckoutSummary({ produto, configCheckout }: CheckoutSummaryProp
   const [isProcessing, setIsProcessing] = useState(false);
   
   // Obter a cor do botão e do texto do botão das configurações ou usar o padrão
-  const buttonColor = configCheckout?.cor_botao || "#10b981"; // Verde por padrão
+  const buttonColor = configCheckout?.cor_botao || "#00C853"; // Verde por padrão 
   const buttonTextColor = configCheckout?.cor_texto_botao || "#FFFFFF";
   
   const handleCompletePurchase = async () => {
@@ -66,20 +67,20 @@ export function CheckoutSummary({ produto, configCheckout }: CheckoutSummaryProp
           <img 
             src={produto.imagem_url} 
             alt={produto.nome} 
-            className="w-10 h-10 object-cover rounded border border-gray-200"
+            className="w-12 h-12 object-cover rounded border border-gray-200"
           />
         )}
         <div className="flex-1">
           <h3 className="text-sm font-medium">{produto.nome}</h3>
           <div className="flex justify-between items-center">
             <p className="text-xs text-gray-500">{produto.tipo}</p>
-            <span className="text-sm font-bold">R$ {Number(produto.valor).toFixed(2)}</span>
+            <span className="text-sm font-bold">{formatCurrency(Number(produto.valor))}</span>
           </div>
         </div>
       </div>
       
       <button 
-        className="w-full py-3 px-4 text-sm font-medium rounded transition-colors flex items-center justify-center gap-2"
+        className="w-full py-3 px-4 text-sm font-medium rounded-md transition-colors flex items-center justify-center gap-2"
         onClick={handleCompletePurchase}
         disabled={isProcessing}
         style={{ 
@@ -102,11 +103,6 @@ export function CheckoutSummary({ produto, configCheckout }: CheckoutSummaryProp
           </>
         )}
       </button>
-      
-      <p className="text-xs text-center text-gray-500 flex items-center justify-center gap-1.5">
-        <Shield size={12} />
-        <span>Pagamento 100% seguro</span>
-      </p>
     </div>
   );
 }
