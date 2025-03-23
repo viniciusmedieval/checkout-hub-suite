@@ -1,5 +1,6 @@
 
 import { Produto } from "@/lib/supabase";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 interface CheckoutHeaderProps {
   produto: Produto;
@@ -10,6 +11,8 @@ interface CheckoutHeaderProps {
 }
 
 export function CheckoutHeader({ produto, configCheckout }: CheckoutHeaderProps) {
+  const isMobile = useIsMobile();
+  
   const scrollToForm = () => {
     const formElement = document.getElementById('checkout-form');
     if (formElement) {
@@ -19,6 +22,15 @@ export function CheckoutHeader({ produto, configCheckout }: CheckoutHeaderProps)
 
   console.log("CheckoutHeader - produto:", produto);
   console.log("CheckoutHeader - configCheckout:", configCheckout);
+  console.log("Is mobile:", isMobile);
+
+  // Choose the appropriate banner based on device type
+  const bannerUrl = isMobile && produto.banner_mobile_url 
+    ? produto.banner_mobile_url 
+    : produto.banner_url;
+
+  // Get banner background color (fallback to default blue if not specified)
+  const bannerColor = produto.banner_color || "#3b82f6";
 
   return (
     <div className="w-full bg-white border-b border-gray-200">
@@ -34,12 +46,15 @@ export function CheckoutHeader({ produto, configCheckout }: CheckoutHeaderProps)
             <h1 className="text-xl md:text-2xl font-bold text-gray-800 mb-2">{produto.nome}</h1>
             <p className="text-sm text-gray-600 mb-4">{produto.descricao}</p>
             
-            {produto.banner_url && (
-              <div className="mt-4 w-full max-w-3xl mx-auto">
+            {bannerUrl && (
+              <div 
+                className="mt-4 w-full max-w-3xl mx-auto rounded-md overflow-hidden shadow-md" 
+                style={{ backgroundColor: bannerColor }}
+              >
                 <img 
-                  src={produto.banner_url} 
+                  src={bannerUrl} 
                   alt={produto.nome} 
-                  className="w-full h-auto rounded-md shadow-md" 
+                  className="w-full h-auto" 
                 />
               </div>
             )}

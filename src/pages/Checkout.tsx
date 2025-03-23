@@ -54,7 +54,8 @@ const Checkout = () => {
           .from("produtos")
           .select("*")
           .eq("slug", slug)
-          .eq("ativo", true);
+          .eq("ativo", true)
+          .single();
 
         console.log("Resposta do Supabase produtos:", { productData, productError });
         
@@ -63,7 +64,7 @@ const Checkout = () => {
           throw productError;
         }
         
-        if (!productData || productData.length === 0) {
+        if (!productData) {
           // Recupera dados do localStorage como fallback
           console.log("Produto não encontrado no Supabase, tentando localStorage");
           const mockStorage = localStorage.getItem('mockSupabaseStorage');
@@ -86,8 +87,8 @@ const Checkout = () => {
           
           setError("Produto não encontrado");
         } else {
-          console.log("Produto encontrado no Supabase:", productData[0]);
-          setProduto(productData[0]);
+          console.log("Produto encontrado no Supabase:", productData);
+          setProduto(productData);
         }
       } catch (error) {
         console.error("Erro ao buscar produto:", error);
