@@ -13,13 +13,6 @@ interface CheckoutHeaderProps {
 export function CheckoutHeader({ produto, configCheckout }: CheckoutHeaderProps) {
   const isMobile = useIsMobile();
   
-  const scrollToForm = () => {
-    const formElement = document.getElementById('checkout-form');
-    if (formElement) {
-      formElement.scrollIntoView({ behavior: 'smooth' });
-    }
-  };
-
   // Choose the appropriate banner based on device type
   const bannerUrl = isMobile && produto.banner_mobile_url 
     ? produto.banner_mobile_url 
@@ -59,15 +52,6 @@ export function CheckoutHeader({ produto, configCheckout }: CheckoutHeaderProps)
                 />
               </div>
             )}
-
-            <div className="mt-6">
-              <button 
-                onClick={scrollToForm}
-                className="bg-blue-600 hover:bg-blue-700 text-white font-medium py-3 px-6 rounded-md shadow-sm transition-colors"
-              >
-                {configCheckout?.texto_botao || "PREENCHA SEUS DADOS"}
-              </button>
-            </div>
           </div>
         </div>
       </div>
