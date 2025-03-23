@@ -41,10 +41,7 @@ export function CheckoutHeader({ produto, configCheckout }: CheckoutHeaderProps)
   console.log('CheckoutHeader - config values:', { 
     configCheckout,
     showTopMessage,
-    topMessageColor,
-    hasBanner,
-    finalBannerUrl,
-    bannerColor
+    topMessageColor
   });
 
   return (
@@ -60,15 +57,20 @@ export function CheckoutHeader({ produto, configCheckout }: CheckoutHeaderProps)
       )}
 
       {/* Banner */}
-      {hasBanner && (
-        <div className="w-full text-center" style={{ backgroundColor: bannerColor }}>
-          <img 
-            src={finalBannerUrl} 
-            alt={produto.nome} 
-            className="w-full h-auto max-w-[1200px] mx-auto" 
-          />
-        </div>
-      )}
+      <div className="w-full text-center">
+        {hasBanner && (
+          <div 
+            className="w-full" 
+            style={{ backgroundColor: bannerColor }}
+          >
+            <img 
+              src={finalBannerUrl} 
+              alt={produto.nome} 
+              className="w-full h-auto max-w-[1200px] mx-auto" 
+            />
+          </div>
+        )}
+      </div>
     </div>
   );
 }

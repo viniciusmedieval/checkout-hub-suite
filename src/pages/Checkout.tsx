@@ -17,9 +17,6 @@ const Checkout = () => {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    // Update document body background to white initially
-    document.body.style.backgroundColor = "#FFFFFF";
-    
     const fetchProduto = async () => {
       if (!slug) {
         setError("Produto não encontrado");
@@ -94,21 +91,7 @@ const Checkout = () => {
     };
 
     fetchProduto();
-    
-    // Cleanup function to reset body background when component unmounts
-    return () => {
-      document.body.style.backgroundColor = "";
-    };
   }, [slug]);
-
-  useEffect(() => {
-    // Update body background color when product or config changes
-    if (produto || configCheckout) {
-      const bgColor = produto?.background_color || configCheckout?.cor_fundo || "#FFFFFF";
-      document.body.style.backgroundColor = bgColor;
-      console.log("Setting body background color to:", bgColor);
-    }
-  }, [produto, configCheckout]);
 
   if (loading) {
     return (
@@ -150,7 +133,7 @@ const Checkout = () => {
   return (
     <div 
       className="min-h-screen flex flex-col text-black"
-      style={{ backgroundColor }}
+      style={{ backgroundColor: backgroundColor }}
     >
       {/* Header with banner */}
       <CheckoutHeader produto={produto} configCheckout={configCheckout} />
