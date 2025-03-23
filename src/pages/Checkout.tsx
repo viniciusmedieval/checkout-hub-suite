@@ -37,8 +37,8 @@ const Checkout = () => {
         if (configError) {
           console.error("Erro ao carregar configurações do checkout:", configError);
         } else if (checkoutConfig && checkoutConfig.length > 0) {
-          setConfigCheckout(checkoutConfig[0]);
           console.log("Config checkout carregada:", checkoutConfig[0]);
+          setConfigCheckout(checkoutConfig[0]);
         }
         
         // Try to get product from Supabase
@@ -123,6 +123,12 @@ const Checkout = () => {
 
   // Determinar a cor de fundo a ser usada
   const backgroundColor = produto.background_color || configCheckout?.cor_fundo || "#FFFFFF";
+  
+  console.log("Checkout - aplicando configurações:", {
+    configCheckout,
+    backgroundColor,
+    topColorFromConfig: configCheckout?.cor_topo
+  });
 
   return (
     <div 

@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from "react";
 import { supabase, ConfigCheckout, Depoimento } from "@/lib/supabase";
 import { toast } from "sonner";
@@ -38,6 +39,7 @@ export function useConfiguracao() {
           console.error("Erro ao carregar configurações do checkout:", configError);
           toast.error("Erro ao carregar configurações do checkout");
         } else if (checkoutConfig && checkoutConfig.length > 0) {
+          console.log("Configurações carregadas:", checkoutConfig[0]);
           setConfig(checkoutConfig[0]);
         }
         
@@ -121,6 +123,7 @@ export function useConfiguracao() {
         throw result.error;
       }
       
+      console.log("Configurações salvas com sucesso:", result);
       toast.success("Configurações salvas com sucesso!");
     } catch (error) {
       console.error("Erro ao salvar configurações:", error);

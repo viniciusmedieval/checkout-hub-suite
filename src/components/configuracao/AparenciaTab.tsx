@@ -12,6 +12,22 @@ interface AparenciaTabProps {
 }
 
 export function AparenciaTab({ config, handleConfigChange, handleSwitchChange }: AparenciaTabProps) {
+  // Function to handle color changes and ensure both inputs (color picker and text field) stay in sync
+  const handleColorChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    console.log(`Alterando cor ${name} para ${value}`);
+    
+    // Create a synthetic event to pass to the original handler
+    const syntheticEvent = {
+      target: {
+        name,
+        value
+      }
+    } as React.ChangeEvent<HTMLInputElement>;
+    
+    handleConfigChange(syntheticEvent);
+  };
+
   return (
     <Card>
       <CardHeader>
@@ -28,13 +44,13 @@ export function AparenciaTab({ config, handleConfigChange, handleSwitchChange }:
               type="color"
               name="cor_topo"
               value={config.cor_topo || "#000000"}
-              onChange={handleConfigChange}
+              onChange={handleColorChange}
               className="w-16 h-10 p-1"
             />
             <Input
               name="cor_topo"
               value={config.cor_topo || "#000000"}
-              onChange={handleConfigChange}
+              onChange={handleColorChange}
             />
           </div>
           <p className="text-xs text-gray-500">Cor da barra de mensagem no topo do checkout</p>
@@ -47,13 +63,13 @@ export function AparenciaTab({ config, handleConfigChange, handleSwitchChange }:
               type="color"
               name="cor_fundo"
               value={config.cor_fundo || "#FFFFFF"}
-              onChange={handleConfigChange}
+              onChange={handleColorChange}
               className="w-16 h-10 p-1"
             />
             <Input
               name="cor_fundo"
               value={config.cor_fundo || "#FFFFFF"}
-              onChange={handleConfigChange}
+              onChange={handleColorChange}
             />
           </div>
           <p className="text-xs text-gray-500">Define a cor de fundo global do checkout quando o produto não tem cor personalizada</p>
@@ -97,14 +113,14 @@ export function AparenciaTab({ config, handleConfigChange, handleSwitchChange }:
             <Input
               type="color"
               name="cor_banner"
-              value={config.cor_banner}
-              onChange={handleConfigChange}
+              value={config.cor_banner || "#000000"}
+              onChange={handleColorChange}
               className="w-16 h-10 p-1"
             />
             <Input
               name="cor_banner"
-              value={config.cor_banner}
-              onChange={handleConfigChange}
+              value={config.cor_banner || "#000000"}
+              onChange={handleColorChange}
             />
           </div>
         </div>

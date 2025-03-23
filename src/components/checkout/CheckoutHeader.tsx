@@ -37,6 +37,12 @@ export function CheckoutHeader({ produto, configCheckout }: CheckoutHeaderProps)
 
   // Get the top message bar color from config
   const topMessageColor = configCheckout?.cor_topo || "#000000";
+  
+  console.log('CheckoutHeader - config values:', { 
+    configCheckout,
+    showTopMessage,
+    topMessageColor
+  });
 
   return (
     <div className="w-full">
