@@ -1,10 +1,12 @@
 
-import { Package } from "lucide-react";
+import { Copy, Package, Trash2 } from "lucide-react";
 import { Produto } from "@/lib/supabase";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
+import { toast } from "sonner";
+import { supabase } from "@/lib/supabase";
 
 interface ProductListProps {
   produtos: Produto[];
@@ -18,6 +20,42 @@ export function ProductList({ produtos, loading, searchTerm, onEdit, onToggleSta
   const filteredProdutos = produtos.filter(produto => 
     produto.nome.toLowerCase().includes(searchTerm.toLowerCase())
   );
+
+  const handleDeleteProduct = async (id: number, nome: string) => {
+    if (!window.confirm(`Tem certeza que deseja excluir o produto "${nome}"?`)) {
+      return;
+    }
+
+    try {
+      const { error } = await supabase
+        .from('produtos')
+        .delete()
+        .eq('id', id);
+      
+      if (error) throw error;
+      
+      // Refrescar a página para mostrar os dados atualizados
+      window.location.reload();
+      toast.success(`Produto "${nome}" excluído com sucesso!`);
+    } catch (error) {
+      console.error('Erro ao excluir produto:', error);
+      toast.error('Falha ao excluir o produto');
+    }
+  };
+
+  const handleCopyCheckoutLink = (slug: string) => {
+    const baseUrl = window.location.origin;
+    const checkoutUrl = `${baseUrl}/checkout/${slug}`;
+    
+    navigator.clipboard.writeText(checkoutUrl)
+      .then(() => {
+        toast.success('Link de checkout copiado para a área de transferência!');
+      })
+      .catch((error) => {
+        console.error('Erro ao copiar link:', error);
+        toast.error('Não foi possível copiar o link');
+      });
+  };
 
   if (loading) {
     return (
@@ -93,21 +131,41 @@ export function ProductList({ produtos, loading, searchTerm, onEdit, onToggleSta
               <p className="text-muted-foreground mt-2 line-clamp-2">{produto.descricao}</p>
             </div>
           </CardContent>
-          <CardFooter className="flex justify-between gap-2 pt-0">
-            <Button 
-              variant="outline" 
-              className="flex-1"
-              onClick={() => onEdit(produto)}
-            >
-              Editar
-            </Button>
-            <Button 
-              variant={produto.ativo ? "destructive" : "default"} 
-              className="flex-1"
-              onClick={() => onToggleStatus(produto.id)}
-            >
-              {produto.ativo ? "Desativar" : "Ativar"}
-            </Button>
+          <CardFooter className="flex flex-col gap-2 pt-0">
+            <div className="flex justify-between gap-2 w-full">
+              <Button 
+                variant="outline" 
+                className="flex-1"
+                onClick={() => onEdit(produto)}
+              >
+                Editar
+              </Button>
+              <Button 
+                variant={produto.ativo ? "destructive" : "default"} 
+                className="flex-1"
+                onClick={() => onToggleStatus(produto.id)}
+              >
+                {produto.ativo ? "Desativar" : "Ativar"}
+              </Button>
+            </div>
+            <div className="flex justify-between gap-2 w-full">
+              <Button 
+                variant="outline" 
+                className="flex-1 gap-2"
+                onClick={() => handleCopyCheckoutLink(produto.slug)}
+              >
+                <Copy className="h-4 w-4" />
+                Copiar Link
+              </Button>
+              <Button 
+                variant="destructive" 
+                className="flex-1 gap-2"
+                onClick={() => handleDeleteProduct(produto.id, produto.nome)}
+              >
+                <Trash2 className="h-4 w-4" />
+                Excluir
+              </Button>
+            </div>
           </CardFooter>
         </Card>
       ))}

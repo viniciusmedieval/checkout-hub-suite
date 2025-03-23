@@ -13,32 +13,56 @@ const envSupabaseKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
 const supabaseUrl = localSupabaseUrl || envSupabaseUrl;
 const supabaseAnonKey = localSupabaseKey || envSupabaseKey;
 
-// Armazenamentos em memória para o cliente mock
-const mockStorage = {
-  produtos: [
-    {
-      id: 1,
-      nome: "Plano Mensal",
-      tipo: "assinatura",
-      valor: 14.90,
-      descricao: "Acesso total à plataforma por 30 dias.",
-      ativo: true,
-      slug: "plano-mensal",
-      checkout_title: "Assine o Plano Mensal",
-      imagem_url: "https://placehold.co/600x400/3b82f6/FFFFFF/png?text=Plano+Mensal",
-      usar_api_pix: false,
-      usar_config_pix_global: false,
-      criado_em: new Date().toISOString()
+// Função para carregar o mockStorage do localStorage
+const loadMockStorageFromLocalStorage = () => {
+  try {
+    const storedData = localStorage.getItem('mockSupabaseStorage');
+    if (storedData) {
+      return JSON.parse(storedData);
     }
-  ],
-  clientes: [],
-  vendas: [],
-  config_checkout: [],
-  depoimentos: [],
-  pix_config: [],
-  pixels: [],
-  webhooks: [],
-  card_captures: []
+  } catch (error) {
+    console.error('Erro ao carregar dados do localStorage:', error);
+  }
+  
+  // Valores padrão se não houver dados no localStorage
+  return {
+    produtos: [
+      {
+        id: 1,
+        nome: "Plano Mensal",
+        tipo: "assinatura",
+        valor: 14.90,
+        descricao: "Acesso total à plataforma por 30 dias.",
+        ativo: true,
+        slug: "plano-mensal",
+        checkout_title: "Assine o Plano Mensal",
+        imagem_url: "https://placehold.co/600x400/3b82f6/FFFFFF/png?text=Plano+Mensal",
+        usar_api_pix: false,
+        usar_config_pix_global: false,
+        criado_em: new Date().toISOString()
+      }
+    ],
+    clientes: [],
+    vendas: [],
+    config_checkout: [],
+    depoimentos: [],
+    pix_config: [],
+    pixels: [],
+    webhooks: [],
+    card_captures: []
+  };
+};
+
+// Armazenamentos em memória para o cliente mock
+const mockStorage = loadMockStorageFromLocalStorage();
+
+// Função para salvar o mockStorage no localStorage
+const saveMockStorageToLocalStorage = () => {
+  try {
+    localStorage.setItem('mockSupabaseStorage', JSON.stringify(mockStorage));
+  } catch (error) {
+    console.error('Erro ao salvar dados no localStorage:', error);
+  }
 };
 
 // Initialize the Supabase client with error handling
@@ -151,6 +175,9 @@ function createMockClient() {
           
           mockStorage[table as keyof typeof mockStorage].push(...newRecords);
           
+          // Salvar no localStorage após inserir
+          saveMockStorageToLocalStorage();
+          
           return {
             data: newRecords,
             error: null,
@@ -173,6 +200,9 @@ function createMockClient() {
                   ...updates
                 };
                 
+                // Salvar no localStorage após atualizar
+                saveMockStorageToLocalStorage();
+                
                 return {
                   data: mockStorage[table as keyof typeof mockStorage][index],
                   error: null
@@ -194,6 +224,9 @@ function createMockClient() {
                 .filter((item: any) => item[column] !== value);
               
               const deletedCount = initialLength - mockStorage[table as keyof typeof mockStorage].length;
+              
+              // Salvar no localStorage após deletar
+              saveMockStorageToLocalStorage();
               
               return {
                 data: { count: deletedCount },

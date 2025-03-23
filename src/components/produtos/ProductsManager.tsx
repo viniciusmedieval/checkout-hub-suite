@@ -38,7 +38,7 @@ export function ProductsManager() {
       </div>
       
       <p className="text-sm text-muted-foreground">
-        Adicione os produtos padrão ao banco de dados.
+        Adicione os produtos padrão ao banco de dados. Esses produtos ficarão salvos permanentemente.
       </p>
       
       <Button 
