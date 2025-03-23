@@ -23,11 +23,11 @@ export function ResumoCompra({
   const buttonTextColor = configCheckout?.cor_texto_botao || "#FFFFFF";
   
   return (
-    <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-4">
+    <div className="bg-white rounded-xl shadow-md border border-gray-200 p-6">
       <div className="space-y-4">
         <div className="flex items-center justify-between border-b pb-3 mb-1">
           <span className="text-sm font-medium">Sua Compra</span>
-          <span className="text-sm">1 item</span>
+          <span className="text-sm">1 item • {formatCurrency(Number(produto.valor))}</span>
         </div>
         
         <div className="flex items-center gap-3">
@@ -35,20 +35,20 @@ export function ResumoCompra({
             <img 
               src={produto.imagem_url} 
               alt={produto.nome} 
-              className="w-16 h-16 object-cover rounded border border-gray-200"
+              className="w-10 h-10 object-cover rounded border border-gray-200"
             />
           )}
           <div className="flex-1">
             <h3 className="text-sm font-medium">{produto.nome}</h3>
             <div className="flex justify-between items-center mt-1">
               <p className="text-xs text-gray-500">{produto.tipo}</p>
-              <span className="text-base font-bold">{formatCurrency(Number(produto.valor))}</span>
+              <span className="text-base font-bold">{formatCurrency(Number(produto.valor))}/mês</span>
             </div>
           </div>
         </div>
         
         <button 
-          className="w-full py-3.5 px-4 text-sm font-medium rounded-lg transition-colors flex items-center justify-center gap-2 shadow-sm"
+          className="w-full py-3 px-4 text-sm font-medium rounded-md transition-colors flex items-center justify-center gap-2 shadow-sm"
           onClick={onCompletePurchase}
           disabled={isProcessing}
           style={{ 
@@ -67,12 +67,16 @@ export function ResumoCompra({
           ) : (
             <>
               <LockIcon size={16} />
-              {configCheckout?.texto_botao || "ASSINAR AGORA"}
+              {configCheckout?.texto_botao || "ASSINE AGORA"}
             </>
           )}
         </button>
         
-        {/* Visitor counter - now moved to the top of the page */}
+        {/* Visitor counter - moved below the button */}
+        <div className="flex items-center justify-center gap-2 text-sm text-[#1B1B1B] animate-pulse-slow">
+          <span role="img" aria-label="fire">🔥</span>
+          <span>Outras <strong>{visitorCount.toLocaleString()}</strong> pessoas estão finalizando agora</span>
+        </div>
       </div>
     </div>
   );
