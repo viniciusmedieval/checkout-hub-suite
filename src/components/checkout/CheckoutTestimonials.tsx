@@ -2,10 +2,10 @@
 import { useState, useEffect } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { MessageSquare } from "lucide-react";
-import { supabase, Depoimento } from "@/lib/supabase";
+import { Depoimento } from "@/lib/supabase";
 import { TestimonialItem } from "./testimonials/TestimonialItem";
 import { TestimonialSkeleton } from "./testimonials/TestimonialSkeleton";
-import { getDefaultTestimonials } from "./testimonials/DefaultTestimonials";
+import { fetchTestimonials } from "@/components/configuracao/services/configServices";
 
 interface CheckoutTestimonialsProps {
   produto_id?: number;
@@ -16,45 +16,32 @@ export function CheckoutTestimonials({ produto_id }: CheckoutTestimonialsProps) 
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const fetchTestimonials = async () => {
+    const loadTestimonials = async () => {
       setLoading(true);
       try {
-        console.log("Fetching testimonials for produto_id:", produto_id);
+        console.log("CheckoutTestimonials - Buscando depoimentos para produto_id:", produto_id);
         
-        // Try to get testimonials from Supabase
-        let query = supabase.from("depoimentos").select("*");
+        // Usar o mesmo serviço que a página de configuração usa
+        const data = await fetchTestimonials();
+        console.log("CheckoutTestimonials - Depoimentos carregados:", data);
         
-        // If we have a produto_id, filter by it
+        // Se temos um produto_id específico, filtrar os depoimentos pelo produto_id
         if (produto_id) {
-          query = query.eq("produto_id", produto_id);
-        }
-        
-        const { data, error } = await query.order('criado_em', { ascending: false });
-        
-        if (error) {
-          console.error("Error fetching testimonials:", error);
-          throw error;
-        }
-        
-        console.log("Testimonials fetched:", data);
-        
-        if (data && data.length > 0) {
-          setTestimonials(data);
+          const filteredData = data.filter(item => 
+            item.produto_id === produto_id || item.produto_id === 0
+          );
+          setTestimonials(filteredData.length > 0 ? filteredData : data);
         } else {
-          console.log("No testimonials found, using defaults");
-          // Fallback to default testimonials if none are found
-          setTestimonials(getDefaultTestimonials());
+          setTestimonials(data);
         }
       } catch (error) {
-        console.error("Erro ao buscar depoimentos:", error);
-        // Set default testimonials on error
-        setTestimonials(getDefaultTestimonials());
+        console.error("Erro ao buscar depoimentos no checkout:", error);
       } finally {
         setLoading(false);
       }
     };
 
-    fetchTestimonials();
+    loadTestimonials();
   }, [produto_id]);
 
   return (
