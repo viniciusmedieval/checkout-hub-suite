@@ -13,26 +13,28 @@ export function CheckoutContent({ produto, configCheckout }: CheckoutContentProp
   // Get title color from config, fallback to black if not set
   const titleColor = configCheckout?.cor_titulo || "#000000";
   
-  // Log the title color for debugging
-  console.log("CheckoutContent - Applying title color:", titleColor);
-  
   return (
-    <div className="container max-w-4xl mx-auto py-8 px-4 space-y-6">
+    <div className="container max-w-3xl mx-auto py-8 px-4 space-y-6">
       {/* Product Title with configurable color */}
       <h1 
-        className="text-3xl font-bold text-center mb-8"
+        className="text-xl font-bold text-center mb-4"
         style={{ color: titleColor }}
       >
         {produto.checkout_title || produto.nome}
       </h1>
       
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <div>
-          <CheckoutForm configCheckout={configCheckout} />
+      <div className="grid grid-cols-1 md:grid-cols-5 gap-6">
+        <div className="md:col-span-3">
+          <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-5">
+            <CheckoutForm configCheckout={configCheckout} />
+          </div>
         </div>
-        <div className="space-y-6">
+        <div className="md:col-span-2 space-y-6">
           <CheckoutSummary produto={produto} configCheckout={configCheckout} />
-          <CheckoutTestimonials produto_id={produto.id} />
+          <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-5">
+            <h2 className="text-base font-medium mb-4">Depoimentos</h2>
+            <CheckoutTestimonials produto_id={produto.id} />
+          </div>
         </div>
       </div>
     </div>

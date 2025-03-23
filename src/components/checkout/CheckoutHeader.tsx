@@ -1,7 +1,7 @@
 
 import { Produto, ConfigCheckout } from "@/lib/supabase";
 import { useIsMobile } from "@/hooks/use-mobile";
-import { useEffect } from "react";
+import { Clock } from "lucide-react";
 
 interface CheckoutHeaderProps {
   produto: Produto;
@@ -39,48 +39,37 @@ export function CheckoutHeader({ produto, configCheckout }: CheckoutHeaderProps)
   // Get the top message bar color from config
   const topMessageColor = configCheckout?.cor_topo || "#000000";
   
-  // Get the top message text color from config (novo campo)
+  // Get the top message text color from config
   const topMessageTextColor = configCheckout?.cor_texto_topo || "#FFFFFF";
-  
-  console.log('CheckoutHeader - Rendering with:', { 
-    configCheckout,
-    showTopMessage,
-    topMessageColor,
-    topMessageTextColor,
-    bannerColor,
-    finalBannerUrl
-  });
 
   return (
     <div className="w-full">
       {/* Top message bar */}
       {showTopMessage && (
         <div 
-          className="text-center py-3 text-sm font-medium"
+          className="py-2 text-xs font-medium text-center"
           style={{ 
             backgroundColor: topMessageColor,
             color: topMessageTextColor 
           }}
         >
-          <p>{configCheckout?.mensagem_topo}</p>
+          <div className="container max-w-4xl mx-auto px-4 flex items-center justify-center gap-2">
+            <Clock size={14} />
+            <p>{configCheckout?.mensagem_topo}</p>
+          </div>
         </div>
       )}
 
       {/* Banner */}
-      <div className="w-full text-center">
-        {hasBanner && (
-          <div 
-            className="w-full" 
-            style={{ backgroundColor: bannerColor }}
-          >
-            <img 
-              src={finalBannerUrl} 
-              alt={produto.nome} 
-              className="w-full h-auto max-w-[1200px] mx-auto" 
-            />
-          </div>
-        )}
-      </div>
+      {hasBanner && (
+        <div className="w-full text-center" style={{ backgroundColor: bannerColor }}>
+          <img 
+            src={finalBannerUrl} 
+            alt={produto.nome} 
+            className="w-full h-auto max-w-3xl mx-auto" 
+          />
+        </div>
+      )}
     </div>
   );
 }

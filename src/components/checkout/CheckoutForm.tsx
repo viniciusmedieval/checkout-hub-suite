@@ -32,10 +32,10 @@ export function CheckoutForm({ configCheckout }: CheckoutFormProps) {
   return (
     <div className="checkout-form">
       <form onSubmit={handleSubmit} className="space-y-4">
-        <h2 className="text-xl font-semibold mb-4 text-black">Informações de Contato</h2>
+        <h2 className="text-base font-semibold mb-3 text-gray-800">Identificação</h2>
         
-        <div className="space-y-2">
-          <Label htmlFor="nome" className="text-gray-700">Nome completo</Label>
+        <div className="space-y-1">
+          <Label htmlFor="nome" className="text-sm text-gray-700">Nome completo</Label>
           <Input 
             id="nome"
             name="nome"
@@ -43,12 +43,12 @@ export function CheckoutForm({ configCheckout }: CheckoutFormProps) {
             value={formData.nome}
             onChange={handleChange}
             required
-            className="bg-white border-gray-300 text-black placeholder:text-gray-500"
+            className="h-9 text-sm bg-white border-gray-300 text-black placeholder:text-gray-500"
           />
         </div>
         
-        <div className="space-y-2">
-          <Label htmlFor="email" className="text-gray-700">E-mail</Label>
+        <div className="space-y-1">
+          <Label htmlFor="email" className="text-sm text-gray-700">E-mail</Label>
           <Input 
             id="email"
             name="email"
@@ -57,12 +57,12 @@ export function CheckoutForm({ configCheckout }: CheckoutFormProps) {
             value={formData.email}
             onChange={handleChange}
             required
-            className="bg-white border-gray-300 text-black placeholder:text-gray-500"
+            className="h-9 text-sm bg-white border-gray-300 text-black placeholder:text-gray-500"
           />
         </div>
         
-        <div className="space-y-2">
-          <Label htmlFor="telefone" className="text-gray-700">Telefone</Label>
+        <div className="space-y-1">
+          <Label htmlFor="telefone" className="text-sm text-gray-700">Telefone</Label>
           <Input 
             id="telefone"
             name="telefone"
@@ -70,36 +70,36 @@ export function CheckoutForm({ configCheckout }: CheckoutFormProps) {
             value={formData.telefone}
             onChange={handleChange}
             required
-            className="bg-white border-gray-300 text-black placeholder:text-gray-500"
+            className="h-9 text-sm bg-white border-gray-300 text-black placeholder:text-gray-500"
           />
         </div>
         
-        <div className="space-y-2">
-          <Label htmlFor="endereco" className="text-gray-700">Endereço (opcional)</Label>
+        <div className="space-y-1">
+          <Label htmlFor="endereco" className="text-sm text-gray-700">Endereço (opcional)</Label>
           <Input 
             id="endereco"
             name="endereco"
             placeholder="Seu endereço completo"
             value={formData.endereco}
             onChange={handleChange}
-            className="bg-white border-gray-300 text-black placeholder:text-gray-500"
+            className="h-9 text-sm bg-white border-gray-300 text-black placeholder:text-gray-500"
           />
         </div>
         
-        <div className="space-y-2">
-          <Label htmlFor="observacoes" className="text-gray-700">Observações (opcional)</Label>
+        <div className="space-y-1">
+          <Label htmlFor="observacoes" className="text-sm text-gray-700">Observações (opcional)</Label>
           <Textarea 
             id="observacoes"
             name="observacoes"
             placeholder="Alguma observação adicional?"
             value={formData.observacoes}
             onChange={handleChange}
-            rows={3}
-            className="bg-white border-gray-300 text-black placeholder:text-gray-500"
+            rows={2}
+            className="text-sm bg-white border-gray-300 text-black placeholder:text-gray-500"
           />
         </div>
         
-        {/* Removemos o botão de finalizar compra daqui */}
+        {/* Botão de finalizar compra será movido para o CheckoutSummary */}
       </form>
     </div>
   );
