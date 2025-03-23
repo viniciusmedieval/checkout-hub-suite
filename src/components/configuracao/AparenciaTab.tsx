@@ -17,11 +17,18 @@ export function AparenciaTab({ config, handleConfigChange, handleSwitchChange }:
     const { name, value } = e.target;
     console.log(`Alterando cor ${name} para ${value}`);
     
+    // Garantir que a cor esteja em formato hexadecimal válido
+    const validHexColor = /^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/.test(value) 
+      ? value 
+      : name === 'cor_fundo' 
+        ? '#FFFFFF' 
+        : '#3b82f6';
+    
     // Create a synthetic event to pass to the original handler
     const syntheticEvent = {
       target: {
         name,
-        value
+        value: validHexColor
       }
     } as React.ChangeEvent<HTMLInputElement>;
     
@@ -51,6 +58,7 @@ export function AparenciaTab({ config, handleConfigChange, handleSwitchChange }:
               name="cor_topo"
               value={config.cor_topo || "#000000"}
               onChange={handleColorChange}
+              placeholder="#000000"
             />
           </div>
           <p className="text-xs text-gray-500">Cor da barra de mensagem no topo do checkout</p>
@@ -70,6 +78,7 @@ export function AparenciaTab({ config, handleConfigChange, handleSwitchChange }:
               name="cor_fundo"
               value={config.cor_fundo || "#FFFFFF"}
               onChange={handleColorChange}
+              placeholder="#FFFFFF"
             />
           </div>
           <p className="text-xs text-gray-500">Define a cor de fundo global do checkout quando o produto não tem cor personalizada</p>
@@ -121,6 +130,7 @@ export function AparenciaTab({ config, handleConfigChange, handleSwitchChange }:
               name="cor_banner"
               value={config.cor_banner || "#000000"}
               onChange={handleColorChange}
+              placeholder="#000000"
             />
           </div>
         </div>

@@ -16,6 +16,33 @@ const Checkout = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
+  // Função para carregar a configuração do checkout
+  const fetchCheckoutConfig = async () => {
+    try {
+      console.log("Buscando configuração do checkout...");
+      
+      const { data: checkoutConfig, error: configError } = await supabase
+        .from("config_checkout")
+        .select("*")
+        .order('created_at', { ascending: false })
+        .limit(1);
+        
+      if (configError) {
+        console.error("Erro ao carregar configurações do checkout:", configError);
+      } else if (checkoutConfig && checkoutConfig.length > 0) {
+        console.log("Config checkout carregada:", checkoutConfig[0]);
+        setConfigCheckout(checkoutConfig[0]);
+        
+        // Aplicar a cor de fundo ao body para garantir que a página inteira usa a cor correta
+        if (checkoutConfig[0].cor_fundo) {
+          document.body.style.backgroundColor = checkoutConfig[0].cor_fundo;
+        }
+      }
+    } catch (error) {
+      console.error("Erro ao buscar configuração do checkout:", error);
+    }
+  };
+
   useEffect(() => {
     const fetchProduto = async () => {
       if (!slug) {
@@ -27,19 +54,8 @@ const Checkout = () => {
       try {
         console.log("Buscando produto com slug:", slug);
         
-        // Fetch checkout configuration
-        const { data: checkoutConfig, error: configError } = await supabase
-          .from("config_checkout")
-          .select("*")
-          .order('created_at', { ascending: false })
-          .limit(1);
-          
-        if (configError) {
-          console.error("Erro ao carregar configurações do checkout:", configError);
-        } else if (checkoutConfig && checkoutConfig.length > 0) {
-          console.log("Config checkout carregada:", checkoutConfig[0]);
-          setConfigCheckout(checkoutConfig[0]);
-        }
+        // Carregar a configuração do checkout primeiro
+        await fetchCheckoutConfig();
         
         // Try to get product from Supabase
         const { data: productData, error: productError } = await supabase
@@ -71,6 +87,12 @@ const Checkout = () => {
               if (produtoEncontrado) {
                 console.log("Produto encontrado nos dados mockStorage:", produtoEncontrado);
                 setProduto(produtoEncontrado);
+                
+                // Aplicar a cor de fundo do produto caso exista
+                if (produtoEncontrado.background_color) {
+                  document.body.style.backgroundColor = produtoEncontrado.background_color;
+                }
+                
                 setLoading(false);
                 return;
               }
@@ -81,6 +103,11 @@ const Checkout = () => {
         } else {
           console.log("Produto encontrado no Supabase:", productData);
           setProduto(productData);
+          
+          // Aplicar a cor de fundo do produto caso exista
+          if (productData.background_color) {
+            document.body.style.backgroundColor = productData.background_color;
+          }
         }
       } catch (error) {
         console.error("Erro ao buscar produto:", error);
@@ -91,7 +118,25 @@ const Checkout = () => {
     };
 
     fetchProduto();
+    
+    // Limpar estilo ao desmontar o componente
+    return () => {
+      document.body.style.backgroundColor = '';
+    };
   }, [slug]);
+
+  // Efeito para atualizar cor de fundo quando a configuração ou o produto muda
+  useEffect(() => {
+    if (!loading) {
+      // Prioridade: cor do produto > cor da configuração > branco (padrão)
+      const backgroundColor = produto?.background_color || 
+                             configCheckout?.cor_fundo || 
+                             "#FFFFFF";
+      
+      console.log("Aplicando cor de fundo:", backgroundColor);
+      document.body.style.backgroundColor = backgroundColor;
+    }
+  }, [produto, configCheckout, loading]);
 
   if (loading) {
     return (
@@ -133,7 +178,7 @@ const Checkout = () => {
   return (
     <div 
       className="min-h-screen flex flex-col text-black"
-      style={{ backgroundColor: backgroundColor }}
+      style={{ backgroundColor }}
     >
       {/* Header with banner */}
       <CheckoutHeader produto={produto} configCheckout={configCheckout} />

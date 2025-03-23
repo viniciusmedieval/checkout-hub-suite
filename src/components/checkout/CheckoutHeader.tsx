@@ -1,6 +1,7 @@
 
 import { Produto, ConfigCheckout } from "@/lib/supabase";
 import { useIsMobile } from "@/hooks/use-mobile";
+import { useEffect } from "react";
 
 interface CheckoutHeaderProps {
   produto: Produto;
@@ -41,8 +42,13 @@ export function CheckoutHeader({ produto, configCheckout }: CheckoutHeaderProps)
   console.log('CheckoutHeader - config values:', { 
     configCheckout,
     showTopMessage,
-    topMessageColor
+    topMessageColor,
+    topColorFromConfig: configCheckout?.cor_topo
   });
+
+  useEffect(() => {
+    console.log('CheckoutHeader - Cor do topo atualizada:', topMessageColor);
+  }, [topMessageColor]);
 
   return (
     <div className="w-full">

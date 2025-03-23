@@ -78,45 +78,39 @@ export function useConfiguracao() {
   const handleSaveConfig = async () => {
     try {
       console.log("Salvando configurações:", config);
+      
+      // Validação para garantir que as cores estão em formato válido de hex
+      const validateHex = (color: string) => {
+        return color && /^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/.test(color);
+      };
+      
+      const configToSave = {
+        mensagem_topo: config.mensagem_topo,
+        cor_topo: validateHex(config.cor_topo) ? config.cor_topo : "#3b82f6",
+        ativa_banner: config.ativa_banner,
+        banner_url: config.banner_url,
+        banner_mobile_url: config.banner_mobile_url,
+        cor_banner: validateHex(config.cor_banner) ? config.cor_banner : "#3b82f6",
+        cor_fundo: validateHex(config.cor_fundo) ? config.cor_fundo : "#FFFFFF",
+        texto_botao: config.texto_botao,
+        rodape_texto: config.rodape_texto,
+        rodape_empresa: config.rodape_empresa,
+        rodape_ano: config.rodape_ano,
+        mostrar_seguro: config.mostrar_seguro,
+        mensagem_rodape: config.mensagem_rodape
+      };
+      
       let result;
       
       if (config.id) {
         result = await supabase
           .from("config_checkout")
-          .update({
-            mensagem_topo: config.mensagem_topo,
-            cor_topo: config.cor_topo,
-            ativa_banner: config.ativa_banner,
-            banner_url: config.banner_url,
-            banner_mobile_url: config.banner_mobile_url,
-            cor_banner: config.cor_banner,
-            cor_fundo: config.cor_fundo,
-            texto_botao: config.texto_botao,
-            rodape_texto: config.rodape_texto,
-            rodape_empresa: config.rodape_empresa,
-            rodape_ano: config.rodape_ano,
-            mostrar_seguro: config.mostrar_seguro,
-            mensagem_rodape: config.mensagem_rodape
-          })
+          .update(configToSave)
           .eq('id', config.id);
       } else {
         result = await supabase
           .from("config_checkout")
-          .insert([{
-            mensagem_topo: config.mensagem_topo,
-            cor_topo: config.cor_topo,
-            ativa_banner: config.ativa_banner,
-            banner_url: config.banner_url,
-            banner_mobile_url: config.banner_mobile_url,
-            cor_banner: config.cor_banner,
-            cor_fundo: config.cor_fundo,
-            texto_botao: config.texto_botao,
-            rodape_texto: config.rodape_texto,
-            rodape_empresa: config.rodape_empresa,
-            rodape_ano: config.rodape_ano,
-            mostrar_seguro: config.mostrar_seguro,
-            mensagem_rodape: config.mensagem_rodape
-          }]);
+          .insert([configToSave]);
       }
       
       if (result.error) {
@@ -125,6 +119,18 @@ export function useConfiguracao() {
       
       console.log("Configurações salvas com sucesso:", result);
       toast.success("Configurações salvas com sucesso!");
+      
+      // Recarregar a configuração para garantir que temos os dados mais recentes
+      const { data: refreshedConfig } = await supabase
+        .from("config_checkout")
+        .select("*")
+        .order('created_at', { ascending: false })
+        .limit(1);
+        
+      if (refreshedConfig && refreshedConfig.length > 0) {
+        setConfig(refreshedConfig[0]);
+        console.log("Configurações atualizadas após salvamento:", refreshedConfig[0]);
+      }
     } catch (error) {
       console.error("Erro ao salvar configurações:", error);
       toast.error("Erro ao salvar configurações. Tente novamente.");
