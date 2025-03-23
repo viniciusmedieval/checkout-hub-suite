@@ -1,18 +1,16 @@
 
-import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Form } from '@/components/ui/form';
-import { X } from 'lucide-react';
-import { toast } from 'sonner';
-import { supabase, Produto } from '@/lib/supabase';
+import { Produto } from '@/lib/supabase';
 import { BasicInfoTab } from './tabs/BasicInfoTab';
 import { CheckoutTab } from './tabs/CheckoutTab';
 import { PixConfigTab } from './tabs/PixConfigTab';
 import { FormActions } from './FormActions';
+import { FormHeader } from './FormHeader';
 import { productSchema, ProductFormValues } from './schemas/productSchema';
+import { useProductForm } from './hooks/useProductForm';
 
 type ProductFormProps = {
   product?: Produto;
@@ -21,9 +19,6 @@ type ProductFormProps = {
 };
 
 export function ProductForm({ product, onClose, onSuccess }: ProductFormProps) {
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const isEditing = !!product;
-
   const form = useForm<ProductFormValues>({
     resolver: zodResolver(productSchema),
     defaultValues: {
@@ -47,82 +42,23 @@ export function ProductForm({ product, onClose, onSuccess }: ProductFormProps) {
     },
   });
 
-  const onSubmit = async (values: ProductFormValues) => {
-    setIsSubmitting(true);
-    try {
-      if (isEditing && product) {
-        const { error } = await supabase
-          .from('produtos')
-          .update(values)
-          .eq('id', product.id);
-          
-        if (error) throw error;
-        
-        toast.success(`Produto "${values.nome}" atualizado com sucesso!`);
-      } else {
-        const { error } = await supabase
-          .from('produtos')
-          .insert([values]);
-          
-        if (error) throw error;
-        
-        toast.success(`Produto "${values.nome}" criado com sucesso!`);
-      }
-      
-      onSuccess();
-      onClose();
-    } catch (error) {
-      console.error('Erro ao salvar produto:', error);
-      toast.error('Ocorreu um erro ao salvar o produto. Tente novamente.');
-    } finally {
-      setIsSubmitting(false);
-    }
-  };
-
-  const generateSlug = () => {
-    const nome = form.getValues('nome');
-    if (nome) {
-      const slug = nome
-        .normalize('NFD')
-        .replace(/[\u0300-\u036f]/g, '')
-        .toLowerCase()
-        .replace(/[^a-z0-9]+/g, '-')
-        .replace(/^-+|-+$/g, '');
-      
-      form.setValue('slug', slug, { shouldValidate: true });
-    }
-  };
+  const { isSubmitting, isEditing, generateSlug, handleSubmit } = useProductForm({
+    product,
+    onClose,
+    onSuccess,
+    form
+  });
 
   return (
     <div className="h-full flex flex-col">
-      <div className="flex justify-between items-center pb-4 border-b mb-4">
-        <h2 className="text-lg font-semibold">{isEditing ? 'Editar Produto' : 'Novo Produto'}</h2>
-        <Button variant="ghost" size="icon" onClick={onClose}>
-          <X className="h-4 w-4" />
-        </Button>
-      </div>
+      <FormHeader isEditing={isEditing} onClose={onClose} />
       
       <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6 flex-1 overflow-y-auto">
-          <Tabs defaultValue="basic">
-            <TabsList className="w-full">
-              <TabsTrigger value="basic" className="flex-1">Informações Básicas</TabsTrigger>
-              <TabsTrigger value="checkout" className="flex-1">Checkout</TabsTrigger>
-              <TabsTrigger value="pix" className="flex-1">Configurações PIX</TabsTrigger>
-            </TabsList>
-            
-            <TabsContent value="basic" className="space-y-4 pt-4">
-              <BasicInfoTab form={form} generateSlug={generateSlug} />
-            </TabsContent>
-            
-            <TabsContent value="checkout" className="space-y-4 pt-4">
-              <CheckoutTab form={form} />
-            </TabsContent>
-            
-            <TabsContent value="pix" className="space-y-4 pt-4">
-              <PixConfigTab form={form} />
-            </TabsContent>
-          </Tabs>
+        <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-6 flex-1 overflow-y-auto">
+          <ProductFormTabs 
+            form={form} 
+            generateSlug={generateSlug} 
+          />
           
           <FormActions 
             isSubmitting={isSubmitting} 
@@ -132,5 +68,34 @@ export function ProductForm({ product, onClose, onSuccess }: ProductFormProps) {
         </form>
       </Form>
     </div>
+  );
+}
+
+interface ProductFormTabsProps {
+  form: ReturnType<typeof useForm<ProductFormValues>>;
+  generateSlug: () => void;
+}
+
+function ProductFormTabs({ form, generateSlug }: ProductFormTabsProps) {
+  return (
+    <Tabs defaultValue="basic">
+      <TabsList className="w-full">
+        <TabsTrigger value="basic" className="flex-1">Informações Básicas</TabsTrigger>
+        <TabsTrigger value="checkout" className="flex-1">Checkout</TabsTrigger>
+        <TabsTrigger value="pix" className="flex-1">Configurações PIX</TabsTrigger>
+      </TabsList>
+      
+      <TabsContent value="basic" className="space-y-4 pt-4">
+        <BasicInfoTab form={form} generateSlug={generateSlug} />
+      </TabsContent>
+      
+      <TabsContent value="checkout" className="space-y-4 pt-4">
+        <CheckoutTab form={form} />
+      </TabsContent>
+      
+      <TabsContent value="pix" className="space-y-4 pt-4">
+        <PixConfigTab form={form} />
+      </TabsContent>
+    </Tabs>
   );
 }
