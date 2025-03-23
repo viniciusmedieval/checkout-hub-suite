@@ -1,4 +1,3 @@
-
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -44,15 +43,20 @@
     --sidebar-border: 240 3.7% 15.9%;
     --sidebar-ring: 240 4.9% 83.9%;
     
-    /* Checkout specific colors */
+    /* Checkout specific colors - updated for white background */
     --checkout-bg: 0 0% 100%;
     --checkout-card-bg: 0 0% 100%;
-    --checkout-input-bg: 0 0% 98%;
+    --checkout-form-bg: 0 0% 0%; /* Black background for form */
+    --checkout-input-bg: 0 0% 0%; /* Black background for inputs */
+    --checkout-input-text: 0 0% 100%; /* White text for inputs */
+    --checkout-input-border: 0 0% 20%; /* Dark border for inputs */
+    --checkout-input-placeholder: 0 0% 70%; /* Light gray placeholder text */
     --checkout-orange: 28 100% 65%;
     --checkout-green: 142 96% 41%;
     --checkout-border: 0 0% 90%;
-    --checkout-text: 0 0% 20%;
-    --checkout-text-light: 0 0% 45%;
+    --checkout-text: 0 0% 100%; /* White text for form */
+    --checkout-text-light: 0 0% 80%; /* Light gray for secondary text */
+    --checkout-button-bg: 210 100% 52%; /* Blue button background */
   }
 }
 
@@ -93,24 +97,32 @@
     text-wrap: balance;
   }
   
-  /* Checkout specific utilities */
+  /* Checkout specific utilities - updated for new design */
   .checkout-input {
-    @apply bg-[hsl(var(--checkout-input-bg))] border-[hsl(var(--checkout-border))] text-[hsl(var(--checkout-text))] focus-visible:ring-1 focus-visible:ring-[#3B82F6] focus-visible:ring-offset-0;
+    @apply bg-black border-[#333] text-white placeholder:text-gray-500 focus-visible:ring-1 focus-visible:ring-[#3B82F6] focus-visible:ring-offset-0;
   }
   
   .checkout-card {
     @apply border-[hsl(var(--checkout-border))] bg-[hsl(var(--checkout-card-bg))] shadow-sm;
   }
   
+  .checkout-form {
+    @apply bg-black text-white rounded-lg p-6 border-0 shadow-sm;
+  }
+  
   .checkout-heading {
-    @apply text-base font-semibold text-[hsl(var(--checkout-text))];
+    @apply text-base font-semibold text-white;
   }
   
   .checkout-subheading {
-    @apply text-sm font-medium text-[hsl(var(--checkout-text-light))];
+    @apply text-sm font-medium text-gray-300;
   }
   
   .checkout-label {
-    @apply text-xs text-[hsl(var(--checkout-text-light))];
+    @apply text-xs text-gray-300;
+  }
+  
+  .checkout-button {
+    @apply bg-[#1E88E5] hover:bg-[#1976D2] text-white font-medium py-3 px-4 rounded-md w-full transition-colors;
   }
 }

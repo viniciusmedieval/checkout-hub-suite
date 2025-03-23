@@ -1,6 +1,6 @@
+
 import { ConfigCheckout } from "@/lib/supabase";
 import { Button } from "@/components/ui/button";
-import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
@@ -31,12 +31,12 @@ export function CheckoutForm({ configCheckout }: CheckoutFormProps) {
   };
 
   return (
-    <Card className="p-6">
+    <div className="checkout-form bg-black rounded-lg overflow-hidden">
       <form onSubmit={handleSubmit} className="space-y-4">
-        <h2 className="text-xl font-semibold mb-4">Informações de Contato</h2>
+        <h2 className="text-xl font-semibold mb-4 text-white">Informações de Contato</h2>
         
         <div className="space-y-2">
-          <Label htmlFor="nome">Nome completo</Label>
+          <Label htmlFor="nome" className="text-white">Nome completo</Label>
           <Input 
             id="nome"
             name="nome"
@@ -44,11 +44,12 @@ export function CheckoutForm({ configCheckout }: CheckoutFormProps) {
             value={formData.nome}
             onChange={handleChange}
             required
+            className="bg-black border-[#333] text-white placeholder:text-gray-500"
           />
         </div>
         
         <div className="space-y-2">
-          <Label htmlFor="email">E-mail</Label>
+          <Label htmlFor="email" className="text-white">E-mail</Label>
           <Input 
             id="email"
             name="email"
@@ -57,11 +58,12 @@ export function CheckoutForm({ configCheckout }: CheckoutFormProps) {
             value={formData.email}
             onChange={handleChange}
             required
+            className="bg-black border-[#333] text-white placeholder:text-gray-500"
           />
         </div>
         
         <div className="space-y-2">
-          <Label htmlFor="telefone">Telefone</Label>
+          <Label htmlFor="telefone" className="text-white">Telefone</Label>
           <Input 
             id="telefone"
             name="telefone"
@@ -69,22 +71,24 @@ export function CheckoutForm({ configCheckout }: CheckoutFormProps) {
             value={formData.telefone}
             onChange={handleChange}
             required
+            className="bg-black border-[#333] text-white placeholder:text-gray-500"
           />
         </div>
         
         <div className="space-y-2">
-          <Label htmlFor="endereco">Endereço (opcional)</Label>
+          <Label htmlFor="endereco" className="text-white">Endereço (opcional)</Label>
           <Input 
             id="endereco"
             name="endereco"
             placeholder="Seu endereço completo"
             value={formData.endereco}
             onChange={handleChange}
+            className="bg-black border-[#333] text-white placeholder:text-gray-500"
           />
         </div>
         
         <div className="space-y-2">
-          <Label htmlFor="observacoes">Observações (opcional)</Label>
+          <Label htmlFor="observacoes" className="text-white">Observações (opcional)</Label>
           <Textarea 
             id="observacoes"
             name="observacoes"
@@ -92,16 +96,17 @@ export function CheckoutForm({ configCheckout }: CheckoutFormProps) {
             value={formData.observacoes}
             onChange={handleChange}
             rows={3}
+            className="bg-black border-[#333] text-white placeholder:text-gray-500"
           />
         </div>
         
         <Button 
           type="submit" 
-          className="w-full py-6 text-lg font-medium mt-4"
+          className="w-full py-6 text-lg font-medium mt-4 bg-[#1E88E5] hover:bg-[#1976D2]"
         >
           {configCheckout?.texto_botao || "FINALIZAR COMPRA"}
         </Button>
       </form>
-    </Card>
+    </div>
   );
 }

@@ -146,13 +146,13 @@ export function CheckoutTestimonials({ produto_id }: CheckoutTestimonialsProps) 
   }
 
   return (
-    <Card className="checkout-card">
+    <Card className="border border-gray-100 bg-white shadow-sm rounded-lg">
       <CardContent className="p-6">
         <div className="flex items-center gap-3 mb-5">
           <div className="flex items-center justify-center w-8 h-8 rounded-full bg-blue-100">
             <MessageSquare size={16} className="text-blue-600" />
           </div>
-          <h3 className="checkout-heading">Depoimentos</h3>
+          <h3 className="text-base font-semibold text-gray-800">Depoimentos</h3>
           <span className="ml-auto text-xs text-gray-500">{testimonials.length} comentários</span>
         </div>
         

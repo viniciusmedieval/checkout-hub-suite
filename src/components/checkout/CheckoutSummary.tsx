@@ -1,3 +1,4 @@
+
 import { Produto, ConfigCheckout } from "@/lib/supabase";
 
 interface CheckoutSummaryProps {
@@ -7,7 +8,7 @@ interface CheckoutSummaryProps {
 
 export function CheckoutSummary({ produto, configCheckout }: CheckoutSummaryProps) {
   return (
-    <div className="checkout-summary bg-white rounded-lg shadow-sm border border-gray-100 overflow-hidden">
+    <div className="bg-white rounded-lg shadow-sm border border-gray-100 overflow-hidden">
       <div className="p-4 border-b border-gray-100">
         <h2 className="text-lg font-semibold">Resumo do Pedido</h2>
       </div>
