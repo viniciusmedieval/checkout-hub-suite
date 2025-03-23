@@ -1,4 +1,3 @@
-
 import { createClient, SupabaseClient } from '@supabase/supabase-js';
 
 // Tentar obter as credenciais do localStorage primeiro
@@ -37,6 +36,7 @@ const loadMockStorageFromLocalStorage = () => {
         slug: "plano-mensal",
         checkout_title: "Assine o Plano Mensal",
         imagem_url: "https://placehold.co/600x400/3b82f6/FFFFFF/png?text=Plano+Mensal",
+        banner_url: "https://placehold.co/1200x300/3b82f6/FFFFFF/png?text=Banner+Plano+Mensal",
         usar_api_pix: false,
         usar_config_pix_global: false,
         criado_em: new Date().toISOString()
@@ -95,72 +95,69 @@ function createMockClient() {
       
       return {
         select: (columns?: string) => {
-          const mockResult = {
-            data: [...mockStorage[table as keyof typeof mockStorage]],
-            error: null,
-            eq: (column: string, value: any) => {
-              const filtered = mockStorage[table as keyof typeof mockStorage].filter((item: any) => item[column] === value);
-              return {
-                data: filtered,
-                error: null,
-                gte: (column2: string, value2: any) => {
-                  const filtered2 = filtered.filter((item: any) => item[column2] >= value2);
+          // Criamos uma função que pode ser encadeada com filtros
+          const buildQueryObject = (items = [...mockStorage[table as keyof typeof mockStorage]]) => {
+            return {
+              data: items,
+              error: null,
+              
+              // Implementa o método eq para filtrar
+              eq: (column: string, value: any) => {
+                const filtered = items.filter((item: any) => item[column] === value);
+                return buildQueryObject(filtered); // Retorna um novo objeto de consulta com os itens filtrados
+              },
+              
+              // Implementa o método gte (greater than or equal)
+              gte: (column: string, value: any) => {
+                const filtered = items.filter((item: any) => item[column] >= value);
+                return buildQueryObject(filtered);
+              },
+              
+              // Implementa o método lte (less than or equal)
+              lte: (column: string, value: any) => {
+                const filtered = items.filter((item: any) => item[column] <= value);
+                return buildQueryObject(filtered);
+              },
+              
+              // Implementa o método order
+              order: (column: string, { ascending = true } = {}) => {
+                const sorted = [...items].sort((a: any, b: any) => {
+                  if (ascending) {
+                    return a[column] > b[column] ? 1 : -1;
+                  } else {
+                    return a[column] < b[column] ? 1 : -1;
+                  }
+                });
+                return buildQueryObject(sorted);
+              },
+              
+              // Implementa o método limit
+              limit: (limit: number) => {
+                return {
+                  data: items.slice(0, limit),
+                  error: null
+                };
+              },
+              
+              // Implementa o método single para obter apenas um resultado
+              single: () => {
+                if (items.length === 0) {
                   return {
-                    lte: (column3: string, value3: any) => {
-                      const filtered3 = filtered2.filter((item: any) => item[column3] <= value3);
-                      return {
-                        data: filtered3,
-                        error: null
-                      };
-                    },
-                    data: filtered2,
-                    error: null
-                  };
-                },
-                order: () => {
-                  return {
-                    limit: (limit: number) => {
-                      return {
-                        data: filtered.slice(0, limit),
-                        error: null
-                      };
-                    },
-                    data: filtered,
-                    error: null
+                    data: null,
+                    error: new Error(`No results found for ${table}`)
                   };
                 }
-              };
-            },
-            gte: (column: string, value: any) => {
-              const filtered = mockStorage[table as keyof typeof mockStorage].filter((item: any) => item[column] >= value);
-              return {
-                lte: (column2: string, value2: any) => {
-                  const filtered2 = filtered.filter((item: any) => item[column2] <= value2);
-                  return {
-                    data: filtered2,
-                    error: null
-                  };
-                },
-                data: filtered,
-                error: null
-              };
-            },
-            order: () => {
-              return {
-                limit: (limit: number) => {
-                  return {
-                    data: mockStorage[table as keyof typeof mockStorage].slice(0, limit),
-                    error: null
-                  };
-                },
-                data: mockStorage[table as keyof typeof mockStorage],
-                error: null
-              };
-            }
+                return {
+                  data: items[0],
+                  error: null
+                };
+              }
+            };
           };
           
-          return mockResult;
+          return buildQueryObject();
         },
+        
         insert: (records: any[] | any) => {
           const recordsArray = Array.isArray(records) ? records : [records];
           const nextId = mockStorage[table as keyof typeof mockStorage].length > 0 
@@ -189,6 +186,7 @@ function createMockClient() {
             }
           };
         },
+        
         update: (updates: any) => {
           return {
             eq: (column: string, value: any) => {
@@ -216,6 +214,7 @@ function createMockClient() {
             }
           };
         },
+        
         delete: () => {
           return {
             eq: (column: string, value: any) => {
