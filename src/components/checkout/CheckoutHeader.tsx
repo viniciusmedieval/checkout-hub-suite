@@ -28,12 +28,17 @@ export function CheckoutHeader({ produto, configCheckout }: CheckoutHeaderProps)
   // Get banner background color (fallback to default blue if not specified)
   const bannerColor = produto.banner_color || "#3b82f6";
 
+  // Check if we have a valid banner URL
+  const hasBanner = !!bannerUrl && bannerUrl.trim() !== '';
+
   return (
     <div className="w-full bg-white border-b border-gray-200">
-      {/* Top message bar */}
-      <div className="bg-blue-600 text-center py-2 text-xs text-white font-medium">
-        <p>{configCheckout?.mensagem_topo || "Oferta especial por tempo limitado!"}</p>
-      </div>
+      {/* Top message bar - only show if no banner */}
+      {!hasBanner && (
+        <div className="bg-blue-600 text-center py-2 text-xs text-white font-medium">
+          <p>{configCheckout?.mensagem_topo || "Oferta especial por tempo limitado!"}</p>
+        </div>
+      )}
 
       {/* Product header/banner */}
       <div className="w-full py-6 px-4 text-center">
@@ -42,7 +47,7 @@ export function CheckoutHeader({ produto, configCheckout }: CheckoutHeaderProps)
             <h1 className="text-xl md:text-2xl font-bold text-gray-800 mb-2">{produto.nome}</h1>
             <p className="text-sm text-gray-600 mb-4">{produto.descricao}</p>
             
-            {bannerUrl && (
+            {hasBanner && (
               <div 
                 className="mt-4 w-full max-w-3xl mx-auto rounded-md overflow-hidden shadow-md" 
                 style={{ backgroundColor: bannerColor }}
