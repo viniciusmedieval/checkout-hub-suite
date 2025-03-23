@@ -1,3 +1,4 @@
+
 import { useEffect, useState } from "react";
 import { useParams, Link } from "react-router-dom";
 import { Produto, supabase, ConfigCheckout } from "@/lib/supabase";
@@ -120,8 +121,14 @@ const Checkout = () => {
     );
   }
 
+  // Determinar a cor de fundo a ser usada
+  const backgroundColor = produto.background_color || configCheckout?.cor_fundo || "#FFFFFF";
+
   return (
-    <div className="min-h-screen flex flex-col bg-white text-black">
+    <div 
+      className="min-h-screen flex flex-col text-black"
+      style={{ backgroundColor: backgroundColor }}
+    >
       {/* Header with banner */}
       <CheckoutHeader produto={produto} configCheckout={configCheckout} />
 
@@ -139,7 +146,7 @@ const Checkout = () => {
       </div>
       
       {/* Footer */}
-      <footer className="mt-auto py-6 text-center border-t border-gray-100 text-sm">
+      <footer className="mt-auto py-6 text-center border-t border-gray-100 text-sm" style={{ borderColor: 'rgba(0,0,0,0.1)' }}>
         <div className="container max-w-4xl mx-auto px-4">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4 items-center">
             <div className="text-left md:text-left text-gray-500">

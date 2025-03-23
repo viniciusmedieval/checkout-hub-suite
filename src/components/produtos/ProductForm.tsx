@@ -38,6 +38,7 @@ export function ProductForm({ product, onClose, onSuccess }: ProductFormProps) {
       banner_url: product?.banner_url || '',
       banner_mobile_url: product?.banner_mobile_url || '',
       banner_color: product?.banner_color || '',
+      background_color: product?.background_color || '',
       tipo_chave_pix: product?.tipo_chave_pix || '',
       chave_pix: product?.chave_pix || '',
       nome_beneficiario: product?.nome_beneficiario || '',

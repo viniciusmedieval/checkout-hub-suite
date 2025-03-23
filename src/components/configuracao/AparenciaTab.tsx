@@ -40,6 +40,25 @@ export function AparenciaTab({ config, handleConfigChange, handleSwitchChange }:
         </div>
         
         <div className="space-y-2">
+          <label className="text-sm font-medium">Cor de Fundo do Checkout</label>
+          <div className="flex gap-2">
+            <Input
+              type="color"
+              name="cor_fundo"
+              value={config.cor_fundo || "#FFFFFF"}
+              onChange={handleConfigChange}
+              className="w-16 h-10 p-1"
+            />
+            <Input
+              name="cor_fundo"
+              value={config.cor_fundo || "#FFFFFF"}
+              onChange={handleConfigChange}
+            />
+          </div>
+          <p className="text-xs text-gray-500">Define a cor de fundo global do checkout quando o produto não tem cor personalizada</p>
+        </div>
+        
+        <div className="space-y-2">
           <label className="text-sm font-medium">URL do Banner (Desktop)</label>
           <Input
             name="banner_url"

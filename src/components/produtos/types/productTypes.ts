@@ -9,6 +9,10 @@ export interface Product {
   slug: string;
   checkout_title: string;
   imagem_url: string;
+  banner_url?: string;
+  banner_mobile_url?: string;
+  banner_color?: string;
+  background_color?: string;
 }
 
 export type ProductFormValues = {
@@ -23,6 +27,7 @@ export type ProductFormValues = {
   banner_url: string;
   banner_mobile_url: string;
   banner_color: string;
+  background_color: string;
   tipo_chave_pix: string;
   chave_pix: string;
   nome_beneficiario: string;

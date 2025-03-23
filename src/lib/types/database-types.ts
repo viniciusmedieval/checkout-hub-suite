@@ -23,6 +23,7 @@ export type Produto = {
   banner_url: string;
   banner_mobile_url: string;
   banner_color: string;
+  background_color: string;
   tipo_chave_pix: string;
   chave_pix: string;
   nome_beneficiario: string;
@@ -51,6 +52,7 @@ export type ConfigCheckout = {
   banner_url: string;
   banner_mobile_url: string;
   cor_banner: string;
+  cor_fundo: string;
   texto_botao: string;
   rodape_texto: string;
   rodape_empresa: string;

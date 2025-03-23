@@ -56,28 +56,53 @@ export function CheckoutTab({ form }: CheckoutTabProps) {
         />
       </div>
       
-      <FormField
-        control={form.control}
-        name="banner_color"
-        render={({ field }) => (
-          <FormItem>
-            <FormLabel>Cor do Banner</FormLabel>
-            <div className="flex gap-2">
-              <div 
-                className="w-10 h-10 rounded border"
-                style={{ backgroundColor: field.value || '#ffffff' }}
-              ></div>
-              <FormControl>
-                <Input type="text" placeholder="#FF5733" {...field} />
-              </FormControl>
-            </div>
-            <FormDescription>
-              Código hexadecimal da cor (ex: #FF5733)
-            </FormDescription>
-            <FormMessage />
-          </FormItem>
-        )}
-      />
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <FormField
+          control={form.control}
+          name="banner_color"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Cor do Banner</FormLabel>
+              <div className="flex gap-2">
+                <div 
+                  className="w-10 h-10 rounded border"
+                  style={{ backgroundColor: field.value || '#ffffff' }}
+                ></div>
+                <FormControl>
+                  <Input type="text" placeholder="#FF5733" {...field} />
+                </FormControl>
+              </div>
+              <FormDescription>
+                Código hexadecimal da cor (ex: #FF5733)
+              </FormDescription>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        
+        <FormField
+          control={form.control}
+          name="background_color"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Cor de Fundo do Checkout</FormLabel>
+              <div className="flex gap-2">
+                <div 
+                  className="w-10 h-10 rounded border"
+                  style={{ backgroundColor: field.value || '#ffffff' }}
+                ></div>
+                <FormControl>
+                  <Input type="text" placeholder="#FFFFFF" {...field} />
+                </FormControl>
+              </div>
+              <FormDescription>
+                Código hexadecimal da cor de fundo (ex: #FFFFFF)
+              </FormDescription>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+      </div>
     </div>
   );
 }
