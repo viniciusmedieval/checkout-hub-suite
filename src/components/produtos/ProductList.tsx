@@ -47,6 +47,8 @@ export function ProductList({ produtos, loading, searchTerm, onEdit, onToggleSta
     const baseUrl = window.location.origin;
     const checkoutUrl = `${baseUrl}/checkout/${slug}`;
     
+    console.log("Copiando link de checkout:", checkoutUrl);
+    
     navigator.clipboard.writeText(checkoutUrl)
       .then(() => {
         toast.success('Link de checkout copiado para a área de transferência!');

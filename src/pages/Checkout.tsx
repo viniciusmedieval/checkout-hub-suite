@@ -46,6 +46,7 @@ const Checkout = () => {
           
         if (checkoutConfig && checkoutConfig.length > 0) {
           setConfigCheckout(checkoutConfig[0]);
+          console.log("Config checkout carregada:", checkoutConfig[0]);
         }
         
         // Try to get product from Supabase
@@ -53,13 +54,18 @@ const Checkout = () => {
           .from("produtos")
           .select("*")
           .eq("slug", slug)
-          .eq("ativo", true)
-          .single();
+          .eq("ativo", true);
 
-        console.log("Resposta do Supabase:", { productData, productError });
+        console.log("Resposta do Supabase produtos:", { productData, productError });
         
         if (productError) {
+          console.error("Erro do Supabase:", productError);
+          throw productError;
+        }
+        
+        if (!productData || productData.length === 0) {
           // Recupera dados do localStorage como fallback
+          console.log("Produto não encontrado no Supabase, tentando localStorage");
           const mockStorage = localStorage.getItem('mockSupabaseStorage');
           if (mockStorage) {
             const parsedStorage = JSON.parse(mockStorage);
@@ -78,13 +84,10 @@ const Checkout = () => {
             }
           }
           
-          throw productError;
-        }
-        
-        if (!productData) {
           setError("Produto não encontrado");
         } else {
-          setProduto(productData);
+          console.log("Produto encontrado no Supabase:", productData[0]);
+          setProduto(productData[0]);
         }
       } catch (error) {
         console.error("Erro ao buscar produto:", error);
