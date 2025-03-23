@@ -1,4 +1,3 @@
-
 import { createClient, SupabaseClient } from '@supabase/supabase-js';
 
 const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
@@ -34,9 +33,15 @@ if (supabaseUrl && supabaseAnonKey) {
             error: null,
           }),
         }),
+        data: [],
+        error: null,
       }),
       insert: () => ({
-        data: null,
+        select: () => ({
+          data: [],
+          error: null
+        }),
+        data: [],
         error: null,
       }),
       update: () => ({

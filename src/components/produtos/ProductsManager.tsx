@@ -17,6 +17,7 @@ export function ProductsManager() {
         toast.success(result.message);
       } else {
         toast.error(result.message);
+        console.error('Error details:', result.error);
       }
     } catch (error) {
       console.error('Error adding products:', error);

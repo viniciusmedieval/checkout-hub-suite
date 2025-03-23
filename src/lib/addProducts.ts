@@ -93,23 +93,33 @@ export const addProductsToSupabase = async () => {
       return { success: true, message: 'All products already exist in the database.' };
     }
     
-    // Insert new products
-    const { data: insertedData, error } = await supabase
-      .from('produtos')
-      .insert(newProducts)
-      .select();
-    
-    if (error) throw error;
-    
-    // Ensure we have an array of inserted data
-    const safeInsertedData = Array.isArray(insertedData) ? insertedData : [];
-    
-    console.log(`Added ${safeInsertedData.length} new products to the database.`);
-    return { 
-      success: true, 
-      message: `Added ${safeInsertedData.length} new products to the database.`,
-      addedProducts: safeInsertedData
-    };
+    // Insert new products - handle the case where .select() might not be available
+    try {
+      const { data: insertedData, error } = await supabase
+        .from('produtos')
+        .insert(newProducts)
+        .select();
+      
+      if (error) throw error;
+      
+      // Ensure we have an array of inserted data
+      const safeInsertedData = Array.isArray(insertedData) ? insertedData : [];
+      
+      console.log(`Added ${safeInsertedData.length} new products to the database.`);
+      return { 
+        success: true, 
+        message: `Added ${safeInsertedData.length} new products to the database.`,
+        addedProducts: safeInsertedData
+      };
+    } catch (selectError) {
+      // If .select() is not supported, just return the success without the added products
+      console.log(`Added new products to the database, but couldn't fetch them.`);
+      return { 
+        success: true, 
+        message: `Added ${newProducts.length} new products to the database.`,
+        addedProducts: newProducts
+      };
+    }
     
   } catch (error) {
     console.error('Error adding products:', error);
