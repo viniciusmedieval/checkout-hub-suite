@@ -9,7 +9,6 @@ import { ResumoCompra } from "@/components/checkout/ResumoCompra";
 import { CheckoutFooter } from "@/components/checkout/CheckoutFooter";
 import { CheckoutLoading } from "@/components/checkout/CheckoutLoading";
 import { CheckoutError } from "@/components/checkout/CheckoutError";
-import { Users } from "lucide-react";
 
 const Checkout = () => {
   const { 
@@ -71,12 +70,6 @@ const Checkout = () => {
           >
             {produto.checkout_title || produto.nome}
           </h1>
-          
-          {/* Visitors Counter */}
-          <div className="flex items-center justify-center gap-2 text-sm text-gray-600 animate-pulse">
-            <Users size={16} />
-            <span>Outras <strong>{visitorCount.toLocaleString()}</strong> pessoas estão finalizando agora 🔥</span>
-          </div>
           
           {/* Cliente Identification Form */}
           <FormIdentificacao 
