@@ -2,7 +2,7 @@
 export function TestimonialSkeleton() {
   return (
     <div className="space-y-4 animate-pulse">
-      {[1, 2].map((i) => (
+      {[1, 2, 3].map((i) => (
         <div key={i} className="border-b border-gray-100 pb-4 last:border-0 last:pb-0">
           <div className="flex gap-3">
             <div className="w-10 h-10 rounded-full bg-gray-200"></div>
