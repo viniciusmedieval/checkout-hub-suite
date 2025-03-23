@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Depoimento } from "@/lib/supabase";
 import { Edit, Trash } from "lucide-react";
+import { StarRating } from "../checkout/testimonials/StarRating";
 
 interface DepoimentoCardProps {
   depoimento: Depoimento;
@@ -30,26 +31,10 @@ export function DepoimentoCard({ depoimento, onDelete, onEdit, isProcessing }: D
           <div className="flex items-center justify-between">
             <h3 className="font-medium">{depoimento.nome}</h3>
             <div className="flex">
-              {[...Array(5)].map((_, i) => (
-                <svg 
-                  key={i} 
-                  xmlns="http://www.w3.org/2000/svg" 
-                  width="16" 
-                  height="16" 
-                  viewBox="0 0 24 24" 
-                  fill={i < depoimento.estrelas ? "currentColor" : "none"} 
-                  stroke="currentColor" 
-                  className={i < depoimento.estrelas ? "text-yellow-500" : "text-muted-foreground"}
-                  strokeWidth="2" 
-                  strokeLinecap="round" 
-                  strokeLinejoin="round"
-                >
-                  <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
-                </svg>
-              ))}
+              <StarRating rating={depoimento.estrelas} />
             </div>
           </div>
-          <p className="text-sm text-muted-foreground mt-2">{depoimento.texto}</p>
+          <p className="text-sm text-muted-foreground mt-2 line-clamp-2">{depoimento.texto}</p>
           <div className="flex justify-end gap-2 mt-4">
             <Button 
               variant="outline" 

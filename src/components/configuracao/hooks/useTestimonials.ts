@@ -2,6 +2,7 @@
 import { useState } from "react";
 import { Depoimento } from "@/lib/supabase";
 import { deleteTestimonial, addTestimonial, updateTestimonial } from "../services/configServices";
+import { toast } from "sonner";
 
 export function useTestimonials(initialDepoimentos: Depoimento[] = []) {
   const [depoimentos, setDepoimentos] = useState<Depoimento[]>(initialDepoimentos);
@@ -16,6 +17,7 @@ export function useTestimonials(initialDepoimentos: Depoimento[] = []) {
       
       if (success) {
         setDepoimentos(prev => prev.filter(dep => dep.id !== id));
+        toast.success("Depoimento excluído com sucesso!");
       }
     } finally {
       setIsLoading(false);
@@ -29,6 +31,7 @@ export function useTestimonials(initialDepoimentos: Depoimento[] = []) {
       
       if (newDepoimento) {
         setDepoimentos(prev => [newDepoimento, ...prev]);
+        toast.success("Depoimento adicionado com sucesso!");
       }
     } finally {
       setIsLoading(false);
@@ -44,6 +47,7 @@ export function useTestimonials(initialDepoimentos: Depoimento[] = []) {
         setDepoimentos(prev => 
           prev.map(dep => dep.id === id ? updatedDepoimento : dep)
         );
+        toast.success("Depoimento atualizado com sucesso!");
       }
     } finally {
       setIsLoading(false);

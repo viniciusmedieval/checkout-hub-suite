@@ -1,6 +1,6 @@
-
 import { supabase, ConfigCheckout, Depoimento } from "@/lib/supabase";
 import { toast } from "sonner";
+import { getDefaultTestimonials } from "@/components/checkout/testimonials/DefaultTestimonials";
 
 export const fetchCheckoutConfig = async (): Promise<ConfigCheckout | null> => {
   try {
@@ -34,7 +34,7 @@ export const fetchTestimonials = async (): Promise<Depoimento[]> => {
     const { data, error } = await supabase
       .from("depoimentos")
       .select("*")
-      .order('created_at', { ascending: false });
+      .order('criado_em', { ascending: false });
       
     if (error) {
       console.error("Erro ao carregar depoimentos:", error);
@@ -42,6 +42,34 @@ export const fetchTestimonials = async (): Promise<Depoimento[]> => {
       return [];
     }
     
+    if (!data || data.length === 0) {
+      console.log("Nenhum depoimento encontrado, adicionando depoimentos padrão");
+      const defaultTestimonials = getDefaultTestimonials();
+      
+      const depoimentosParaInserir = defaultTestimonials.map(dep => ({
+        nome: dep.nome,
+        texto: dep.texto,
+        estrelas: dep.estrelas,
+        foto_url: dep.foto_url,
+        produto_id: 0,
+        criado_em: new Date().toISOString()
+      }));
+      
+      const { data: insertedData, error: insertError } = await supabase
+        .from("depoimentos")
+        .insert(depoimentosParaInserir)
+        .select();
+        
+      if (insertError) {
+        console.error("Erro ao inserir depoimentos padrão:", insertError);
+        return [];
+      }
+      
+      console.log("Depoimentos padrão adicionados com sucesso:", insertedData);
+      return insertedData || [];
+    }
+    
+    console.log("Depoimentos carregados do banco:", data);
     return data || [];
   } catch (error) {
     console.error("Erro ao carregar depoimentos:", error);
@@ -52,7 +80,6 @@ export const fetchTestimonials = async (): Promise<Depoimento[]> => {
 
 export const saveConfig = async (config: ConfigCheckout): Promise<ConfigCheckout | null> => {
   try {
-    // Validação para garantir que as cores estão em formato válido de hex
     const validateHex = (color: string) => {
       return color && /^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/.test(color);
     };
@@ -68,8 +95,8 @@ export const saveConfig = async (config: ConfigCheckout): Promise<ConfigCheckout
       cor_fundo: validateHex(config.cor_fundo) ? config.cor_fundo : "#FFFFFF",
       cor_titulo: validateHex(config.cor_titulo) ? config.cor_titulo : "#000000",
       texto_botao: config.texto_botao,
-      cor_botao: validateHex(config.cor_botao) ? config.cor_botao : "#8B5CF6", // Validando a cor do botão
-      cor_texto_botao: validateHex(config.cor_texto_botao) ? config.cor_texto_botao : "#FFFFFF", // Validando a cor do texto do botão
+      cor_botao: validateHex(config.cor_botao) ? config.cor_botao : "#8B5CF6",
+      cor_texto_botao: validateHex(config.cor_texto_botao) ? config.cor_texto_botao : "#FFFFFF",
       rodape_texto: config.rodape_texto,
       rodape_empresa: config.rodape_empresa,
       rodape_ano: config.rodape_ano,
@@ -100,7 +127,6 @@ export const saveConfig = async (config: ConfigCheckout): Promise<ConfigCheckout
     console.log("Configurações salvas com sucesso:", result);
     toast.success("Configurações salvas com sucesso!");
     
-    // Recarregar a configuração para garantir que temos os dados mais recentes
     const { data: refreshedConfig, error: refreshError } = await supabase
       .from("config_checkout")
       .select("*")
