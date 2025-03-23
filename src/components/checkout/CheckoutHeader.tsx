@@ -33,27 +33,20 @@ export function CheckoutHeader({ produto, configCheckout }: CheckoutHeaderProps)
         </div>
       )}
 
-      {/* Product header/banner */}
-      <div className="w-full py-6 px-4 text-center">
-        <div className="container max-w-6xl mx-auto">
-          <div className="flex flex-col items-center justify-center">
-            <h1 className="text-xl md:text-2xl font-bold text-gray-800 mb-2">{produto.nome}</h1>
-            <p className="text-sm text-gray-600 mb-4">{produto.descricao}</p>
-            
-            {hasBanner && (
-              <div 
-                className="mt-4 w-full max-w-3xl mx-auto rounded-md overflow-hidden shadow-md" 
-                style={{ backgroundColor: bannerColor }}
-              >
-                <img 
-                  src={bannerUrl} 
-                  alt={produto.nome} 
-                  className="w-full h-auto" 
-                />
-              </div>
-            )}
+      {/* Banner only - no product text */}
+      <div className="w-full text-center">
+        {hasBanner && (
+          <div 
+            className="w-full" 
+            style={{ backgroundColor: bannerColor }}
+          >
+            <img 
+              src={bannerUrl} 
+              alt={produto.nome} 
+              className="w-full h-auto" 
+            />
           </div>
-        </div>
+        )}
       </div>
     </div>
   );
