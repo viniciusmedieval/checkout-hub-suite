@@ -1,37 +1,31 @@
 
-import { useEffect } from "react";
-import { useParams } from "react-router-dom";
-import { useCheckoutData } from "@/hooks/useCheckoutData";
-import { CheckoutHeader } from "@/components/checkout/CheckoutHeader";
-import { CheckoutContent } from "@/components/checkout/CheckoutContent";
+import { useCheckout } from "@/hooks/useCheckout";
+import { HeaderTimer } from "@/components/checkout/HeaderTimer";
+import { BannerCheckout } from "@/components/checkout/BannerCheckout";
+import { FormIdentificacao } from "@/components/checkout/FormIdentificacao";
+import { PaymentMethodSelector } from "@/components/checkout/payment/PaymentMethodSelector";
+import { CheckoutTestimonials } from "@/components/checkout/CheckoutTestimonials";
+import { ResumoCompra } from "@/components/checkout/ResumoCompra";
 import { CheckoutFooter } from "@/components/checkout/CheckoutFooter";
 import { CheckoutLoading } from "@/components/checkout/CheckoutLoading";
 import { CheckoutError } from "@/components/checkout/CheckoutError";
 
 const Checkout = () => {
-  const { slug } = useParams<{ slug: string }>();
-  const { produto, configCheckout, loading, error } = useCheckoutData(slug);
-
-  // Efeito para atualizar cor de fundo quando a configuração ou o produto muda
-  useEffect(() => {
-    if (!loading) {
-      // Prioridade: cor do produto > cor da configuração > branco (padrão)
-      const backgroundColor = produto?.background_color || 
-                             configCheckout?.cor_fundo || 
-                             "#FFFFFF";
-      
-      console.log("Checkout - Aplicando cor de fundo final:", backgroundColor);
-      document.body.style.backgroundColor = backgroundColor;
-      // Adiciona uma classe específica para personalização adicional
-      document.body.classList.add('checkout-page');
-    }
-    
-    // Limpar estilo ao desmontar o componente
-    return () => {
-      document.body.style.backgroundColor = '';
-      document.body.classList.remove('checkout-page');
-    };
-  }, [produto, configCheckout, loading]);
+  const { 
+    produto, 
+    configCheckout, 
+    loading, 
+    error,
+    formData,
+    formErrors,
+    paymentMethod,
+    isSubmitting,
+    countdown,
+    visitorCount,
+    handleInputChange,
+    setPaymentMethod,
+    submitOrder
+  } = useCheckout();
 
   if (loading) {
     return <CheckoutLoading />;
@@ -44,17 +38,68 @@ const Checkout = () => {
   // Determinar a cor de fundo a ser usada
   const backgroundColor = produto.background_color || configCheckout?.cor_fundo || "#F9F9F9";
 
+  // PixConfig para o produto atual
+  const pixConfig = produto ? {
+    tipo_chave_pix: produto.tipo_chave_pix,
+    chave_pix: produto.chave_pix,
+    nome_beneficiario: produto.nome_beneficiario
+  } : null;
+
   return (
     <div 
       className="min-h-screen flex flex-col"
       style={{ backgroundColor }}
     >
-      {/* Header with banner */}
-      <CheckoutHeader produto={produto} configCheckout={configCheckout} />
+      {/* Header with countdown */}
+      <HeaderTimer 
+        backgroundColor={configCheckout?.cor_topo || "#1e1e1e"}
+        textColor={configCheckout?.cor_texto_topo || "#FFFFFF"}
+        message={configCheckout?.mensagem_topo || "Oferta especial por tempo limitado!"}
+      />
+
+      {/* Banner */}
+      <BannerCheckout produto={produto} configCheckout={configCheckout} />
 
       {/* Main checkout content */}
       <div className="flex-grow flex justify-center">
-        <CheckoutContent produto={produto} configCheckout={configCheckout} />
+        <div className="w-full max-w-md mx-auto py-4 px-3 sm:py-6 sm:px-4 space-y-4">
+          {/* Product Title with configurable color */}
+          <h1 
+            className="text-xl font-bold text-center mb-2"
+            style={{ color: configCheckout?.cor_titulo || "#000000" }}
+          >
+            {produto.checkout_title || produto.nome}
+          </h1>
+          
+          {/* Cliente Identification Form */}
+          <FormIdentificacao 
+            formData={formData} 
+            errors={formErrors} 
+            onChange={handleInputChange} 
+          />
+          
+          {/* Payment Section */}
+          <PaymentMethodSelector 
+            productValue={produto.valor} 
+            pixConfig={pixConfig}
+            onPaymentMethodChange={setPaymentMethod}
+            produto={produto}
+          />
+          
+          {/* Testimonials Section */}
+          <div className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
+            <CheckoutTestimonials produto_id={produto.id} />
+          </div>
+          
+          {/* Order Summary & CTA Button */}
+          <ResumoCompra 
+            produto={produto} 
+            configCheckout={configCheckout}
+            visitorCount={visitorCount}
+            isProcessing={isSubmitting}
+            onCompletePurchase={submitOrder}
+          />
+        </div>
       </div>
       
       {/* Footer */}

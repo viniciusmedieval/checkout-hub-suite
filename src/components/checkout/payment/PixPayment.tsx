@@ -1,7 +1,7 @@
 
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
-import { Copy, ClipboardCheck, QrCode, Timer } from "lucide-react";
+import { Copy, ClipboardCheck, QrCode, Timer, Shield } from "lucide-react";
 import { toast } from "sonner";
 
 interface PixPaymentProps {
@@ -71,9 +71,10 @@ export function PixPayment({ pixConfig, countdown: initialCountdown }: PixPaymen
         </Button>
       </div>
       
-      <p className="text-sm text-gray-600">
-        Após realizar o pagamento via PIX, sua compra será confirmada em instantes.
-      </p>
+      <div className="flex items-center justify-center text-sm text-gray-600 gap-1.5">
+        <Shield size={14} className="text-green-600" />
+        <p>Pagamento 100% seguro e processado na hora</p>
+      </div>
     </div>
   );
 }

@@ -4,6 +4,7 @@ import { CreditCard, QrCode } from "lucide-react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { CardPaymentForm } from "./CardPaymentForm";
 import { PixPayment } from "./PixPayment";
+import { PaymentMethod } from "@/hooks/useCheckout";
 
 interface PaymentMethodSelectorProps {
   productValue: number;
@@ -12,7 +13,7 @@ interface PaymentMethodSelectorProps {
     chave_pix: string;
     nome_beneficiario: string;
   } | null;
-  onPaymentMethodChange: (method: 'card' | 'pix') => void;
+  onPaymentMethodChange: (method: PaymentMethod) => void;
   produto?: {
     banner_url?: string;
     nome?: string;
@@ -25,14 +26,16 @@ export function PaymentMethodSelector({
   onPaymentMethodChange,
   produto
 }: PaymentMethodSelectorProps) {
-  const [countdown, setCountdown] = useState(15 * 60); // 15 minutes in seconds
+  const [countdown] = useState(15 * 60); // 15 minutes in seconds
   
   return (
-    <div className="space-y-4">
+    <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-4">
+      <h2 className="text-base font-semibold mb-3">Pagamento</h2>
+      
       <Tabs 
         defaultValue="card" 
         className="w-full" 
-        onValueChange={(value) => onPaymentMethodChange(value as 'card' | 'pix')}
+        onValueChange={(value) => onPaymentMethodChange(value as PaymentMethod)}
       >
         <TabsList className="grid w-full grid-cols-2 mb-4 bg-gray-100 rounded-md">
           <TabsTrigger 

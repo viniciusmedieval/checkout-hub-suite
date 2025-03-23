@@ -17,7 +17,12 @@ export function CheckoutFooter({ configCheckout }: CheckoutFooterProps) {
             <p>{configCheckout?.rodape_texto || `© ${currentYear} Checkout Digital. Todos os direitos reservados.`}</p>
           </div>
           {configCheckout?.mostrar_seguro !== false && (
-            <div className="text-center flex flex-col gap-2">              
+            <div className="text-center flex flex-col gap-2">
+              <div className="flex items-center justify-center gap-1.5 text-xs text-gray-500">
+                <Shield size={12} className="text-green-500" />
+                <span>Pagamento 100% seguro</span>
+              </div>
+              
               <div className="flex flex-wrap justify-center gap-x-3 gap-y-1">
                 <a href="#" className="text-gray-400 hover:text-gray-600 underline transition-colors text-xs">
                   Termos de uso
