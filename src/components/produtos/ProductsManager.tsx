@@ -39,7 +39,13 @@ export function ProductsManager() {
       </div>
 
       <div className="flex items-center space-x-4 mb-4">
-        <ProductSearch search={search} setSearch={setSearch} />
+        <ProductSearch 
+          searchTerm={search} 
+          onSearchChange={setSearch} 
+          onReload={fetchProducts}
+          search={search}
+          setSearch={setSearch}
+        />
         <ProductFilter filter={filter} setFilter={setFilter} />
       </div>
 
