@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { Package, Plus, Database } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -12,7 +11,7 @@ import { supabase, Produto } from "@/lib/supabase";
 import { ProductsManager } from "@/components/produtos/ProductsManager";
 import { ProductForm } from "@/components/produtos/ProductForm";
 import { Skeleton } from "@/components/ui/skeleton";
-import { useMediaQuery } from "@/hooks/use-mobile";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 const Produtos = () => {
   const [searchTerm, setSearchTerm] = useState("");
@@ -20,7 +19,7 @@ const Produtos = () => {
   const [loading, setLoading] = useState(true);
   const [selectedProduct, setSelectedProduct] = useState<Produto | undefined>(undefined);
   const [isFormOpen, setIsFormOpen] = useState(false);
-  const isMobile = useMediaQuery("(max-width: 768px)");
+  const isMobile = useIsMobile();
 
   useEffect(() => {
     fetchProdutos();
@@ -47,11 +46,9 @@ const Produtos = () => {
 
   const handleToggleStatus = async (id: number) => {
     try {
-      // Find the current produto
       const currentProduto = produtos.find(p => p.id === id);
       if (!currentProduto) return;
       
-      // Toggle the status in the database
       const { error } = await supabase
         .from('produtos')
         .update({ ativo: !currentProduto.ativo })
@@ -59,7 +56,6 @@ const Produtos = () => {
       
       if (error) throw error;
       
-      // Update the local state
       setProdutos(produtos.map(produto => 
         produto.id === id ? { ...produto, ativo: !produto.ativo } : produto
       ));
