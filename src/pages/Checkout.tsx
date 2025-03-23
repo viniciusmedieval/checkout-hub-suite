@@ -23,6 +23,28 @@ const Checkout = () => {
       }
 
       try {
+        console.log("Buscando produto com slug:", slug);
+        
+        // Recupera dados do localStorage como fallback
+        const mockStorage = localStorage.getItem('mockSupabaseStorage');
+        if (mockStorage) {
+          const parsedStorage = JSON.parse(mockStorage);
+          if (parsedStorage && parsedStorage.produtos) {
+            console.log("Dados mockStorage encontrados:", parsedStorage.produtos);
+            const produtoEncontrado = parsedStorage.produtos.find(
+              (p: Produto) => p.slug === slug && p.ativo
+            );
+            
+            if (produtoEncontrado) {
+              console.log("Produto encontrado nos dados mockStorage:", produtoEncontrado);
+              setProduto(produtoEncontrado);
+              setLoading(false);
+              return;
+            }
+          }
+        }
+
+        // Tenta buscar no Supabase se não encontrou no mockStorage
         const { data, error } = await supabase
           .from("produtos")
           .select("*")
@@ -30,6 +52,8 @@ const Checkout = () => {
           .eq("ativo", true)
           .single();
 
+        console.log("Resposta do Supabase:", { data, error });
+        
         if (error) throw error;
         
         if (!data) {
@@ -71,9 +95,9 @@ const Checkout = () => {
             {error || "O produto que você está procurando não existe ou não está mais disponível."}
           </p>
           <Button asChild>
-            <Link to="/" className="inline-flex items-center gap-2">
+            <Link to="/produtos" className="inline-flex items-center gap-2">
               <ArrowLeft className="h-4 w-4" />
-              Voltar para o Dashboard
+              Voltar para Produtos
             </Link>
           </Button>
         </div>

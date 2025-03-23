@@ -76,7 +76,45 @@ const productsToAdd: ProductToAdd[] = [
 // Function to add products to Supabase
 export const addProductsToSupabase = async () => {
   try {
-    // Check if products already exist to avoid duplicates
+    // Atualiza o localStorage primeiro
+    try {
+      const mockStorageStr = localStorage.getItem('mockSupabaseStorage');
+      const mockStorage = mockStorageStr ? JSON.parse(mockStorageStr) : { produtos: [] };
+      
+      if (!mockStorage.produtos) {
+        mockStorage.produtos = [];
+      }
+      
+      // Obtém slugs existentes para evitar duplicações
+      const existingSlugs = mockStorage.produtos.map((p: any) => p.slug);
+      
+      // Apenas adiciona produtos que ainda não existem
+      const novoProdutos = productsToAdd.filter(p => !existingSlugs.includes(p.slug));
+      
+      if (novoProdutos.length > 0) {
+        // Adiciona IDs aos novos produtos
+        const ultimoId = mockStorage.produtos.length > 0 
+          ? Math.max(...mockStorage.produtos.map((p: any) => p.id)) 
+          : 0;
+        
+        const produtosComId = novoProdutos.map((p, index) => ({
+          ...p,
+          id: ultimoId + index + 1,
+          criado_em: new Date().toISOString()
+        }));
+        
+        // Adiciona ao array de produtos
+        mockStorage.produtos.push(...produtosComId);
+        
+        // Salva no localStorage
+        localStorage.setItem('mockSupabaseStorage', JSON.stringify(mockStorage));
+        console.log(`${produtosComId.length} produtos adicionados ao localStorage`);
+      }
+    } catch (localStorageError) {
+      console.error("Erro ao atualizar localStorage:", localStorageError);
+    }
+    
+    // Continua com o código original que tenta salvar no Supabase
     const { data, error: fetchError } = await supabase
       .from('produtos')
       .select('slug');
