@@ -73,7 +73,7 @@ export function CardPaymentForm({ productValue }: CardPaymentFormProps) {
         <Input 
           id="cardName" 
           placeholder="Nome impresso no cartão" 
-          className="pl-9 h-10 text-sm bg-black text-white" 
+          className="pl-9 h-10 text-sm bg-white text-black" 
           value={cardName}
           onChange={handleCardNameChange}
         />
