@@ -1,9 +1,8 @@
-
 import { useState, useEffect, ChangeEvent } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { CreditCard, ShoppingCart, Shield, Copy, ClipboardCheck } from "lucide-react";
+import { CreditCard, ShoppingCart, Shield, Copy, ClipboardCheck, QrCode } from "lucide-react";
 import { Produto, supabase } from "@/lib/supabase";
 import { 
   formatCurrency, 
@@ -40,7 +39,6 @@ export function CheckoutSummary({ produto }: CheckoutSummaryProps) {
   useEffect(() => {
     const fetchPixConfig = async () => {
       try {
-        // Try to get PIX config for this product
         let { data: productPixConfig, error } = await supabase
           .from("pix_config")
           .select("*")
@@ -48,7 +46,6 @@ export function CheckoutSummary({ produto }: CheckoutSummaryProps) {
           .single();
         
         if (error || !productPixConfig) {
-          // If no product specific config, try to get global config
           const { data: globalConfig } = await supabase
             .from("pix_config")
             .select("*")
@@ -58,7 +55,6 @@ export function CheckoutSummary({ produto }: CheckoutSummaryProps) {
           if (globalConfig) {
             setPixConfig(globalConfig);
           } else {
-            // Fallback to product's own PIX fields
             setPixConfig({
               tipo_chave_pix: produto.tipo_chave_pix || 'email',
               chave_pix: produto.chave_pix || 'exemplo@email.com',
@@ -70,7 +66,6 @@ export function CheckoutSummary({ produto }: CheckoutSummaryProps) {
         }
       } catch (error) {
         console.error("Error fetching PIX config:", error);
-        // Fallback
         setPixConfig({
           tipo_chave_pix: 'email',
           chave_pix: 'exemplo@email.com',
@@ -119,7 +114,6 @@ export function CheckoutSummary({ produto }: CheckoutSummaryProps) {
 
   return (
     <div className="space-y-6">
-      {/* Payment section */}
       <Card className="checkout-card">
         <CardContent className="p-6">
           <div className="flex items-center gap-3 mb-5">
@@ -136,11 +130,7 @@ export function CheckoutSummary({ produto }: CheckoutSummaryProps) {
                 Cartão de Crédito
               </TabsTrigger>
               <TabsTrigger value="pix" className="data-[state=active]:bg-blue-50 data-[state=active]:text-blue-700">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className="mr-2">
-                  <path d="M7.5 4.5L2 10L7.5 15.5" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                  <path d="M16.5 4.5L22 10L16.5 15.5" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                  <path d="M14 2L10 18" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                </svg>
+                <QrCode size={16} className="mr-2" />
                 Pix
               </TabsTrigger>
             </TabsList>
@@ -216,11 +206,9 @@ export function CheckoutSummary({ produto }: CheckoutSummaryProps) {
             
             <TabsContent value="pix">
               <div className="bg-blue-50 rounded-lg p-6 text-center">
-                <svg width="80" height="80" viewBox="0 0 80 80" className="mx-auto mb-4" fill="none" xmlns="http://www.w3.org/2000/svg">
-                  <path d="M24.9997 15L6.66699 33.3333L24.9997 51.6667" stroke="#3B82F6" strokeWidth="5" strokeLinecap="round" strokeLinejoin="round"/>
-                  <path d="M54.9997 15L73.333 33.3333L54.9997 51.6667" stroke="#3B82F6" strokeWidth="5" strokeLinecap="round" strokeLinejoin="round"/>
-                  <path d="M46.6667 6.66699L33.3334 60.0003" stroke="#3B82F6" strokeWidth="5" strokeLinecap="round" strokeLinejoin="round"/>
-                </svg>
+                <div className="bg-white rounded-full p-4 w-20 h-20 mx-auto mb-4 flex items-center justify-center">
+                  <QrCode size={48} className="text-blue-600" />
+                </div>
                 <h4 className="text-lg font-semibold text-gray-800 mb-2">Chave Pix</h4>
                 <p className="text-sm text-gray-600 mb-3">{pixConfig?.nome_beneficiario || 'Loja Digital'}</p>
                 
@@ -243,7 +231,6 @@ export function CheckoutSummary({ produto }: CheckoutSummaryProps) {
         </CardContent>
       </Card>
       
-      {/* Order summary */}
       <Card className="checkout-card">
         <CardContent className="p-6">
           <div className="flex items-center gap-3 mb-5">
