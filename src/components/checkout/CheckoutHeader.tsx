@@ -20,10 +20,6 @@ export function CheckoutHeader({ produto, configCheckout }: CheckoutHeaderProps)
     }
   };
 
-  console.log("CheckoutHeader - produto:", produto);
-  console.log("CheckoutHeader - configCheckout:", configCheckout);
-  console.log("Is mobile:", isMobile);
-
   // Choose the appropriate banner based on device type
   const bannerUrl = isMobile && produto.banner_mobile_url 
     ? produto.banner_mobile_url 
@@ -36,7 +32,7 @@ export function CheckoutHeader({ produto, configCheckout }: CheckoutHeaderProps)
     <div className="w-full bg-white border-b border-gray-200">
       {/* Top message bar */}
       <div className="bg-blue-600 text-center py-2 text-xs text-white font-medium">
-        <p>{configCheckout?.mensagem_topo || "Tempo limitado! Preços promocionais encerram em breve."}</p>
+        <p>{configCheckout?.mensagem_topo || "Oferta especial por tempo limitado!"}</p>
       </div>
 
       {/* Product header/banner */}
@@ -64,7 +60,7 @@ export function CheckoutHeader({ produto, configCheckout }: CheckoutHeaderProps)
                 onClick={scrollToForm}
                 className="bg-blue-600 hover:bg-blue-700 text-white font-medium py-3 px-6 rounded-md shadow-sm transition-colors"
               >
-                {configCheckout?.texto_botao || "PREENCHA SEUS DADOS ABAIXO"}
+                {configCheckout?.texto_botao || "PREENCHA SEUS DADOS"}
               </button>
             </div>
           </div>

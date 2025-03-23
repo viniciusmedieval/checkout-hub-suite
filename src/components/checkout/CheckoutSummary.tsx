@@ -76,6 +76,7 @@ export function CheckoutSummary({ produto }: CheckoutSummaryProps) {
             productValue={produto.valor}
             pixConfig={pixConfig}
             onPaymentMethodChange={setPaymentMethod}
+            produto={produto}
           />
         </CardContent>
       </Card>
