@@ -1,8 +1,17 @@
 
 import { createClient, SupabaseClient } from '@supabase/supabase-js';
 
-const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
-const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
+// Tentar obter as credenciais do localStorage primeiro
+const localSupabaseUrl = typeof window !== 'undefined' ? localStorage.getItem('supabaseUrl') : null;
+const localSupabaseKey = typeof window !== 'undefined' ? localStorage.getItem('supabaseKey') : null;
+
+// Tentar obter credenciais das variáveis de ambiente como fallback
+const envSupabaseUrl = import.meta.env.VITE_SUPABASE_URL;
+const envSupabaseKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
+
+// Usar as credenciais do localStorage se disponíveis, senão usar as do ambiente
+const supabaseUrl = localSupabaseUrl || envSupabaseUrl;
+const supabaseAnonKey = localSupabaseKey || envSupabaseKey;
 
 // Armazenamentos em memória para o cliente mock
 const mockStorage = {
@@ -35,15 +44,25 @@ const mockStorage = {
 // Initialize the Supabase client with error handling
 let supabase: SupabaseClient;
 
-// Check if the required environment variables are available
+// Check if the required credenciais are available
 if (supabaseUrl && supabaseAnonKey) {
-  supabase = createClient(supabaseUrl, supabaseAnonKey);
-  console.log('Supabase client initialized with environment variables');
+  try {
+    supabase = createClient(supabaseUrl, supabaseAnonKey);
+    console.log('Supabase client initialized with provided credentials');
+  } catch (error) {
+    console.error('Error initializing Supabase client:', error);
+    // Fallback to mock client
+    supabase = createMockClient();
+  }
 } else {
-  console.warn('Supabase environment variables not found, using mock client');
-  // Create a mock client that doesn't actually connect to Supabase
-  // but provides the same interface and simulates storage in memory
-  supabase = {
+  console.warn('Supabase credentials not found, using mock client');
+  // Create a mock client
+  supabase = createMockClient();
+}
+
+// Função para criar o cliente mock
+function createMockClient() {
+  return {
     from: (table: string) => {
       // Garantir que a tabela existe no storage mock
       if (!mockStorage[table as keyof typeof mockStorage]) {
