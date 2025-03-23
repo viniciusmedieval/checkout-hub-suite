@@ -42,7 +42,7 @@ export function PaymentMethodSelector({
           <CreditCard size={18} className="text-gray-700" />
           <h2 className="text-base font-semibold text-black">Pagamento</h2>
         </div>
-        <span className="text-sm text-orange-500 font-medium">
+        <span className="text-sm text-black font-medium">
           {activeTab === "card" ? "Cartão de crédito" : "Pix"}
         </span>
       </div>
