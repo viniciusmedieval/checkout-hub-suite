@@ -39,12 +39,6 @@ export function CheckoutContent({ produto, configCheckout }: CheckoutContentProp
           {produto.checkout_title || produto.nome}
         </h1>
         
-        {/* Visitors Counter */}
-        <div className="flex items-center justify-center gap-2 text-xs text-gray-500 mb-2">
-          <Users size={14} />
-          <span>Outras <strong>{visitorCount.toLocaleString()}</strong> pessoas estão finalizando agora</span>
-        </div>
-        
         {/* Cliente Identification Form */}
         <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-4">
           <CheckoutForm configCheckout={configCheckout} />

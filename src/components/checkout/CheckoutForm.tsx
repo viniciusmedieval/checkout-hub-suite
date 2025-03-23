@@ -49,7 +49,7 @@ export function CheckoutForm({ configCheckout }: CheckoutFormProps) {
 
   return (
     <div className="space-y-4">
-      <h2 className="text-base font-semibold mb-3">Identificação</h2>
+      <h2 className="text-base font-semibold mb-3 text-black">Identificação</h2>
       
       <div className="space-y-3">
         <div className="relative">
@@ -62,7 +62,7 @@ export function CheckoutForm({ configCheckout }: CheckoutFormProps) {
             placeholder="Nome completo"
             value={formData.nome}
             onChange={handleChange}
-            className={`pl-9 h-10 text-sm ${errors.nome ? 'border-red-500' : ''}`}
+            className={`pl-9 h-10 text-sm ${errors.nome ? 'border-red-500' : ''} bg-white text-black`}
           />
           {errors.nome && <p className="text-red-500 text-xs mt-1">Nome é obrigatório</p>}
         </div>
@@ -78,7 +78,7 @@ export function CheckoutForm({ configCheckout }: CheckoutFormProps) {
             placeholder="Seu e-mail"
             value={formData.email}
             onChange={handleChange}
-            className={`pl-9 h-10 text-sm ${errors.email ? 'border-red-500' : ''}`}
+            className={`pl-9 h-10 text-sm ${errors.email ? 'border-red-500' : ''} bg-white text-black`}
           />
           {errors.email && <p className="text-red-500 text-xs mt-1">E-mail inválido</p>}
         </div>
@@ -94,7 +94,7 @@ export function CheckoutForm({ configCheckout }: CheckoutFormProps) {
               placeholder="Celular"
               value={formData.telefone}
               onChange={handleChange}
-              className={`pl-9 h-10 text-sm ${errors.telefone ? 'border-red-500' : ''}`}
+              className={`pl-9 h-10 text-sm ${errors.telefone ? 'border-red-500' : ''} bg-white text-black`}
             />
             {errors.telefone && <p className="text-red-500 text-xs mt-1">Celular inválido</p>}
           </div>
@@ -109,7 +109,7 @@ export function CheckoutForm({ configCheckout }: CheckoutFormProps) {
               placeholder="CPF/CNPJ"
               value={formData.documento}
               onChange={handleChange}
-              className={`pl-9 h-10 text-sm ${errors.documento ? 'border-red-500' : ''}`}
+              className={`pl-9 h-10 text-sm ${errors.documento ? 'border-red-500' : ''} bg-white text-black`}
             />
             {errors.documento && <p className="text-red-500 text-xs mt-1">Documento inválido</p>}
           </div>

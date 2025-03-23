@@ -35,8 +35,11 @@ const Checkout = () => {
     return <CheckoutError error={error} />;
   }
 
-  // Determinar a cor de fundo a ser usada
-  const backgroundColor = produto.background_color || configCheckout?.cor_fundo || "#F9F9F9";
+  // Determinar a cor de fundo a ser usada (default: white)
+  const backgroundColor = produto.background_color || configCheckout?.cor_fundo || "#FFFFFF";
+  
+  // Determinar a cor do texto a ser usada (default: black)
+  const textColor = configCheckout?.cor_titulo || "#000000";
 
   // PixConfig para o produto atual
   const pixConfig = produto ? {
@@ -51,11 +54,13 @@ const Checkout = () => {
       style={{ backgroundColor }}
     >
       {/* Header with countdown */}
-      <HeaderTimer 
-        backgroundColor={configCheckout?.cor_topo || "#1e1e1e"}
-        textColor={configCheckout?.cor_texto_topo || "#FFFFFF"}
-        message={configCheckout?.mensagem_topo || "Oferta especial por tempo limitado!"}
-      />
+      {configCheckout?.mensagem_topo && (
+        <HeaderTimer 
+          backgroundColor={configCheckout?.cor_topo || "#1e1e1e"}
+          textColor={configCheckout?.cor_texto_topo || "#FFFFFF"}
+          message={configCheckout.mensagem_topo}
+        />
+      )}
 
       {/* Banner */}
       <BannerCheckout produto={produto} configCheckout={configCheckout} />
@@ -66,7 +71,7 @@ const Checkout = () => {
           {/* Product Title with configurable color */}
           <h1 
             className="text-xl font-bold text-center"
-            style={{ color: configCheckout?.cor_titulo || "#000000" }}
+            style={{ color: textColor }}
           >
             {produto.checkout_title || produto.nome}
           </h1>
