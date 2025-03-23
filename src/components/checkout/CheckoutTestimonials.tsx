@@ -5,7 +5,7 @@ import { MessageSquare } from "lucide-react";
 import { Depoimento } from "@/lib/supabase";
 import { TestimonialItem } from "./testimonials/TestimonialItem";
 import { TestimonialSkeleton } from "./testimonials/TestimonialSkeleton";
-import { fetchTestimonials } from "@/components/configuracao/services/configServices";
+import { fetchTestimonials } from "@/components/configuracao/services";
 
 interface CheckoutTestimonialsProps {
   produto_id?: number;

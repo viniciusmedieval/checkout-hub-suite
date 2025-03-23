@@ -1,7 +1,7 @@
 
 import { useState, useEffect } from "react";
 import { ConfigCheckout, Depoimento } from "@/lib/supabase";
-import { fetchCheckoutConfig, fetchTestimonials } from "./services/configServices";
+import { fetchCheckoutConfig, fetchTestimonials } from "./services";
 import { useConfigSettings } from "./hooks/useConfigSettings";
 import { useTestimonials } from "./hooks/useTestimonials";
 import { defaultConfig } from "./utils/defaultConfig";
@@ -26,7 +26,7 @@ export function useConfiguracao() {
     isLoading: depoimentosSaving,
     handleDeleteTestimonial,
     handleAddTestimonial,
-    handleUpdateTestimonial // New function
+    handleUpdateTestimonial
   } = useTestimonials([]);
 
   useEffect(() => {

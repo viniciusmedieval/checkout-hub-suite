@@ -1,7 +1,7 @@
 
 import { useState } from "react";
 import { ConfigCheckout } from "@/lib/supabase";
-import { saveConfig } from "../services/configServices";
+import { saveConfig } from "../services";
 import { defaultConfig } from "../utils/defaultConfig";
 
 export function useConfigSettings(initialConfig: ConfigCheckout | null = null) {

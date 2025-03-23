@@ -1,7 +1,7 @@
 
 import { useState } from "react";
 import { Depoimento } from "@/lib/supabase";
-import { deleteTestimonial, addTestimonial, updateTestimonial } from "../services/configServices";
+import { deleteTestimonial, addTestimonial, updateTestimonial } from "../services";
 import { toast } from "sonner";
 
 export function useTestimonials(initialDepoimentos: Depoimento[] = []) {
