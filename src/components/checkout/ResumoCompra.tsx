@@ -26,8 +26,8 @@ export function ResumoCompra({
     <div className="bg-white rounded-xl shadow-md border border-gray-200 p-6">
       <div className="space-y-4">
         <div className="flex items-center justify-between border-b pb-3 mb-1">
-          <span className="text-sm font-medium">Sua Compra</span>
-          <span className="text-sm">1 item • {formatCurrency(Number(produto.valor))}</span>
+          <span className="text-sm font-medium text-black">Sua Compra</span>
+          <span className="text-sm text-black">1 item • {formatCurrency(Number(produto.valor))}</span>
         </div>
         
         <div className="flex items-center gap-3">
@@ -39,10 +39,10 @@ export function ResumoCompra({
             />
           )}
           <div className="flex-1">
-            <h3 className="text-sm font-medium">{produto.nome}</h3>
+            <h3 className="text-sm font-medium text-black">{produto.nome}</h3>
             <div className="flex justify-between items-center mt-1">
-              <p className="text-xs text-gray-500">{produto.tipo}</p>
-              <span className="text-base font-bold">{formatCurrency(Number(produto.valor))}/mês</span>
+              <p className="text-xs text-gray-600">assinatura</p>
+              <span className="text-base font-bold text-black">{formatCurrency(Number(produto.valor))}/mês</span>
             </div>
           </div>
         </div>
@@ -72,8 +72,8 @@ export function ResumoCompra({
           )}
         </button>
         
-        {/* Visitor counter - moved below the button */}
-        <div className="flex items-center justify-center gap-2 text-sm text-[#1B1B1B] animate-pulse-slow">
+        {/* Visitor counter - moved below the button to match the image */}
+        <div className="flex items-center justify-center gap-2 text-sm text-black">
           <span role="img" aria-label="fire">🔥</span>
           <span>Outras <strong>{visitorCount.toLocaleString()}</strong> pessoas estão finalizando agora</span>
         </div>
