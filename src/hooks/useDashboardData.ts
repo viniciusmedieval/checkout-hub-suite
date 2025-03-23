@@ -8,12 +8,15 @@ import {
   fetchActiveProducts, 
   fetchTotalSales,
   fetchSalesVsCustomersData,
-  fetchTopProductsData
+  fetchTopProductsData,
+  fetchPixGeneratedData,
+  fetchCardCaptureData
 } from '@/services/dashboardService';
 import { 
   transformSalesVsCustomersData, 
   transformTopProductsData,
-  generateMockChartData
+  transformPixGeneratedData,
+  transformCardCaptureData
 } from '@/utils/chartDataTransformers';
 
 // Export formatCurrency for backward compatibility
@@ -78,10 +81,15 @@ export function useDashboardData() {
       const topProductsChartData = transformTopProductsData(topProductsRawData);
       setTopProductsData(topProductsChartData);
       
-      // Generate mock data for PIX and Card charts
-      const { pixData, cardData } = generateMockChartData(10);
-      setPixGeneratedData(pixData);
-      setCardCaptureData(cardData);
+      // Fetch real PIX Generated data
+      const pixRawData = await fetchPixGeneratedData(startDate, endDate);
+      const pixChartData = transformPixGeneratedData(pixRawData);
+      setPixGeneratedData(pixChartData);
+      
+      // Fetch real Card Capture data
+      const cardRawData = await fetchCardCaptureData(startDate, endDate);
+      const cardChartData = transformCardCaptureData(cardRawData);
+      setCardCaptureData(cardChartData);
       
     } catch (error) {
       console.error('Error fetching chart data:', error);
@@ -119,3 +127,4 @@ export function useDashboardData() {
     setEndDate
   };
 }
+

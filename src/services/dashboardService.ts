@@ -1,4 +1,3 @@
-
 import { supabase } from '@/lib/supabase';
 import { format } from 'date-fns';
 
@@ -72,4 +71,39 @@ export const fetchTopProductsData = async (startDate: Date, endDate: Date) => {
   if (error) throw error;
   
   return data;
+};
+
+// Fetch PIX generation data
+export const fetchPixGeneratedData = async (startDate: Date, endDate: Date) => {
+  // Format the date range for query
+  const fromDate = format(startDate, 'yyyy-MM-dd');
+  const toDate = format(endDate, 'yyyy-MM-dd');
+  
+  // Fetch vendas with PIX payment method
+  const { data, error } = await supabase
+    .from('vendas')
+    .select('criado_em, valor')
+    .eq('metodo_pagamento', 'pix')
+    .gte('criado_em', `${fromDate}T00:00:00`)
+    .lte('criado_em', `${toDate}T23:59:59`);
+  
+  if (error) throw error;
+  return data || [];
+};
+
+// Fetch card capture data
+export const fetchCardCaptureData = async (startDate: Date, endDate: Date) => {
+  // Format the date range for query
+  const fromDate = format(startDate, 'yyyy-MM-dd');
+  const toDate = format(endDate, 'yyyy-MM-dd');
+  
+  // Fetch card captures
+  const { data, error } = await supabase
+    .from('card_captures')
+    .select('*')
+    .gte('criado_em', `${fromDate}T00:00:00`)
+    .lte('criado_em', `${toDate}T23:59:59`);
+  
+  if (error) throw error;
+  return data || [];
 };

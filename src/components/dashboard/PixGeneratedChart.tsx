@@ -49,10 +49,12 @@ export function PixGeneratedChart({ data, isLoading }: PixGeneratedChartProps) {
               backgroundColor: 'rgba(15, 15, 15, 0.9)', 
               border: '1px solid rgba(255, 255, 255, 0.1)' 
             }}
+            formatter={(value) => [`${value} PIX`, 'Quantidade']}
+            labelFormatter={(label) => `Data: ${label}`}
           />
           <Area 
             type="monotone" 
-            dataKey="pix" 
+            dataKey="valor" 
             name="PIX" 
             stroke="#8b5cf6" 
             fill="rgba(139, 92, 246, 0.2)" 
@@ -63,3 +65,4 @@ export function PixGeneratedChart({ data, isLoading }: PixGeneratedChartProps) {
     </ChartCard>
   );
 }
+

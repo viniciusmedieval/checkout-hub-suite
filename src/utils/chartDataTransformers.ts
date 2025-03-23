@@ -1,4 +1,3 @@
-
 import { format } from 'date-fns';
 import { ChartData } from '@/types/dashboard';
 
@@ -76,6 +75,61 @@ export const transformTopProductsData = (data: any[]): ChartData[] => {
   
   // Take top 5 products
   return chartData.slice(0, 5);
+};
+
+// Transform PIX data into chart format
+export const transformPixGeneratedData = (data: any[]): ChartData[] => {
+  // Group PIX transactions by date
+  const groupedData: Record<string, number> = {};
+  
+  data.forEach(transaction => {
+    const date = format(new Date(transaction.criado_em), 'dd/MM');
+    if (!groupedData[date]) {
+      groupedData[date] = 0;
+    }
+    groupedData[date] += 1; // Count the number of PIX transactions
+  });
+  
+  // Convert grouped data to chart format
+  const chartData: ChartData[] = Object.keys(groupedData).map(date => ({
+    name: date,
+    valor: groupedData[date]
+  }));
+  
+  // Sort by date (day/month format)
+  return sortChartDataByDate(chartData);
+};
+
+// Transform card capture data into chart format
+export const transformCardCaptureData = (data: any[]): ChartData[] => {
+  // Group card captures by date
+  const groupedData: Record<string, number> = {};
+  
+  data.forEach(capture => {
+    const date = format(new Date(capture.criado_em), 'dd/MM');
+    if (!groupedData[date]) {
+      groupedData[date] = 0;
+    }
+    groupedData[date] += 1; // Count the number of card captures
+  });
+  
+  // Convert grouped data to chart format
+  const chartData: ChartData[] = Object.keys(groupedData).map(date => ({
+    name: date,
+    valor: groupedData[date]
+  }));
+  
+  // Sort by date (day/month format)
+  return sortChartDataByDate(chartData);
+};
+
+// Helper function to sort chart data by date
+const sortChartDataByDate = (chartData: ChartData[]): ChartData[] => {
+  return chartData.sort((a, b) => {
+    const [dayA, monthA] = a.name.split('/').map(Number);
+    const [dayB, monthB] = b.name.split('/').map(Number);
+    return (monthA - monthB) || (dayA - dayB);
+  });
 };
 
 // Generate mock data for PIX and Card Capture charts

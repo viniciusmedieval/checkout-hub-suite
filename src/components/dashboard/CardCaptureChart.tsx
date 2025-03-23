@@ -49,10 +49,12 @@ export function CardCaptureChart({ data, isLoading }: CardCaptureChartProps) {
               backgroundColor: 'rgba(15, 15, 15, 0.9)', 
               border: '1px solid rgba(255, 255, 255, 0.1)' 
             }}
+            formatter={(value) => [`${value} cartões`, 'Quantidade']}
+            labelFormatter={(label) => `Data: ${label}`}
           />
           <Area 
             type="monotone" 
-            dataKey="cartoes" 
+            dataKey="valor" 
             name="Cartões" 
             stroke="#f97316" 
             fill="rgba(249, 115, 22, 0.2)" 
@@ -63,3 +65,4 @@ export function CardCaptureChart({ data, isLoading }: CardCaptureChartProps) {
     </ChartCard>
   );
 }
+
