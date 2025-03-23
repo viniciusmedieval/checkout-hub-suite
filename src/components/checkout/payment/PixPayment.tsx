@@ -1,8 +1,9 @@
 
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
-import { Copy, ClipboardCheck, QrCode, Timer, Shield } from "lucide-react";
+import { Copy, ClipboardCheck, QrCode, Timer, Shield, Info } from "lucide-react";
 import { toast } from "sonner";
+import { formatCurrency } from "@/utils/formatters";
 
 interface PixPaymentProps {
   pixConfig: {
@@ -11,9 +12,10 @@ interface PixPaymentProps {
     nome_beneficiario: string;
   } | null;
   countdown: number; // seconds
+  productValue: number;
 }
 
-export function PixPayment({ pixConfig, countdown: initialCountdown }: PixPaymentProps) {
+export function PixPayment({ pixConfig, countdown: initialCountdown, productValue }: PixPaymentProps) {
   const [copied, setCopied] = useState(false);
   const [countdown, setCountdown] = useState(initialCountdown);
 
@@ -69,6 +71,18 @@ export function PixPayment({ pixConfig, countdown: initialCountdown }: PixPaymen
           {copied ? <ClipboardCheck size={16} className="mr-1.5" /> : <Copy size={16} className="mr-1.5" />}
           {copied ? 'Copiado' : 'Copiar'}
         </Button>
+      </div>
+      
+      <div className="mb-4 text-left">
+        <div className="flex items-center gap-1.5 mb-2">
+          <Info size={14} className="text-blue-600" />
+          <p className="text-sm font-medium text-gray-800">Informações sobre o pagamento via PIX</p>
+        </div>
+        <p className="text-sm text-gray-700 mb-2">O pagamento é instantâneo e liberação imediata.</p>
+        <p className="text-sm text-gray-700 mb-4">Ao clicar em "Assinar agora" você será encaminhado para um ambiente seguro, onde encontrará o passo a passo para realizar o pagamento.</p>
+        <p className="text-center text-sm font-medium text-amber-700 mb-2">
+          Valor à vista: {formatCurrency(productValue)}
+        </p>
       </div>
       
       <div className="flex items-center justify-center text-sm text-gray-600 gap-1.5">

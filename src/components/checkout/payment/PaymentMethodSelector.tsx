@@ -4,6 +4,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { CardPaymentForm } from "./CardPaymentForm";
 import { PixPayment } from "./PixPayment";
 import { PaymentMethod } from "@/hooks/useCheckout";
+import { CreditCard } from "lucide-react";
 
 interface PaymentMethodSelectorProps {
   productValue: number;
@@ -16,6 +17,7 @@ interface PaymentMethodSelectorProps {
   produto?: {
     banner_url?: string;
     nome?: string;
+    valor?: number;
   };
 }
 
@@ -25,16 +27,31 @@ export function PaymentMethodSelector({
   onPaymentMethodChange,
   produto
 }: PaymentMethodSelectorProps) {
+  const [activeTab, setActiveTab] = useState<PaymentMethod>("card");
   const [countdown] = useState(15 * 60); // 15 minutes in seconds
+  
+  const handleTabChange = (value: string) => {
+    setActiveTab(value as PaymentMethod);
+    onPaymentMethodChange(value as PaymentMethod);
+  };
   
   return (
     <div className="p-4">
-      <h2 className="text-base font-semibold mb-3 text-black">Pagamento</h2>
+      <div className="flex items-center justify-between mb-3">
+        <div className="flex items-center gap-2">
+          <CreditCard size={18} className="text-gray-700" />
+          <h2 className="text-base font-semibold text-black">Pagamento</h2>
+        </div>
+        <span className="text-sm text-orange-500 font-medium">
+          {activeTab === "card" ? "Cartão de crédito" : "Pix"}
+        </span>
+      </div>
       
       <Tabs 
         defaultValue="card" 
-        className="w-full" 
-        onValueChange={(value) => onPaymentMethodChange(value as PaymentMethod)}
+        value={activeTab}
+        className="w-full"
+        onValueChange={handleTabChange}
       >
         <TabsList className="grid w-full grid-cols-2 mb-4 bg-gray-100 rounded-md border border-gray-200">
           <TabsTrigger 
@@ -58,7 +75,11 @@ export function PaymentMethodSelector({
         </TabsContent>
         
         <TabsContent value="pix" className="mt-0">
-          <PixPayment pixConfig={pixConfig} countdown={countdown} />
+          <PixPayment 
+            pixConfig={pixConfig} 
+            countdown={countdown} 
+            productValue={produto?.valor ?? productValue} 
+          />
         </TabsContent>
       </Tabs>
     </div>
