@@ -61,10 +61,12 @@ export function NovoDepoimentoModal({
   });
 
   const handleSubmit = async (values: DepoimentoFormValues) => {
-    // Make sure to include the rating from state
+    // Make sure to include all required properties and ensure they are non-optional
     const depoimento = {
-      ...values,
+      nome: values.nome, // Ensure nome is always provided
+      texto: values.texto, // Ensure texto is always provided
       estrelas: selectedRating,
+      produto_id: values.produto_id || 0, // Provide a default if undefined
       // If no photo URL is provided, use a default avatar
       foto_url: values.foto_url || `https://randomuser.me/api/portraits/${Math.random() > 0.5 ? 'men' : 'women'}/${Math.floor(Math.random() * 70)}.jpg`,
     };

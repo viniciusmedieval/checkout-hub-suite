@@ -7,16 +7,29 @@ interface ProductSearchProps {
   searchTerm: string;
   onSearchChange: (value: string) => void;
   onReload: () => void;
+  // Add the following props to match what's passed from ProductsManager
+  search?: string;
+  setSearch?: (value: string) => void;
 }
 
-export function ProductSearch({ searchTerm, onSearchChange, onReload }: ProductSearchProps) {
+export function ProductSearch({ 
+  searchTerm, 
+  onSearchChange, 
+  onReload,
+  search,
+  setSearch
+}: ProductSearchProps) {
+  // Use either the new props or the original ones
+  const searchValue = search !== undefined ? search : searchTerm;
+  const handleSearchChange = setSearch || onSearchChange;
+
   return (
     <div className="flex items-center gap-4 mb-4">
       <div className="relative flex-1">
         <Input
           placeholder="Buscar produto..."
-          value={searchTerm}
-          onChange={(e) => onSearchChange(e.target.value)}
+          value={searchValue}
+          onChange={(e) => handleSearchChange(e.target.value)}
           className="pl-10"
         />
         <div className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground">
