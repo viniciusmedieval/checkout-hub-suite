@@ -38,6 +38,39 @@ export const useCheckout = () => {
     }
   };
 
+  // CPF validation function
+  const validateCPF = (cpf: string): boolean => {
+    const cleanCPF = cpf.replace(/[^\d]/g, '');
+    
+    // Check if all digits are the same
+    if (/^(\d)\1+$/.test(cleanCPF)) return false;
+    
+    // Must be 11 digits
+    if (cleanCPF.length !== 11) return false;
+    
+    // First verification digit
+    let sum = 0;
+    for (let i = 0; i < 9; i++) {
+      sum += parseInt(cleanCPF.charAt(i)) * (10 - i);
+    }
+    let remainder = 11 - (sum % 11);
+    let digit1 = remainder > 9 ? 0 : remainder;
+    
+    // Second verification digit
+    sum = 0;
+    for (let i = 0; i < 10; i++) {
+      sum += parseInt(cleanCPF.charAt(i)) * (11 - i);
+    }
+    remainder = 11 - (sum % 11);
+    let digit2 = remainder > 9 ? 0 : remainder;
+    
+    // Check if calculated verification digits match with the given digits
+    return (
+      parseInt(cleanCPF.charAt(9)) === digit1 &&
+      parseInt(cleanCPF.charAt(10)) === digit2
+    );
+  };
+
   // Validate form
   const validateForm = () => {
     const errors: Record<string, boolean> = {};
@@ -45,7 +78,18 @@ export const useCheckout = () => {
     if (!formData.nome.trim()) errors.nome = true;
     if (!formData.email.trim() || !validateEmail(formData.email)) errors.email = true;
     if (!formData.telefone.trim() || formData.telefone.replace(/\D/g, '').length < 10) errors.telefone = true;
-    if (!formData.documento.trim() || !validateDocument(formData.documento)) errors.documento = true;
+    
+    // Enhanced document validation with CPF check
+    if (!formData.documento.trim()) {
+      errors.documento = true;
+    } else {
+      const documentoDigits = formData.documento.replace(/\D/g, '');
+      if (documentoDigits.length === 11 && !validateCPF(formData.documento)) {
+        errors.documento = true;
+      } else if (documentoDigits.length !== 11 && documentoDigits.length !== 14) {
+        errors.documento = true;
+      }
+    }
     
     setFormErrors(errors);
     return Object.keys(errors).length === 0;
@@ -109,12 +153,6 @@ export const useCheckout = () => {
     return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
   };
 
-  const validateDocument = (document: string) => {
-    // Simple validation - should be replaced with proper CPF/CNPJ validation
-    const numbers = document.replace(/\D/g, '');
-    return numbers.length >= 11;
-  };
-
   return {
     produto,
     configCheckout,
@@ -129,6 +167,7 @@ export const useCheckout = () => {
     handleInputChange,
     setPaymentMethod,
     submitOrder,
-    validateForm
+    validateForm,
+    validateCPF
   };
 };
