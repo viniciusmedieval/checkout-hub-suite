@@ -39,16 +39,13 @@ export function CheckoutHeader({ produto, configCheckout }: CheckoutHeaderProps)
   // Get the top message bar color from config
   const topMessageColor = configCheckout?.cor_topo || "#000000";
   
-  console.log('CheckoutHeader - config values:', { 
+  console.log('CheckoutHeader - Rendering with:', { 
     configCheckout,
     showTopMessage,
     topMessageColor,
-    topColorFromConfig: configCheckout?.cor_topo
+    bannerColor,
+    finalBannerUrl
   });
-
-  useEffect(() => {
-    console.log('CheckoutHeader - Cor do topo atualizada:', topMessageColor);
-  }, [topMessageColor]);
 
   return (
     <div className="w-full">

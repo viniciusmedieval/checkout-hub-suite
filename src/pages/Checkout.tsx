@@ -19,7 +19,7 @@ const Checkout = () => {
   // Função para carregar a configuração do checkout
   const fetchCheckoutConfig = async () => {
     try {
-      console.log("Buscando configuração do checkout...");
+      console.log("Checkout - Buscando configuração do checkout...");
       
       const { data: checkoutConfig, error: configError } = await supabase
         .from("config_checkout")
@@ -28,18 +28,42 @@ const Checkout = () => {
         .limit(1);
         
       if (configError) {
-        console.error("Erro ao carregar configurações do checkout:", configError);
+        console.error("Checkout - Erro ao carregar configurações do checkout:", configError);
       } else if (checkoutConfig && checkoutConfig.length > 0) {
-        console.log("Config checkout carregada:", checkoutConfig[0]);
-        setConfigCheckout(checkoutConfig[0]);
+        console.log("Checkout - Config carregada:", checkoutConfig[0]);
         
-        // Aplicar a cor de fundo ao body para garantir que a página inteira usa a cor correta
-        if (checkoutConfig[0].cor_fundo) {
-          document.body.style.backgroundColor = checkoutConfig[0].cor_fundo;
+        // Validar cores antes de aplicar
+        if (checkoutConfig[0]) {
+          const config = {...checkoutConfig[0]};
+          
+          // Garantir que cores estão em formato hex válido
+          const validateHex = (color: string | null | undefined) => {
+            return color && /^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/.test(color);
+          };
+          
+          if (!validateHex(config.cor_topo)) config.cor_topo = "#3b82f6";
+          if (!validateHex(config.cor_fundo)) config.cor_fundo = "#FFFFFF";
+          if (!validateHex(config.cor_banner)) config.cor_banner = "#3b82f6";
+          
+          console.log("Checkout - Cores validadas:", {
+            corTopo: config.cor_topo,
+            corFundo: config.cor_fundo,
+            corBanner: config.cor_banner
+          });
+          
+          setConfigCheckout(config);
+          
+          // Aplicar a cor de fundo ao body para garantir que a página inteira usa a cor correta
+          if (config.cor_fundo) {
+            console.log("Checkout - Aplicando cor de fundo:", config.cor_fundo);
+            document.body.style.backgroundColor = config.cor_fundo;
+          }
         }
+      } else {
+        console.log("Checkout - Nenhuma configuração encontrada");
       }
     } catch (error) {
-      console.error("Erro ao buscar configuração do checkout:", error);
+      console.error("Checkout - Erro ao buscar configuração do checkout:", error);
     }
   };
 
@@ -52,7 +76,7 @@ const Checkout = () => {
       }
 
       try {
-        console.log("Buscando produto com slug:", slug);
+        console.log("Checkout - Buscando produto com slug:", slug);
         
         // Carregar a configuração do checkout primeiro
         await fetchCheckoutConfig();
@@ -65,27 +89,27 @@ const Checkout = () => {
           .eq("ativo", true)
           .single();
 
-        console.log("Resposta do Supabase produtos:", { productData, productError });
+        console.log("Checkout - Resposta do Supabase produtos:", { productData, productError });
         
         if (productError) {
-          console.error("Erro do Supabase:", productError);
+          console.error("Checkout - Erro do Supabase:", productError);
           throw productError;
         }
         
         if (!productData) {
           // Recupera dados do localStorage como fallback
-          console.log("Produto não encontrado no Supabase, tentando localStorage");
+          console.log("Checkout - Produto não encontrado no Supabase, tentando localStorage");
           const mockStorage = localStorage.getItem('mockSupabaseStorage');
           if (mockStorage) {
             const parsedStorage = JSON.parse(mockStorage);
             if (parsedStorage && parsedStorage.produtos) {
-              console.log("Dados mockStorage encontrados:", parsedStorage.produtos);
+              console.log("Checkout - Dados mockStorage encontrados:", parsedStorage.produtos);
               const produtoEncontrado = parsedStorage.produtos.find(
                 (p: Produto) => p.slug === slug && p.ativo
               );
               
               if (produtoEncontrado) {
-                console.log("Produto encontrado nos dados mockStorage:", produtoEncontrado);
+                console.log("Checkout - Produto encontrado nos dados mockStorage:", produtoEncontrado);
                 setProduto(produtoEncontrado);
                 
                 // Aplicar a cor de fundo do produto caso exista
@@ -101,7 +125,7 @@ const Checkout = () => {
           
           setError("Produto não encontrado");
         } else {
-          console.log("Produto encontrado no Supabase:", productData);
+          console.log("Checkout - Produto encontrado no Supabase:", productData);
           setProduto(productData);
           
           // Aplicar a cor de fundo do produto caso exista
@@ -110,7 +134,7 @@ const Checkout = () => {
           }
         }
       } catch (error) {
-        console.error("Erro ao buscar produto:", error);
+        console.error("Checkout - Erro ao buscar produto:", error);
         setError("Erro ao carregar o produto. Tente novamente mais tarde.");
       } finally {
         setLoading(false);
@@ -133,10 +157,18 @@ const Checkout = () => {
                              configCheckout?.cor_fundo || 
                              "#FFFFFF";
       
-      console.log("Aplicando cor de fundo:", backgroundColor);
+      console.log("Checkout - Aplicando cor de fundo final:", backgroundColor);
       document.body.style.backgroundColor = backgroundColor;
     }
   }, [produto, configCheckout, loading]);
+
+  // Logs adicionais para debug
+  useEffect(() => {
+    if (configCheckout) {
+      console.log("Checkout - configCheckout atualizado:", configCheckout);
+      console.log("Checkout - cor_topo:", configCheckout.cor_topo);
+    }
+  }, [configCheckout]);
 
   if (loading) {
     return (
@@ -169,10 +201,11 @@ const Checkout = () => {
   // Determinar a cor de fundo a ser usada
   const backgroundColor = produto.background_color || configCheckout?.cor_fundo || "#FFFFFF";
   
-  console.log("Checkout - aplicando configurações:", {
+  console.log("Checkout - Renderizando com configurações:", {
     configCheckout,
+    corTopo: configCheckout?.cor_topo,
     backgroundColor,
-    topColorFromConfig: configCheckout?.cor_topo
+    mensagemTopo: configCheckout?.mensagem_topo
   });
 
   return (

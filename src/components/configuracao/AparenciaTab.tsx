@@ -4,6 +4,7 @@ import { Input } from "@/components/ui/input";
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
 import { ConfigCheckout } from "@/lib/supabase";
+import { useEffect } from "react";
 
 interface AparenciaTabProps {
   config: ConfigCheckout;
@@ -15,7 +16,7 @@ export function AparenciaTab({ config, handleConfigChange, handleSwitchChange }:
   // Function to handle color changes and ensure both inputs (color picker and text field) stay in sync
   const handleColorChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
-    console.log(`Alterando cor ${name} para ${value}`);
+    console.log(`AparenciaTab - Alterando cor ${name} para ${value}`);
     
     // Garantir que a cor esteja em formato hexadecimal válido
     const validHexColor = /^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/.test(value) 
@@ -34,6 +35,15 @@ export function AparenciaTab({ config, handleConfigChange, handleSwitchChange }:
     
     handleConfigChange(syntheticEvent);
   };
+
+  // Log current config values on mount and whenever they change
+  useEffect(() => {
+    console.log('AparenciaTab - Valores atuais das cores:', {
+      corTopo: config.cor_topo,
+      corFundo: config.cor_fundo,
+      corBanner: config.cor_banner
+    });
+  }, [config.cor_topo, config.cor_fundo, config.cor_banner]);
 
   return (
     <Card>

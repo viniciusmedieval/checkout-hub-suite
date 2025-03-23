@@ -67,11 +67,12 @@ export function useConfiguracao() {
 
   const handleConfigChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
-    console.log(`Alterando ${name} para ${value}`);
+    console.log(`useConfiguracao - Alterando ${name} para ${value}`);
     setConfig(prev => ({ ...prev, [name]: value }));
   };
   
   const handleSwitchChange = (name: string, checked: boolean) => {
+    console.log(`useConfiguracao - Alterando switch ${name} para ${checked}`);
     setConfig(prev => ({ ...prev, [name]: checked }));
   };
 
@@ -100,6 +101,8 @@ export function useConfiguracao() {
         mensagem_rodape: config.mensagem_rodape
       };
       
+      console.log("Configurações validadas a serem salvas:", configToSave);
+      
       let result;
       
       if (config.id) {
@@ -114,6 +117,7 @@ export function useConfiguracao() {
       }
       
       if (result.error) {
+        console.error("Erro ao salvar configurações:", result.error);
         throw result.error;
       }
       
@@ -121,15 +125,19 @@ export function useConfiguracao() {
       toast.success("Configurações salvas com sucesso!");
       
       // Recarregar a configuração para garantir que temos os dados mais recentes
-      const { data: refreshedConfig } = await supabase
+      const { data: refreshedConfig, error: refreshError } = await supabase
         .from("config_checkout")
         .select("*")
         .order('created_at', { ascending: false })
         .limit(1);
-        
+      
+      if (refreshError) {
+        console.error("Erro ao recarregar config após salvar:", refreshError);
+      }  
+      
       if (refreshedConfig && refreshedConfig.length > 0) {
-        setConfig(refreshedConfig[0]);
         console.log("Configurações atualizadas após salvamento:", refreshedConfig[0]);
+        setConfig(refreshedConfig[0]);
       }
     } catch (error) {
       console.error("Erro ao salvar configurações:", error);
