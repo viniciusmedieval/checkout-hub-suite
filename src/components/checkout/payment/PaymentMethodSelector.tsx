@@ -53,7 +53,7 @@ export function PaymentMethodSelector({
         className="w-full"
         onValueChange={handleTabChange}
       >
-        <TabsList className="grid w-full grid-cols-2 mb-4 bg-gray-100 rounded-md border border-gray-200">
+        <TabsList className="grid w-full grid-cols-2 mb-4 rounded-md border border-gray-200 p-0 overflow-hidden">
           <TabsTrigger 
             value="card" 
             className="data-[state=active]:bg-white data-[state=active]:text-gray-900 data-[state=active]:border-b-2 data-[state=active]:border-blue-500 text-sm py-2.5 rounded-md"
