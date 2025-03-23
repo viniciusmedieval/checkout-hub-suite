@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { supabase, ConfigCheckout, Depoimento } from "@/lib/supabase";
 import { toast } from "sonner";
@@ -25,12 +24,10 @@ export function useConfiguracao() {
   const [depoimentos, setDepoimentos] = useState<Depoimento[]>([]);
   const [depoimentosSaving, setDepoimentosSaving] = useState(false);
 
-  // Fetch configuration data from Supabase
   useEffect(() => {
     const fetchConfigData = async () => {
       setLoading(true);
       try {
-        // Fetch checkout configuration
         const { data: checkoutConfig, error: configError } = await supabase
           .from("config_checkout")
           .select("*")
@@ -44,7 +41,6 @@ export function useConfiguracao() {
           setConfig(checkoutConfig[0]);
         }
         
-        // Fetch testimonials
         const { data: testimonials, error: testimonialsError } = await supabase
           .from("depoimentos")
           .select("*")
@@ -69,6 +65,7 @@ export function useConfiguracao() {
 
   const handleConfigChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
+    console.log(`Alterando ${name} para ${value}`);
     setConfig(prev => ({ ...prev, [name]: value }));
   };
   
@@ -78,10 +75,10 @@ export function useConfiguracao() {
 
   const handleSaveConfig = async () => {
     try {
+      console.log("Salvando configurações:", config);
       let result;
       
       if (config.id) {
-        // Update existing record
         result = await supabase
           .from("config_checkout")
           .update({
@@ -101,7 +98,6 @@ export function useConfiguracao() {
           })
           .eq('id', config.id);
       } else {
-        // Insert new record
         result = await supabase
           .from("config_checkout")
           .insert([{
@@ -132,7 +128,6 @@ export function useConfiguracao() {
     }
   };
 
-  // Function to handle testimonial deletion
   const handleDeleteTestimonial = async (id: number) => {
     if (!confirm("Tem certeza que deseja excluir este depoimento?")) return;
     
@@ -155,7 +150,6 @@ export function useConfiguracao() {
     }
   };
 
-  // Function to handle adding new testimonials
   const handleAddTestimonial = async (depoimento: Omit<Depoimento, "id" | "criado_em">) => {
     setDepoimentosSaving(true);
     try {

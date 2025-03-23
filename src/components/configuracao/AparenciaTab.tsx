@@ -27,16 +27,17 @@ export function AparenciaTab({ config, handleConfigChange, handleSwitchChange }:
             <Input
               type="color"
               name="cor_topo"
-              value={config.cor_topo}
+              value={config.cor_topo || "#000000"}
               onChange={handleConfigChange}
               className="w-16 h-10 p-1"
             />
             <Input
               name="cor_topo"
-              value={config.cor_topo}
+              value={config.cor_topo || "#000000"}
               onChange={handleConfigChange}
             />
           </div>
+          <p className="text-xs text-gray-500">Cor da barra de mensagem no topo do checkout</p>
         </div>
         
         <div className="space-y-2">

@@ -35,13 +35,16 @@ export function CheckoutHeader({ produto, configCheckout }: CheckoutHeaderProps)
   const showTopMessage = configCheckout?.mensagem_topo && 
                         configCheckout.mensagem_topo.trim() !== '';
 
+  // Get the top message bar color from config
+  const topMessageColor = configCheckout?.cor_topo || "#000000";
+
   return (
     <div className="w-full">
       {/* Top message bar */}
       {showTopMessage && (
         <div 
           className="text-center py-3 text-sm text-white font-medium"
-          style={{ backgroundColor: configCheckout?.cor_topo || "#000000" }}
+          style={{ backgroundColor: topMessageColor }}
         >
           <p>{configCheckout?.mensagem_topo}</p>
         </div>
