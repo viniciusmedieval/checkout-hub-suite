@@ -21,10 +21,10 @@ export function TestimonialItem({ testimonial }: TestimonialItemProps) {
             }}
           />
         </div>
-        <div className="flex-1">
+        <div className="flex-1 min-w-0"> {/* Added min-width-0 to allow proper text wrapping */}
           <div className="flex items-center justify-between">
             <h4 className="text-sm font-medium text-gray-800">{testimonial.nome}</h4>
-            <div className="flex gap-1 items-center">
+            <div className="flex-shrink-0 flex gap-1 items-center">
               <span className="text-green-500 text-xs font-medium">Verificado</span>
               <div className="w-4 h-4 rounded-full bg-green-100 flex items-center justify-center">
                 <svg width="10" height="8" viewBox="0 0 10 8" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -36,7 +36,9 @@ export function TestimonialItem({ testimonial }: TestimonialItemProps) {
           <div className="mt-1">
             <StarRating rating={testimonial.estrelas} />
           </div>
-          <p className="text-sm text-gray-600 mt-2">{testimonial.texto}</p>
+          <p className="text-sm text-gray-600 mt-2 break-words">
+            {testimonial.texto}
+          </p>
         </div>
       </div>
     </div>
