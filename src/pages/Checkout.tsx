@@ -9,6 +9,7 @@ import { ResumoCompra } from "@/components/checkout/ResumoCompra";
 import { CheckoutFooter } from "@/components/checkout/CheckoutFooter";
 import { CheckoutLoading } from "@/components/checkout/CheckoutLoading";
 import { CheckoutError } from "@/components/checkout/CheckoutError";
+import { Users } from "lucide-react";
 
 const Checkout = () => {
   const { 
@@ -62,14 +63,20 @@ const Checkout = () => {
 
       {/* Main checkout content */}
       <div className="flex-grow flex justify-center">
-        <div className="w-full max-w-md mx-auto py-4 px-3 sm:py-6 sm:px-4 space-y-4">
+        <div className="w-full max-w-md mx-auto py-6 px-4 space-y-5">
           {/* Product Title with configurable color */}
           <h1 
-            className="text-xl font-bold text-center mb-2"
+            className="text-xl font-bold text-center"
             style={{ color: configCheckout?.cor_titulo || "#000000" }}
           >
             {produto.checkout_title || produto.nome}
           </h1>
+          
+          {/* Visitors Counter */}
+          <div className="flex items-center justify-center gap-2 text-sm text-gray-600 animate-pulse">
+            <Users size={16} />
+            <span>Outras <strong>{visitorCount.toLocaleString()}</strong> pessoas estão finalizando agora 🔥</span>
+          </div>
           
           {/* Cliente Identification Form */}
           <FormIdentificacao 
@@ -78,17 +85,19 @@ const Checkout = () => {
             onChange={handleInputChange} 
           />
           
-          {/* Payment Section */}
-          <PaymentMethodSelector 
-            productValue={produto.valor} 
-            pixConfig={pixConfig}
-            onPaymentMethodChange={setPaymentMethod}
-            produto={produto}
-          />
-          
           {/* Testimonials Section */}
-          <div className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
+          <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
             <CheckoutTestimonials produto_id={produto.id} />
+          </div>
+          
+          {/* Payment Section */}
+          <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+            <PaymentMethodSelector 
+              productValue={produto.valor} 
+              pixConfig={pixConfig}
+              onPaymentMethodChange={setPaymentMethod}
+              produto={produto}
+            />
           </div>
           
           {/* Order Summary & CTA Button */}

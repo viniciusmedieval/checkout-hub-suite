@@ -39,15 +39,15 @@ export function HeaderTimer({
 
   return (
     <div 
-      className="py-2 text-xs font-medium text-center w-full"
+      className="py-3 text-sm font-medium text-center w-full"
       style={{ 
         backgroundColor, 
         color: textColor 
       }}
     >
       <div className="container max-w-md mx-auto px-4 flex items-center justify-center gap-2">
-        <Clock size={14} />
-        <p>{message} <strong>{formatTime(timer.minutes)}:{formatTime(timer.seconds)}</strong></p>
+        <Clock size={16} />
+        <p className="font-medium">{message} <strong>{formatTime(timer.minutes)}:{formatTime(timer.seconds)}</strong></p>
       </div>
     </div>
   );

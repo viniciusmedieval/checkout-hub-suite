@@ -29,7 +29,7 @@ export function PaymentMethodSelector({
   const [countdown] = useState(15 * 60); // 15 minutes in seconds
   
   return (
-    <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-4">
+    <div className="p-4">
       <h2 className="text-base font-semibold mb-3">Pagamento</h2>
       
       <Tabs 
@@ -37,19 +37,19 @@ export function PaymentMethodSelector({
         className="w-full" 
         onValueChange={(value) => onPaymentMethodChange(value as PaymentMethod)}
       >
-        <TabsList className="grid w-full grid-cols-2 mb-4 bg-gray-100 rounded-md">
+        <TabsList className="grid w-full grid-cols-2 mb-4 bg-gray-100 rounded-md border border-gray-200">
           <TabsTrigger 
             value="card" 
-            className="data-[state=active]:bg-white data-[state=active]:text-gray-900 data-[state=active]:shadow-sm text-sm py-2 rounded-md"
+            className="data-[state=active]:bg-white data-[state=active]:text-gray-900 data-[state=active]:border-b-2 data-[state=active]:border-blue-500 text-sm py-2.5 rounded-md"
           >
-            <CreditCard size={14} className="mr-2" />
+            <CreditCard size={16} className="mr-2" />
             Cartão de Crédito
           </TabsTrigger>
           <TabsTrigger 
             value="pix" 
-            className="data-[state=active]:bg-white data-[state=active]:text-gray-900 data-[state=active]:shadow-sm text-sm py-2 rounded-md"
+            className="data-[state=active]:bg-white data-[state=active]:text-gray-900 data-[state=active]:border-b-2 data-[state=active]:border-blue-500 text-sm py-2.5 rounded-md"
           >
-            <QrCode size={14} className="mr-2" />
+            <QrCode size={16} className="mr-2" />
             Pix
           </TabsTrigger>
         </TabsList>

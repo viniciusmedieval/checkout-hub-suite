@@ -21,13 +21,13 @@ export function TestimonialItem({ testimonial }: TestimonialItemProps) {
   };
 
   return (
-    <div className="border-b border-gray-100 pb-3 last:border-0 last:pb-0">
-      <div className="flex items-start gap-2">
+    <div className="border-b border-gray-100 pb-4 last:border-0 last:pb-0">
+      <div className="flex items-start gap-3">
         <div className="flex-shrink-0">
           <img 
             src={testimonial.foto_url || `https://ui-avatars.com/api/?name=${encodeURIComponent(testimonial.nome)}&background=random`} 
             alt={testimonial.nome} 
-            className="w-10 h-10 rounded-full object-cover border border-gray-100"
+            className="w-12 h-12 rounded-full object-cover border border-gray-100"
             onError={(e) => {
               const target = e.target as HTMLImageElement;
               target.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(testimonial.nome)}&background=random`;
@@ -36,10 +36,10 @@ export function TestimonialItem({ testimonial }: TestimonialItemProps) {
         </div>
         <div className="flex-1 min-w-0">
           <div className="flex items-center justify-between mb-1">
-            <h4 className="text-sm font-medium text-gray-800">{testimonial.nome}</h4>
-            <StarRating rating={testimonial.estrelas} size="xs" />
+            <h4 className="text-sm font-semibold text-gray-800">{testimonial.nome}</h4>
+            <StarRating rating={testimonial.estrelas} size="sm" />
           </div>
-          <p className="text-xs text-gray-600 break-words mb-2">
+          <p className="text-sm text-gray-600 break-words mb-2">
             {testimonial.texto}
           </p>
           <div className="flex items-center justify-between">
@@ -48,9 +48,9 @@ export function TestimonialItem({ testimonial }: TestimonialItemProps) {
             </span>
             <button 
               onClick={() => setHelpful(!helpful)}
-              className={`text-xs flex items-center gap-1 ${helpful ? 'text-green-600' : 'text-gray-400'} transition-colors`}
+              className={`text-xs flex items-center gap-1 ${helpful ? 'text-green-600' : 'text-gray-400'} hover:text-green-600 transition-colors`}
             >
-              <ThumbsUp size={12} />
+              <ThumbsUp size={14} />
               <span>{helpful ? 'Útil' : 'Foi útil?'}</span>
             </button>
           </div>

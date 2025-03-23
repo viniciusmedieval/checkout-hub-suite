@@ -23,9 +23,9 @@ export function ResumoCompra({
   const buttonTextColor = configCheckout?.cor_texto_botao || "#FFFFFF";
   
   return (
-    <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-4">
-      <div className="space-y-3">
-        <div className="flex items-center justify-between border-b pb-2 mb-2">
+    <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-4">
+      <div className="space-y-4">
+        <div className="flex items-center justify-between border-b pb-3 mb-1">
           <span className="text-sm font-medium">Sua Compra</span>
           <span className="text-sm">1 item</span>
         </div>
@@ -35,20 +35,20 @@ export function ResumoCompra({
             <img 
               src={produto.imagem_url} 
               alt={produto.nome} 
-              className="w-12 h-12 object-cover rounded border border-gray-200"
+              className="w-16 h-16 object-cover rounded border border-gray-200"
             />
           )}
           <div className="flex-1">
             <h3 className="text-sm font-medium">{produto.nome}</h3>
-            <div className="flex justify-between items-center">
+            <div className="flex justify-between items-center mt-1">
               <p className="text-xs text-gray-500">{produto.tipo}</p>
-              <span className="text-sm font-bold">{formatCurrency(Number(produto.valor))}</span>
+              <span className="text-base font-bold">{formatCurrency(Number(produto.valor))}</span>
             </div>
           </div>
         </div>
         
         <button 
-          className="w-full py-3 px-4 text-sm font-medium rounded-md transition-colors flex items-center justify-center gap-2"
+          className="w-full py-3.5 px-4 text-sm font-medium rounded-lg transition-colors flex items-center justify-center gap-2 shadow-sm"
           onClick={onCompletePurchase}
           disabled={isProcessing}
           style={{ 
@@ -66,17 +66,13 @@ export function ResumoCompra({
             </>
           ) : (
             <>
-              <LockIcon size={14} />
+              <LockIcon size={16} />
               {configCheckout?.texto_botao || "ASSINAR AGORA"}
             </>
           )}
         </button>
         
-        {/* Visitor counter */}
-        <div className="flex items-center justify-center gap-2 text-xs text-gray-500 mt-2">
-          <Users size={14} />
-          <span>Outras <strong>{visitorCount.toLocaleString()}</strong> pessoas estão finalizando agora</span>
-        </div>
+        {/* Visitor counter - now moved to the top of the page */}
       </div>
     </div>
   );

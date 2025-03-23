@@ -31,10 +31,10 @@ export function FormIdentificacao({ formData, errors, onChange }: FormIdentifica
     : true;
 
   return (
-    <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-4">
-      <h2 className="text-base font-semibold mb-3">Identificação</h2>
+    <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-4">
+      <h2 className="text-base font-semibold mb-4">Identificação</h2>
       
-      <div className="space-y-3">
+      <div className="space-y-4">
         <div className="relative">
           <div className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400">
             <User size={16} />
@@ -50,7 +50,7 @@ export function FormIdentificacao({ formData, errors, onChange }: FormIdentifica
             placeholder="Nome completo"
             value={formData.nome}
             onChange={handleChange}
-            className={`pl-9 h-10 text-sm ${errors.nome ? 'border-red-500' : ''}`}
+            className={`pl-10 h-11 text-sm rounded-lg ${errors.nome ? 'border-red-500' : 'border-gray-200'}`}
           />
           {errors.nome && <p className="text-red-500 text-xs mt-1">Nome é obrigatório</p>}
         </div>
@@ -71,12 +71,12 @@ export function FormIdentificacao({ formData, errors, onChange }: FormIdentifica
             placeholder="Seu e-mail"
             value={formData.email}
             onChange={handleChange}
-            className={`pl-9 h-10 text-sm ${errors.email ? 'border-red-500' : ''}`}
+            className={`pl-10 h-11 text-sm rounded-lg ${errors.email ? 'border-red-500' : 'border-gray-200'}`}
           />
           {errors.email && <p className="text-red-500 text-xs mt-1">E-mail inválido</p>}
         </div>
         
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <div className="relative">
             <div className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400">
               <Phone size={16} />
@@ -92,7 +92,7 @@ export function FormIdentificacao({ formData, errors, onChange }: FormIdentifica
               placeholder="Celular"
               value={formData.telefone}
               onChange={handleChange}
-              className={`pl-9 h-10 text-sm ${errors.telefone ? 'border-red-500' : ''}`}
+              className={`pl-10 h-11 text-sm rounded-lg ${errors.telefone ? 'border-red-500' : 'border-gray-200'}`}
             />
             {errors.telefone && <p className="text-red-500 text-xs mt-1">Celular inválido</p>}
           </div>
@@ -112,7 +112,7 @@ export function FormIdentificacao({ formData, errors, onChange }: FormIdentifica
               placeholder="CPF/CNPJ"
               value={formData.documento}
               onChange={handleChange}
-              className={`pl-9 h-10 text-sm ${errors.documento ? 'border-red-500' : ''}`}
+              className={`pl-10 h-11 text-sm rounded-lg ${errors.documento ? 'border-red-500' : 'border-gray-200'}`}
             />
             {errors.documento && <p className="text-red-500 text-xs mt-1">Documento inválido</p>}
           </div>
@@ -129,7 +129,7 @@ export function FormIdentificacao({ formData, errors, onChange }: FormIdentifica
             value={formData.observacoes}
             onChange={handleChange}
             rows={2}
-            className="pl-9 resize-none text-sm"
+            className="pl-10 resize-none text-sm rounded-lg border-gray-200"
           />
         </div>
       </div>
