@@ -1,11 +1,11 @@
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Input } from "@/components/ui/input";
-import { formatCardNumber } from "@/utils/formatters";
 import { CardInput } from "./CardInput";
 import { CardExpiryInput } from "./CardExpiryInput";
 import { CardCVVInput } from "./CardCVVInput";
 import { InstallmentSelector } from "./InstallmentSelector";
+import { User, CheckCircle2 } from "lucide-react";
 
 interface CardPaymentFormProps {
   productValue: number;
@@ -23,13 +23,13 @@ export function CardPaymentForm({ productValue }: CardPaymentFormProps) {
     cardExpiry: false,
     cardCVV: false
   });
+  const [formIsComplete, setFormIsComplete] = useState(false);
 
-  const handleCardNumberChange = (value: string) => {
-    const formattedValue = formatCardNumber(value);
-    setCardNumber(formattedValue);
+  const handleCardNumberChange = (value: string, isValid: boolean) => {
+    setCardNumber(value);
     setIsValid(prev => ({
       ...prev,
-      cardNumber: value.length >= 13 && value.length <= 19
+      cardNumber: isValid
     }));
   };
 
@@ -58,22 +58,36 @@ export function CardPaymentForm({ productValue }: CardPaymentFormProps) {
     }));
   };
   
+  // Check if all form fields are valid
+  useEffect(() => {
+    setFormIsComplete(
+      isValid.cardNumber && 
+      isValid.cardName && 
+      isValid.cardExpiry && 
+      isValid.cardCVV
+    );
+  }, [isValid]);
+  
   return (
     <div className="space-y-3">
       <CardInput 
         value={cardNumber}
         onChange={handleCardNumberChange}
-        isValid={isValid.cardNumber}
       />
       
       <div className="relative">
-        <div className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-700">
-          👤
+        <div className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500">
+          <User size={18} />
         </div>
+        {isValid.cardName && (
+          <div className="absolute right-3 top-1/2 -translate-y-1/2 text-green-500">
+            <CheckCircle2 size={16} />
+          </div>
+        )}
         <Input 
           id="cardName" 
           placeholder="Nome impresso no cartão" 
-          className="pl-9 h-10 text-sm bg-white text-black" 
+          className="pl-9 h-11 text-sm bg-white text-black rounded-lg" 
           value={cardName}
           onChange={handleCardNameChange}
         />
@@ -96,6 +110,13 @@ export function CardPaymentForm({ productValue }: CardPaymentFormProps) {
         value={installments}
         onChange={setInstallments}
       />
+      
+      {formIsComplete && (
+        <div className="mt-2 text-sm text-green-600 flex items-center gap-1">
+          <CheckCircle2 size={16} />
+          <span>Informações do cartão validadas</span>
+        </div>
+      )}
     </div>
   );
 }
