@@ -1,7 +1,7 @@
 
 import { Users, Package, DollarSign, PercentCircle } from "lucide-react";
 import { StatCard } from "./StatCard";
-import { formatCurrency } from "@/hooks/useDashboardData";
+import { formatCurrency } from "@/utils/formatters";
 
 interface StatsCardsProps {
   totalClientes: number;

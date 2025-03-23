@@ -10,7 +10,7 @@ import {
   YAxis 
 } from "recharts";
 import { ChartCard } from "./ChartCard";
-import { ChartData } from "@/hooks/useDashboardData";
+import { ChartData } from "@/types/dashboard";
 import { Skeleton } from "@/components/ui/skeleton";
 
 interface SalesVsCustomersChartProps {
