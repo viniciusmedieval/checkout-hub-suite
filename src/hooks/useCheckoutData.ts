@@ -37,12 +37,14 @@ export const useCheckoutData = (slug: string | undefined) => {
           if (!validateHex(config.cor_fundo)) config.cor_fundo = "#FFFFFF";
           if (!validateHex(config.cor_banner)) config.cor_banner = "#3b82f6";
           if (!validateHex(config.cor_titulo)) config.cor_titulo = "#000000";
+          if (!validateHex(config.cor_botao)) config.cor_botao = "#8B5CF6"; // Validando cor do botão
           
           console.log("useCheckoutData - Cores validadas:", {
             corTopo: config.cor_topo,
             corFundo: config.cor_fundo,
             corBanner: config.cor_banner,
-            corTitulo: config.cor_titulo
+            corTitulo: config.cor_titulo,
+            corBotao: config.cor_botao // Adicionando log para a cor do botão
           });
           
           setConfigCheckout(config);

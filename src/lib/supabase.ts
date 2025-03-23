@@ -1,3 +1,4 @@
+
 import { createClient, SupabaseClient } from '@supabase/supabase-js';
 import { createMockClient } from './mock/mock-client';
 
@@ -47,7 +48,7 @@ export type ConfigCheckout = {
   cor_fundo: string;
   cor_titulo: string;
   texto_botao: string;
-  cor_botao: string; // Nova propriedade para cor do botão
+  cor_botao: string; // Propriedade para cor do botão CTA
   rodape_texto: string;
   rodape_empresa: string;
   rodape_ano: string;

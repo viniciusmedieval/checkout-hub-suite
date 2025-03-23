@@ -16,7 +16,7 @@ export function OrderSummary({ produto, configCheckout }: OrderSummaryProps) {
   const [loading, setLoading] = useState(false);
   
   // Obter a cor do botão das configurações ou usar o padrão
-  const buttonColor = configCheckout?.cor_botao || "#10B981";
+  const buttonColor = configCheckout?.cor_botao || "#8B5CF6";
   
   const handleComprar = async () => {
     setLoading(true);
