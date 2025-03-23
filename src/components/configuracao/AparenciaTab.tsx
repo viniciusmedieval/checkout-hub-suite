@@ -1,4 +1,3 @@
-
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Switch } from "@/components/ui/switch";
@@ -97,7 +96,7 @@ export function AparenciaTab({ config, handleConfigChange, handleSwitchChange }:
         </div>
         
         <div className="space-y-2">
-          <label className="text-sm font-medium">Cor do Título</label>
+          <label className="text-sm font-medium">Cor do Título do Produto</label>
           <div className="flex gap-2">
             <Input
               type="color"
@@ -113,7 +112,7 @@ export function AparenciaTab({ config, handleConfigChange, handleSwitchChange }:
               placeholder="#000000"
             />
           </div>
-          <p className="text-xs text-gray-500">Cor do texto do título no checkout</p>
+          <p className="text-xs text-gray-500">Cor do texto do título principal do produto no checkout</p>
         </div>
         
         <div className="space-y-2">
