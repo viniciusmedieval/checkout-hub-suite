@@ -73,14 +73,15 @@ const productsToAdd: ProductToAdd[] = [
 export const addProductsToSupabase = async () => {
   try {
     // Check if products already exist to avoid duplicates
-    const { data: existingProducts, error: fetchError } = await supabase
+    const { data, error: fetchError } = await supabase
       .from('produtos')
       .select('slug');
     
     if (fetchError) throw fetchError;
     
-    // Ensure existingProducts is an array even if data is null
-    const existingSlugs = (existingProducts || []).map(product => product.slug);
+    // Explicitly ensure we have an array, even if data is null or undefined
+    const existingProducts = Array.isArray(data) ? data : [];
+    const existingSlugs = existingProducts.map(product => product.slug);
     
     // Filter out products that already exist
     const newProducts = productsToAdd.filter(product => 
@@ -93,18 +94,21 @@ export const addProductsToSupabase = async () => {
     }
     
     // Insert new products
-    const { data, error } = await supabase
+    const { data: insertedData, error } = await supabase
       .from('produtos')
       .insert(newProducts)
       .select();
     
     if (error) throw error;
     
-    console.log(`Added ${(data || []).length} new products to the database.`);
+    // Ensure we have an array of inserted data
+    const safeInsertedData = Array.isArray(insertedData) ? insertedData : [];
+    
+    console.log(`Added ${safeInsertedData.length} new products to the database.`);
     return { 
       success: true, 
-      message: `Added ${(data || []).length} new products to the database.`,
-      addedProducts: data || []
+      message: `Added ${safeInsertedData.length} new products to the database.`,
+      addedProducts: safeInsertedData
     };
     
   } catch (error) {
