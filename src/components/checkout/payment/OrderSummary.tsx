@@ -5,14 +5,19 @@ import { formatCurrency } from "@/utils/formatters";
 import { Produto } from "@/lib/types/database-types";
 import { useState } from "react";
 import { toast } from "sonner";
+import { ConfigCheckout } from "@/lib/supabase";
 
 interface OrderSummaryProps {
   produto: Produto;
+  configCheckout?: ConfigCheckout | null;
 }
 
-export function OrderSummary({ produto }: OrderSummaryProps) {
+export function OrderSummary({ produto, configCheckout }: OrderSummaryProps) {
   const [loading, setLoading] = useState(false);
-
+  
+  // Obter a cor do botão das configurações ou usar o padrão
+  const buttonColor = configCheckout?.cor_botao || "#10B981";
+  
   const handleComprar = async () => {
     setLoading(true);
 
@@ -54,8 +59,9 @@ export function OrderSummary({ produto }: OrderSummaryProps) {
       
       <Button 
         onClick={handleComprar}
-        className="w-full bg-green-500 hover:bg-green-600 text-white font-bold py-4 text-base h-auto"
+        className="w-full text-white font-bold py-4 text-base h-auto"
         disabled={loading}
+        style={{ backgroundColor: buttonColor }}
       >
         {loading ? (
           <>
@@ -66,7 +72,7 @@ export function OrderSummary({ produto }: OrderSummaryProps) {
             Processando...
           </>
         ) : (
-          'Assinar agora'
+          configCheckout?.texto_botao || "GARANTIR AGORA"
         )}
       </Button>
       

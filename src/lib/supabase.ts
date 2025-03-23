@@ -1,3 +1,4 @@
+
 import { createClient, SupabaseClient } from '@supabase/supabase-js';
 import { createMockClient } from './mock/mock-client';
 
@@ -39,7 +40,7 @@ export type ConfigCheckout = {
   id: number;
   mensagem_topo: string;
   cor_topo: string;
-  cor_texto_topo: string; // Novo campo para a cor do texto da mensagem de topo
+  cor_texto_topo: string;
   ativa_banner: boolean;
   banner_url: string;
   banner_mobile_url: string;
@@ -47,6 +48,7 @@ export type ConfigCheckout = {
   cor_fundo: string;
   cor_titulo: string;
   texto_botao: string;
+  cor_botao: string; // Nova propriedade para cor do botão
   rodape_texto: string;
   rodape_empresa: string;
   rodape_ano: string;

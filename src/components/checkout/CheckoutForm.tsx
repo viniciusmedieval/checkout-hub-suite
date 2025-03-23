@@ -1,6 +1,5 @@
 
 import { ConfigCheckout } from "@/lib/supabase";
-import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
@@ -100,12 +99,7 @@ export function CheckoutForm({ configCheckout }: CheckoutFormProps) {
           />
         </div>
         
-        <Button 
-          type="submit" 
-          className="w-full py-6 text-lg font-medium mt-4 bg-[#1E88E5] hover:bg-[#1976D2]"
-        >
-          {configCheckout?.texto_botao || "FINALIZAR COMPRA"}
-        </Button>
+        {/* Removemos o botão de finalizar compra daqui */}
       </form>
     </div>
   );

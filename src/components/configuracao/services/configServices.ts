@@ -68,6 +68,7 @@ export const saveConfig = async (config: ConfigCheckout): Promise<ConfigCheckout
       cor_fundo: validateHex(config.cor_fundo) ? config.cor_fundo : "#FFFFFF",
       cor_titulo: validateHex(config.cor_titulo) ? config.cor_titulo : "#000000",
       texto_botao: config.texto_botao,
+      cor_botao: validateHex(config.cor_botao) ? config.cor_botao : "#10B981", // Validação da nova propriedade
       rodape_texto: config.rodape_texto,
       rodape_empresa: config.rodape_empresa,
       rodape_ano: config.rodape_ano,

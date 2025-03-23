@@ -20,6 +20,15 @@ export function ProductColorSection({ config, handleColorChange }: ProductColorS
       />
       
       <ColorPicker
+        name="cor_botao"
+        value={config.cor_botao}
+        defaultValue="#10B981"
+        onChange={handleColorChange}
+        label="Cor do Botão CTA"
+        description="Define a cor do botão principal de chamada à ação no checkout"
+      />
+      
+      <ColorPicker
         name="cor_fundo"
         value={config.cor_fundo}
         defaultValue="#FFFFFF"

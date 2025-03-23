@@ -11,6 +11,9 @@ interface CheckoutSummaryProps {
 export function CheckoutSummary({ produto, configCheckout }: CheckoutSummaryProps) {
   const [isProcessing, setIsProcessing] = useState(false);
   
+  // Obter a cor do botão das configurações ou usar o padrão
+  const buttonColor = configCheckout?.cor_botao || "#10B981";
+  
   const handleCompletePurchase = () => {
     setIsProcessing(true);
     
@@ -55,9 +58,10 @@ export function CheckoutSummary({ produto, configCheckout }: CheckoutSummaryProp
         </div>
         
         <button 
-          className={`w-full py-3 px-4 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-md transition-colors ${isProcessing ? 'opacity-70 cursor-not-allowed' : ''}`}
+          className={`w-full py-3 px-4 text-white font-medium rounded-md transition-colors ${isProcessing ? 'opacity-70 cursor-not-allowed' : ''}`}
           onClick={handleCompletePurchase}
           disabled={isProcessing}
+          style={{ backgroundColor: buttonColor }}
         >
           {isProcessing ? (
             <span className="flex items-center justify-center">
