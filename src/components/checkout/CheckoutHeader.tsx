@@ -20,8 +20,8 @@ export function CheckoutHeader({ produto, configCheckout }: CheckoutHeaderProps)
     ? configCheckout.banner_mobile_url
     : configCheckout?.banner_url;
     
-  // Use product banner if available, otherwise use config banner
-  const finalBannerUrl = bannerUrl || configBannerUrl;
+  // Only use config banner if product has no banner AND config banner is activated
+  const finalBannerUrl = bannerUrl || (configCheckout?.ativa_banner ? configBannerUrl : undefined);
 
   // Get banner background color (fallback to config color, then default blue)
   const bannerColor = produto.banner_color || 
