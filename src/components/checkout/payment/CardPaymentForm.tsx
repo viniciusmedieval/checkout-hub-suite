@@ -6,7 +6,6 @@ import {
   formatCardExpiry, 
   getInstallmentOptions 
 } from "@/utils/formatters";
-import { CreditCard, User, Calendar, Lock, CheckCircle } from "lucide-react";
 
 interface CardPaymentFormProps {
   productValue: number;
@@ -104,13 +103,13 @@ export function CardPaymentForm({ productValue }: CardPaymentFormProps) {
   return (
     <div className="space-y-3">
       <div className="relative">
-        <div className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400">
-          <CreditCard size={16} />
+        <div className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-700">
+          💳
         </div>
         <Input 
           id="cardNumber" 
           placeholder="Número do cartão" 
-          className="pl-9 h-10 text-sm pr-12" 
+          className="pl-9 h-10 text-sm pr-12 bg-black text-white" 
           value={cardNumber}
           onChange={handleCardNumberChange}
           maxLength={19}
@@ -128,26 +127,16 @@ export function CardPaymentForm({ productValue }: CardPaymentFormProps) {
             />
           </div>
         )}
-        {isValid.cardNumber && !cardBrand && (
-          <div className="absolute right-3 top-1/2 -translate-y-1/2 text-green-500">
-            <CheckCircle size={16} />
-          </div>
-        )}
       </div>
       
       <div className="relative">
-        <div className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400">
-          <User size={16} />
+        <div className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-700">
+          👤
         </div>
-        {isValid.cardName && (
-          <div className="absolute right-3 top-1/2 -translate-y-1/2 text-green-500">
-            <CheckCircle size={16} />
-          </div>
-        )}
         <Input 
           id="cardName" 
           placeholder="Nome impresso no cartão" 
-          className="pl-9 h-10 text-sm" 
+          className="pl-9 h-10 text-sm bg-black text-white" 
           value={cardName}
           onChange={handleCardNameChange}
         />
@@ -155,18 +144,13 @@ export function CardPaymentForm({ productValue }: CardPaymentFormProps) {
       
       <div className="grid grid-cols-2 gap-3">
         <div className="relative">
-          <div className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400">
-            <Calendar size={16} />
+          <div className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-700">
+            📅
           </div>
-          {isValid.cardExpiry && (
-            <div className="absolute right-3 top-1/2 -translate-y-1/2 text-green-500">
-              <CheckCircle size={16} />
-            </div>
-          )}
           <Input 
             id="cardExpiry" 
             placeholder="MM/AA" 
-            className="pl-9 h-10 text-sm" 
+            className="pl-9 h-10 text-sm bg-black text-white" 
             value={cardExpiry}
             onChange={handleCardExpiryChange}
             maxLength={5}
@@ -174,18 +158,13 @@ export function CardPaymentForm({ productValue }: CardPaymentFormProps) {
         </div>
         
         <div className="relative">
-          <div className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400">
-            <Lock size={16} />
+          <div className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-700">
+            🔒
           </div>
-          {isValid.cardCVV && (
-            <div className="absolute right-3 top-1/2 -translate-y-1/2 text-green-500">
-              <CheckCircle size={16} />
-            </div>
-          )}
           <Input 
             id="cardCVV" 
             placeholder="CVV" 
-            className="pl-9 h-10 text-sm" 
+            className="pl-9 h-10 text-sm bg-black text-white" 
             value={cardCVV}
             onChange={handleCardCVVChange}
             maxLength={4}

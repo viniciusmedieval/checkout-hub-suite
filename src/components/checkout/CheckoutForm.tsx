@@ -1,9 +1,7 @@
 
 import { ConfigCheckout } from "@/lib/supabase";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import { useState } from "react";
-import { User, Phone, Mail, FileText } from "lucide-react";
 import { formatPhoneNumber, formatCPF } from "@/utils/formatters";
 
 interface CheckoutFormProps {
@@ -53,8 +51,8 @@ export function CheckoutForm({ configCheckout }: CheckoutFormProps) {
       
       <div className="space-y-3">
         <div className="relative">
-          <div className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400">
-            <User size={16} />
+          <div className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-700">
+            👤
           </div>
           <Input 
             id="nome"
@@ -68,8 +66,8 @@ export function CheckoutForm({ configCheckout }: CheckoutFormProps) {
         </div>
         
         <div className="relative">
-          <div className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400">
-            <Mail size={16} />
+          <div className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-700">
+            ✉️
           </div>
           <Input 
             id="email"
@@ -85,8 +83,8 @@ export function CheckoutForm({ configCheckout }: CheckoutFormProps) {
         
         <div className="grid grid-cols-2 gap-3">
           <div className="relative">
-            <div className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400">
-              <Phone size={16} />
+            <div className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-700">
+              📱
             </div>
             <Input 
               id="telefone"
@@ -100,8 +98,8 @@ export function CheckoutForm({ configCheckout }: CheckoutFormProps) {
           </div>
           
           <div className="relative">
-            <div className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400">
-              <FileText size={16} />
+            <div className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-700">
+              📝
             </div>
             <Input 
               id="documento"

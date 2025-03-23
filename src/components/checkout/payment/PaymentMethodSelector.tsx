@@ -1,6 +1,5 @@
 
 import { useState } from "react";
-import { CreditCard, QrCode } from "lucide-react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { CardPaymentForm } from "./CardPaymentForm";
 import { PixPayment } from "./PixPayment";
@@ -42,14 +41,14 @@ export function PaymentMethodSelector({
             value="card" 
             className="data-[state=active]:bg-white data-[state=active]:text-gray-900 data-[state=active]:border-b-2 data-[state=active]:border-blue-500 text-sm py-2.5 rounded-md"
           >
-            <CreditCard size={16} className="mr-2" />
+            <span className="mr-2">💳</span>
             Cartão de Crédito
           </TabsTrigger>
           <TabsTrigger 
             value="pix" 
             className="data-[state=active]:bg-white data-[state=active]:text-gray-900 data-[state=active]:border-b-2 data-[state=active]:border-blue-500 text-sm py-2.5 rounded-md"
           >
-            <QrCode size={16} className="mr-2" />
+            <span className="mr-2">📱</span>
             Pix
           </TabsTrigger>
         </TabsList>

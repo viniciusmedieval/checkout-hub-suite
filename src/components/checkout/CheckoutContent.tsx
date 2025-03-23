@@ -5,7 +5,7 @@ import { CheckoutForm } from "@/components/checkout/CheckoutForm";
 import { CheckoutSummary } from "@/components/checkout/CheckoutSummary";
 import { CheckoutTestimonials } from "@/components/checkout/CheckoutTestimonials";
 import { PaymentMethodSelector } from "@/components/checkout/payment/PaymentMethodSelector";
-import { Shield, Users } from "lucide-react";
+import { Shield } from "lucide-react";
 
 interface CheckoutContentProps {
   produto: Produto;
@@ -24,12 +24,9 @@ export function CheckoutContent({ produto, configCheckout }: CheckoutContentProp
     chave_pix: produto.chave_pix,
     nome_beneficiario: produto.nome_beneficiario
   } : null;
-  
-  // Random number for visitor count (for demo purposes)
-  const visitorCount = Math.floor(Math.random() * 20000) + 10000;
 
   return (
-    <div className="w-full max-w-md mx-auto py-4 px-3 sm:py-6 sm:px-4">
+    <div className="w-full max-w-md mx-auto py-4 px-3 sm:py-6 sm:px-4 bg-white">
       <div className="space-y-4">
         {/* Product Title with configurable color */}
         <h1 
@@ -46,7 +43,6 @@ export function CheckoutContent({ produto, configCheckout }: CheckoutContentProp
         
         {/* Payment Section */}
         <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-4">
-          <h2 className="font-medium text-base mb-4">Pagamento</h2>
           <PaymentMethodSelector 
             productValue={produto.valor} 
             pixConfig={pixConfig}
