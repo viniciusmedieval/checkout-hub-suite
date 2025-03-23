@@ -17,7 +17,8 @@ const Configuracao = () => {
     handleSwitchChange,
     handleSaveConfig,
     handleDeleteTestimonial,
-    handleAddTestimonial
+    handleAddTestimonial,
+    handleUpdateTestimonial // New function
   } = useConfiguracao();
 
   if (loading) {
@@ -60,6 +61,7 @@ const Configuracao = () => {
             depoimentosSaving={depoimentosSaving}
             handleDeleteTestimonial={handleDeleteTestimonial}
             handleAddTestimonial={handleAddTestimonial}
+            handleUpdateTestimonial={handleUpdateTestimonial} // Pass the new function
           />
         </TabsContent>
       </Tabs>

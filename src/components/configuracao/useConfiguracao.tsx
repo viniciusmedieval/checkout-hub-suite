@@ -25,7 +25,8 @@ export function useConfiguracao() {
     setDepoimentos,
     isLoading: depoimentosSaving,
     handleDeleteTestimonial,
-    handleAddTestimonial
+    handleAddTestimonial,
+    handleUpdateTestimonial // New function
   } = useTestimonials([]);
 
   useEffect(() => {
@@ -58,6 +59,7 @@ export function useConfiguracao() {
     handleSwitchChange,
     handleSaveConfig,
     handleDeleteTestimonial,
-    handleAddTestimonial
+    handleAddTestimonial,
+    handleUpdateTestimonial // Include the new function
   };
 }

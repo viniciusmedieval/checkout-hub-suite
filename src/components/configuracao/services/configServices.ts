@@ -164,3 +164,26 @@ export const addTestimonial = async (depoimento: Omit<Depoimento, "id" | "criado
     return null;
   }
 };
+
+export const updateTestimonial = async (id: number, depoimento: Partial<Depoimento>): Promise<Depoimento | null> => {
+  try {
+    const { data, error } = await supabase
+      .from("depoimentos")
+      .update(depoimento)
+      .eq('id', id)
+      .select();
+      
+    if (error) throw error;
+    
+    if (data && data.length > 0) {
+      toast.success("Depoimento atualizado com sucesso!");
+      return data[0] as Depoimento;
+    }
+    
+    return null;
+  } catch (error) {
+    console.error("Erro ao atualizar depoimento:", error);
+    toast.error("Erro ao atualizar depoimento. Tente novamente.");
+    return null;
+  }
+};

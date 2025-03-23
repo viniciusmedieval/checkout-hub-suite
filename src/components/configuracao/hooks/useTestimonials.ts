@@ -1,7 +1,7 @@
 
 import { useState } from "react";
 import { Depoimento } from "@/lib/supabase";
-import { deleteTestimonial, addTestimonial } from "../services/configServices";
+import { deleteTestimonial, addTestimonial, updateTestimonial } from "../services/configServices";
 
 export function useTestimonials(initialDepoimentos: Depoimento[] = []) {
   const [depoimentos, setDepoimentos] = useState<Depoimento[]>(initialDepoimentos);
@@ -34,12 +34,28 @@ export function useTestimonials(initialDepoimentos: Depoimento[] = []) {
       setIsLoading(false);
     }
   };
+  
+  const handleUpdateTestimonial = async (id: number, depoimento: Partial<Depoimento>) => {
+    setIsLoading(true);
+    try {
+      const updatedDepoimento = await updateTestimonial(id, depoimento);
+      
+      if (updatedDepoimento) {
+        setDepoimentos(prev => 
+          prev.map(dep => dep.id === id ? updatedDepoimento : dep)
+        );
+      }
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   return {
     depoimentos,
     setDepoimentos,
     isLoading,
     handleDeleteTestimonial,
-    handleAddTestimonial
+    handleAddTestimonial,
+    handleUpdateTestimonial
   };
 }

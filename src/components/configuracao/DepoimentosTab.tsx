@@ -5,21 +5,31 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Depoimento } from "@/lib/supabase";
 import { DepoimentoCard } from "./DepoimentoCard";
 import { NovoDepoimentoModal } from "./NovoDepoimentoModal";
+import { EditarDepoimentoModal } from "./EditarDepoimentoModal";
 
 interface DepoimentosTabProps {
   depoimentos: Depoimento[];
   depoimentosSaving: boolean;
   handleDeleteTestimonial: (id: number) => Promise<void>;
   handleAddTestimonial: (depoimento: Omit<Depoimento, "id" | "criado_em">) => Promise<void>;
+  handleUpdateTestimonial: (id: number, depoimento: Partial<Depoimento>) => Promise<void>;
 }
 
 export function DepoimentosTab({ 
   depoimentos, 
   depoimentosSaving, 
   handleDeleteTestimonial,
-  handleAddTestimonial
+  handleAddTestimonial,
+  handleUpdateTestimonial
 }: DepoimentosTabProps) {
-  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isAddModalOpen, setIsAddModalOpen] = useState(false);
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [editingDepoimento, setEditingDepoimento] = useState<Depoimento | null>(null);
+
+  const handleEditClick = (depoimento: Depoimento) => {
+    setEditingDepoimento(depoimento);
+    setIsEditModalOpen(true);
+  };
 
   return (
     <Card>
@@ -31,7 +41,7 @@ export function DepoimentosTab({
       </CardHeader>
       <CardContent>
         <div className="flex justify-end mb-4">
-          <Button variant="outline" onClick={() => setIsModalOpen(true)}>
+          <Button variant="outline" onClick={() => setIsAddModalOpen(true)}>
             Adicionar Depoimento
           </Button>
         </div>
@@ -47,18 +57,29 @@ export function DepoimentosTab({
                 key={depoimento.id}
                 depoimento={depoimento}
                 onDelete={handleDeleteTestimonial}
-                isDeleting={depoimentosSaving}
+                onEdit={handleEditClick}
+                isProcessing={depoimentosSaving}
               />
             ))
           )}
         </div>
         
         <NovoDepoimentoModal
-          isOpen={isModalOpen}
-          onClose={() => setIsModalOpen(false)}
+          isOpen={isAddModalOpen}
+          onClose={() => setIsAddModalOpen(false)}
           onSubmit={handleAddTestimonial}
           isSaving={depoimentosSaving}
         />
+
+        {editingDepoimento && (
+          <EditarDepoimentoModal
+            isOpen={isEditModalOpen}
+            onClose={() => setIsEditModalOpen(false)}
+            onSubmit={(depoimento) => handleUpdateTestimonial(editingDepoimento.id, depoimento)}
+            depoimento={editingDepoimento}
+            isSaving={depoimentosSaving}
+          />
+        )}
       </CardContent>
     </Card>
   );

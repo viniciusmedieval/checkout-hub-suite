@@ -2,14 +2,16 @@
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Depoimento } from "@/lib/supabase";
+import { Edit, Trash } from "lucide-react";
 
 interface DepoimentoCardProps {
   depoimento: Depoimento;
   onDelete: (id: number) => Promise<void>;
-  isDeleting: boolean;
+  onEdit: (depoimento: Depoimento) => void;
+  isProcessing: boolean;
 }
 
-export function DepoimentoCard({ depoimento, onDelete, isDeleting }: DepoimentoCardProps) {
+export function DepoimentoCard({ depoimento, onDelete, onEdit, isProcessing }: DepoimentoCardProps) {
   return (
     <Card className="overflow-hidden border border-border">
       <div className="flex flex-col md:flex-row">
@@ -49,14 +51,21 @@ export function DepoimentoCard({ depoimento, onDelete, isDeleting }: DepoimentoC
           </div>
           <p className="text-sm text-muted-foreground mt-2">{depoimento.texto}</p>
           <div className="flex justify-end gap-2 mt-4">
-            <Button variant="outline" size="sm">Editar</Button>
+            <Button 
+              variant="outline" 
+              size="sm" 
+              onClick={() => onEdit(depoimento)}
+              disabled={isProcessing}
+            >
+              <Edit size={16} className="mr-1" /> Editar
+            </Button>
             <Button 
               variant="destructive" 
               size="sm" 
               onClick={() => onDelete(depoimento.id)}
-              disabled={isDeleting}
+              disabled={isProcessing}
             >
-              Excluir
+              <Trash size={16} className="mr-1" /> Excluir
             </Button>
           </div>
         </div>

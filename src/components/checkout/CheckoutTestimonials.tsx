@@ -2,15 +2,7 @@
 import { useState, useEffect } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { MessageSquare } from "lucide-react";
-import { supabase } from "@/lib/supabase";
-
-interface Testimonial {
-  id: number;
-  nome: string;
-  texto: string;
-  estrelas: number;
-  foto_url: string;
-}
+import { supabase, Depoimento } from "@/lib/supabase";
 
 interface CheckoutTestimonialsProps {
   produto_id?: number;
@@ -41,13 +33,15 @@ function StarRating({ rating }: { rating: number }) {
 }
 
 export function CheckoutTestimonials({ produto_id }: CheckoutTestimonialsProps) {
-  const [testimonials, setTestimonials] = useState<Testimonial[]>([]);
+  const [testimonials, setTestimonials] = useState<Depoimento[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchTestimonials = async () => {
       setLoading(true);
       try {
+        console.log("Fetching testimonials for produto_id:", produto_id);
+        
         // Try to get testimonials from Supabase
         let query = supabase.from("depoimentos").select("*");
         
@@ -56,13 +50,19 @@ export function CheckoutTestimonials({ produto_id }: CheckoutTestimonialsProps) 
           query = query.eq("produto_id", produto_id);
         }
         
-        const { data, error } = await query;
+        const { data, error } = await query.order('criado_em', { ascending: false });
         
-        if (error) throw error;
+        if (error) {
+          console.error("Error fetching testimonials:", error);
+          throw error;
+        }
+        
+        console.log("Testimonials fetched:", data);
         
         if (data && data.length > 0) {
           setTestimonials(data);
         } else {
+          console.log("No testimonials found, using defaults");
           // Fallback to default testimonials if none are found
           setTestimonials([
             {
@@ -70,21 +70,24 @@ export function CheckoutTestimonials({ produto_id }: CheckoutTestimonialsProps) 
               nome: "Carlos Mendes",
               texto: "Simplesmente excelente! O conteúdo superou todas as minhas expectativas. Vale cada centavo investido.",
               estrelas: 5,
-              foto_url: "https://randomuser.me/api/portraits/men/32.jpg"
+              foto_url: "https://randomuser.me/api/portraits/men/32.jpg",
+              criado_em: new Date().toISOString()
             },
             {
               id: 2,
               nome: "Ana Paula Silva",
               texto: "Melhor compra que fiz este ano. O suporte é excelente e o material é completo e atualizado.",
               estrelas: 5,
-              foto_url: "https://randomuser.me/api/portraits/women/44.jpg"
+              foto_url: "https://randomuser.me/api/portraits/women/44.jpg",
+              criado_em: new Date().toISOString()
             },
             {
               id: 3,
               nome: "Roberto Almeida",
               texto: "Já estou aplicando o conhecimento e vendo resultados. Recomendo fortemente!",
               estrelas: 4,
-              foto_url: "https://randomuser.me/api/portraits/men/22.jpg"
+              foto_url: "https://randomuser.me/api/portraits/men/22.jpg",
+              criado_em: new Date().toISOString()
             }
           ]);
         }
@@ -97,21 +100,24 @@ export function CheckoutTestimonials({ produto_id }: CheckoutTestimonialsProps) 
             nome: "Carlos Mendes",
             texto: "Simplesmente excelente! O conteúdo superou todas as minhas expectativas. Vale cada centavo investido.",
             estrelas: 5,
-            foto_url: "https://randomuser.me/api/portraits/men/32.jpg"
+            foto_url: "https://randomuser.me/api/portraits/men/32.jpg",
+            criado_em: new Date().toISOString()
           },
           {
             id: 2,
             nome: "Ana Paula Silva",
             texto: "Melhor compra que fiz este ano. O suporte é excelente e o material é completo e atualizado.",
             estrelas: 5,
-            foto_url: "https://randomuser.me/api/portraits/women/44.jpg"
+            foto_url: "https://randomuser.me/api/portraits/women/44.jpg",
+            criado_em: new Date().toISOString()
           },
           {
             id: 3,
             nome: "Roberto Almeida",
             texto: "Já estou aplicando o conhecimento e vendo resultados. Recomendo fortemente!",
             estrelas: 4,
-            foto_url: "https://randomuser.me/api/portraits/men/22.jpg"
+            foto_url: "https://randomuser.me/api/portraits/men/22.jpg",
+            criado_em: new Date().toISOString()
           }
         ]);
       } finally {
@@ -124,13 +130,13 @@ export function CheckoutTestimonials({ produto_id }: CheckoutTestimonialsProps) 
 
   if (loading) {
     return (
-      <Card className="checkout-card">
+      <Card className="border border-gray-100 bg-white shadow-sm rounded-lg">
         <CardContent className="p-6">
           <div className="flex items-center gap-3 mb-5">
             <div className="flex items-center justify-center w-8 h-8 rounded-full bg-blue-100">
               <MessageSquare size={16} className="text-blue-600" />
             </div>
-            <h3 className="checkout-heading">Depoimentos</h3>
+            <h3 className="text-base font-semibold text-gray-800">Depoimentos</h3>
           </div>
           <div className="space-y-4 animate-pulse">
             {[1, 2].map((i) => (

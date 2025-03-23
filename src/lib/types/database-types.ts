@@ -1,4 +1,3 @@
-
 // Types for our database tables
 export type Cliente = {
   id: number;
@@ -69,7 +68,7 @@ export type Depoimento = {
   texto: string;
   estrelas: number;
   foto_url: string;
-  produto_id: number;
+  produto_id?: number; // Making this optional
   criado_em: string;
 };
 
