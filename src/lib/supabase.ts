@@ -1,10 +1,65 @@
-import { createClient } from '@supabase/supabase-js';
+
+import { createClient, SupabaseClient } from '@supabase/supabase-js';
 
 const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
 const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
 
-// Initialize the Supabase client
-export const supabase = createClient(supabaseUrl || '', supabaseAnonKey || '');
+// Initialize the Supabase client with error handling
+let supabase: SupabaseClient;
+
+// Check if the required environment variables are available
+if (supabaseUrl && supabaseAnonKey) {
+  supabase = createClient(supabaseUrl, supabaseAnonKey);
+  console.log('Supabase client initialized with environment variables');
+} else {
+  console.warn('Supabase environment variables not found, using mock client');
+  // Create a mock client that doesn't actually connect to Supabase
+  // but provides the same interface
+  supabase = {
+    from: () => ({
+      select: () => ({
+        eq: () => ({
+          data: [],
+          error: null,
+        }),
+        gte: () => ({
+          lte: () => ({
+            data: [],
+            error: null,
+          }),
+        }),
+        order: () => ({
+          limit: () => ({
+            data: [],
+            error: null,
+          }),
+        }),
+      }),
+      insert: () => ({
+        data: null,
+        error: null,
+      }),
+      update: () => ({
+        eq: () => ({
+          data: null,
+          error: null,
+        }),
+      }),
+      delete: () => ({
+        eq: () => ({
+          data: null,
+          error: null,
+        }),
+      }),
+    }),
+    auth: {
+      getUser: () => Promise.resolve({ data: { user: null }, error: null }),
+      onAuthStateChange: () => ({ data: { subscription: { unsubscribe: () => {} } } }),
+    },
+  } as unknown as SupabaseClient;
+}
+
+export { supabase };
 
 // Types for our database tables
 export type Cliente = {
