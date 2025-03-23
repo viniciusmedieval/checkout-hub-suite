@@ -132,7 +132,14 @@ export function FormIdentificacao({ formData, errors, onChange }: FormIdentifica
             <div className="relative">
               <div className="absolute left-3 top-1/2 -translate-y-1/2">
                 <div className="flex items-center gap-1">
-                  <Flag className="h-4 w-4 text-blue-500 fill-blue-100" />
+                  <span className="flex items-center justify-center">
+                    <svg width="18" height="12" viewBox="0 0 18 12" fill="none" xmlns="http://www.w3.org/2000/svg">
+                      <rect width="18" height="12" fill="#009C3B"/>
+                      <path d="M9 1.5L16.5 6L9 10.5L1.5 6L9 1.5Z" fill="#FFDF00"/>
+                      <circle cx="9" cy="6" r="3.5" fill="#002776"/>
+                      <path d="M5.5 6C5.5 6 7 7.5 9 7.5C11 7.5 12.5 6 12.5 6" stroke="white" strokeWidth="0.5"/>
+                    </svg>
+                  </span>
                   <span className="text-sm text-gray-500">+55</span>
                 </div>
               </div>
