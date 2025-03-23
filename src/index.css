@@ -43,6 +43,13 @@
     --sidebar-accent-foreground: 240 5% 84.9%;
     --sidebar-border: 240 3.7% 15.9%;
     --sidebar-ring: 240 4.9% 83.9%;
+    
+    /* Checkout specific colors */
+    --checkout-bg: 0 0% 11%;
+    --checkout-card-bg: 0 0% 15%;
+    --checkout-input-bg: 0 0% 16%;
+    --checkout-orange: 28 100% 65%;
+    --checkout-green: 142 96% 41%;
   }
 }
 
@@ -81,5 +88,14 @@
   
   .text-balance {
     text-wrap: balance;
+  }
+  
+  /* Checkout specific utilities */
+  .checkout-input {
+    @apply bg-[#2A2A2A] border-[#353535] text-white focus-visible:ring-1 focus-visible:ring-[#FF914D] focus-visible:ring-offset-0;
+  }
+  
+  .checkout-card {
+    @apply border-[#353535] bg-[#1D1D1D];
   }
 }
