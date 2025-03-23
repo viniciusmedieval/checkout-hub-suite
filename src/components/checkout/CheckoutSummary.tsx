@@ -58,8 +58,8 @@ export function CheckoutSummary({ produto, configCheckout }: CheckoutSummaryProp
   return (
     <div className="space-y-3">
       <div className="flex items-center justify-between border-b pb-2 mb-2">
-        <span className="text-sm font-medium">Sua Compra</span>
-        <span className="text-sm">1 item</span>
+        <span className="text-sm font-medium text-black">Sua Compra</span>
+        <span className="text-sm text-black">1 item</span>
       </div>
       
       <div className="flex items-center gap-3">
@@ -71,10 +71,10 @@ export function CheckoutSummary({ produto, configCheckout }: CheckoutSummaryProp
           />
         )}
         <div className="flex-1">
-          <h3 className="text-sm font-medium">{produto.nome}</h3>
+          <h3 className="text-sm font-medium text-black">{produto.nome}</h3>
           <div className="flex justify-between items-center">
-            <p className="text-xs text-gray-500">{produto.tipo}</p>
-            <span className="text-sm font-bold">{formatCurrency(Number(produto.valor))}</span>
+            <p className="text-xs text-gray-600">assinatura</p>
+            <span className="text-sm font-bold text-black">{formatCurrency(Number(produto.valor))}</span>
           </div>
         </div>
       </div>

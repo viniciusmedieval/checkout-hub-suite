@@ -29,7 +29,7 @@ export function PaymentMethodSelector({
   
   return (
     <div className="p-4">
-      <h2 className="text-base font-semibold mb-3">Pagamento</h2>
+      <h2 className="text-base font-semibold mb-3 text-black">Pagamento</h2>
       
       <Tabs 
         defaultValue="card" 
