@@ -49,6 +49,7 @@ export type ConfigCheckout = {
   cor_titulo: string;
   texto_botao: string;
   cor_botao: string; // Propriedade para cor do botão CTA
+  cor_texto_botao: string; // Nova propriedade para cor do texto do botão CTA
   rodape_texto: string;
   rodape_empresa: string;
   rodape_ano: string;

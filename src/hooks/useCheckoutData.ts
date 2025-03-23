@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { Produto, supabase, ConfigCheckout } from "@/lib/supabase";
 
@@ -38,13 +37,15 @@ export const useCheckoutData = (slug: string | undefined) => {
           if (!validateHex(config.cor_banner)) config.cor_banner = "#3b82f6";
           if (!validateHex(config.cor_titulo)) config.cor_titulo = "#000000";
           if (!validateHex(config.cor_botao)) config.cor_botao = "#8B5CF6"; // Validando cor do botão
+          if (!validateHex(config.cor_texto_botao)) config.cor_texto_botao = "#FFFFFF"; // Validando cor do texto do botão
           
           console.log("useCheckoutData - Cores validadas:", {
             corTopo: config.cor_topo,
             corFundo: config.cor_fundo,
             corBanner: config.cor_banner,
             corTitulo: config.cor_titulo,
-            corBotao: config.cor_botao // Adicionando log para a cor do botão
+            corBotao: config.cor_botao,
+            corTextoBotao: config.cor_texto_botao // Adicionando log para a cor do texto do botão
           });
           
           setConfigCheckout(config);

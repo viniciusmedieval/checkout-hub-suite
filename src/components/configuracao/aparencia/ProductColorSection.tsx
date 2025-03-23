@@ -29,6 +29,15 @@ export function ProductColorSection({ config, handleColorChange }: ProductColorS
       />
       
       <ColorPicker
+        name="cor_texto_botao"
+        value={config.cor_texto_botao}
+        defaultValue="#FFFFFF"
+        onChange={handleColorChange}
+        label="Cor do Texto do Botão CTA"
+        description="Define a cor do texto do botão principal de chamada à ação"
+      />
+      
+      <ColorPicker
         name="cor_fundo"
         value={config.cor_fundo}
         defaultValue="#FFFFFF"

@@ -14,6 +14,7 @@ export const defaultConfig: ConfigCheckout = {
   cor_titulo: "#000000",
   texto_botao: "GARANTIR AGORA",
   cor_botao: "#8B5CF6", // Alterando para um roxo vibrante como padrão
+  cor_texto_botao: "#FFFFFF", // Texto branco como padrão para o botão
   rodape_texto: "Todos os direitos reservados.",
   rodape_empresa: "Minha Empresa LTDA",
   rodape_ano: "2023",
