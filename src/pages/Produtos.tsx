@@ -5,15 +5,22 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { Dialog, DialogContent } from "@/components/ui/dialog";
+import { Sheet, SheetContent } from "@/components/ui/sheet";
 import { toast } from "sonner";
 import { supabase, Produto } from "@/lib/supabase";
 import { ProductsManager } from "@/components/produtos/ProductsManager";
+import { ProductForm } from "@/components/produtos/ProductForm";
 import { Skeleton } from "@/components/ui/skeleton";
+import { useMediaQuery } from "@/hooks/use-mobile";
 
 const Produtos = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [produtos, setProdutos] = useState<Produto[]>([]);
   const [loading, setLoading] = useState(true);
+  const [selectedProduct, setSelectedProduct] = useState<Produto | undefined>(undefined);
+  const [isFormOpen, setIsFormOpen] = useState(false);
+  const isMobile = useMediaQuery("(max-width: 768px)");
 
   useEffect(() => {
     fetchProdutos();
@@ -64,6 +71,20 @@ const Produtos = () => {
     }
   };
 
+  const handleOpenForm = (product?: Produto) => {
+    setSelectedProduct(product);
+    setIsFormOpen(true);
+  };
+
+  const handleCloseForm = () => {
+    setIsFormOpen(false);
+    setSelectedProduct(undefined);
+  };
+
+  const handleProductSaved = () => {
+    fetchProdutos();
+  };
+
   const filteredProdutos = produtos.filter(produto => 
     produto.nome.toLowerCase().includes(searchTerm.toLowerCase())
   );
@@ -72,7 +93,7 @@ const Produtos = () => {
     <div className="space-y-6 animate-fade-in">
       <div className="flex justify-between items-center">
         <h1 className="text-3xl font-bold tracking-tight">Produtos</h1>
-        <Button className="flex items-center gap-2">
+        <Button className="flex items-center gap-2" onClick={() => handleOpenForm()}>
           <Plus className="h-4 w-4" />
           Novo Produto
         </Button>
@@ -160,7 +181,13 @@ const Produtos = () => {
                     </div>
                   </CardContent>
                   <CardFooter className="flex justify-between gap-2 pt-0">
-                    <Button variant="outline" className="flex-1">Editar</Button>
+                    <Button 
+                      variant="outline" 
+                      className="flex-1"
+                      onClick={() => handleOpenForm(produto)}
+                    >
+                      Editar
+                    </Button>
                     <Button 
                       variant={produto.ativo ? "destructive" : "default"} 
                       className="flex-1"
@@ -187,6 +214,32 @@ const Produtos = () => {
           <ProductsManager />
         </div>
       </div>
+
+      {isMobile ? (
+        <Sheet open={isFormOpen} onOpenChange={setIsFormOpen}>
+          <SheetContent side="bottom" className="h-[90%] max-h-[90%] p-6 overflow-y-auto">
+            {isFormOpen && (
+              <ProductForm 
+                product={selectedProduct} 
+                onClose={handleCloseForm} 
+                onSuccess={handleProductSaved} 
+              />
+            )}
+          </SheetContent>
+        </Sheet>
+      ) : (
+        <Dialog open={isFormOpen} onOpenChange={setIsFormOpen}>
+          <DialogContent className="sm:max-w-[720px] max-h-[90vh] overflow-y-auto p-6">
+            {isFormOpen && (
+              <ProductForm 
+                product={selectedProduct} 
+                onClose={handleCloseForm} 
+                onSuccess={handleProductSaved} 
+              />
+            )}
+          </DialogContent>
+        </Dialog>
+      )}
     </div>
   );
 };

@@ -33,6 +33,10 @@ export function ProductsManager() {
       <p className="text-sm text-muted-foreground">
         Adicione os produtos padrão ao banco de dados.
       </p>
+      <div className="text-xs text-amber-600 mb-2">
+        <p>Status: Usando mock de banco de dados</p>
+        <p>Configure as variáveis de ambiente do Supabase para conectar a um banco real.</p>
+      </div>
       <Button 
         onClick={handleAddProducts} 
         disabled={loading}

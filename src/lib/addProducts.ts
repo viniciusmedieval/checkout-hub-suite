@@ -31,6 +31,7 @@ const productsToAdd: ProductToAdd[] = [
     ativo: true,
     slug: "plano-mensal",
     checkout_title: "Assine o Plano Mensal",
+    imagem_url: "https://placehold.co/600x400/3b82f6/FFFFFF/png?text=Plano+Mensal",
     usar_api_pix: false,
     usar_config_pix_global: false,
   },
@@ -42,6 +43,7 @@ const productsToAdd: ProductToAdd[] = [
     ativo: true,
     slug: "plano-trimestral",
     checkout_title: "Assine o Plano Trimestral",
+    imagem_url: "https://placehold.co/600x400/22c55e/FFFFFF/png?text=Plano+Trimestral",
     usar_api_pix: false,
     usar_config_pix_global: false,
   },
@@ -53,17 +55,19 @@ const productsToAdd: ProductToAdd[] = [
     ativo: true,
     slug: "plano-semestral",
     checkout_title: "Assine o Plano Semestral",
+    imagem_url: "https://placehold.co/600x400/a855f7/FFFFFF/png?text=Plano+Semestral",
     usar_api_pix: false,
     usar_config_pix_global: false,
   },
   {
     nome: "Plano Vitalício",
     tipo: "assinatura",
-    valor: 29.90,
+    valor: 299.90,
     descricao: "Acesso vitalício à plataforma, sem mensalidades.",
     ativo: true,
     slug: "plano-vitalicio",
     checkout_title: "Aproveite o Vitalício!",
+    imagem_url: "https://placehold.co/600x400/ec4899/FFFFFF/png?text=Plano+Vitalício",
     usar_api_pix: false,
     usar_config_pix_global: false,
   }
@@ -90,7 +94,7 @@ export const addProductsToSupabase = async () => {
     
     if (newProducts.length === 0) {
       console.log('All products already exist in the database.');
-      return { success: true, message: 'All products already exist in the database.' };
+      return { success: true, message: 'Todos os produtos já existem no banco de dados.' };
     }
     
     // Insert new products - handle the case where .select() might not be available
@@ -108,15 +112,15 @@ export const addProductsToSupabase = async () => {
       console.log(`Added ${safeInsertedData.length} new products to the database.`);
       return { 
         success: true, 
-        message: `Added ${safeInsertedData.length} new products to the database.`,
+        message: `Adicionados ${safeInsertedData.length} novos produtos ao banco de dados.`,
         addedProducts: safeInsertedData
       };
     } catch (selectError) {
-      // If .select() is not supported, just return the success without the added products
+      // Se .select() não for suportado, apenas retornamos sucesso sem os produtos adicionados
       console.log(`Added new products to the database, but couldn't fetch them.`);
       return { 
         success: true, 
-        message: `Added ${newProducts.length} new products to the database.`,
+        message: `Adicionados ${newProducts.length} novos produtos ao banco de dados.`,
         addedProducts: newProducts
       };
     }
@@ -125,7 +129,7 @@ export const addProductsToSupabase = async () => {
     console.error('Error adding products:', error);
     return { 
       success: false, 
-      message: `Error adding products: ${error instanceof Error ? error.message : 'Unknown error'}`,
+      message: `Erro ao adicionar produtos: ${error instanceof Error ? error.message : 'Erro desconhecido'}`,
       error
     };
   }
