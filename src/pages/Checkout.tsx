@@ -1,23 +1,13 @@
 
 import { useEffect, useState } from "react";
 import { useParams, Link } from "react-router-dom";
-import { Produto, supabase } from "@/lib/supabase";
+import { Produto, supabase, ConfigCheckout } from "@/lib/supabase";
 import { Loader2, ArrowLeft, Shield } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { CheckoutForm } from "@/components/checkout/CheckoutForm";
 import { CheckoutTestimonials } from "@/components/checkout/CheckoutTestimonials";
 import { CheckoutSummary } from "@/components/checkout/CheckoutSummary";
 import { CheckoutHeader } from "@/components/checkout/CheckoutHeader";
-
-interface ConfigCheckout {
-  mensagem_topo: string;
-  texto_botao: string;
-  rodape_texto: string;
-  rodape_empresa: string;
-  rodape_ano: string;
-  mostrar_seguro: boolean;
-  mensagem_rodape: string;
-}
 
 const Checkout = () => {
   const { slug } = useParams<{ slug: string }>();
@@ -38,13 +28,15 @@ const Checkout = () => {
         console.log("Buscando produto com slug:", slug);
         
         // Fetch checkout configuration
-        const { data: checkoutConfig } = await supabase
+        const { data: checkoutConfig, error: configError } = await supabase
           .from("config_checkout")
           .select("*")
           .order('created_at', { ascending: false })
           .limit(1);
           
-        if (checkoutConfig && checkoutConfig.length > 0) {
+        if (configError) {
+          console.error("Erro ao carregar configurações do checkout:", configError);
+        } else if (checkoutConfig && checkoutConfig.length > 0) {
           setConfigCheckout(checkoutConfig[0]);
           console.log("Config checkout carregada:", checkoutConfig[0]);
         }
@@ -132,13 +124,13 @@ const Checkout = () => {
   return (
     <div className="min-h-screen flex flex-col bg-[hsl(var(--checkout-bg))] text-[hsl(var(--checkout-text))]">
       {/* Header with banner */}
-      <CheckoutHeader produto={produto} configCheckout={configCheckout || undefined} />
+      <CheckoutHeader produto={produto} configCheckout={configCheckout} />
 
       {/* Main checkout content */}
       <div className="container max-w-3xl mx-auto py-8 px-4 space-y-6">
-        <CheckoutForm />
+        <CheckoutForm configCheckout={configCheckout} />
         <CheckoutTestimonials produto_id={produto.id} />
-        <CheckoutSummary produto={produto} />
+        <CheckoutSummary produto={produto} configCheckout={configCheckout} />
       </div>
       
       {/* Footer */}
@@ -149,13 +141,15 @@ const Checkout = () => {
               <p>{configCheckout?.rodape_texto || '© 2023 Checkout Digital. Todos os direitos reservados.'}</p>
             </div>
             <div className="text-center">
-              <p className="flex justify-center items-center gap-1 text-gray-500">
-                <Shield size={14} />
-                Pagamento 100% seguro
-              </p>
+              {configCheckout?.mostrar_seguro !== false && (
+                <p className="flex justify-center items-center gap-1 text-gray-500">
+                  <Shield size={14} />
+                  {configCheckout?.mensagem_rodape || 'Pagamento 100% seguro'}
+                </p>
+              )}
             </div>
             <div className="text-right md:text-right text-gray-500">
-              <p>Termos de Uso | Política de Privacidade</p>
+              <p>{configCheckout?.rodape_empresa || 'Powered by'} © {configCheckout?.rodape_ano || '2023'}</p>
             </div>
           </div>
         </div>
