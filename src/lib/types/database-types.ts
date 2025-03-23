@@ -1,3 +1,4 @@
+
 // Types for our database tables
 export type Cliente = {
   id: number;
@@ -47,7 +48,7 @@ export type ConfigCheckout = {
   id: number;
   mensagem_topo: string;
   cor_topo: string;
-  cor_texto_topo: string; // Nova propriedade para a cor do texto da mensagem de topo
+  cor_texto_topo: string;
   ativa_banner: boolean;
   banner_url: string;
   banner_mobile_url: string;
@@ -55,6 +56,8 @@ export type ConfigCheckout = {
   cor_fundo: string;
   cor_titulo: string;
   texto_botao: string;
+  cor_botao: string;
+  cor_texto_botao: string;
   rodape_texto: string;
   rodape_empresa: string;
   rodape_ano: string;
@@ -68,7 +71,7 @@ export type Depoimento = {
   texto: string;
   estrelas: number;
   foto_url: string;
-  produto_id?: number; // Making this optional
+  produto_id?: number;
   criado_em: string;
 };
 

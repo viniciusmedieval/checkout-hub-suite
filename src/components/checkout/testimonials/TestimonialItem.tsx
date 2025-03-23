@@ -8,7 +8,7 @@ interface TestimonialItemProps {
 
 export function TestimonialItem({ testimonial }: TestimonialItemProps) {
   return (
-    <div className="border-b border-gray-100 pb-3 mb-3 last:border-0 last:pb-0 last:mb-0">
+    <div className="border-b border-gray-100 pb-3 last:border-0 last:pb-0">
       <div className="flex items-start gap-2">
         <div className="flex-shrink-0">
           <img 
@@ -22,11 +22,9 @@ export function TestimonialItem({ testimonial }: TestimonialItemProps) {
           />
         </div>
         <div className="flex-1 min-w-0">
-          <div className="flex items-center justify-between mb-1">
+          <div className="flex items-center justify-between">
             <h4 className="text-xs font-medium text-gray-800">{testimonial.nome}</h4>
-            <div className="flex-shrink-0">
-              <StarRating rating={testimonial.estrelas} size="xs" />
-            </div>
+            <StarRating rating={testimonial.estrelas} size="xs" />
           </div>
           <p className="text-xs text-gray-600 break-words">
             {testimonial.texto}

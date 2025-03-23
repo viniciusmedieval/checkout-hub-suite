@@ -22,21 +22,16 @@ const Checkout = () => {
       
       console.log("Checkout - Aplicando cor de fundo final:", backgroundColor);
       document.body.style.backgroundColor = backgroundColor;
+      // Adiciona uma classe específica para personalização adicional
+      document.body.classList.add('checkout-page');
     }
     
     // Limpar estilo ao desmontar o componente
     return () => {
       document.body.style.backgroundColor = '';
+      document.body.classList.remove('checkout-page');
     };
   }, [produto, configCheckout, loading]);
-
-  // Logs adicionais para debug
-  useEffect(() => {
-    if (configCheckout) {
-      console.log("Checkout - configCheckout atualizado:", configCheckout);
-      console.log("Checkout - cor_topo:", configCheckout.cor_topo);
-    }
-  }, [configCheckout]);
 
   if (loading) {
     return <CheckoutLoading />;
@@ -48,24 +43,17 @@ const Checkout = () => {
 
   // Determinar a cor de fundo a ser usada
   const backgroundColor = produto.background_color || configCheckout?.cor_fundo || "#FFFFFF";
-  
-  console.log("Checkout - Renderizando com configurações:", {
-    configCheckout,
-    corTopo: configCheckout?.cor_topo,
-    backgroundColor,
-    mensagemTopo: configCheckout?.mensagem_topo
-  });
 
   return (
     <div 
-      className="min-h-screen flex flex-col text-black"
+      className="min-h-screen flex flex-col"
       style={{ backgroundColor }}
     >
       {/* Header with banner */}
       <CheckoutHeader produto={produto} configCheckout={configCheckout} />
 
       {/* Main checkout content */}
-      <div className="flex-grow flex items-start justify-center">
+      <div className="flex-grow flex justify-center">
         <CheckoutContent produto={produto} configCheckout={configCheckout} />
       </div>
       
@@ -73,6 +61,6 @@ const Checkout = () => {
       <CheckoutFooter configCheckout={configCheckout} />
     </div>
   );
-}
+};
 
 export default Checkout;

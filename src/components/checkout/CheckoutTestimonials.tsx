@@ -1,6 +1,5 @@
 
 import { useState, useEffect } from "react";
-import { Card, CardContent } from "@/components/ui/card";
 import { MessageSquare } from "lucide-react";
 import { Depoimento } from "@/lib/supabase";
 import { TestimonialItem } from "./testimonials/TestimonialItem";
@@ -45,26 +44,26 @@ export function CheckoutTestimonials({ produto_id }: CheckoutTestimonialsProps) 
   }, [produto_id]);
 
   return (
-    <Card className="border border-gray-100 bg-white shadow-sm rounded-lg">
-      <CardContent className="p-6">
-        <div className="flex items-center gap-3 mb-5">
-          <div className="flex items-center justify-center w-8 h-8 rounded-full bg-blue-100">
-            <MessageSquare size={16} className="text-blue-600" />
-          </div>
-          <h3 className="text-base font-semibold text-gray-800">Depoimentos</h3>
-          {!loading && <span className="ml-auto text-xs text-gray-500">{testimonials.length} comentários</span>}
-        </div>
-        
-        {loading ? (
-          <TestimonialSkeleton />
-        ) : (
-          <div className="space-y-4">
-            {testimonials.map((testimonial) => (
-              <TestimonialItem key={testimonial.id} testimonial={testimonial} />
-            ))}
-          </div>
+    <div className="p-4">
+      <div className="flex items-center gap-2 mb-3">
+        <MessageSquare size={16} className="text-gray-500" />
+        <h3 className="text-base font-medium">Depoimentos</h3>
+        {!loading && (
+          <span className="ml-auto text-xs text-gray-500">
+            {testimonials.length} comentário{testimonials.length !== 1 ? 's' : ''}
+          </span>
         )}
-      </CardContent>
-    </Card>
+      </div>
+      
+      {loading ? (
+        <TestimonialSkeleton />
+      ) : (
+        <div className="space-y-3">
+          {testimonials.map((testimonial) => (
+            <TestimonialItem key={testimonial.id} testimonial={testimonial} />
+          ))}
+        </div>
+      )}
+    </div>
   );
 }

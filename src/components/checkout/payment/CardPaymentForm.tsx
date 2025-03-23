@@ -6,6 +6,7 @@ import {
   formatCardExpiry, 
   getInstallmentOptions 
 } from "@/utils/formatters";
+import { CreditCard, User, Calendar, Lock } from "lucide-react";
 
 interface CardPaymentFormProps {
   productValue: number;
@@ -38,49 +39,57 @@ export function CardPaymentForm({ productValue }: CardPaymentFormProps) {
   };
 
   return (
-    <div className="space-y-4">
-      <div className="space-y-2">
-        <label htmlFor="cardNumber" className="checkout-label">Número do cartão</label>
+    <div className="space-y-3">
+      <div className="relative">
+        <div className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400">
+          <CreditCard size={16} />
+        </div>
         <Input 
           id="cardNumber" 
-          placeholder="0000 0000 0000 0000" 
-          className="checkout-input" 
+          placeholder="Número do cartão" 
+          className="pl-9 h-10 text-sm" 
           value={cardNumber}
           onChange={handleCardNumberChange}
           maxLength={19}
         />
       </div>
       
-      <div className="space-y-2">
-        <label htmlFor="cardName" className="checkout-label">Nome no cartão</label>
+      <div className="relative">
+        <div className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400">
+          <User size={16} />
+        </div>
         <Input 
           id="cardName" 
-          placeholder="Nome como está impresso no cartão" 
-          className="checkout-input" 
+          placeholder="Nome impresso no cartão" 
+          className="pl-9 h-10 text-sm" 
           value={cardName}
           onChange={(e) => setCardName(e.target.value)}
         />
       </div>
       
-      <div className="grid grid-cols-2 gap-4">
-        <div className="space-y-2">
-          <label htmlFor="cardExpiry" className="checkout-label">Vencimento</label>
+      <div className="grid grid-cols-2 gap-3">
+        <div className="relative">
+          <div className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400">
+            <Calendar size={16} />
+          </div>
           <Input 
             id="cardExpiry" 
             placeholder="MM/AA" 
-            className="checkout-input" 
+            className="pl-9 h-10 text-sm" 
             value={cardExpiry}
             onChange={handleCardExpiryChange}
             maxLength={5}
           />
         </div>
         
-        <div className="space-y-2">
-          <label htmlFor="cardCVV" className="checkout-label">CVV</label>
+        <div className="relative">
+          <div className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400">
+            <Lock size={16} />
+          </div>
           <Input 
             id="cardCVV" 
-            placeholder="123" 
-            className="checkout-input" 
+            placeholder="CVV" 
+            className="pl-9 h-10 text-sm" 
             value={cardCVV}
             onChange={handleCardCVVChange}
             maxLength={4}
@@ -88,11 +97,10 @@ export function CardPaymentForm({ productValue }: CardPaymentFormProps) {
         </div>
       </div>
       
-      <div className="space-y-2">
-        <label htmlFor="installments" className="checkout-label">Parcelas</label>
+      <div>
         <select 
           id="installments" 
-          className="w-full h-10 bg-[hsl(var(--checkout-input-bg))] border border-[hsl(var(--checkout-border))] rounded-md px-3 text-[hsl(var(--checkout-text))]"
+          className="w-full h-10 bg-white border border-gray-200 rounded px-3 text-sm text-gray-900"
           value={installments}
           onChange={(e) => setInstallments(e.target.value)}
         >

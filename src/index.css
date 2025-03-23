@@ -44,20 +44,20 @@
     --sidebar-border: 240 3.7% 15.9%;
     --sidebar-ring: 240 4.9% 83.9%;
     
-    /* Checkout specific colors - updated for white background */
-    --checkout-bg: 0 0% 100%; /* Branco por padrão */
+    /* Checkout specific colors - updated for Kirvano style */
+    --checkout-bg: 0 0% 97%; /* Off-white background */
     --checkout-card-bg: 0 0% 100%;
     --checkout-form-bg: 0 0% 100%; /* White background for form */
     --checkout-input-bg: 0 0% 100%; /* White background for inputs */
     --checkout-input-text: 0 0% 0%; /* Black text for inputs */
-    --checkout-input-border: 0 0% 80%; /* Light gray border for inputs */
+    --checkout-input-border: 0 0% 85%; /* Light gray border for inputs */
     --checkout-input-placeholder: 0 0% 60%; /* Gray placeholder text */
     --checkout-orange: 28 100% 65%;
     --checkout-green: 142 96% 41%;
     --checkout-border: 0 0% 90%;
-    --checkout-text: 0 0% 0%; /* Black text for form */
+    --checkout-text: 0 0% 20%; /* Dark text for form */
     --checkout-text-light: 0 0% 40%; /* Dark gray for secondary text */
-    --checkout-button-bg: 210 100% 52%; /* Blue button background */
+    --checkout-button-bg: 151 55% 41.6%; /* Green button background */
   }
 }
 
@@ -75,9 +75,9 @@
     @apply scroll-smooth;
   }
   
-  /* Override para a página de checkout ter fundo branco por padrão */
+  /* Override para a página de checkout ter fundo cinza claro por padrão */
   body.checkout-page {
-    background-color: #FFFFFF;
+    background-color: #f9f9f9;
   }
 }
 
@@ -103,21 +103,21 @@
     text-wrap: balance;
   }
   
-  /* Checkout specific utilities - updated for new design */
+  /* Checkout specific utilities - updated for Kirvano style */
   .checkout-input {
-    @apply bg-white border-gray-300 text-black placeholder:text-gray-500 focus-visible:ring-1 focus-visible:ring-[#3B82F6] focus-visible:ring-offset-0;
+    @apply bg-white border-gray-200 text-gray-900 placeholder:text-gray-400 focus-visible:ring-1 focus-visible:ring-green-500 focus-visible:ring-offset-0 h-10 text-sm;
   }
   
   .checkout-card {
-    @apply border-[hsl(var(--checkout-border))] bg-[hsl(var(--checkout-card-bg))] shadow-sm;
+    @apply border-gray-200 bg-white shadow-sm rounded;
   }
   
   .checkout-form {
-    @apply bg-white text-black rounded-lg p-6 border border-gray-200 shadow-sm;
+    @apply bg-white text-gray-900 rounded p-4 border border-gray-200 shadow-sm;
   }
   
   .checkout-heading {
-    @apply text-base font-semibold text-black;
+    @apply text-base font-medium text-gray-900;
   }
   
   .checkout-subheading {
@@ -125,10 +125,10 @@
   }
   
   .checkout-label {
-    @apply text-xs text-gray-700;
+    @apply text-xs text-gray-600;
   }
   
   .checkout-button {
-    @apply bg-[#1E88E5] hover:bg-[#1976D2] text-white font-medium py-3 px-4 rounded-md w-full transition-colors;
+    @apply bg-green-600 hover:bg-green-700 text-white font-medium py-3 px-4 rounded w-full transition-colors;
   }
 }

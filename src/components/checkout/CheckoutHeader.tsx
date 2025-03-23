@@ -37,14 +37,14 @@ export function CheckoutHeader({ produto, configCheckout }: CheckoutHeaderProps)
                         configCheckout.mensagem_topo.trim() !== '';
 
   // Get the top message bar color from config
-  const topMessageColor = configCheckout?.cor_topo || "#000000";
+  const topMessageColor = configCheckout?.cor_topo || "#1e1e1e";
   
   // Get the top message text color from config
   const topMessageTextColor = configCheckout?.cor_texto_topo || "#FFFFFF";
 
   return (
-    <div className="w-full">
-      {/* Top message bar */}
+    <header className="w-full">
+      {/* Top urgency message bar */}
       {showTopMessage && (
         <div 
           className="py-2 text-xs font-medium text-center"
@@ -53,7 +53,7 @@ export function CheckoutHeader({ produto, configCheckout }: CheckoutHeaderProps)
             color: topMessageTextColor 
           }}
         >
-          <div className="container max-w-4xl mx-auto px-4 flex items-center justify-center gap-2">
+          <div className="container max-w-md mx-auto px-4 flex items-center justify-center gap-2">
             <Clock size={14} />
             <p>{configCheckout?.mensagem_topo}</p>
           </div>
@@ -66,10 +66,10 @@ export function CheckoutHeader({ produto, configCheckout }: CheckoutHeaderProps)
           <img 
             src={finalBannerUrl} 
             alt={produto.nome} 
-            className="w-full h-auto max-w-3xl mx-auto" 
+            className="w-full h-auto max-w-md mx-auto" 
           />
         </div>
       )}
-    </div>
+    </header>
   );
 }

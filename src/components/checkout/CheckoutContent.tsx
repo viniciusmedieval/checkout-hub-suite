@@ -1,8 +1,10 @@
 
 import { Produto, ConfigCheckout } from "@/lib/supabase";
 import { CheckoutForm } from "@/components/checkout/CheckoutForm";
-import { CheckoutTestimonials } from "@/components/checkout/CheckoutTestimonials";
 import { CheckoutSummary } from "@/components/checkout/CheckoutSummary";
+import { CheckoutTestimonials } from "@/components/checkout/CheckoutTestimonials";
+import { PaymentMethodSelector } from "@/components/checkout/payment/PaymentMethodSelector";
+import { useState } from "react";
 
 interface CheckoutContentProps {
   produto: Produto;
@@ -10,29 +12,56 @@ interface CheckoutContentProps {
 }
 
 export function CheckoutContent({ produto, configCheckout }: CheckoutContentProps) {
+  const [paymentMethod, setPaymentMethod] = useState<'card' | 'pix'>('card');
+  
   // Get title color from config, fallback to black if not set
   const titleColor = configCheckout?.cor_titulo || "#000000";
   
+  // Pix configuration for the product
+  const pixConfig = produto ? {
+    tipo_chave_pix: produto.tipo_chave_pix,
+    chave_pix: produto.chave_pix,
+    nome_beneficiario: produto.nome_beneficiario
+  } : null;
+  
   return (
-    <div className="container max-w-xl mx-auto py-8 px-4 space-y-6">
-      {/* Product Title with configurable color */}
-      <h1 
-        className="text-xl font-bold text-center mb-4"
-        style={{ color: titleColor }}
-      >
-        {produto.checkout_title || produto.nome}
-      </h1>
-      
+    <div className="w-full max-w-md mx-auto py-4 px-3 sm:py-6 sm:px-4">
       <div className="space-y-6">
-        <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-5">
+        {/* Product Title with configurable color */}
+        <h1 
+          className="text-xl font-bold text-center mb-2"
+          style={{ color: titleColor }}
+        >
+          {produto.checkout_title || produto.nome}
+        </h1>
+        
+        {/* Cliente Identification Form */}
+        <div className="bg-white rounded border border-gray-200 p-4">
           <CheckoutForm configCheckout={configCheckout} />
         </div>
         
-        <CheckoutSummary produto={produto} configCheckout={configCheckout} />
+        {/* Payment Section */}
+        <div className="bg-white rounded border border-gray-200 p-4">
+          <h2 className="font-medium text-base mb-4">Pagamento</h2>
+          <PaymentMethodSelector 
+            productValue={produto.valor} 
+            pixConfig={pixConfig}
+            onPaymentMethodChange={setPaymentMethod}
+            produto={produto}
+          />
+        </div>
         
-        <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-5">
-          <h2 className="text-base font-medium mb-4">Depoimentos</h2>
+        {/* Testimonials Section */}
+        <div className="bg-white rounded border border-gray-200 overflow-hidden">
           <CheckoutTestimonials produto_id={produto.id} />
+        </div>
+        
+        {/* Order Summary & CTA Button */}
+        <div className="bg-white rounded border border-gray-200 p-4 sticky bottom-0">
+          <CheckoutSummary 
+            produto={produto} 
+            configCheckout={configCheckout} 
+          />
         </div>
       </div>
     </div>
