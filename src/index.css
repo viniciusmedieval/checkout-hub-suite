@@ -45,11 +45,14 @@
     --sidebar-ring: 240 4.9% 83.9%;
     
     /* Checkout specific colors */
-    --checkout-bg: 0 0% 11%;
-    --checkout-card-bg: 0 0% 15%;
-    --checkout-input-bg: 0 0% 16%;
+    --checkout-bg: 0 0% 100%;
+    --checkout-card-bg: 0 0% 100%;
+    --checkout-input-bg: 0 0% 98%;
     --checkout-orange: 28 100% 65%;
     --checkout-green: 142 96% 41%;
+    --checkout-border: 0 0% 90%;
+    --checkout-text: 0 0% 20%;
+    --checkout-text-light: 0 0% 45%;
   }
 }
 
@@ -92,10 +95,22 @@
   
   /* Checkout specific utilities */
   .checkout-input {
-    @apply bg-[#2A2A2A] border-[#353535] text-white focus-visible:ring-1 focus-visible:ring-[#FF914D] focus-visible:ring-offset-0;
+    @apply bg-[hsl(var(--checkout-input-bg))] border-[hsl(var(--checkout-border))] text-[hsl(var(--checkout-text))] focus-visible:ring-1 focus-visible:ring-[#3B82F6] focus-visible:ring-offset-0;
   }
   
   .checkout-card {
-    @apply border-[#353535] bg-[#1D1D1D];
+    @apply border-[hsl(var(--checkout-border))] bg-[hsl(var(--checkout-card-bg))] shadow-sm;
+  }
+  
+  .checkout-heading {
+    @apply text-base font-semibold text-[hsl(var(--checkout-text))];
+  }
+  
+  .checkout-subheading {
+    @apply text-sm font-medium text-[hsl(var(--checkout-text-light))];
+  }
+  
+  .checkout-label {
+    @apply text-xs text-[hsl(var(--checkout-text-light))];
   }
 }

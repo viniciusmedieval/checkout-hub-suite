@@ -1,172 +1,300 @@
 
-import { useState } from "react";
+import { useState, useEffect, ChangeEvent } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { CreditCard, ShoppingCart, Shield } from "lucide-react";
-import { Produto } from "@/lib/supabase";
+import { CreditCard, ShoppingCart, Shield, Copy, ClipboardCheck } from "lucide-react";
+import { Produto, supabase } from "@/lib/supabase";
+import { 
+  formatCurrency, 
+  formatCardNumber, 
+  formatCardExpiry, 
+  getInstallmentOptions 
+} from "@/utils/formatters";
 import { toast } from "sonner";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 interface CheckoutSummaryProps {
   produto: Produto;
 }
 
+interface PixConfig {
+  tipo_chave_pix: string;
+  chave_pix: string;
+  nome_beneficiario: string;
+}
+
 export function CheckoutSummary({ produto }: CheckoutSummaryProps) {
   const [paymentMethod, setPaymentMethod] = useState<'card' | 'pix'>('card');
+  const [pixConfig, setPixConfig] = useState<PixConfig | null>(null);
+  const [copied, setCopied] = useState(false);
+  const [cardNumber, setCardNumber] = useState("");
+  const [cardName, setCardName] = useState("");
+  const [cardExpiry, setCardExpiry] = useState("");
+  const [cardCVV, setCardCVV] = useState("");
+  const [installments, setInstallments] = useState("1");
+  const [loading, setLoading] = useState(false);
   
-  const handleComprar = () => {
-    toast.success("Compra realizada com sucesso!");
+  const installmentOptions = getInstallmentOptions(produto.valor);
+
+  useEffect(() => {
+    const fetchPixConfig = async () => {
+      try {
+        // Try to get PIX config for this product
+        let { data: productPixConfig, error } = await supabase
+          .from("pix_config")
+          .select("*")
+          .eq("produto_id", produto.id)
+          .single();
+        
+        if (error || !productPixConfig) {
+          // If no product specific config, try to get global config
+          const { data: globalConfig } = await supabase
+            .from("pix_config")
+            .select("*")
+            .eq("is_global", true)
+            .single();
+          
+          if (globalConfig) {
+            setPixConfig(globalConfig);
+          } else {
+            // Fallback to product's own PIX fields
+            setPixConfig({
+              tipo_chave_pix: produto.tipo_chave_pix || 'email',
+              chave_pix: produto.chave_pix || 'exemplo@email.com',
+              nome_beneficiario: produto.nome_beneficiario || 'Loja Digital'
+            });
+          }
+        } else {
+          setPixConfig(productPixConfig);
+        }
+      } catch (error) {
+        console.error("Error fetching PIX config:", error);
+        // Fallback
+        setPixConfig({
+          tipo_chave_pix: 'email',
+          chave_pix: 'exemplo@email.com',
+          nome_beneficiario: 'Loja Digital'
+        });
+      }
+    };
+
+    fetchPixConfig();
+  }, [produto.id, produto.tipo_chave_pix, produto.chave_pix, produto.nome_beneficiario]);
+
+  const handleCardNumberChange = (e: ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value.replace(/\D/g, '');
+    setCardNumber(formatCardNumber(value));
+  };
+
+  const handleCardExpiryChange = (e: ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value.replace(/\D/g, '');
+    setCardExpiry(formatCardExpiry(value));
+  };
+
+  const handleCardCVVChange = (e: ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value.replace(/\D/g, '');
+    if (value.length <= 4) {
+      setCardCVV(value);
+    }
+  };
+
+  const copyPixCode = () => {
+    if (pixConfig?.chave_pix) {
+      navigator.clipboard.writeText(pixConfig.chave_pix);
+      setCopied(true);
+      toast.success("Chave PIX copiada!");
+      setTimeout(() => setCopied(false), 3000);
+    }
+  };
+
+  const handleComprar = async () => {
+    setLoading(true);
+
+    setTimeout(() => {
+      toast.success("Sua compra foi processada com sucesso!");
+      setLoading(false);
+    }, 1500);
   };
 
   return (
     <div className="space-y-6">
       {/* Payment section */}
-      <Card className="border border-[#353535] bg-[#1D1D1D]">
-        <CardContent className="p-4">
-          <div className="flex items-center justify-between mb-4">
-            <div className="flex items-center gap-2">
-              <CreditCard size={18} className="text-[#FF914D]" />
-              <h3 className="text-sm font-medium">Pagamento</h3>
+      <Card className="checkout-card">
+        <CardContent className="p-6">
+          <div className="flex items-center gap-3 mb-5">
+            <div className="flex items-center justify-center w-8 h-8 rounded-full bg-blue-100">
+              <CreditCard size={16} className="text-blue-600" />
             </div>
-            <span className="text-xs text-gray-400">Cartão de crédito</span>
+            <h3 className="checkout-heading">Pagamento</h3>
           </div>
           
-          <div className="flex items-center mb-4 gap-4">
-            <button 
-              className={`flex-1 py-2 text-center rounded-md text-sm font-medium transition-colors ${paymentMethod === 'card' ? 'bg-[#FF914D] text-white' : 'bg-[#2A2A2A] text-gray-400 hover:bg-[#353535]'}`}
-              onClick={() => setPaymentMethod('card')}
-            >
-              <CreditCard size={16} className="inline-block mr-2" />
-              Cartão
-            </button>
-            <button 
-              className={`flex-1 py-2 text-center rounded-md text-sm font-medium transition-colors ${paymentMethod === 'pix' ? 'bg-[#FF914D] text-white' : 'bg-[#2A2A2A] text-gray-400 hover:bg-[#353535]'}`}
-              onClick={() => setPaymentMethod('pix')}
-            >
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className="inline-block mr-2">
-                <path d="M7.5 4.5L2 10L7.5 15.5" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                <path d="M16.5 4.5L22 10L16.5 15.5" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                <path d="M14 2L10 18" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-              </svg>
-              Pix
-            </button>
-          </div>
-          
-          {paymentMethod === 'card' && (
-            <div className="space-y-4">
-              <div className="space-y-2">
-                <label htmlFor="cardNumber" className="text-xs text-gray-400">Número do cartão</label>
-                <Input 
-                  id="cardNumber" 
-                  placeholder="Digite o número do seu cartão" 
-                  className="bg-[#2A2A2A] border-[#353535] focus:border-[#FF914D] text-white" 
-                />
-              </div>
-              
-              <div className="space-y-2">
-                <label htmlFor="cardName" className="text-xs text-gray-400">Nome no cartão</label>
-                <Input 
-                  id="cardName" 
-                  placeholder="Digite o nome impresso no cartão" 
-                  className="bg-[#2A2A2A] border-[#353535] focus:border-[#FF914D] text-white" 
-                />
-              </div>
-              
-              <div className="grid grid-cols-2 gap-4">
+          <Tabs defaultValue="card" className="w-full" onValueChange={(value) => setPaymentMethod(value as 'card' | 'pix')}>
+            <TabsList className="grid w-full grid-cols-2 mb-6">
+              <TabsTrigger value="card" className="data-[state=active]:bg-blue-50 data-[state=active]:text-blue-700">
+                <CreditCard size={16} className="mr-2" />
+                Cartão de Crédito
+              </TabsTrigger>
+              <TabsTrigger value="pix" className="data-[state=active]:bg-blue-50 data-[state=active]:text-blue-700">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className="mr-2">
+                  <path d="M7.5 4.5L2 10L7.5 15.5" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                  <path d="M16.5 4.5L22 10L16.5 15.5" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                  <path d="M14 2L10 18" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                </svg>
+                Pix
+              </TabsTrigger>
+            </TabsList>
+            
+            <TabsContent value="card" className="space-y-4">
+              <div className="space-y-4">
                 <div className="space-y-2">
-                  <label htmlFor="cardExpiry" className="text-xs text-gray-400">Vencimento</label>
+                  <label htmlFor="cardNumber" className="checkout-label">Número do cartão</label>
                   <Input 
-                    id="cardExpiry" 
-                    placeholder="MM/AA" 
-                    className="bg-[#2A2A2A] border-[#353535] focus:border-[#FF914D] text-white" 
+                    id="cardNumber" 
+                    placeholder="0000 0000 0000 0000" 
+                    className="checkout-input" 
+                    value={cardNumber}
+                    onChange={handleCardNumberChange}
+                    maxLength={19}
                   />
                 </div>
                 
                 <div className="space-y-2">
-                  <label htmlFor="cardCVV" className="text-xs text-gray-400">CVV</label>
+                  <label htmlFor="cardName" className="checkout-label">Nome no cartão</label>
                   <Input 
-                    id="cardCVV" 
-                    placeholder="123" 
-                    className="bg-[#2A2A2A] border-[#353535] focus:border-[#FF914D] text-white" 
+                    id="cardName" 
+                    placeholder="Nome como está impresso no cartão" 
+                    className="checkout-input" 
+                    value={cardName}
+                    onChange={(e) => setCardName(e.target.value)}
                   />
                 </div>
-              </div>
-              
-              <div className="grid grid-cols-2 gap-4">
+                
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <label htmlFor="cardExpiry" className="checkout-label">Vencimento</label>
+                    <Input 
+                      id="cardExpiry" 
+                      placeholder="MM/AA" 
+                      className="checkout-input" 
+                      value={cardExpiry}
+                      onChange={handleCardExpiryChange}
+                      maxLength={5}
+                    />
+                  </div>
+                  
+                  <div className="space-y-2">
+                    <label htmlFor="cardCVV" className="checkout-label">CVV</label>
+                    <Input 
+                      id="cardCVV" 
+                      placeholder="123" 
+                      className="checkout-input" 
+                      value={cardCVV}
+                      onChange={handleCardCVVChange}
+                      maxLength={4}
+                    />
+                  </div>
+                </div>
+                
                 <div className="space-y-2">
-                  <label htmlFor="installments" className="text-xs text-gray-400">Parcelas</label>
+                  <label htmlFor="installments" className="checkout-label">Parcelas</label>
                   <select 
                     id="installments" 
-                    className="w-full h-10 bg-[#2A2A2A] border border-[#353535] rounded-md px-3 text-white"
+                    className="w-full h-10 bg-[hsl(var(--checkout-input-bg))] border border-[hsl(var(--checkout-border))] rounded-md px-3 text-[hsl(var(--checkout-text))]"
+                    value={installments}
+                    onChange={(e) => setInstallments(e.target.value)}
                   >
-                    <option value="1">1x de R$ {produto.valor.toFixed(2)}</option>
-                    <option value="2">2x de R$ {(produto.valor / 2).toFixed(2)}</option>
-                    <option value="3">3x de R$ {(produto.valor / 3).toFixed(2)}</option>
+                    {installmentOptions.map((option) => (
+                      <option key={option.value} value={option.value}>
+                        {option.label}
+                      </option>
+                    ))}
                   </select>
                 </div>
-                
-                <div className="space-y-2">
-                  <label htmlFor="cpfCartao" className="text-xs text-gray-400">CPF do titular</label>
-                  <Input 
-                    id="cpfCartao" 
-                    placeholder="Apenas números" 
-                    className="bg-[#2A2A2A] border-[#353535] focus:border-[#FF914D] text-white" 
-                  />
-                </div>
               </div>
-            </div>
-          )}
-          
-          {paymentMethod === 'pix' && (
-            <div className="text-center p-4 bg-[#2A2A2A] rounded-md">
-              <svg width="80" height="80" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className="mx-auto mb-2">
-                <path d="M7.5 4.5L2 10L7.5 15.5" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                <path d="M16.5 4.5L22 10L16.5 15.5" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                <path d="M14 2L10 18" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-              </svg>
-              <p className="text-sm mb-2">Gere o QR Code para pagamento</p>
-              <button className="bg-[#FF914D] text-white px-4 py-2 rounded-md text-sm">
-                Gerar QR Code
-              </button>
-            </div>
-          )}
+            </TabsContent>
+            
+            <TabsContent value="pix">
+              <div className="bg-blue-50 rounded-lg p-6 text-center">
+                <svg width="80" height="80" viewBox="0 0 80 80" className="mx-auto mb-4" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M24.9997 15L6.66699 33.3333L24.9997 51.6667" stroke="#3B82F6" strokeWidth="5" strokeLinecap="round" strokeLinejoin="round"/>
+                  <path d="M54.9997 15L73.333 33.3333L54.9997 51.6667" stroke="#3B82F6" strokeWidth="5" strokeLinecap="round" strokeLinejoin="round"/>
+                  <path d="M46.6667 6.66699L33.3334 60.0003" stroke="#3B82F6" strokeWidth="5" strokeLinecap="round" strokeLinejoin="round"/>
+                </svg>
+                <h4 className="text-lg font-semibold text-gray-800 mb-2">Chave Pix</h4>
+                <p className="text-sm text-gray-600 mb-3">{pixConfig?.nome_beneficiario || 'Loja Digital'}</p>
+                
+                <div className="bg-white border border-gray-200 rounded-md p-3 mb-4 flex items-center justify-between">
+                  <span className="text-sm text-gray-800 font-medium truncate mr-2">
+                    {pixConfig?.chave_pix || 'exemplo@email.com'}
+                  </span>
+                  <Button variant="outline" size="sm" onClick={copyPixCode} className="shrink-0">
+                    {copied ? <ClipboardCheck size={16} className="mr-1.5" /> : <Copy size={16} className="mr-1.5" />}
+                    {copied ? 'Copiado' : 'Copiar'}
+                  </Button>
+                </div>
+                
+                <p className="text-sm text-gray-600">
+                  Após realizar o pagamento via PIX, sua compra será confirmada em instantes.
+                </p>
+              </div>
+            </TabsContent>
+          </Tabs>
         </CardContent>
       </Card>
       
       {/* Order summary */}
-      <Card className="border border-[#353535] bg-[#1D1D1D]">
-        <CardContent className="p-4">
-          <div className="flex items-center gap-2 mb-4">
-            <ShoppingCart size={18} className="text-[#FF914D]" />
-            <h3 className="text-sm font-medium">Sua Compra</h3>
-            <span className="ml-auto text-xs font-medium text-[#FF914D]">1 item • R$ {produto.valor.toFixed(2)}</span>
+      <Card className="checkout-card">
+        <CardContent className="p-6">
+          <div className="flex items-center gap-3 mb-5">
+            <div className="flex items-center justify-center w-8 h-8 rounded-full bg-blue-100">
+              <ShoppingCart size={16} className="text-blue-600" />
+            </div>
+            <h3 className="checkout-heading">Resumo da Compra</h3>
           </div>
           
-          <div className="flex items-start gap-3 p-3 bg-[#2A2A2A] rounded-md mb-4">
-            <div className="w-12 h-12 rounded overflow-hidden flex-shrink-0">
-              <img 
-                src={produto.imagem_url || 'https://placehold.co/100x100/333/FFF'} 
-                alt={produto.nome} 
-                className="w-full h-full object-cover"
-              />
-            </div>
-            <div>
-              <p className="text-xs text-gray-400">Produto Digital - Checkout Card</p>
-              <p className="text-sm font-medium">{produto.nome}</p>
-              <p className="text-[#FF914D] text-sm font-bold">R$ {produto.valor.toFixed(2)}</p>
+          <div className="border border-gray-100 rounded-lg p-4 mb-6">
+            <div className="flex items-start gap-3">
+              <div className="w-16 h-16 rounded overflow-hidden flex-shrink-0 bg-gray-100">
+                <img 
+                  src={produto.imagem_url || 'https://placehold.co/100x100/f1f5f9/64748b?text=Produto'} 
+                  alt={produto.nome} 
+                  className="w-full h-full object-cover"
+                  onError={(e) => {
+                    const target = e.target as HTMLImageElement;
+                    target.src = 'https://placehold.co/100x100/f1f5f9/64748b?text=Produto';
+                  }}
+                />
+              </div>
+              <div>
+                <p className="text-xs text-gray-500">Produto Digital</p>
+                <p className="text-base font-medium text-gray-800">{produto.nome}</p>
+                <p className="text-lg font-bold text-blue-600">{formatCurrency(produto.valor)}</p>
+              </div>
             </div>
           </div>
           
           <Button 
             onClick={handleComprar}
-            className="w-full bg-[#04D361] hover:bg-[#03b050] text-white font-bold py-3 text-lg"
+            className="w-full bg-green-500 hover:bg-green-600 text-white font-bold py-4 text-base h-auto"
+            disabled={loading}
           >
-            Finalizar agora
+            {loading ? (
+              <>
+                <svg className="animate-spin -ml-1 mr-2 h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                </svg>
+                Processando...
+              </>
+            ) : (
+              'Assinar agora'
+            )}
           </Button>
           
-          <div className="flex items-center justify-center mt-4 text-xs text-gray-400 gap-1">
+          <div className="flex items-center justify-center mt-4 text-xs text-gray-500 gap-1.5">
             <Shield size={14} />
-            <span>Compra 100% segura. Proteção garantida na hora da compra.</span>
+            <span>Quase 10.946 usuários ativos finalizaram a compra neste momento.</span>
           </div>
         </CardContent>
       </Card>
