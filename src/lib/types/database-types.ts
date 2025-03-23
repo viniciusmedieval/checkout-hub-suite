@@ -53,6 +53,7 @@ export type ConfigCheckout = {
   banner_mobile_url: string;
   cor_banner: string;
   cor_fundo: string;
+  cor_titulo: string; // New field for title text color
   texto_botao: string;
   rodape_texto: string;
   rodape_empresa: string;

@@ -36,11 +36,13 @@ export const useCheckoutData = (slug: string | undefined) => {
           if (!validateHex(config.cor_topo)) config.cor_topo = "#3b82f6";
           if (!validateHex(config.cor_fundo)) config.cor_fundo = "#FFFFFF";
           if (!validateHex(config.cor_banner)) config.cor_banner = "#3b82f6";
+          if (!validateHex(config.cor_titulo)) config.cor_titulo = "#000000";
           
           console.log("useCheckoutData - Cores validadas:", {
             corTopo: config.cor_topo,
             corFundo: config.cor_fundo,
-            corBanner: config.cor_banner
+            corBanner: config.cor_banner,
+            corTitulo: config.cor_titulo
           });
           
           setConfigCheckout(config);

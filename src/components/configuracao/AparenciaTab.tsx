@@ -41,9 +41,10 @@ export function AparenciaTab({ config, handleConfigChange, handleSwitchChange }:
     console.log('AparenciaTab - Valores atuais das cores:', {
       corTopo: config.cor_topo,
       corFundo: config.cor_fundo,
-      corBanner: config.cor_banner
+      corBanner: config.cor_banner,
+      corTitulo: config.cor_titulo
     });
-  }, [config.cor_topo, config.cor_fundo, config.cor_banner]);
+  }, [config.cor_topo, config.cor_fundo, config.cor_banner, config.cor_titulo]);
 
   return (
     <Card>
@@ -72,6 +73,26 @@ export function AparenciaTab({ config, handleConfigChange, handleSwitchChange }:
             />
           </div>
           <p className="text-xs text-gray-500">Cor da barra de mensagem no topo do checkout</p>
+        </div>
+        
+        <div className="space-y-2">
+          <label className="text-sm font-medium">Cor do Título</label>
+          <div className="flex gap-2">
+            <Input
+              type="color"
+              name="cor_titulo"
+              value={config.cor_titulo || "#000000"}
+              onChange={handleColorChange}
+              className="w-16 h-10 p-1"
+            />
+            <Input
+              name="cor_titulo"
+              value={config.cor_titulo || "#000000"}
+              onChange={handleColorChange}
+              placeholder="#000000"
+            />
+          </div>
+          <p className="text-xs text-gray-500">Cor do texto do título no checkout</p>
         </div>
         
         <div className="space-y-2">

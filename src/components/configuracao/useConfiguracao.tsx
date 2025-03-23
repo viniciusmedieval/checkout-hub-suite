@@ -13,6 +13,7 @@ export function useConfiguracao() {
     banner_mobile_url: "https://placehold.co/600x400/3b82f6/FFFFFF/png?text=Banner+Mobile",
     cor_banner: "#3b82f6",
     cor_fundo: "#FFFFFF",
+    cor_titulo: "#000000", // Default title color
     texto_botao: "GARANTIR AGORA",
     rodape_texto: "Todos os direitos reservados.",
     rodape_empresa: "Minha Empresa LTDA",
@@ -93,6 +94,7 @@ export function useConfiguracao() {
         banner_mobile_url: config.banner_mobile_url,
         cor_banner: validateHex(config.cor_banner) ? config.cor_banner : "#3b82f6",
         cor_fundo: validateHex(config.cor_fundo) ? config.cor_fundo : "#FFFFFF",
+        cor_titulo: validateHex(config.cor_titulo) ? config.cor_titulo : "#000000", // Validate title color
         texto_botao: config.texto_botao,
         rodape_texto: config.rodape_texto,
         rodape_empresa: config.rodape_empresa,
