@@ -9,7 +9,7 @@ interface CheckoutFooterProps {
 export function CheckoutFooter({ configCheckout }: CheckoutFooterProps) {
   return (
     <footer className="mt-auto py-4 text-center border-t border-gray-100 text-xs" style={{ borderColor: 'rgba(0,0,0,0.1)' }}>
-      <div className="container max-w-3xl mx-auto px-4">
+      <div className="container max-w-xl mx-auto px-4">
         <div className="grid grid-cols-1 gap-2">
           <div className="text-center text-gray-500">
             <p>{configCheckout?.rodape_texto || '© 2023 Checkout Digital. Todos os direitos reservados.'}</p>

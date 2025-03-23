@@ -65,12 +65,14 @@ const Checkout = () => {
       <CheckoutHeader produto={produto} configCheckout={configCheckout} />
 
       {/* Main checkout content */}
-      <CheckoutContent produto={produto} configCheckout={configCheckout} />
+      <div className="flex-grow flex items-start justify-center">
+        <CheckoutContent produto={produto} configCheckout={configCheckout} />
+      </div>
       
       {/* Footer */}
       <CheckoutFooter configCheckout={configCheckout} />
     </div>
   );
-};
+}
 
 export default Checkout;
