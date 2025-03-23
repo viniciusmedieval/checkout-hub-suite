@@ -11,7 +11,6 @@ export type FormData = {
   email: string;
   telefone: string;
   documento: string;
-  observacoes: string;
 };
 
 export const useCheckout = () => {
@@ -22,8 +21,7 @@ export const useCheckout = () => {
     nome: "",
     email: "",
     telefone: "",
-    documento: "",
-    observacoes: ""
+    documento: ""
   });
 
   const [formErrors, setFormErrors] = useState<Record<string, boolean>>({});
@@ -92,8 +90,7 @@ export const useCheckout = () => {
         nome: "",
         email: "",
         telefone: "",
-        documento: "",
-        observacoes: ""
+        documento: ""
       });
       
       // Redirect to thank you page or show success message

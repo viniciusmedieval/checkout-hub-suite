@@ -2,9 +2,8 @@
 import { ConfigCheckout } from "@/lib/supabase";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
 import { useState } from "react";
-import { User, Phone, Mail, FileText, MessageSquare } from "lucide-react";
+import { User, Phone, Mail, FileText } from "lucide-react";
 import { formatPhoneNumber, formatCPF } from "@/utils/formatters";
 
 interface CheckoutFormProps {
@@ -16,8 +15,7 @@ export function CheckoutForm({ configCheckout }: CheckoutFormProps) {
     nome: "",
     email: "",
     telefone: "",
-    documento: "",
-    observacoes: ""
+    documento: ""
   });
 
   const [errors, setErrors] = useState({
@@ -115,21 +113,6 @@ export function CheckoutForm({ configCheckout }: CheckoutFormProps) {
             />
             {errors.documento && <p className="text-red-500 text-xs mt-1">Documento inválido</p>}
           </div>
-        </div>
-        
-        <div className="relative">
-          <div className="absolute left-3 top-3 text-gray-400">
-            <MessageSquare size={16} />
-          </div>
-          <Textarea 
-            id="observacoes"
-            name="observacoes"
-            placeholder="Observações (opcional)"
-            value={formData.observacoes}
-            onChange={handleChange}
-            rows={2}
-            className="pl-9 resize-none text-sm"
-          />
         </div>
       </div>
     </div>

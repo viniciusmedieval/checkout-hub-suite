@@ -1,7 +1,6 @@
 
 import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
-import { User, Phone, Mail, FileText, MessageSquare, CheckCircle } from "lucide-react";
+import { User, Phone, Mail, FileText, CheckCircle } from "lucide-react";
 import { ChangeEvent } from "react";
 import { formatPhoneNumber, formatCPF } from "@/utils/formatters";
 import { FormData } from "@/hooks/useCheckout";
@@ -116,21 +115,6 @@ export function FormIdentificacao({ formData, errors, onChange }: FormIdentifica
             />
             {errors.documento && <p className="text-red-500 text-xs mt-1">Documento inválido</p>}
           </div>
-        </div>
-        
-        <div className="relative">
-          <div className="absolute left-3 top-3 text-gray-400">
-            <MessageSquare size={16} />
-          </div>
-          <Textarea 
-            id="observacoes"
-            name="observacoes"
-            placeholder="Observações (opcional)"
-            value={formData.observacoes}
-            onChange={handleChange}
-            rows={2}
-            className="pl-10 resize-none text-sm rounded-lg border-gray-200"
-          />
         </div>
       </div>
     </div>
