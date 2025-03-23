@@ -1,4 +1,3 @@
-
 import { useEffect, useState } from "react";
 import { useParams, Link } from "react-router-dom";
 import { Produto, supabase, ConfigCheckout } from "@/lib/supabase";
@@ -122,20 +121,26 @@ const Checkout = () => {
   }
 
   return (
-    <div className="min-h-screen flex flex-col bg-[hsl(var(--checkout-bg))] text-[hsl(var(--checkout-text))]">
+    <div className="min-h-screen flex flex-col bg-white text-black">
       {/* Header with banner */}
       <CheckoutHeader produto={produto} configCheckout={configCheckout} />
 
       {/* Main checkout content */}
-      <div className="container max-w-3xl mx-auto py-8 px-4 space-y-6">
-        <CheckoutForm configCheckout={configCheckout} />
-        <CheckoutTestimonials produto_id={produto.id} />
-        <CheckoutSummary produto={produto} configCheckout={configCheckout} />
+      <div className="container max-w-4xl mx-auto py-8 px-4 space-y-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div>
+            <CheckoutForm configCheckout={configCheckout} />
+          </div>
+          <div className="space-y-6">
+            <CheckoutSummary produto={produto} configCheckout={configCheckout} />
+            <CheckoutTestimonials produto_id={produto.id} />
+          </div>
+        </div>
       </div>
       
       {/* Footer */}
       <footer className="mt-auto py-6 text-center border-t border-gray-100 text-sm">
-        <div className="container max-w-3xl mx-auto px-4">
+        <div className="container max-w-4xl mx-auto px-4">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4 items-center">
             <div className="text-left md:text-left text-gray-500">
               <p>{configCheckout?.rodape_texto || '© 2023 Checkout Digital. Todos os direitos reservados.'}</p>

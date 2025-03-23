@@ -31,12 +31,12 @@ export function CheckoutForm({ configCheckout }: CheckoutFormProps) {
   };
 
   return (
-    <div className="checkout-form bg-black rounded-lg overflow-hidden">
+    <div className="checkout-form">
       <form onSubmit={handleSubmit} className="space-y-4">
-        <h2 className="text-xl font-semibold mb-4 text-white">Informações de Contato</h2>
+        <h2 className="text-xl font-semibold mb-4 text-black">Informações de Contato</h2>
         
         <div className="space-y-2">
-          <Label htmlFor="nome" className="text-white">Nome completo</Label>
+          <Label htmlFor="nome" className="text-gray-700">Nome completo</Label>
           <Input 
             id="nome"
             name="nome"
@@ -44,12 +44,12 @@ export function CheckoutForm({ configCheckout }: CheckoutFormProps) {
             value={formData.nome}
             onChange={handleChange}
             required
-            className="bg-black border-[#333] text-white placeholder:text-gray-500"
+            className="bg-white border-gray-300 text-black placeholder:text-gray-500"
           />
         </div>
         
         <div className="space-y-2">
-          <Label htmlFor="email" className="text-white">E-mail</Label>
+          <Label htmlFor="email" className="text-gray-700">E-mail</Label>
           <Input 
             id="email"
             name="email"
@@ -58,12 +58,12 @@ export function CheckoutForm({ configCheckout }: CheckoutFormProps) {
             value={formData.email}
             onChange={handleChange}
             required
-            className="bg-black border-[#333] text-white placeholder:text-gray-500"
+            className="bg-white border-gray-300 text-black placeholder:text-gray-500"
           />
         </div>
         
         <div className="space-y-2">
-          <Label htmlFor="telefone" className="text-white">Telefone</Label>
+          <Label htmlFor="telefone" className="text-gray-700">Telefone</Label>
           <Input 
             id="telefone"
             name="telefone"
@@ -71,24 +71,24 @@ export function CheckoutForm({ configCheckout }: CheckoutFormProps) {
             value={formData.telefone}
             onChange={handleChange}
             required
-            className="bg-black border-[#333] text-white placeholder:text-gray-500"
+            className="bg-white border-gray-300 text-black placeholder:text-gray-500"
           />
         </div>
         
         <div className="space-y-2">
-          <Label htmlFor="endereco" className="text-white">Endereço (opcional)</Label>
+          <Label htmlFor="endereco" className="text-gray-700">Endereço (opcional)</Label>
           <Input 
             id="endereco"
             name="endereco"
             placeholder="Seu endereço completo"
             value={formData.endereco}
             onChange={handleChange}
-            className="bg-black border-[#333] text-white placeholder:text-gray-500"
+            className="bg-white border-gray-300 text-black placeholder:text-gray-500"
           />
         </div>
         
         <div className="space-y-2">
-          <Label htmlFor="observacoes" className="text-white">Observações (opcional)</Label>
+          <Label htmlFor="observacoes" className="text-gray-700">Observações (opcional)</Label>
           <Textarea 
             id="observacoes"
             name="observacoes"
@@ -96,7 +96,7 @@ export function CheckoutForm({ configCheckout }: CheckoutFormProps) {
             value={formData.observacoes}
             onChange={handleChange}
             rows={3}
-            className="bg-black border-[#333] text-white placeholder:text-gray-500"
+            className="bg-white border-gray-300 text-black placeholder:text-gray-500"
           />
         </div>
         

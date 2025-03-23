@@ -23,32 +23,31 @@ export function CheckoutHeader({ produto, configCheckout }: CheckoutHeaderProps)
   // Only use config banner if product has no banner AND config banner is activated
   const finalBannerUrl = bannerUrl || (configCheckout?.ativa_banner ? configBannerUrl : undefined);
 
-  // Get banner background color (fallback to config color, then default blue)
+  // Get banner background color (fallback to config color, then default black)
   const bannerColor = produto.banner_color || 
                       configCheckout?.cor_banner || 
-                      "#3b82f6";
+                      "#000000";
 
   // Check if we have a valid banner URL
   const hasBanner = !!finalBannerUrl && finalBannerUrl.trim() !== '';
   
-  // Only show top message bar if banner is disabled and we have a message
-  const showTopMessage = !hasBanner && 
-                         configCheckout?.mensagem_topo && 
-                         configCheckout.mensagem_topo.trim() !== '';
+  // Always show top message bar if we have a message
+  const showTopMessage = configCheckout?.mensagem_topo && 
+                        configCheckout.mensagem_topo.trim() !== '';
 
   return (
-    <div className="w-full bg-white border-b border-gray-200">
-      {/* Top message bar - only show if no banner */}
+    <div className="w-full">
+      {/* Top message bar */}
       {showTopMessage && (
         <div 
-          className="text-center py-2 text-xs text-white font-medium"
-          style={{ backgroundColor: configCheckout?.cor_topo || "#3b82f6" }}
+          className="text-center py-3 text-sm text-white font-medium"
+          style={{ backgroundColor: configCheckout?.cor_topo || "#000000" }}
         >
           <p>{configCheckout?.mensagem_topo}</p>
         </div>
       )}
 
-      {/* Banner only */}
+      {/* Banner */}
       <div className="w-full text-center">
         {hasBanner && (
           <div 
@@ -58,7 +57,7 @@ export function CheckoutHeader({ produto, configCheckout }: CheckoutHeaderProps)
             <img 
               src={finalBannerUrl} 
               alt={produto.nome} 
-              className="w-full h-auto" 
+              className="w-full h-auto max-w-[1200px] mx-auto" 
             />
           </div>
         )}

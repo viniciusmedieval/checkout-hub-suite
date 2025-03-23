@@ -1,3 +1,4 @@
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -46,16 +47,16 @@
     /* Checkout specific colors - updated for white background */
     --checkout-bg: 0 0% 100%;
     --checkout-card-bg: 0 0% 100%;
-    --checkout-form-bg: 0 0% 0%; /* Black background for form */
-    --checkout-input-bg: 0 0% 0%; /* Black background for inputs */
-    --checkout-input-text: 0 0% 100%; /* White text for inputs */
-    --checkout-input-border: 0 0% 20%; /* Dark border for inputs */
-    --checkout-input-placeholder: 0 0% 70%; /* Light gray placeholder text */
+    --checkout-form-bg: 0 0% 100%; /* White background for form */
+    --checkout-input-bg: 0 0% 100%; /* White background for inputs */
+    --checkout-input-text: 0 0% 0%; /* Black text for inputs */
+    --checkout-input-border: 0 0% 80%; /* Light gray border for inputs */
+    --checkout-input-placeholder: 0 0% 60%; /* Gray placeholder text */
     --checkout-orange: 28 100% 65%;
     --checkout-green: 142 96% 41%;
     --checkout-border: 0 0% 90%;
-    --checkout-text: 0 0% 100%; /* White text for form */
-    --checkout-text-light: 0 0% 80%; /* Light gray for secondary text */
+    --checkout-text: 0 0% 0%; /* Black text for form */
+    --checkout-text-light: 0 0% 40%; /* Dark gray for secondary text */
     --checkout-button-bg: 210 100% 52%; /* Blue button background */
   }
 }
@@ -99,7 +100,7 @@
   
   /* Checkout specific utilities - updated for new design */
   .checkout-input {
-    @apply bg-black border-[#333] text-white placeholder:text-gray-500 focus-visible:ring-1 focus-visible:ring-[#3B82F6] focus-visible:ring-offset-0;
+    @apply bg-white border-gray-300 text-black placeholder:text-gray-500 focus-visible:ring-1 focus-visible:ring-[#3B82F6] focus-visible:ring-offset-0;
   }
   
   .checkout-card {
@@ -107,19 +108,19 @@
   }
   
   .checkout-form {
-    @apply bg-black text-white rounded-lg p-6 border-0 shadow-sm;
+    @apply bg-white text-black rounded-lg p-6 border border-gray-200 shadow-sm;
   }
   
   .checkout-heading {
-    @apply text-base font-semibold text-white;
+    @apply text-base font-semibold text-black;
   }
   
   .checkout-subheading {
-    @apply text-sm font-medium text-gray-300;
+    @apply text-sm font-medium text-gray-700;
   }
   
   .checkout-label {
-    @apply text-xs text-gray-300;
+    @apply text-xs text-gray-700;
   }
   
   .checkout-button {

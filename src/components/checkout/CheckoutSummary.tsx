@@ -8,9 +8,9 @@ interface CheckoutSummaryProps {
 
 export function CheckoutSummary({ produto, configCheckout }: CheckoutSummaryProps) {
   return (
-    <div className="bg-white rounded-lg shadow-sm border border-gray-100 overflow-hidden">
+    <div className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
       <div className="p-4 border-b border-gray-100">
-        <h2 className="text-lg font-semibold">Resumo do Pedido</h2>
+        <h2 className="text-lg font-semibold text-black">Resumo do Pedido</h2>
       </div>
       
       <div className="p-4 space-y-4">
@@ -23,7 +23,7 @@ export function CheckoutSummary({ produto, configCheckout }: CheckoutSummaryProp
             />
           )}
           <div>
-            <h3 className="font-medium">{produto.nome}</h3>
+            <h3 className="font-medium text-black">{produto.nome}</h3>
             <p className="text-sm text-gray-500">{produto.tipo}</p>
           </div>
         </div>
@@ -31,12 +31,12 @@ export function CheckoutSummary({ produto, configCheckout }: CheckoutSummaryProp
         <div className="border-t border-gray-100 pt-4">
           <div className="flex justify-between mb-2">
             <span className="text-gray-600">Subtotal</span>
-            <span>R$ {Number(produto.valor).toFixed(2)}</span>
+            <span className="text-black">R$ {Number(produto.valor).toFixed(2)}</span>
           </div>
           
           <div className="flex justify-between font-medium text-lg">
-            <span>Total</span>
-            <span>R$ {Number(produto.valor).toFixed(2)}</span>
+            <span className="text-black">Total</span>
+            <span className="text-black">R$ {Number(produto.valor).toFixed(2)}</span>
           </div>
         </div>
         
