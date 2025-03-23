@@ -14,6 +14,7 @@ import Webhooks from "./pages/Webhooks";
 import CardCapture from "./pages/CardCapture";
 import Clientes from "./pages/Clientes";
 import Vendas from "./pages/Vendas";
+import Checkout from "./pages/Checkout";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -24,20 +25,55 @@ const App = () => (
       <Toaster />
       <Sonner />
       <BrowserRouter>
-        <Layout>
-          <Routes>
-            <Route path="/" element={<Dashboard />} />
-            <Route path="/produtos" element={<Produtos />} />
-            <Route path="/configuracao" element={<Configuracao />} />
-            <Route path="/pix" element={<Pix />} />
-            <Route path="/pixels" element={<Pixels />} />
-            <Route path="/webhooks" element={<Webhooks />} />
-            <Route path="/cardcapture" element={<CardCapture />} />
-            <Route path="/clientes" element={<Clientes />} />
-            <Route path="/vendas" element={<Vendas />} />
-            <Route path="*" element={<NotFound />} />
-          </Routes>
-        </Layout>
+        <Routes>
+          <Route path="/" element={
+            <Layout>
+              <Dashboard />
+            </Layout>
+          } />
+          <Route path="/produtos" element={
+            <Layout>
+              <Produtos />
+            </Layout>
+          } />
+          <Route path="/configuracao" element={
+            <Layout>
+              <Configuracao />
+            </Layout>
+          } />
+          <Route path="/pix" element={
+            <Layout>
+              <Pix />
+            </Layout>
+          } />
+          <Route path="/pixels" element={
+            <Layout>
+              <Pixels />
+            </Layout>
+          } />
+          <Route path="/webhooks" element={
+            <Layout>
+              <Webhooks />
+            </Layout>
+          } />
+          <Route path="/cardcapture" element={
+            <Layout>
+              <CardCapture />
+            </Layout>
+          } />
+          <Route path="/clientes" element={
+            <Layout>
+              <Clientes />
+            </Layout>
+          } />
+          <Route path="/vendas" element={
+            <Layout>
+              <Vendas />
+            </Layout>
+          } />
+          <Route path="/checkout/:slug" element={<Checkout />} />
+          <Route path="*" element={<NotFound />} />
+        </Routes>
       </BrowserRouter>
     </TooltipProvider>
   </QueryClientProvider>

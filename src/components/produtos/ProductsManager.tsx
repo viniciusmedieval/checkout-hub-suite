@@ -15,6 +15,8 @@ export function ProductsManager() {
       
       if (result.success) {
         toast.success(result.message);
+        // Refresh the page to show the updated data
+        window.location.reload();
       } else {
         toast.error(result.message);
         console.error('Error details:', result.error);
@@ -38,7 +40,7 @@ export function ProductsManager() {
       </div>
       
       <p className="text-sm text-muted-foreground">
-        Adicione os produtos padrão ao banco de dados. Esses produtos ficarão salvos permanentemente.
+        Adicione os produtos padrão ao banco de dados. Esses produtos ficarão salvos permanentemente no Supabase.
       </p>
       
       <Button 
