@@ -193,20 +193,23 @@ export const addTestimonial = async (depoimento: Omit<Depoimento, "id" | "criado
 
 export const updateTestimonial = async (id: number, depoimento: Partial<Depoimento>): Promise<Depoimento | null> => {
   try {
-    const { data, error } = await supabase
+    const { error } = await supabase
       .from("depoimentos")
       .update(depoimento)
-      .eq('id', id)
-      .select();
+      .eq('id', id);
       
     if (error) throw error;
     
-    if (data && data.length > 0) {
-      toast.success("Depoimento atualizado com sucesso!");
-      return data[0] as Depoimento;
-    }
+    const { data, error: fetchError } = await supabase
+      .from("depoimentos")
+      .select("*")
+      .eq('id', id)
+      .single();
+      
+    if (fetchError) throw fetchError;
     
-    return null;
+    toast.success("Depoimento atualizado com sucesso!");
+    return data as Depoimento;
   } catch (error) {
     console.error("Erro ao atualizar depoimento:", error);
     toast.error("Erro ao atualizar depoimento. Tente novamente.");
