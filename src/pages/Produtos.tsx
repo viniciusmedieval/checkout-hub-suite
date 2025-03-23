@@ -32,6 +32,7 @@ const Produtos = () => {
     } catch (error) {
       console.error('Error fetching products:', error);
       toast.error('Falha ao carregar produtos');
+      setProdutos([]);
     } finally {
       setLoading(false);
     }
@@ -119,9 +120,9 @@ const Produtos = () => {
                 </Card>
               ))}
             </div>
-          ) : filteredProdutos.length > 0 ? (
+          ) : produtos?.length > 0 ? (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-              {filteredProdutos.map((produto) => (
+              {filteredProdutos?.map((produto) => (
                 <Card key={produto.id} className="overflow-hidden transition-all duration-300 hover:shadow-lg">
                   <CardHeader className="p-0">
                     <div className="relative h-48 w-full">
