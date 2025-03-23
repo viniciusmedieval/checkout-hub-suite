@@ -79,7 +79,8 @@ export const addProductsToSupabase = async () => {
     
     if (fetchError) throw fetchError;
     
-    const existingSlugs = existingProducts.map(product => product.slug);
+    // Ensure existingProducts is an array even if data is null
+    const existingSlugs = (existingProducts || []).map(product => product.slug);
     
     // Filter out products that already exist
     const newProducts = productsToAdd.filter(product => 
@@ -99,11 +100,11 @@ export const addProductsToSupabase = async () => {
     
     if (error) throw error;
     
-    console.log(`Added ${data.length} new products to the database.`);
+    console.log(`Added ${(data || []).length} new products to the database.`);
     return { 
       success: true, 
-      message: `Added ${data.length} new products to the database.`,
-      addedProducts: data
+      message: `Added ${(data || []).length} new products to the database.`,
+      addedProducts: data || []
     };
     
   } catch (error) {

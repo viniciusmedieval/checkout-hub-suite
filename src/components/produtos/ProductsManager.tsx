@@ -3,6 +3,7 @@ import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { addProductsToSupabase } from '@/lib/addProducts';
 import { toast } from 'sonner';
+import { Loader2 } from 'lucide-react';
 
 export function ProductsManager() {
   const [loading, setLoading] = useState(false);
@@ -36,7 +37,12 @@ export function ProductsManager() {
         disabled={loading}
         className="w-full"
       >
-        {loading ? 'Adicionando...' : 'Adicionar Produtos Padrão'}
+        {loading ? (
+          <>
+            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+            Adicionando...
+          </>
+        ) : 'Adicionar Produtos Padrão'}
       </Button>
     </div>
   );
