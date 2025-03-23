@@ -33,7 +33,7 @@ import {
 import { Textarea } from "@/components/ui/textarea"
 import { toast } from "sonner";
 import { EditIcon, LinkIcon, PackageIcon } from "lucide-react";
-import { supabase } from "@/lib/supabase";
+import { supabase, Produto } from "@/lib/supabase";
 
 interface Product {
   id: number;
@@ -245,7 +245,6 @@ export function ProductsManager() {
                 <EditIcon size={14} />
                 <span className="hidden sm:inline">Editar</span>
               </Button>
-              {/* Add Delete button if needed */}
             </div>
           </div>
         ))}
