@@ -1,74 +1,107 @@
-
-import { useState, ChangeEvent } from "react";
+import { ConfigCheckout } from "@/lib/supabase";
+import { Button } from "@/components/ui/button";
+import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
-import { Card, CardContent } from "@/components/ui/card";
-import { User } from "lucide-react";
-import { formatPhoneNumber } from "@/utils/formatters";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
+import { useState } from "react";
 
-export function CheckoutForm() {
-  const [phoneNumber, setPhoneNumber] = useState("");
-  
-  const handlePhoneChange = (e: ChangeEvent<HTMLInputElement>) => {
-    const value = e.target.value.replace(/\D/g, '');
-    setPhoneNumber(formatPhoneNumber(value));
+interface CheckoutFormProps {
+  configCheckout?: ConfigCheckout | null;
+}
+
+export function CheckoutForm({ configCheckout }: CheckoutFormProps) {
+  const [formData, setFormData] = useState({
+    nome: "",
+    email: "",
+    telefone: "",
+    endereco: "",
+    observacoes: ""
+  });
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    const { name, value } = e.target;
+    setFormData(prev => ({ ...prev, [name]: value }));
+  };
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    console.log("Form submitted:", formData);
+    // Process checkout form submission
   };
 
   return (
-    <Card className="checkout-card" id="checkout-form">
-      <CardContent className="p-6">
-        <div className="flex items-center gap-3 mb-5">
-          <div className="flex items-center justify-center w-8 h-8 rounded-full bg-blue-100">
-            <User size={16} className="text-blue-600" />
-          </div>
-          <h3 className="checkout-heading">Identificação</h3>
+    <Card className="p-6">
+      <form onSubmit={handleSubmit} className="space-y-4">
+        <h2 className="text-xl font-semibold mb-4">Informações de Contato</h2>
+        
+        <div className="space-y-2">
+          <Label htmlFor="nome">Nome completo</Label>
+          <Input 
+            id="nome"
+            name="nome"
+            placeholder="Digite seu nome completo"
+            value={formData.nome}
+            onChange={handleChange}
+            required
+          />
         </div>
         
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-          <div className="space-y-2">
-            <label htmlFor="nome" className="checkout-label">Nome completo</label>
-            <Input 
-              id="nome" 
-              placeholder="Digite seu nome completo" 
-              className="checkout-input" 
-            />
-          </div>
-          
-          <div className="space-y-2">
-            <label htmlFor="email" className="checkout-label">E-mail</label>
-            <Input 
-              id="email" 
-              type="email" 
-              placeholder="Digite seu e-mail" 
-              className="checkout-input" 
-            />
-          </div>
-          
-          <div className="space-y-2">
-            <label htmlFor="cpf" className="checkout-label">Documento (CPF/CNPJ)</label>
-            <Input 
-              id="cpf" 
-              placeholder="Digite apenas números" 
-              className="checkout-input" 
-            />
-          </div>
-          
-          <div className="space-y-2">
-            <label htmlFor="telefone" className="checkout-label">Celular</label>
-            <div className="flex items-center">
-              <div className="flex gap-1 items-center bg-gray-100 border border-[hsl(var(--checkout-border))] px-2 rounded-l-md h-10">
-                <span className="text-sm text-gray-500">+55</span>
-              </div>
-              <Input 
-                id="telefone" 
-                placeholder="(00) 00000-0000" 
-                className="checkout-input rounded-l-none border-l-0"
-                value={phoneNumber}
-                onChange={handlePhoneChange}
-              />
-            </div>
-          </div>
+        <div className="space-y-2">
+          <Label htmlFor="email">E-mail</Label>
+          <Input 
+            id="email"
+            name="email"
+            type="email"
+            placeholder="seu@email.com"
+            value={formData.email}
+            onChange={handleChange}
+            required
+          />
         </div>
-      </CardContent>
+        
+        <div className="space-y-2">
+          <Label htmlFor="telefone">Telefone</Label>
+          <Input 
+            id="telefone"
+            name="telefone"
+            placeholder="(00) 00000-0000"
+            value={formData.telefone}
+            onChange={handleChange}
+            required
+          />
+        </div>
+        
+        <div className="space-y-2">
+          <Label htmlFor="endereco">Endereço (opcional)</Label>
+          <Input 
+            id="endereco"
+            name="endereco"
+            placeholder="Seu endereço completo"
+            value={formData.endereco}
+            onChange={handleChange}
+          />
+        </div>
+        
+        <div className="space-y-2">
+          <Label htmlFor="observacoes">Observações (opcional)</Label>
+          <Textarea 
+            id="observacoes"
+            name="observacoes"
+            placeholder="Alguma observação adicional?"
+            value={formData.observacoes}
+            onChange={handleChange}
+            rows={3}
+          />
+        </div>
+        
+        <Button 
+          type="submit" 
+          className="w-full py-6 text-lg font-medium mt-4"
+        >
+          {configCheckout?.texto_botao || "FINALIZAR COMPRA"}
+        </Button>
+      </form>
     </Card>
   );
 }
