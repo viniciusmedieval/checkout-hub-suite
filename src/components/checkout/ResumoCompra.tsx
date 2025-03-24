@@ -72,7 +72,7 @@ export function ResumoCompra({
           )}
         </button>
         
-        {/* Visitor message - agora usando a mensagem do painel do admin */}
+        {/* Mensagem de destaque do checkout - vindo do painel admin */}
         {configCheckout?.mensagem_rodape && (
           <div className="flex items-center justify-center gap-2 text-sm text-gray-600 text-center mt-3">
             <span role="img" aria-label="fire">🔥</span>
