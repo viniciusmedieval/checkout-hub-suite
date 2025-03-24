@@ -24,16 +24,25 @@ export const fetchTestimonials = async (): Promise<Depoimento[]> => {
       console.log("Nenhum depoimento encontrado, adicionando depoimentos padrão");
       const defaultTestimonials = getDefaultTestimonials();
       
+      // Verificar se há produtos no sistema para evitar erros de chave estrangeira
+      const { data: produtos } = await supabase
+        .from("produtos")
+        .select("id")
+        .limit(1);
+        
+      const hasProdutos = produtos && produtos.length > 0;
+      
+      // Se não houver produtos, não definir produto_id para evitar erro de chave estrangeira
       const depoimentosParaInserir = defaultTestimonials.map(dep => ({
         nome: dep.nome,
         texto: dep.texto,
         estrelas: dep.estrelas,
         foto_url: dep.foto_url,
-        produto_id: 0,
+        produto_id: null, // Definido como null para evitar erros de chave estrangeira
         criado_em: new Date().toISOString()
       }));
       
-      // Passo 1: Inserir depoimentos padrão - CORRIGIDO: removido .select() após insert
+      // Passo 1: Inserir depoimentos padrão
       const { error: insertError } = await supabase
         .from("depoimentos")
         .insert(depoimentosParaInserir);
@@ -98,7 +107,7 @@ export const deleteTestimonial = async (id: number): Promise<boolean> => {
  */
 export const addTestimonial = async (depoimento: Omit<Depoimento, "id" | "criado_em">): Promise<Depoimento | null> => {
   try {
-    // Passo 1: Inserir o novo depoimento - CORRIGIDO: removido .select() após insert
+    // Passo 1: Inserir o novo depoimento
     const { error } = await supabase
       .from("depoimentos")
       .insert([depoimento]);
@@ -135,7 +144,7 @@ export const addTestimonial = async (depoimento: Omit<Depoimento, "id" | "criado
  */
 export const updateTestimonial = async (id: number, depoimento: Partial<Depoimento>): Promise<Depoimento | null> => {
   try {
-    // Passo 1: Atualizar o depoimento - CORRIGIDO: removido .select() após update
+    // Passo 1: Atualizar o depoimento
     const { error } = await supabase
       .from("depoimentos")
       .update(depoimento)

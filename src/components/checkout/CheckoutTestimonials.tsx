@@ -27,7 +27,8 @@ export function CheckoutTestimonials({ produto_id }: CheckoutTestimonialsProps) 
         // Se temos um produto_id específico, filtrar os depoimentos pelo produto_id
         if (produto_id) {
           const filteredData = data.filter(item => 
-            item.produto_id === produto_id || item.produto_id === 0
+            // Permitir depoimentos com produto_id igual ao atual OU depoimentos sem produto_id específico (null/undefined)
+            item.produto_id === produto_id || !item.produto_id
           );
           setTestimonials(filteredData.length > 0 ? filteredData : data);
         } else {
