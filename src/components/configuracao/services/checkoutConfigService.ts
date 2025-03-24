@@ -27,7 +27,9 @@ export const fetchCheckoutConfig = async (): Promise<ConfigCheckout | null> => {
         ativa_banner: Boolean(data[0].ativa_banner),
         mostrar_campo_documento: Boolean(data[0].mostrar_campo_documento),
         mostrar_campo_telefone: Boolean(data[0].mostrar_campo_telefone),
-        mostrar_contador: Boolean(data[0].mostrar_contador)
+        mostrar_contador: Boolean(data[0].mostrar_contador),
+        mostrar_bandeira_brasil: Boolean(data[0].mostrar_bandeira_brasil),
+        mostrar_prefixo_telefone: Boolean(data[0].mostrar_prefixo_telefone)
       };
       
       console.log("Configurações carregadas:", configData);
@@ -79,6 +81,8 @@ export const saveConfig = async (config: ConfigCheckout): Promise<ConfigCheckout
       // Form fields
       mostrar_campo_documento: Boolean(config.mostrar_campo_documento),
       mostrar_campo_telefone: Boolean(config.mostrar_campo_telefone),
+      mostrar_bandeira_brasil: Boolean(config.mostrar_bandeira_brasil),
+      mostrar_prefixo_telefone: Boolean(config.mostrar_prefixo_telefone),
       titulo_identificacao: config.titulo_identificacao || "Identificação",
       titulo_pagamento: config.titulo_pagamento || "Pagamento",
       // Visitor counter fields
@@ -96,7 +100,6 @@ export const saveConfig = async (config: ConfigCheckout): Promise<ConfigCheckout
     };
     
     console.log("Configurações validadas a serem salvas:", configToSave);
-    console.log("Valor final de mostrar_seguro:", configToSave.mostrar_seguro, typeof configToSave.mostrar_seguro);
     
     let result;
     
@@ -138,7 +141,9 @@ export const saveConfig = async (config: ConfigCheckout): Promise<ConfigCheckout
         ativa_banner: Boolean(refreshedConfig[0].ativa_banner),
         mostrar_campo_documento: Boolean(refreshedConfig[0].mostrar_campo_documento),
         mostrar_campo_telefone: Boolean(refreshedConfig[0].mostrar_campo_telefone),
-        mostrar_contador: Boolean(refreshedConfig[0].mostrar_contador)
+        mostrar_contador: Boolean(refreshedConfig[0].mostrar_contador),
+        mostrar_bandeira_brasil: Boolean(refreshedConfig[0].mostrar_bandeira_brasil),
+        mostrar_prefixo_telefone: Boolean(refreshedConfig[0].mostrar_prefixo_telefone)
       };
       
       console.log("Configurações atualizadas após salvamento:", updatedConfig);

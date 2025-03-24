@@ -24,6 +24,8 @@ export const defaultConfig: ConfigCheckout = {
   // Form fields
   mostrar_campo_documento: true,
   mostrar_campo_telefone: true,
+  mostrar_bandeira_brasil: true,
+  mostrar_prefixo_telefone: true,
   titulo_identificacao: "Identificação",
   titulo_pagamento: "Pagamento",
   // Visitor counter

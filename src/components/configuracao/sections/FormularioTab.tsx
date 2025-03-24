@@ -44,6 +44,31 @@ export function FormularioTab({ config, handleConfigChange, handleSwitchChange }
             <Label htmlFor="mostrar-campo-telefone">Mostrar campo de telefone</Label>
           </div>
         </div>
+
+        <Separator />
+
+        {/* Phone Field Configuration */}
+        <div className="space-y-4">
+          <h3 className="text-sm font-medium">Opções do Campo de Telefone</h3>
+          
+          <div className="flex items-center space-x-2 mb-4">
+            <Switch 
+              checked={config.mostrar_bandeira_brasil || false} 
+              onCheckedChange={(checked) => handleSwitchChange('mostrar_bandeira_brasil', checked)}
+              id="mostrar-bandeira-brasil"
+            />
+            <Label htmlFor="mostrar-bandeira-brasil">Mostrar bandeira do Brasil</Label>
+          </div>
+          
+          <div className="flex items-center space-x-2">
+            <Switch 
+              checked={config.mostrar_prefixo_telefone || false} 
+              onCheckedChange={(checked) => handleSwitchChange('mostrar_prefixo_telefone', checked)}
+              id="mostrar-prefixo-telefone"
+            />
+            <Label htmlFor="mostrar-prefixo-telefone">Mostrar prefixo "+55"</Label>
+          </div>
+        </div>
         
         <Separator />
         

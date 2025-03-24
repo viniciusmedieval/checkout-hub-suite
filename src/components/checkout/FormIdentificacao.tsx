@@ -36,6 +36,10 @@ export function FormIdentificacao({
   const telefoneIconName = configCheckout?.icone_telefone || "smartphone";
   const documentoIconName = configCheckout?.icone_documento || "file-text";
   
+  // Determine whether to show Brazil flag and +55 prefix
+  const showBrasilFlag = configCheckout?.mostrar_bandeira_brasil !== false;
+  const showPrefixoTelefone = configCheckout?.mostrar_prefixo_telefone !== false;
+  
   // Handle form field changes
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     onChange(e.target.name, e.target.value);
@@ -96,14 +100,20 @@ export function FormIdentificacao({
         {/* Telefone - Exibir apenas se configurado para mostrar */}
         {showTelefone && (
           <div className="relative">
-            <div className="absolute left-3 top-1/2 -translate-y-1/2" style={{ color: iconColor }}>
-              <DynamicIcon name={telefoneIconName} size={18} />
+            <div className="absolute left-3 top-1/2 -translate-y-1/2 flex items-center" style={{ color: iconColor }}>
+              {showBrasilFlag ? (
+                <DynamicIcon name="brasil-flag" size={14} />
+              ) : (
+                <DynamicIcon name={telefoneIconName} size={18} />
+              )}
+              {showPrefixoTelefone && <span className="ml-1 text-sm text-gray-600">+55</span>}
             </div>
             <Input
               name="telefone"
               placeholder="Seu telefone com DDD"
               className={cn(
-                "pl-9 h-11 bg-white text-black border border-gray-200",
+                showPrefixoTelefone ? "pl-16" : showBrasilFlag ? "pl-10" : "pl-9",
+                "h-11 bg-white text-black border border-gray-200",
                 errors.telefone ? "border-red-500" : ""
               )}
               value={formData.telefone}
