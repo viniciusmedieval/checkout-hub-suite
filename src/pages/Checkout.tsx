@@ -1,11 +1,7 @@
 
 import { useCheckout } from "@/hooks/useCheckout";
-import { HeaderTimer } from "@/components/checkout/HeaderTimer";
 import { CheckoutHeader } from "@/components/checkout/CheckoutHeader";
-import { FormIdentificacao } from "@/components/checkout/FormIdentificacao";
-import { PaymentMethodSelector } from "@/components/checkout/payment/PaymentMethodSelector";
-import { CheckoutTestimonials } from "@/components/checkout/CheckoutTestimonials";
-import { ResumoCompra } from "@/components/checkout/ResumoCompra";
+import { CheckoutMainContent } from "@/components/checkout/CheckoutMainContent";
 import { CheckoutFooter } from "@/components/checkout/CheckoutFooter";
 import { CheckoutLoading } from "@/components/checkout/CheckoutLoading";
 import { CheckoutError } from "@/components/checkout/CheckoutError";
@@ -38,66 +34,28 @@ const Checkout = () => {
   // Determinar a cor de fundo a ser usada (default: white)
   const backgroundColor = produto.background_color || configCheckout?.cor_fundo || "#FFFFFF";
   
-  // Determinar a cor do texto a ser usada (default: black)
-  const textColor = configCheckout?.cor_titulo || "#000000";
-
-  // PixConfig para o produto atual
-  const pixConfig = produto ? {
-    tipo_chave_pix: produto.tipo_chave_pix,
-    chave_pix: produto.chave_pix,
-    nome_beneficiario: produto.nome_beneficiario
-  } : null;
-
   return (
     <div 
       className="min-h-screen flex flex-col"
       style={{ backgroundColor }}
     >
-      {/* CheckoutHeader contém tanto a barra de mensagem quanto o banner */}
+      {/* Header: contém tanto a barra de mensagem quanto o banner */}
       <CheckoutHeader produto={produto} configCheckout={configCheckout} />
 
       {/* Main checkout content */}
       <div className="flex-grow flex justify-center">
-        <div className="w-full max-w-md mx-auto py-6 px-4 space-y-5">
-          {/* Product Title with configurable color */}
-          <h1 
-            className="text-xl font-bold text-center"
-            style={{ color: textColor }}
-          >
-            {produto.checkout_title || produto.nome}
-          </h1>
-          
-          {/* Cliente Identification Form */}
-          <FormIdentificacao 
-            formData={formData} 
-            errors={formErrors} 
-            onChange={handleInputChange} 
-          />
-          
-          {/* Testimonials Section */}
-          <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
-            <CheckoutTestimonials produto_id={produto.id} />
-          </div>
-          
-          {/* Payment Section */}
-          <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
-            <PaymentMethodSelector 
-              productValue={produto.valor} 
-              pixConfig={pixConfig}
-              onPaymentMethodChange={setPaymentMethod}
-              produto={produto}
-            />
-          </div>
-          
-          {/* Order Summary & CTA Button */}
-          <ResumoCompra 
-            produto={produto} 
-            configCheckout={configCheckout}
-            visitorCount={visitorCount}
-            isProcessing={isSubmitting}
-            onCompletePurchase={submitOrder}
-          />
-        </div>
+        <CheckoutMainContent 
+          produto={produto}
+          configCheckout={configCheckout}
+          formData={formData}
+          formErrors={formErrors}
+          paymentMethod={paymentMethod}
+          isSubmitting={isSubmitting}
+          visitorCount={visitorCount}
+          handleInputChange={handleInputChange}
+          setPaymentMethod={setPaymentMethod}
+          submitOrder={submitOrder}
+        />
       </div>
       
       {/* Footer */}
