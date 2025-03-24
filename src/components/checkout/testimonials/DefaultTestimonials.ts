@@ -6,30 +6,27 @@ export const getDefaultTestimonials = (): Depoimento[] => [
   {
     id: 1,
     nome: "João Silva",
-    email: "joao@example.com",
     texto: "Produto excelente! Superou todas as minhas expectativas. Recomendo muito.",
-    avatar_url: "https://randomuser.me/api/portraits/men/1.jpg",
-    nota: 5,
+    foto_url: "https://randomuser.me/api/portraits/men/1.jpg",
+    estrelas: 5,
     produto_id: null,
     criado_em: new Date().toISOString()
   },
   {
     id: 2,
     nome: "Maria Oliveira",
-    email: "maria@example.com",
     texto: "Muito bom! Atendeu perfeitamente às minhas necessidades.",
-    avatar_url: "https://randomuser.me/api/portraits/women/1.jpg",
-    nota: 4,
+    foto_url: "https://randomuser.me/api/portraits/women/1.jpg",
+    estrelas: 4,
     produto_id: null,
     criado_em: new Date().toISOString()
   },
   {
     id: 3,
     nome: "Pedro Santos",
-    email: "pedro@example.com",
     texto: "Recomendo fortemente! O suporte ao cliente é excelente.",
-    avatar_url: "https://randomuser.me/api/portraits/men/2.jpg",
-    nota: 5,
+    foto_url: "https://randomuser.me/api/portraits/men/2.jpg",
+    estrelas: 5,
     produto_id: null,
     criado_em: new Date().toISOString()
   }

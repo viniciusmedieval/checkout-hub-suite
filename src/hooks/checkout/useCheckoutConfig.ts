@@ -71,13 +71,17 @@ export const useCheckoutConfig = () => {
         cor_botao: "#8B5CF6",
         cor_texto_botao: "#FFFFFF",
         cor_texto_contador: "#4B5563",
+        cor_texto_topo: "#FFFFFF",
         mensagem_topo: "Oferta por tempo limitado!",
         texto_botao: "Finalizar Compra",
         rodape_texto: "Todos os direitos reservados",
         rodape_empresa: "Sua Empresa",
         rodape_ano: new Date().getFullYear().toString(),
         mostrar_seguro: true,
-        ativa_banner: true
+        ativa_banner: true,
+        banner_url: "",
+        banner_mobile_url: "",
+        mensagem_rodape: "Compra 100% segura e garantida."
       };
       
       setConfigCheckout(defaultConfig);
@@ -95,13 +99,17 @@ export const useCheckoutConfig = () => {
         cor_botao: "#8B5CF6",
         cor_texto_botao: "#FFFFFF",
         cor_texto_contador: "#4B5563",
+        cor_texto_topo: "#FFFFFF",
         mensagem_topo: "Oferta por tempo limitado!",
         texto_botao: "Finalizar Compra",
         rodape_texto: "Todos os direitos reservados",
         rodape_empresa: "Sua Empresa",
         rodape_ano: new Date().getFullYear().toString(),
         mostrar_seguro: true,
-        ativa_banner: true
+        ativa_banner: true,
+        banner_url: "",
+        banner_mobile_url: "",
+        mensagem_rodape: "Compra 100% segura e garantida."
       };
       
       setConfigCheckout(defaultConfig);
