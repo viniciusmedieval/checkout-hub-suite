@@ -71,12 +71,6 @@ export function ResumoCompra({
             </>
           )}
         </button>
-        
-        {/* Visitor counter */}
-        <div className="flex items-center justify-center gap-2 text-sm text-black">
-          <span role="img" aria-label="fire">🔥</span>
-          <span>Outras <strong>{visitorCount.toLocaleString()}</strong> pessoas estão finalizando agora</span>
-        </div>
       </div>
     </div>
   );
