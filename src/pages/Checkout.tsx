@@ -5,8 +5,16 @@ import { CheckoutMainContent } from "@/components/checkout/CheckoutMainContent";
 import { CheckoutFooter } from "@/components/checkout/CheckoutFooter";
 import { CheckoutLoading } from "@/components/checkout/CheckoutLoading";
 import { CheckoutError } from "@/components/checkout/CheckoutError";
+import { useEffect } from "react";
+import { useParams } from "react-router-dom";
 
 const Checkout = () => {
+  const { slug } = useParams<{ slug: string }>();
+  
+  useEffect(() => {
+    console.log("🔍 Checkout renderizado com slug:", slug);
+  }, [slug]);
+  
   const { 
     produto, 
     configCheckout, 
@@ -22,6 +30,15 @@ const Checkout = () => {
     setPaymentMethod,
     submitOrder
   } = useCheckout();
+
+  useEffect(() => {
+    if (produto) {
+      console.log("✅ Produto carregado:", { id: produto.id, nome: produto.nome, slug: produto.slug });
+    }
+    if (error) {
+      console.error("❌ Erro ao carregar produto:", error);
+    }
+  }, [produto, error]);
 
   if (loading) {
     return <CheckoutLoading />;

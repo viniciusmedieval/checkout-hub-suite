@@ -168,6 +168,14 @@ export function ProductList({ produtos, loading, searchTerm, onEdit, onToggleSta
                 Excluir
               </Button>
             </div>
+            <a 
+              href={`/checkout/${produto.slug}`} 
+              target="_blank" 
+              rel="noopener noreferrer" 
+              className="text-xs text-primary hover:underline mt-2 text-center"
+            >
+              Visualizar página de checkout
+            </a>
           </CardFooter>
         </Card>
       ))}
