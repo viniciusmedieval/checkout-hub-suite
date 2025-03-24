@@ -1,190 +1,214 @@
 
-import { SupabaseClient } from '@supabase/supabase-js';
+import { Database } from '@/lib/types/database-types';
+import { createClient, PostgrestResponse } from '@supabase/supabase-js';
 import { mockStorage, saveMockStorageToLocalStorage } from './storage-utils';
 
-/**
- * Creates a mock Supabase client for development and testing when real Supabase is not available
- */
-export function createMockClient(): SupabaseClient {
-  console.log('Criando mock client para o Supabase');
+// Mock client initialization
+export function createMockClient() {
+  console.log('Creating mock Supabase client');
   
-  // Helper function to save changes to localStorage
-  const saveToStorage = (table: string, data: any) => {
-    if (!mockStorage[table]) {
-      mockStorage[table] = [];
+  // Adapter para métodos do Supabase
+  const mockClient = {
+    from(table: string) {
+      const getTableData = () => {
+        return mockStorage[table] || [];
+      };
+
+      const setTableData = (data: any[]) => {
+        mockStorage[table] = data;
+        saveMockStorageToLocalStorage();
+      };
+
+      return {
+        // SELECT
+        select(columns = '*') {
+          return {
+            order(column: string, { ascending = false } = {}) {
+              return {
+                limit(num: number) {
+                  return {
+                    single() {
+                      const items = getTableData();
+                      const sortedItems = [...items].sort((a, b) => {
+                        return ascending ? 
+                          (a[column] > b[column] ? 1 : -1) : 
+                          (a[column] < b[column] ? 1 : -1);
+                      });
+                      
+                      const result = sortedItems.slice(0, num)[0];
+                      
+                      const response: PostgrestResponse<any> = {
+                        data: result || null,
+                        error: null,
+                        count: result ? 1 : 0,
+                        status: 200,
+                        statusText: 'OK'
+                      };
+                      
+                      return response;
+                    },
+                    async then(callback: (result: PostgrestResponse<any>) => void) {
+                      const items = getTableData();
+                      const sortedItems = [...items].sort((a, b) => {
+                        return ascending ? 
+                          (a[column] > b[column] ? 1 : -1) : 
+                          (a[column] < b[column] ? 1 : -1);
+                      });
+                      
+                      const limitedItems = sortedItems.slice(0, num);
+                      
+                      const response: PostgrestResponse<any> = {
+                        data: limitedItems,
+                        error: null,
+                        count: limitedItems.length,
+                        status: 200,
+                        statusText: 'OK'
+                      };
+                      
+                      return callback(response);
+                    }
+                  };
+                },
+                async then(callback: (result: PostgrestResponse<any>) => void) {
+                  const items = getTableData();
+                  const sortedItems = [...items].sort((a, b) => {
+                    return ascending ? 
+                      (a[column] > b[column] ? 1 : -1) : 
+                      (a[column] < b[column] ? 1 : -1);
+                  });
+                  
+                  const response: PostgrestResponse<any> = {
+                    data: sortedItems,
+                    error: null,
+                    count: sortedItems.length,
+                    status: 200,
+                    statusText: 'OK'
+                  };
+                  
+                  return callback(response);
+                }
+              };
+            },
+            eq(column: string, value: any) {
+              return {
+                single() {
+                  const items = getTableData();
+                  const result = items.find(item => item[column] === value);
+                  
+                  const response: PostgrestResponse<any> = {
+                    data: result || null,
+                    error: null,
+                    count: result ? 1 : 0,
+                    status: 200,
+                    statusText: 'OK'
+                  };
+                  
+                  return response;
+                },
+                async then(callback: (result: PostgrestResponse<any>) => void) {
+                  const items = getTableData();
+                  const filteredItems = items.filter(item => item[column] === value);
+                  
+                  const response: PostgrestResponse<any> = {
+                    data: filteredItems,
+                    error: null,
+                    count: filteredItems.length,
+                    status: 200,
+                    statusText: 'OK'
+                  };
+                  
+                  return callback(response);
+                }
+              };
+            },
+            async then(callback: (result: PostgrestResponse<any>) => void) {
+              const items = getTableData();
+              
+              const response: PostgrestResponse<any> = {
+                data: items,
+                error: null,
+                count: items.length,
+                status: 200,
+                statusText: 'OK'
+              };
+              
+              return callback(response);
+            }
+          };
+        },
+
+        // INSERT
+        insert(newItems: any[]) {
+          // IMPORTANT: Changed to return object without select method to match new Supabase behavior
+          console.log(`[Mock] Inserting ${newItems.length} items into ${table}`);
+          
+          const items = getTableData();
+          const lastId = items.length > 0 ? Math.max(...items.map(i => i.id || 0)) : 0;
+          
+          const itemsWithIds = newItems.map((item, index) => ({
+            id: item.id || (lastId + index + 1),
+            ...item,
+            // Adicionar timestamps se não existirem
+            criado_em: item.criado_em || new Date().toISOString()
+          }));
+          
+          setTableData([...items, ...itemsWithIds]);
+          saveMockStorageToLocalStorage();
+          
+          return {
+            data: newItems,
+            error: null
+          };
+        },
+
+        // UPDATE
+        update(updates: any) {
+          // IMPORTANT: Changed to return object without select method to match new Supabase behavior
+          return {
+            eq(column: string, value: any) {
+              console.log(`[Mock] Updating in ${table} where ${column} = ${value}`);
+              
+              const items = getTableData();
+              const updatedItems = items.map(item => {
+                if (item[column] === value) {
+                  return { ...item, ...updates };
+                }
+                return item;
+              });
+              
+              setTableData(updatedItems);
+              saveMockStorageToLocalStorage();
+              
+              return {
+                data: null,
+                error: null
+              };
+            }
+          };
+        },
+
+        // DELETE
+        delete() {
+          return {
+            eq(column: string, value: any) {
+              console.log(`[Mock] Deleting from ${table} where ${column} = ${value}`);
+              
+              const items = getTableData();
+              const filteredItems = items.filter(item => item[column] !== value);
+              
+              setTableData(filteredItems);
+              saveMockStorageToLocalStorage();
+              
+              return {
+                data: null,
+                error: null
+              };
+            }
+          };
+        }
+      };
     }
-    saveMockStorageToLocalStorage();
-    return { data, error: null };
   };
 
-  // Mock client implementation
-  return {
-    from: (table: string) => ({
-      select: (columns: string = '*') => {
-        console.log(`Mock Supabase - Selecionando ${columns} da tabela ${table}`);
-        return {
-          eq: (column: string, value: any) => {
-            console.log(`Mock Supabase - Filtrando por ${column} = ${value}`);
-            return {
-              single: () => {
-                const items = mockStorage[table] || [];
-                const item = items.find((item: any) => item[column] === value);
-                
-                return {
-                  data: item || null,
-                  error: item ? null : new Error(`Item não encontrado com ${column}=${value}`)
-                };
-              },
-              maybeSingle: () => {
-                const items = mockStorage[table] || [];
-                const item = items.find((item: any) => item[column] === value);
-                
-                return {
-                  data: item || null,
-                  error: null
-                };
-              }
-            };
-          },
-          order: (column: string, { ascending }: { ascending: boolean }) => {
-            console.log(`Mock Supabase - Ordenando por ${column}, ascending: ${ascending}`);
-            return {
-              limit: (limit: number) => {
-                console.log(`Mock Supabase - Limitando a ${limit} resultados`);
-                return {
-                  single: () => {
-                    const items = mockStorage[table] || [];
-                    const sortedItems = [...items].sort((a, b) => {
-                      if (ascending) {
-                        return a[column] > b[column] ? 1 : -1;
-                      } else {
-                        return a[column] < b[column] ? 1 : -1;
-                      }
-                    });
-                    
-                    const limitedItems = sortedItems.slice(0, limit);
-                    return {
-                      data: limitedItems[0] || null,
-                      error: limitedItems.length === 0 ? new Error('Nenhum item encontrado') : null
-                    };
-                  },
-                  maybeSingle: () => {
-                    const items = mockStorage[table] || [];
-                    const sortedItems = [...items].sort((a, b) => {
-                      if (ascending) {
-                        return a[column] > b[column] ? 1 : -1;
-                      } else {
-                        return a[column] < b[column] ? 1 : -1;
-                      }
-                    });
-                    
-                    const limitedItems = sortedItems.slice(0, limit);
-                    return {
-                      data: limitedItems[0] || null,
-                      error: null
-                    };
-                  }
-                };
-              }
-            };
-          }
-        };
-      },
-      insert: (data: any[]) => {
-        console.log(`Mock Supabase - Inserindo na tabela ${table}:`, data);
-        
-        if (!mockStorage[table]) {
-          mockStorage[table] = [];
-        }
-        
-        const newItems = data.map((item) => {
-          // Generate random ID if doesn't exist
-          const newItem = { ...item };
-          if (!newItem.id) {
-            newItem.id = Date.now() + Math.floor(Math.random() * 1000);
-          }
-          
-          // Add timestamps if they don't exist
-          if (!newItem.created_at) {
-            newItem.created_at = new Date().toISOString();
-          }
-          
-          return newItem;
-        });
-        
-        mockStorage[table] = [...mockStorage[table], ...newItems];
-        saveMockStorageToLocalStorage();
-        
-        return {
-          data: newItems,
-          error: null
-        };
-      },
-      update: (data: any) => {
-        console.log(`Mock Supabase - Atualizando tabela ${table}:`, data);
-        
-        return {
-          eq: (column: string, value: any) => {
-            console.log(`Mock Supabase - Atualizando onde ${column} = ${value}`);
-            
-            if (!mockStorage[table]) {
-              return { data: null, error: new Error(`Tabela ${table} não encontrada`) };
-            }
-            
-            const items = mockStorage[table];
-            const updatedItems = items.map((item: any) => {
-              if (item[column] === value) {
-                return { ...item, ...data, updated_at: new Date().toISOString() };
-              }
-              return item;
-            });
-            
-            mockStorage[table] = updatedItems;
-            saveMockStorageToLocalStorage();
-            
-            return {
-              data: null,
-              error: null
-            };
-          }
-        };
-      },
-      delete: () => {
-        return {
-          eq: (column: string, value: any) => {
-            console.log(`Mock Supabase - Deletando da tabela ${table} onde ${column} = ${value}`);
-            
-            if (!mockStorage[table]) {
-              return { data: null, error: null };
-            }
-            
-            const items = mockStorage[table];
-            const filteredItems = items.filter((item: any) => item[column] !== value);
-            
-            mockStorage[table] = filteredItems;
-            saveMockStorageToLocalStorage();
-            
-            return {
-              data: null,
-              error: null
-            };
-          }
-        };
-      }
-    }),
-    storage: {
-      from: (bucket: string) => ({
-        // Implement storage methods if needed
-        upload: (_path: string, _file: File) => Promise.resolve({ data: { path: 'mock-file-path' }, error: null }),
-        getPublicUrl: (_path: string) => ({ data: { publicUrl: 'https://mock-url.com/mock-file.jpg' } })
-      })
-    },
-    auth: {
-      // Implement auth methods if needed
-      signUp: () => Promise.resolve({ data: null, error: null }),
-      signIn: () => Promise.resolve({ data: null, error: null }),
-      signOut: () => Promise.resolve({ error: null })
-    },
-    // Add other mock methods as needed
-  } as unknown as SupabaseClient;
+  return mockClient as unknown as ReturnType<typeof createClient<Database>>;
 }

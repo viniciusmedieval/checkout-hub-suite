@@ -53,7 +53,7 @@ export function useProductManager() {
   const handleFormSubmit = async (values: ProductFormValues) => {
     try {
       if (isCreating) {
-        // Step 1: Insert the new product - FIXED: removed .select() after insert
+        // Passo 1: Inserir o novo produto - CORRIGIDO: removido .select() após insert
         const { error } = await supabase
           .from("produtos")
           .insert([values]);
@@ -64,7 +64,7 @@ export function useProductManager() {
           return;
         }
 
-        // Step 2: Fetch the newly created product in a separate query
+        // Passo 2: Buscar o produto recém-criado em uma consulta separada
         const { data, error: selectError } = await supabase
           .from("produtos")
           .select("*")
@@ -91,7 +91,7 @@ export function useProductManager() {
       }
 
       if (isEditing && selectedProduct) {
-        // Step 1: Update the product - FIXED: removed .select() after update
+        // Passo 1: Atualizar o produto - CORRIGIDO: removido .select() após update
         const { error } = await supabase
           .from("produtos")
           .update(values)
@@ -103,7 +103,7 @@ export function useProductManager() {
           return;
         }
 
-        // Step 2: Fetch the updated product in a separate query
+        // Passo 2: Buscar o produto atualizado em uma consulta separada
         const { data, error: selectError } = await supabase
           .from("produtos")
           .select("*")
