@@ -1,214 +1,258 @@
 
-import { Database } from '@/lib/types/database-types';
-import { createClient, PostgrestResponse } from '@supabase/supabase-js';
+import { createClient } from '@supabase/supabase-js';
 import { mockStorage, saveMockStorageToLocalStorage } from './storage-utils';
 
-// Mock client initialization
+// Since Database isn't exported from @/lib/types/database-types, we'll create a simpler type
+// that matches what we need for the mock client
+type SimplifiedDatabase = {
+  public: {
+    Tables: Record<string, any>;
+  }
+}
+
+// Create a mock Supabase client for local development and testing
 export function createMockClient() {
-  console.log('Creating mock Supabase client');
+  console.warn('Using mock Supabase client');
   
-  // Adapter para métodos do Supabase
-  const mockClient = {
-    from(table: string) {
-      const getTableData = () => {
-        return mockStorage[table] || [];
-      };
-
-      const setTableData = (data: any[]) => {
-        mockStorage[table] = data;
-        saveMockStorageToLocalStorage();
-      };
-
+  // Simple mock implementation of the Supabase client
+  return {
+    from: (table: string) => {
+      console.log(`Mock client: from(${table})`);
       return {
-        // SELECT
-        select(columns = '*') {
+        select: (columns: string = '*') => {
+          console.log(`Mock client: ${table}.select(${columns})`);
           return {
-            order(column: string, { ascending = false } = {}) {
+            eq: (column: string, value: any) => {
+              console.log(`Mock client: ${table}.select().eq(${column}, ${value})`);
+              const data = mockStorage[table] || [];
+              let filteredData = data.filter((row: any) => row[column] === value);
+              
               return {
-                limit(num: number) {
+                single: () => {
+                  console.log(`Mock client: ${table}.select().eq().single()`);
+                  const result = filteredData.length > 0 ? filteredData[0] : null;
+                  
                   return {
-                    single() {
-                      const items = getTableData();
-                      const sortedItems = [...items].sort((a, b) => {
-                        return ascending ? 
-                          (a[column] > b[column] ? 1 : -1) : 
-                          (a[column] < b[column] ? 1 : -1);
-                      });
+                    data: result,
+                    error: result ? null : { message: 'No rows found' }
+                  };
+                },
+                maybeSingle: () => {
+                  console.log(`Mock client: ${table}.select().eq().maybeSingle()`);
+                  const result = filteredData.length > 0 ? filteredData[0] : null;
+                  
+                  return {
+                    data: result,
+                    error: null
+                  };
+                },
+                then: (callback: Function) => {
+                  return Promise.resolve({
+                    data: filteredData,
+                    error: null
+                  }).then(callback);
+                }
+              };
+            },
+            order: (column: string, { ascending = true } = {}) => {
+              console.log(`Mock client: ${table}.select().order(${column}, ${ascending})`);
+              const data = mockStorage[table] || [];
+              
+              // Sort the data based on the column and order
+              const sortedData = [...data].sort((a, b) => {
+                if (ascending) {
+                  return a[column] > b[column] ? 1 : -1;
+                } else {
+                  return a[column] < b[column] ? 1 : -1;
+                }
+              });
+              
+              return {
+                limit: (limit: number) => {
+                  console.log(`Mock client: ${table}.select().order().limit(${limit})`);
+                  const limitedData = sortedData.slice(0, limit);
+                  
+                  return {
+                    single: () => {
+                      console.log(`Mock client: ${table}.select().order().limit().single()`);
+                      const result = limitedData.length > 0 ? limitedData[0] : null;
                       
-                      const result = sortedItems.slice(0, num)[0];
-                      
-                      const response: PostgrestResponse<any> = {
-                        data: result || null,
-                        error: null,
-                        count: result ? 1 : 0,
-                        status: 200,
-                        statusText: 'OK'
+                      return {
+                        data: result,
+                        error: result ? null : { message: 'No rows found' }
                       };
-                      
-                      return response;
                     },
-                    async then(callback: (result: PostgrestResponse<any>) => void) {
-                      const items = getTableData();
-                      const sortedItems = [...items].sort((a, b) => {
-                        return ascending ? 
-                          (a[column] > b[column] ? 1 : -1) : 
-                          (a[column] < b[column] ? 1 : -1);
-                      });
-                      
-                      const limitedItems = sortedItems.slice(0, num);
-                      
-                      const response: PostgrestResponse<any> = {
-                        data: limitedItems,
-                        error: null,
-                        count: limitedItems.length,
-                        status: 200,
-                        statusText: 'OK'
-                      };
-                      
-                      return callback(response);
+                    then: (callback: Function) => {
+                      return Promise.resolve({
+                        data: limitedData,
+                        error: null
+                      }).then(callback);
                     }
                   };
                 },
-                async then(callback: (result: PostgrestResponse<any>) => void) {
-                  const items = getTableData();
-                  const sortedItems = [...items].sort((a, b) => {
-                    return ascending ? 
-                      (a[column] > b[column] ? 1 : -1) : 
-                      (a[column] < b[column] ? 1 : -1);
-                  });
-                  
-                  const response: PostgrestResponse<any> = {
-                    data: sortedItems,
-                    error: null,
-                    count: sortedItems.length,
-                    status: 200,
-                    statusText: 'OK'
-                  };
-                  
-                  return callback(response);
+                then: (callback: Function) => {
+                  return Promise.resolve({
+                    data: sortedData,
+                    error: null
+                  }).then(callback);
                 }
               };
             },
-            eq(column: string, value: any) {
+            limit: (limit: number) => {
+              console.log(`Mock client: ${table}.select().limit(${limit})`);
+              const data = mockStorage[table] || [];
+              const limitedData = data.slice(0, limit);
+              
               return {
-                single() {
-                  const items = getTableData();
-                  const result = items.find(item => item[column] === value);
-                  
-                  const response: PostgrestResponse<any> = {
-                    data: result || null,
-                    error: null,
-                    count: result ? 1 : 0,
-                    status: 200,
-                    statusText: 'OK'
-                  };
-                  
-                  return response;
-                },
-                async then(callback: (result: PostgrestResponse<any>) => void) {
-                  const items = getTableData();
-                  const filteredItems = items.filter(item => item[column] === value);
-                  
-                  const response: PostgrestResponse<any> = {
-                    data: filteredItems,
-                    error: null,
-                    count: filteredItems.length,
-                    status: 200,
-                    statusText: 'OK'
-                  };
-                  
-                  return callback(response);
+                then: (callback: Function) => {
+                  return Promise.resolve({
+                    data: limitedData,
+                    error: null
+                  }).then(callback);
                 }
               };
             },
-            async then(callback: (result: PostgrestResponse<any>) => void) {
-              const items = getTableData();
-              
-              const response: PostgrestResponse<any> = {
-                data: items,
-                error: null,
-                count: items.length,
-                status: 200,
-                statusText: 'OK'
-              };
-              
-              return callback(response);
+            then: (callback: Function) => {
+              const data = mockStorage[table] || [];
+              return Promise.resolve({
+                data: data,
+                error: null
+              }).then(callback);
             }
           };
         },
-
-        // INSERT
-        insert(newItems: any[]) {
-          // IMPORTANT: Changed to return object without select method to match new Supabase behavior
-          console.log(`[Mock] Inserting ${newItems.length} items into ${table}`);
+        insert: (records: any) => {
+          console.log(`Mock client: ${table}.insert()`, records);
           
-          const items = getTableData();
-          const lastId = items.length > 0 ? Math.max(...items.map(i => i.id || 0)) : 0;
+          // Convert single record to array
+          const recordsArray = Array.isArray(records) ? records : [records];
           
-          const itemsWithIds = newItems.map((item, index) => ({
-            id: item.id || (lastId + index + 1),
-            ...item,
-            // Adicionar timestamps se não existirem
-            criado_em: item.criado_em || new Date().toISOString()
-          }));
+          // Initialize table if it doesn't exist
+          if (!mockStorage[table]) {
+            mockStorage[table] = [];
+          }
           
-          setTableData([...items, ...itemsWithIds]);
+          // Add ID if not provided
+          recordsArray.forEach((record: any) => {
+            if (!record.id) {
+              // Find max ID and increment
+              const maxId = mockStorage[table].reduce(
+                (max: number, item: any) => (item.id && item.id > max ? item.id : max),
+                0
+              );
+              record.id = maxId + 1;
+            }
+            
+            // Add created_at or criado_em if they don't exist
+            if (!record.created_at && !record.criado_em) {
+              record.criado_em = new Date().toISOString();
+            }
+            
+            mockStorage[table].push(record);
+          });
+          
+          // Save to localStorage
           saveMockStorageToLocalStorage();
           
           return {
-            data: newItems,
-            error: null
+            then: (callback: Function) => {
+              return Promise.resolve({
+                data: null,
+                error: null
+              }).then(callback);
+            }
           };
         },
-
-        // UPDATE
-        update(updates: any) {
-          // IMPORTANT: Changed to return object without select method to match new Supabase behavior
+        update: (updates: any) => {
+          console.log(`Mock client: ${table}.update()`, updates);
+          
           return {
-            eq(column: string, value: any) {
-              console.log(`[Mock] Updating in ${table} where ${column} = ${value}`);
+            eq: (column: string, value: any) => {
+              console.log(`Mock client: ${table}.update().eq(${column}, ${value})`);
               
-              const items = getTableData();
-              const updatedItems = items.map(item => {
-                if (item[column] === value) {
-                  return { ...item, ...updates };
+              if (!mockStorage[table]) {
+                return {
+                  then: (callback: Function) => {
+                    return Promise.resolve({
+                      data: null,
+                      error: { message: 'Table not found' }
+                    }).then(callback);
+                  }
+                };
+              }
+              
+              // Find and update records
+              mockStorage[table] = mockStorage[table].map((record: any) => {
+                if (record[column] === value) {
+                  return { ...record, ...updates };
                 }
-                return item;
+                return record;
               });
               
-              setTableData(updatedItems);
+              // Save to localStorage
               saveMockStorageToLocalStorage();
               
               return {
-                data: null,
-                error: null
+                then: (callback: Function) => {
+                  return Promise.resolve({
+                    data: null,
+                    error: null
+                  }).then(callback);
+                }
               };
             }
           };
         },
-
-        // DELETE
-        delete() {
+        delete: () => {
+          console.log(`Mock client: ${table}.delete()`);
+          
           return {
-            eq(column: string, value: any) {
-              console.log(`[Mock] Deleting from ${table} where ${column} = ${value}`);
+            eq: (column: string, value: any) => {
+              console.log(`Mock client: ${table}.delete().eq(${column}, ${value})`);
               
-              const items = getTableData();
-              const filteredItems = items.filter(item => item[column] !== value);
+              if (!mockStorage[table]) {
+                return {
+                  then: (callback: Function) => {
+                    return Promise.resolve({
+                      data: null,
+                      error: { message: 'Table not found' }
+                    }).then(callback);
+                  }
+                };
+              }
               
-              setTableData(filteredItems);
+              // Filter out deleted records
+              mockStorage[table] = mockStorage[table].filter(
+                (record: any) => record[column] !== value
+              );
+              
+              // Save to localStorage
               saveMockStorageToLocalStorage();
               
               return {
-                data: null,
-                error: null
+                then: (callback: Function) => {
+                  return Promise.resolve({
+                    data: null,
+                    error: null
+                  }).then(callback);
+                }
               };
             }
           };
         }
       };
+    },
+    auth: {
+      signUp: () => Promise.resolve({ data: null, error: null }),
+      signIn: () => Promise.resolve({ data: null, error: null }),
+      signOut: () => Promise.resolve({ error: null }),
+      onAuthStateChange: () => ({ data: { subscription: { unsubscribe: () => {} } } })
+    },
+    storage: {
+      from: () => ({
+        upload: () => Promise.resolve({ data: null, error: null }),
+        getPublicUrl: () => ({ data: { publicUrl: 'mock-public-url' } })
+      })
     }
-  };
-
-  return mockClient as unknown as ReturnType<typeof createClient<Database>>;
+  } as unknown as ReturnType<typeof createClient<SimplifiedDatabase>>;
 }
