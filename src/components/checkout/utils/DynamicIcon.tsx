@@ -1,5 +1,6 @@
 
 import { icons } from "lucide-react";
+import { BrasilFlag } from "./BrasilFlag";
 
 // Define props for the dynamic icon component
 interface DynamicIconProps {
@@ -13,6 +14,11 @@ export function DynamicIcon({ name, size = 16, className = "", color }: DynamicI
   if (!name) {
     console.warn("No icon name provided to DynamicIcon component");
     return null;
+  }
+
+  // Caso especial para a bandeira do Brasil
+  if (name === "brasil-flag") {
+    return <BrasilFlag size={size} className={className} />;
   }
 
   // Convert kebab-case to PascalCase for Lucide

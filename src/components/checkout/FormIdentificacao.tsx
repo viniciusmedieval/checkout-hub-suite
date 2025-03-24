@@ -29,7 +29,7 @@ export function FormIdentificacao({
   const iconColor = configCheckout?.cor_icones || "#8a898c";
   const nomeIconName = configCheckout?.icone_nome || "user";
   const emailIconName = configCheckout?.icone_email || "mail";
-  const telefoneIconName = configCheckout?.icone_telefone || "smartphone";
+  const telefoneIconName = "brasil-flag"; // Sempre usar a bandeira do Brasil para telefone
   const documentoIconName = configCheckout?.icone_documento || "file-text";
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -92,11 +92,11 @@ export function FormIdentificacao({
         <div className={`grid ${showDocumento && showTelefone ? 'grid-cols-2' : 'grid-cols-1'} gap-3`}>
           {showTelefone && (
             <div className="relative">
-              <div className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-700">
+              <div className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-700 flex items-center">
+                <span className="mr-1">+55</span>
                 <DynamicIcon 
                   name={telefoneIconName} 
-                  size={16} 
-                  color={iconColor} 
+                  size={14}
                 />
               </div>
               <Input 
@@ -105,7 +105,7 @@ export function FormIdentificacao({
                 placeholder="Celular"
                 value={formData.telefone}
                 onChange={handleChange}
-                className={`pl-9 h-10 text-sm ${errors.telefone ? 'border-red-500' : 'border-gray-200'} bg-white text-black focus-visible:ring-gray-300`}
+                className={`pl-16 h-10 text-sm ${errors.telefone ? 'border-red-500' : 'border-gray-200'} bg-white text-black focus-visible:ring-gray-300`}
               />
               {errors.telefone && <p className="text-red-500 text-xs mt-1">Celular inválido</p>}
             </div>
