@@ -2,8 +2,8 @@
 import { useState } from "react";
 import { Produto, ConfigCheckout } from "@/lib/supabase";
 import { CheckoutForm } from "@/components/checkout/CheckoutForm";
-import { CheckoutSummary } from "@/components/checkout/CheckoutSummary";
 import { CheckoutTestimonials } from "@/components/checkout/CheckoutTestimonials";
+import { ResumoCompra } from "@/components/checkout/ResumoCompra";
 import { PaymentMethodSelector } from "@/components/checkout/payment/PaymentMethodSelector";
 import { Shield } from "lucide-react";
 
@@ -58,7 +58,7 @@ export function CheckoutContent({ produto, configCheckout }: CheckoutContentProp
         
         {/* Order Summary & CTA Button */}
         <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-4">
-          <CheckoutSummary 
+          <ResumoCompra 
             produto={produto} 
             configCheckout={configCheckout} 
           />
