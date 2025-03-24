@@ -31,7 +31,7 @@ export function DynamicIcon({ name, size = 16, className = "", color }: DynamicI
   
   if (!LucideIcon) {
     console.warn(`Icon not found: ${name}, using Circle fallback`);
-    return null;
+    return icons["Circle"]({ size, className, color });
   }
   
   return (
