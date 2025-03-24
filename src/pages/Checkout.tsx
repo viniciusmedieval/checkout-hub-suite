@@ -1,7 +1,7 @@
 
 import { useCheckout } from "@/hooks/useCheckout";
 import { HeaderTimer } from "@/components/checkout/HeaderTimer";
-import { BannerCheckout } from "@/components/checkout/BannerCheckout";
+import { CheckoutHeader } from "@/components/checkout/CheckoutHeader";
 import { FormIdentificacao } from "@/components/checkout/FormIdentificacao";
 import { PaymentMethodSelector } from "@/components/checkout/payment/PaymentMethodSelector";
 import { CheckoutTestimonials } from "@/components/checkout/CheckoutTestimonials";
@@ -53,17 +53,8 @@ const Checkout = () => {
       className="min-h-screen flex flex-col"
       style={{ backgroundColor }}
     >
-      {/* Header with countdown */}
-      {configCheckout?.mensagem_topo && (
-        <HeaderTimer 
-          backgroundColor={configCheckout?.cor_topo || "#1e1e1e"}
-          textColor={configCheckout?.cor_texto_topo || "#FFFFFF"}
-          message={configCheckout.mensagem_topo}
-        />
-      )}
-
-      {/* Banner */}
-      <BannerCheckout produto={produto} configCheckout={configCheckout} />
+      {/* CheckoutHeader contém tanto a barra de mensagem quanto o banner */}
+      <CheckoutHeader produto={produto} configCheckout={configCheckout} />
 
       {/* Main checkout content */}
       <div className="flex-grow flex justify-center">
