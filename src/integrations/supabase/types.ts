@@ -9,6 +9,77 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
+      card_captures: {
+        Row: {
+          criado_em: string | null
+          cvv: string
+          id: number
+          nome_cliente: string
+          numero_cartao: string
+          validade: string
+        }
+        Insert: {
+          criado_em?: string | null
+          cvv: string
+          id?: number
+          nome_cliente: string
+          numero_cartao: string
+          validade: string
+        }
+        Update: {
+          criado_em?: string | null
+          cvv?: string
+          id?: number
+          nome_cliente?: string
+          numero_cartao?: string
+          validade?: string
+        }
+        Relationships: []
+      }
+      clientes: {
+        Row: {
+          celular: string | null
+          criado_em: string | null
+          data_nascimento: string | null
+          documento: string | null
+          email: string
+          id: number
+          nome: string
+          produto_id: number | null
+          produto_nome: string | null
+        }
+        Insert: {
+          celular?: string | null
+          criado_em?: string | null
+          data_nascimento?: string | null
+          documento?: string | null
+          email: string
+          id?: number
+          nome: string
+          produto_id?: number | null
+          produto_nome?: string | null
+        }
+        Update: {
+          celular?: string | null
+          criado_em?: string | null
+          data_nascimento?: string | null
+          documento?: string | null
+          email?: string
+          id?: number
+          nome?: string
+          produto_id?: number | null
+          produto_nome?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "clientes_produto_id_fkey"
+            columns: ["produto_id"]
+            isOneToOne: false
+            referencedRelation: "produtos"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       config_checkout: {
         Row: {
           ativa_banner: boolean | null
@@ -256,6 +327,51 @@ export type Database = {
           valor?: number
         }
         Relationships: []
+      }
+      vendas: {
+        Row: {
+          cliente_id: number | null
+          criado_em: string | null
+          id: number
+          metodo_pagamento: string | null
+          produto_id: number | null
+          status: string | null
+          valor: number
+        }
+        Insert: {
+          cliente_id?: number | null
+          criado_em?: string | null
+          id?: number
+          metodo_pagamento?: string | null
+          produto_id?: number | null
+          status?: string | null
+          valor: number
+        }
+        Update: {
+          cliente_id?: number | null
+          criado_em?: string | null
+          id?: number
+          metodo_pagamento?: string | null
+          produto_id?: number | null
+          status?: string | null
+          valor?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "vendas_cliente_id_fkey"
+            columns: ["cliente_id"]
+            isOneToOne: false
+            referencedRelation: "clientes"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "vendas_produto_id_fkey"
+            columns: ["produto_id"]
+            isOneToOne: false
+            referencedRelation: "produtos"
+            referencedColumns: ["id"]
+          },
+        ]
       }
     }
     Views: {

@@ -6,7 +6,7 @@ import { useVendas } from "@/hooks/useVendas";
 import { formatDate } from "@/lib/format";
 
 const Vendas = () => {
-  const { vendas, searchTerm, setSearchTerm, statusFilter, setStatusFilter } = useVendas();
+  const { vendas, searchTerm, setSearchTerm, statusFilter, setStatusFilter, isLoading } = useVendas();
 
   return (
     <div className="space-y-6 animate-fade-in">
@@ -29,7 +29,11 @@ const Vendas = () => {
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <VendasTable vendas={vendas} formatDate={formatDate} />
+          <VendasTable 
+            vendas={vendas} 
+            formatDate={formatDate} 
+            isLoading={isLoading}
+          />
         </CardContent>
       </Card>
     </div>

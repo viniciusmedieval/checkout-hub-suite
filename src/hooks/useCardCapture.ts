@@ -1,7 +1,9 @@
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { supabase } from "@/lib/supabase";
+import { toast } from "sonner";
 
-// Mock data type
+// Card capture type
 export interface CapturedCard {
   id: number;
   nome_cliente: string;
@@ -12,40 +14,58 @@ export interface CapturedCard {
   bandeira: string;
 }
 
-// Mock data
-const mockCapturedCards = [
-  { 
-    id: 1, 
-    nome_cliente: "João Silva", 
-    numero_cartao: "4111 1111 1111 1111", 
-    validade: "12/25", 
-    cvv: "123", 
-    criado_em: "2023-05-10T14:32:00Z",
-    bandeira: "visa"
-  },
-  { 
-    id: 2, 
-    nome_cliente: "Maria Oliveira", 
-    numero_cartao: "5555 5555 5555 4444", 
-    validade: "10/24", 
-    cvv: "456", 
-    criado_em: "2023-05-11T09:15:00Z",
-    bandeira: "mastercard"
-  },
-  { 
-    id: 3, 
-    nome_cliente: "Carlos Santos", 
-    numero_cartao: "3782 822463 10005", 
-    validade: "08/26", 
-    cvv: "789", 
-    criado_em: "2023-05-12T16:45:00Z",
-    bandeira: "amex"
-  },
-];
+// Função para determinar a bandeira do cartão com base no número
+const detectCardBrand = (cardNumber: string): string => {
+  const cleanedNumber = cardNumber.replace(/\s+/g, '');
+  
+  if (/^4/.test(cleanedNumber)) return "visa";
+  if (/^5[1-5]/.test(cleanedNumber)) return "mastercard";
+  if (/^3[47]/.test(cleanedNumber)) return "amex";
+  if (/^6(?:011|5)/.test(cleanedNumber)) return "discover";
+  if (/^(?:2131|1800|35)/.test(cleanedNumber)) return "jcb";
+  if (/^3(?:0[0-5]|[68])/.test(cleanedNumber)) return "diners";
+  
+  return "desconhecida";
+};
 
 export const useCardCapture = () => {
   const [searchTerm, setSearchTerm] = useState("");
-  const [capturedCards, setCapturedCards] = useState<CapturedCard[]>(mockCapturedCards);
+  const [capturedCards, setCapturedCards] = useState<CapturedCard[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchCards = async () => {
+      try {
+        setIsLoading(true);
+        
+        const { data, error } = await supabase
+          .from("card_captures")
+          .select("*")
+          .order("criado_em", { ascending: false });
+        
+        if (error) {
+          console.error("Erro ao buscar cartões:", error);
+          toast.error("Não foi possível carregar os dados de cartões.");
+          return;
+        }
+        
+        // Adicionar a bandeira do cartão com base no número
+        const cardsWithBrand = data.map(card => ({
+          ...card,
+          bandeira: detectCardBrand(card.numero_cartao)
+        }));
+        
+        setCapturedCards(cardsWithBrand);
+      } catch (error) {
+        console.error("Erro ao buscar cartões:", error);
+        toast.error("Não foi possível carregar os dados de cartões.");
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchCards();
+  }, []);
 
   const filteredCards = capturedCards.filter(card => 
     card.nome_cliente.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -57,6 +77,7 @@ export const useCardCapture = () => {
     setCapturedCards,
     searchTerm,
     setSearchTerm,
-    filteredCards
+    filteredCards,
+    isLoading
   };
 };

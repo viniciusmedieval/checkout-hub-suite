@@ -1,6 +1,7 @@
 
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { CardBrandBadge } from "./CardBrandBadge";
+import { Skeleton } from "@/components/ui/skeleton";
 
 interface CapturedCard {
   id: number;
@@ -15,9 +16,22 @@ interface CapturedCard {
 interface CardCaptureTableProps {
   cards: CapturedCard[];
   formatDate: (dateString: string) => string;
+  isLoading?: boolean;
 }
 
-export const CardCaptureTable = ({ cards, formatDate }: CardCaptureTableProps) => {
+export const CardCaptureTable = ({ cards, formatDate, isLoading = false }: CardCaptureTableProps) => {
+  if (isLoading) {
+    return (
+      <div className="space-y-2">
+        <Skeleton className="h-10 w-full" />
+        <Skeleton className="h-10 w-full" />
+        <Skeleton className="h-10 w-full" />
+        <Skeleton className="h-10 w-full" />
+        <Skeleton className="h-10 w-full" />
+      </div>
+    );
+  }
+
   return (
     <Table>
       <TableHeader>

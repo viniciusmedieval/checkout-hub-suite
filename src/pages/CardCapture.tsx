@@ -6,7 +6,7 @@ import { useCardCapture } from "@/hooks/useCardCapture";
 import { formatDate } from "@/lib/format";
 
 const CardCapture = () => {
-  const { filteredCards, searchTerm, setSearchTerm } = useCardCapture();
+  const { filteredCards, searchTerm, setSearchTerm, isLoading } = useCardCapture();
 
   return (
     <div className="space-y-6 animate-fade-in">
@@ -27,7 +27,11 @@ const CardCapture = () => {
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <CardCaptureTable cards={filteredCards} formatDate={formatDate} />
+          <CardCaptureTable 
+            cards={filteredCards} 
+            formatDate={formatDate} 
+            isLoading={isLoading}
+          />
         </CardContent>
       </Card>
     </div>

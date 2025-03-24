@@ -1,64 +1,7 @@
 
-import { useState } from "react";
-
-// Mock data
-const mockVendas = [
-  { 
-    id: 1, 
-    cliente_id: 1, 
-    cliente_nome: "João Silva",
-    produto_id: 1,
-    produto_nome: "Curso de Marketing Digital",
-    valor: 297.00,
-    status: "aprovado",
-    metodo_pagamento: "pix",
-    criado_em: "2023-05-10T14:32:00Z"
-  },
-  { 
-    id: 2, 
-    cliente_id: 2, 
-    cliente_nome: "Maria Oliveira",
-    produto_id: 2,
-    produto_nome: "E-book Finanças Pessoais",
-    valor: 47.00,
-    status: "aprovado",
-    metodo_pagamento: "cartao",
-    criado_em: "2023-05-11T09:15:00Z"
-  },
-  { 
-    id: 3, 
-    cliente_id: 3, 
-    cliente_nome: "Carlos Santos",
-    produto_id: 1,
-    produto_nome: "Curso de Marketing Digital",
-    valor: 297.00,
-    status: "pendente",
-    metodo_pagamento: "boleto",
-    criado_em: "2023-05-12T16:45:00Z"
-  },
-  { 
-    id: 4, 
-    cliente_id: 4, 
-    cliente_nome: "Ana Pereira",
-    produto_id: 3,
-    produto_nome: "Mentorias de Vendas",
-    valor: 997.00,
-    status: "recusado",
-    metodo_pagamento: "cartao",
-    criado_em: "2023-05-13T11:20:00Z"
-  },
-  { 
-    id: 5, 
-    cliente_id: 5, 
-    cliente_nome: "Paulo Souza",
-    produto_id: 2,
-    produto_nome: "E-book Finanças Pessoais",
-    valor: 47.00,
-    status: "aprovado",
-    metodo_pagamento: "pix",
-    criado_em: "2023-05-14T13:50:00Z"
-  },
-];
+import { useState, useEffect } from "react";
+import { supabase } from "@/lib/supabase";
+import { toast } from "sonner";
 
 export interface Venda {
   id: number;
@@ -75,7 +18,46 @@ export interface Venda {
 export const useVendas = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState("todos");
-  const [vendas] = useState<Venda[]>(mockVendas);
+  const [vendas, setVendas] = useState<Venda[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchVendas = async () => {
+      try {
+        setIsLoading(true);
+        
+        const { data, error } = await supabase
+          .from("vendas")
+          .select(`
+            *,
+            clientes:cliente_id (nome),
+            produtos:produto_id (nome)
+          `);
+        
+        if (error) {
+          console.error("Erro ao buscar vendas:", error);
+          toast.error("Não foi possível carregar as vendas.");
+          return;
+        }
+        
+        // Formatar dados para corresponder à interface Venda
+        const vendasFormatadas = data.map(venda => ({
+          ...venda,
+          cliente_nome: venda.clientes?.nome || "Cliente não encontrado",
+          produto_nome: venda.produtos?.nome || "Produto não encontrado"
+        }));
+        
+        setVendas(vendasFormatadas);
+      } catch (error) {
+        console.error("Erro ao buscar vendas:", error);
+        toast.error("Não foi possível carregar as vendas.");
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchVendas();
+  }, []);
 
   const filteredVendas = vendas.filter(venda => {
     const matchesSearch = 
@@ -93,6 +75,7 @@ export const useVendas = () => {
     searchTerm,
     setSearchTerm,
     statusFilter,
-    setStatusFilter
+    setStatusFilter,
+    isLoading
   };
 };

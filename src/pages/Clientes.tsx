@@ -6,7 +6,7 @@ import { useClientes } from "@/hooks/useClientes";
 import { formatDate } from "@/lib/format";
 
 const Clientes = () => {
-  const { filteredClientes, searchTerm, setSearchTerm } = useClientes();
+  const { filteredClientes, searchTerm, setSearchTerm, isLoading } = useClientes();
 
   return (
     <div className="space-y-6 animate-fade-in">
@@ -27,7 +27,11 @@ const Clientes = () => {
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <ClientesTable clientes={filteredClientes} formatDate={formatDate} />
+          <ClientesTable 
+            clientes={filteredClientes} 
+            formatDate={formatDate} 
+            isLoading={isLoading}
+          />
         </CardContent>
       </Card>
     </div>

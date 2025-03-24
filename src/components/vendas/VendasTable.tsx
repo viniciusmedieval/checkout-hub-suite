@@ -2,6 +2,7 @@
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { StatusBadge } from "./StatusBadge";
 import { PaymentMethodIcon } from "./PaymentMethodIcon";
+import { Skeleton } from "@/components/ui/skeleton";
 
 interface Venda {
   id: number;
@@ -18,9 +19,22 @@ interface Venda {
 interface VendasTableProps {
   vendas: Venda[];
   formatDate: (dateString: string) => string;
+  isLoading?: boolean;
 }
 
-export const VendasTable = ({ vendas, formatDate }: VendasTableProps) => {
+export const VendasTable = ({ vendas, formatDate, isLoading = false }: VendasTableProps) => {
+  if (isLoading) {
+    return (
+      <div className="space-y-2">
+        <Skeleton className="h-10 w-full" />
+        <Skeleton className="h-10 w-full" />
+        <Skeleton className="h-10 w-full" />
+        <Skeleton className="h-10 w-full" />
+        <Skeleton className="h-10 w-full" />
+      </div>
+    );
+  }
+
   return (
     <Table>
       <TableHeader>

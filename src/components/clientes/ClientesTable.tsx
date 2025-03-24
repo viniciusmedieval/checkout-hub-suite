@@ -1,5 +1,6 @@
 
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { Skeleton } from "@/components/ui/skeleton";
 
 interface Cliente {
   id: number;
@@ -15,9 +16,22 @@ interface Cliente {
 interface ClientesTableProps {
   clientes: Cliente[];
   formatDate: (dateString: string) => string;
+  isLoading?: boolean;
 }
 
-export const ClientesTable = ({ clientes, formatDate }: ClientesTableProps) => {
+export const ClientesTable = ({ clientes, formatDate, isLoading = false }: ClientesTableProps) => {
+  if (isLoading) {
+    return (
+      <div className="space-y-2">
+        <Skeleton className="h-10 w-full" />
+        <Skeleton className="h-10 w-full" />
+        <Skeleton className="h-10 w-full" />
+        <Skeleton className="h-10 w-full" />
+        <Skeleton className="h-10 w-full" />
+      </div>
+    );
+  }
+
   return (
     <Table>
       <TableHeader>
