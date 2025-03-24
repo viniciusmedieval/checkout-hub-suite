@@ -138,4 +138,35 @@ export const saveConfig = async (config: ConfigCheckout): Promise<ConfigCheckout
       toast.success("Configurações salvas com sucesso!");
       return processedData;
     } else {
-      console.log("🔄
+      console.log("🔄 Criando nova configuração");
+
+      // Inserir nova configuração
+      const { data: insertedData, error: insertError } = await supabase
+        .from("config_checkout")
+        .insert([configToSave])
+        .select() // Aqui podemos usar .select() porque o Supabase retorna os dados inseridos
+        .single();
+
+      if (insertError) {
+        console.error("❌ Erro ao criar configurações:", insertError);
+        toast.error("Erro ao criar configurações: " + insertError.message);
+        return null;
+      }
+
+      if (!insertedData) {
+        console.error("❌ Erro: Retorno nulo do Supabase após inserção");
+        toast.error("Erro ao recuperar dados criados. Tente novamente.");
+        return null;
+      }
+
+      const processedData = ensureBooleanFields(insertedData);
+      console.log("✅ Configuração criada com sucesso:", processedData);
+      toast.success("Configurações salvas com sucesso!");
+      return processedData;
+    }
+  } catch (error) {
+    console.error("❌ Erro no saveConfig:", error);
+    toast.error("Erro ao salvar configurações: " + (error.message || "Erro desconhecido"));
+    return null;
+  }
+};
