@@ -24,9 +24,13 @@ export function useProductManager() {
         toast.error("Erro ao buscar produtos. Tente novamente.");
       }
 
-      if (data) {
-        setProducts(data);
+      if (!data) {
+        console.error("Erro: Retorno nulo do Supabase ao buscar produtos");
+        toast.error("Erro ao buscar produtos. Tente novamente.");
+        return;
       }
+
+      setProducts(data);
     } catch (error) {
       console.error("Erro inesperado ao buscar produtos:", error);
       toast.error("Erro inesperado ao buscar produtos. Tente novamente.");
@@ -48,10 +52,10 @@ export function useProductManager() {
   const handleFormSubmit = async (values: ProductFormValues) => {
     try {
       if (isCreating) {
-        const { data, error } = await supabase
+        // Step 1: Insert the new product
+        const { error } = await supabase
           .from("produtos")
-          .insert([values])
-          .select();
+          .insert([values]);
 
         if (error) {
           console.error("Erro ao criar produto:", error);
@@ -59,18 +63,38 @@ export function useProductManager() {
           return;
         }
 
-        if (data && data.length > 0) {
-          setProducts([...products, data[0] as Product]);
-          toast.success("Produto criado com sucesso!");
+        // Step 2: Fetch the newly created product
+        const { data, error: selectError } = await supabase
+          .from("produtos")
+          .select("*")
+          .order('id', { ascending: false })
+          .limit(1)
+          .single();
+          
+        if (selectError) {
+          console.error("Erro ao buscar produto criado:", selectError);
+          toast.error("Produto criado, mas houve erro ao buscar os dados.");
+          await fetchProducts(); // Refresh the list anyway
+          return;
         }
+
+        if (!data) {
+          console.error("Erro: Retorno nulo do Supabase após criação de produto");
+          toast.error("Erro ao recuperar produto criado. Tente novamente.");
+          await fetchProducts(); // Refresh the list anyway
+          return;
+        }
+
+        setProducts([data as Product, ...products]);
+        toast.success("Produto criado com sucesso!");
       }
 
       if (isEditing && selectedProduct) {
-        const { data, error } = await supabase
+        // Step 1: Update the product
+        const { error } = await supabase
           .from("produtos")
           .update(values)
-          .eq("id", selectedProduct.id)
-          .select();
+          .eq("id", selectedProduct.id);
 
         if (error) {
           console.error("Erro ao atualizar produto:", error);
@@ -78,13 +102,32 @@ export function useProductManager() {
           return;
         }
 
-        if (data && data.length > 0) {
-          const updatedProducts = products.map((product) =>
-            product.id === selectedProduct.id ? (data[0] as Product) : product
-          );
-          setProducts(updatedProducts);
-          toast.success("Produto atualizado com sucesso!");
+        // Step 2: Fetch the updated product
+        const { data, error: selectError } = await supabase
+          .from("produtos")
+          .select("*")
+          .eq("id", selectedProduct.id)
+          .single();
+          
+        if (selectError) {
+          console.error("Erro ao buscar produto atualizado:", selectError);
+          toast.error("Produto atualizado, mas houve erro ao buscar os dados.");
+          await fetchProducts(); // Refresh the list anyway
+          return;
         }
+
+        if (!data) {
+          console.error("Erro: Retorno nulo do Supabase após atualização de produto");
+          toast.error("Erro ao recuperar produto atualizado. Tente novamente.");
+          await fetchProducts(); // Refresh the list anyway
+          return;
+        }
+
+        const updatedProducts = products.map((product) =>
+          product.id === selectedProduct.id ? (data as Product) : product
+        );
+        setProducts(updatedProducts);
+        toast.success("Produto atualizado com sucesso!");
       }
     } catch (error) {
       console.error("Erro inesperado ao salvar produto:", error);

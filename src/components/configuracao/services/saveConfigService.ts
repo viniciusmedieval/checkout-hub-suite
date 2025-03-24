@@ -74,7 +74,7 @@ export const saveConfig = async (config: ConfigCheckout): Promise<ConfigCheckout
     if (config.id) {
       console.log(`Atualizando configuração existente com ID ${config.id}`);
       
-      // FIXED: Do not chain .select() directly after update
+      // Step 1: Update the record
       const { error } = await supabase
         .from("config_checkout")
         .update(configToSave)
@@ -86,7 +86,7 @@ export const saveConfig = async (config: ConfigCheckout): Promise<ConfigCheckout
         return null;
       }
       
-      // Do a separate query to fetch the updated record
+      // Step 2: Fetch the updated record in a separate query
       const { data, error: selectError } = await supabase
         .from("config_checkout")
         .select('*')
@@ -99,6 +99,12 @@ export const saveConfig = async (config: ConfigCheckout): Promise<ConfigCheckout
         return null;
       }
       
+      if (!data) {
+        console.error("Erro: Retorno nulo do Supabase após atualização");
+        toast.error("Erro ao recuperar dados atualizados. Tente novamente.");
+        return null;
+      }
+      
       const processedData = ensureBooleanFields(data);
       console.log("Configuração atualizada com sucesso:", processedData);
       toast.success("Configurações salvas com sucesso!");
@@ -107,7 +113,7 @@ export const saveConfig = async (config: ConfigCheckout): Promise<ConfigCheckout
     } else {
       console.log("Criando nova configuração");
       
-      // FIXED: Do not chain .select() directly after insert
+      // Step 1: Insert the new record
       const { error } = await supabase
         .from("config_checkout")
         .insert([configToSave]);
@@ -118,7 +124,7 @@ export const saveConfig = async (config: ConfigCheckout): Promise<ConfigCheckout
         return null;
       }
       
-      // Do a separate query to fetch the newly created record
+      // Step 2: Fetch the newly created record in a separate query
       const { data, error: selectError } = await supabase
         .from("config_checkout")
         .select('*')
@@ -129,6 +135,12 @@ export const saveConfig = async (config: ConfigCheckout): Promise<ConfigCheckout
       if (selectError) {
         console.error("Erro ao buscar configuração criada:", selectError);
         toast.error("Configuração criada, mas houve erro ao buscar os dados criados.");
+        return null;
+      }
+      
+      if (!data) {
+        console.error("Erro: Retorno nulo do Supabase após inserção");
+        toast.error("Erro ao recuperar dados criados. Tente novamente.");
         return null;
       }
       

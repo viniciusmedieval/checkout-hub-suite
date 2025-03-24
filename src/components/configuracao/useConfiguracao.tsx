@@ -107,13 +107,17 @@ export function useConfiguracao() {
         setTimeout(() => {
           reloadConfig();
         }, 500);
+        
+        return true;
       } else {
-        console.error("Falha ao salvar configurações");
+        console.error("Falha ao salvar configurações: retorno nulo");
         toast.error("Configurações não foram salvas. Verifique os erros.");
+        return false;
       }
     } catch (error) {
       console.error("Erro ao salvar e recarregar:", error);
       toast.error("Erro ao salvar as configurações");
+      return false;
     }
   };
 

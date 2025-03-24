@@ -14,7 +14,7 @@ try {
   console.log('Using Supabase integration client');
   supabase = integrationClient;
 } catch (error) {
-  console.log('Supabase integration client not available, using fallback', error);
+  console.error('Supabase integration client not available, using fallback', error);
   
   // Try to get credentials from localStorage as fallback
   const localSupabaseUrl = typeof window !== 'undefined' ? localStorage.getItem('supabaseUrl') : null;
@@ -35,12 +35,15 @@ try {
       console.log('Fallback Supabase client initialized successfully with URL:', supabaseUrl);
     } catch (error) {
       console.error('Error initializing fallback Supabase client:', error);
+      console.error('Usando mock client devido a falha na inicialização do Supabase');
       // Fallback to mock client
       supabase = createMockClient();
-      console.log('Using mock Supabase client due to initialization error');
     }
   } else {
-    console.warn('Supabase credentials not found, using mock client');
+    console.warn('Credenciais do Supabase não encontradas. Verifique se as variáveis de ambiente estão configuradas:');
+    console.warn('- VITE_SUPABASE_URL: ' + (envSupabaseUrl ? 'Configurada' : 'NÃO CONFIGURADA'));
+    console.warn('- VITE_SUPABASE_ANON_KEY: ' + (envSupabaseKey ? 'Configurada' : 'NÃO CONFIGURADA'));
+    console.warn('Usando mock client por falta de credenciais.');
     // Create a mock client
     supabase = createMockClient();
   }

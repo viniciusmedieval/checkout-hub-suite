@@ -33,13 +33,29 @@ export const fetchTestimonials = async (): Promise<Depoimento[]> => {
         criado_em: new Date().toISOString()
       }));
       
-      const { data: insertedData, error: insertError } = await supabase
+      // Step 1: Insert default testimonials
+      const { error: insertError } = await supabase
         .from("depoimentos")
-        .insert(depoimentosParaInserir)
-        .select();
+        .insert(depoimentosParaInserir);
         
       if (insertError) {
         console.error("Erro ao inserir depoimentos padrão:", insertError);
+        return [];
+      }
+      
+      // Step 2: Fetch the newly inserted testimonials
+      const { data: insertedData, error: selectError } = await supabase
+        .from("depoimentos")
+        .select("*")
+        .order('criado_em', { ascending: false });
+        
+      if (selectError) {
+        console.error("Erro ao buscar depoimentos inseridos:", selectError);
+        return [];
+      }
+      
+      if (!insertedData) {
+        console.error("Erro: Retorno nulo do Supabase após inserção de depoimentos");
         return [];
       }
       
@@ -82,19 +98,31 @@ export const deleteTestimonial = async (id: number): Promise<boolean> => {
  */
 export const addTestimonial = async (depoimento: Omit<Depoimento, "id" | "criado_em">): Promise<Depoimento | null> => {
   try {
-    const { data, error } = await supabase
+    // Step 1: Insert the new testimonial
+    const { error } = await supabase
       .from("depoimentos")
-      .insert([depoimento])
-      .select();
+      .insert([depoimento]);
       
     if (error) throw error;
     
-    if (data && data.length > 0) {
-      toast.success("Depoimento adicionado com sucesso!");
-      return data[0] as Depoimento;
+    // Step 2: Fetch the newly created testimonial
+    const { data, error: selectError } = await supabase
+      .from("depoimentos")
+      .select("*")
+      .order('id', { ascending: false })
+      .limit(1)
+      .single();
+      
+    if (selectError) throw selectError;
+    
+    if (!data) {
+      console.error("Erro: Retorno nulo do Supabase após inserção de depoimento");
+      toast.error("Erro ao recuperar depoimento criado. Tente novamente.");
+      return null;
     }
     
-    return null;
+    toast.success("Depoimento adicionado com sucesso!");
+    return data as Depoimento;
   } catch (error) {
     console.error("Erro ao adicionar depoimento:", error);
     toast.error("Erro ao adicionar depoimento. Tente novamente.");
@@ -107,6 +135,7 @@ export const addTestimonial = async (depoimento: Omit<Depoimento, "id" | "criado
  */
 export const updateTestimonial = async (id: number, depoimento: Partial<Depoimento>): Promise<Depoimento | null> => {
   try {
+    // Step 1: Update the testimonial
     const { error } = await supabase
       .from("depoimentos")
       .update(depoimento)
@@ -114,6 +143,7 @@ export const updateTestimonial = async (id: number, depoimento: Partial<Depoimen
       
     if (error) throw error;
     
+    // Step 2: Fetch the updated testimonial
     const { data, error: fetchError } = await supabase
       .from("depoimentos")
       .select("*")
@@ -121,6 +151,12 @@ export const updateTestimonial = async (id: number, depoimento: Partial<Depoimen
       .single();
       
     if (fetchError) throw fetchError;
+    
+    if (!data) {
+      console.error("Erro: Retorno nulo do Supabase após atualização de depoimento");
+      toast.error("Erro ao recuperar depoimento atualizado. Tente novamente.");
+      return null;
+    }
     
     toast.success("Depoimento atualizado com sucesso!");
     return data as Depoimento;

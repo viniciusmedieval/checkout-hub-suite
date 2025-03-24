@@ -42,7 +42,7 @@ export function useProductForm({
       if (isEditing && product) {
         console.log(`Updating product with ID: ${product.id}`);
         
-        // Update operation - do not chain with select()
+        // Step 1: Update the record
         const { error } = await supabase
           .from("produtos")
           .update(data)
@@ -54,7 +54,7 @@ export function useProductForm({
           return;
         }
 
-        // Fetch the updated product in a separate query if needed
+        // Step 2: Fetch the updated record in a separate query
         const { data: updatedProduct, error: fetchError } = await supabase
           .from("produtos")
           .select("*")
@@ -63,7 +63,10 @@ export function useProductForm({
           
         if (fetchError) {
           console.error("Error fetching updated product:", fetchError);
-          // Still consider the update successful even if fetching fails
+          toast.error("Produto atualizado, mas houve erro ao buscar os dados atualizados.");
+        } else if (!updatedProduct) {
+          console.error("Erro: Retorno nulo do Supabase após atualização do produto");
+          toast.error("Erro ao recuperar dados do produto atualizado.");
         } else {
           console.log("Updated product data:", updatedProduct);
         }
@@ -75,7 +78,7 @@ export function useProductForm({
       } else {
         console.log("Creating new product");
         
-        // Insert operation - do not chain with select()
+        // Step 1: Insert the new record
         const { error } = await supabase
           .from("produtos")
           .insert([data]);
@@ -84,6 +87,24 @@ export function useProductForm({
           console.error("Error creating product:", error);
           toast.error(`Erro ao criar produto: ${error.message}`);
           return;
+        }
+
+        // Step 2: Fetch the newly created record in a separate query if needed
+        const { data: newProduct, error: fetchError } = await supabase
+          .from("produtos")
+          .select("*")
+          .order('id', { ascending: false })
+          .limit(1)
+          .single();
+          
+        if (fetchError) {
+          console.error("Error fetching created product:", fetchError);
+          toast.error("Produto criado, mas houve erro ao buscar os dados criados.");
+        } else if (!newProduct) {
+          console.error("Erro: Retorno nulo do Supabase após criação do produto");
+          toast.error("Erro ao recuperar dados do produto criado.");
+        } else {
+          console.log("New product created:", newProduct);
         }
 
         console.log("Product created successfully");
