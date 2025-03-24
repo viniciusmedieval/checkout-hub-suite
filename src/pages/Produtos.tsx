@@ -25,12 +25,17 @@ const Produtos = () => {
   const fetchProdutos = async () => {
     setLoading(true);
     try {
+      console.log("Fetching produtos from Supabase");
       const { data, error } = await supabase
         .from('produtos')
         .select('*');
       
-      if (error) throw error;
+      if (error) {
+        console.error('Error fetching products:', error);
+        throw error;
+      }
       
+      console.log("Produtos fetched:", data);
       setProdutos(data || []);
     } catch (error) {
       console.error('Error fetching products:', error);
@@ -46,12 +51,17 @@ const Produtos = () => {
       const currentProduto = produtos.find(p => p.id === id);
       if (!currentProduto) return;
       
+      console.log(`Toggling status for product ${id} from ${currentProduto.ativo} to ${!currentProduto.ativo}`);
+      
       const { error } = await supabase
         .from('produtos')
         .update({ ativo: !currentProduto.ativo })
         .eq('id', id);
       
-      if (error) throw error;
+      if (error) {
+        console.error('Error updating product status:', error);
+        throw error;
+      }
       
       setProdutos(produtos.map(produto => 
         produto.id === id ? { ...produto, ativo: !produto.ativo } : produto
@@ -65,16 +75,19 @@ const Produtos = () => {
   };
 
   const handleOpenForm = (product?: Produto) => {
+    console.log("Opening form with product:", product);
     setSelectedProduct(product);
     setIsFormOpen(true);
   };
 
   const handleCloseForm = () => {
+    console.log("Closing product form");
     setIsFormOpen(false);
     setSelectedProduct(undefined);
   };
 
   const handleProductSaved = () => {
+    console.log("Product saved, refreshing list");
     fetchProdutos();
   };
 

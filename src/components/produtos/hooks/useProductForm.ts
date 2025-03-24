@@ -1,9 +1,10 @@
 
-import { useState } from 'react';
-import { UseFormReturn } from 'react-hook-form';
-import { toast } from 'sonner';
-import { supabase, Produto } from '@/lib/supabase';
-import { ProductFormValues } from '../schemas/productSchema';
+import { useState } from "react";
+import { UseFormReturn } from "react-hook-form";
+import { toast } from "sonner";
+import { Produto } from "@/lib/supabase";
+import { supabase } from "@/integrations/supabase/client";
+import { ProductFormValues } from "../schemas/productSchema";
 
 interface UseProductFormProps {
   product?: Produto;
@@ -12,51 +13,73 @@ interface UseProductFormProps {
   form: UseFormReturn<ProductFormValues>;
 }
 
-export function useProductForm({ product, onClose, onSuccess, form }: UseProductFormProps) {
+export function useProductForm({
+  product,
+  onClose,
+  onSuccess,
+  form
+}: UseProductFormProps) {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const isEditing = !!product;
 
   const generateSlug = () => {
-    const nome = form.getValues('nome');
-    if (nome) {
-      const slug = nome
-        .normalize('NFD')
-        .replace(/[\u0300-\u036f]/g, '')
-        .toLowerCase()
-        .replace(/[^a-z0-9]+/g, '-')
-        .replace(/^-+|-+$/g, '');
-      
-      form.setValue('slug', slug, { shouldValidate: true });
-    }
+    const productName = form.getValues("nome");
+    if (!productName) return;
+
+    const slug = productName
+      .toLowerCase()
+      .replace(/[^\w\s]/gi, "")
+      .replace(/\s+/g, "-");
+
+    form.setValue("slug", slug);
   };
 
-  const handleSubmit = async (values: ProductFormValues) => {
+  const handleSubmit = async (data: ProductFormValues) => {
     setIsSubmitting(true);
+    console.log("Submitting product data:", data);
+
     try {
       if (isEditing && product) {
-        const { error } = await supabase
-          .from('produtos')
-          .update(values)
-          .eq('id', product.id);
-          
-        if (error) throw error;
+        console.log(`Updating product with ID: ${product.id}`);
         
-        toast.success(`Produto "${values.nome}" atualizado com sucesso!`);
+        const { data: updatedProduct, error } = await supabase
+          .from("produtos")
+          .update(data)
+          .eq("id", product.id)
+          .select();
+
+        if (error) {
+          console.error("Error updating product:", error);
+          toast.error(`Erro ao atualizar produto: ${error.message}`);
+          return;
+        }
+
+        console.log("Product updated successfully:", updatedProduct);
+        toast.success("Produto atualizado com sucesso!");
+        onSuccess();
+        onClose();
       } else {
-        const { error } = await supabase
-          .from('produtos')
-          .insert([values]);
-          
-        if (error) throw error;
+        console.log("Creating new product");
         
-        toast.success(`Produto "${values.nome}" criado com sucesso!`);
+        const { data: newProduct, error } = await supabase
+          .from("produtos")
+          .insert([data])
+          .select();
+
+        if (error) {
+          console.error("Error creating product:", error);
+          toast.error(`Erro ao criar produto: ${error.message}`);
+          return;
+        }
+
+        console.log("Product created successfully:", newProduct);
+        toast.success("Produto criado com sucesso!");
+        onSuccess();
+        onClose();
       }
-      
-      onSuccess();
-      onClose();
     } catch (error) {
-      console.error('Erro ao salvar produto:', error);
-      toast.error('Ocorreu um erro ao salvar o produto. Tente novamente.');
+      console.error("Unexpected error:", error);
+      toast.error("Erro inesperado ao salvar produto. Tente novamente.");
     } finally {
       setIsSubmitting(false);
     }

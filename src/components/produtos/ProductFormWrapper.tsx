@@ -73,6 +73,8 @@ export function ProductFormWrapper({
     );
   };
 
+  console.log("ProductFormWrapper - rendering with product:", product);
+
   return (
     <>
       {isMobile ? (
