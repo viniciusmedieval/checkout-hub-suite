@@ -45,7 +45,7 @@ export function FormIdentificacao({
       <div className="space-y-3">
         <div className="relative">
           <div className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-700">
-            <User size={16} className="text-purple-500" />
+            <User size={16} className="text-gray-500" />
           </div>
           <Input 
             id="nome"
@@ -60,7 +60,7 @@ export function FormIdentificacao({
         
         <div className="relative">
           <div className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-700">
-            <Mail size={16} className="text-purple-500" />
+            <Mail size={16} className="text-gray-500" />
           </div>
           <Input 
             id="email"
@@ -78,7 +78,7 @@ export function FormIdentificacao({
           {showTelefone && (
             <div className="relative">
               <div className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-700">
-                <Smartphone size={16} className="text-purple-500" />
+                <Smartphone size={16} className="text-gray-500" />
               </div>
               <Input 
                 id="telefone"
@@ -95,7 +95,7 @@ export function FormIdentificacao({
           {showDocumento && (
             <div className="relative">
               <div className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-700">
-                <FileText size={16} className="text-purple-500" />
+                <FileText size={16} className="text-gray-500" />
               </div>
               <Input 
                 id="documento"
