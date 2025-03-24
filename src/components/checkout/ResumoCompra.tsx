@@ -1,6 +1,6 @@
 
 import { Produto, ConfigCheckout } from "@/lib/supabase";
-import { LockIcon, Shield } from "lucide-react";
+import { LockIcon } from "lucide-react";
 import { formatCurrency } from "@/utils/formatters";
 
 interface ResumoCompraProps {
@@ -71,12 +71,6 @@ export function ResumoCompra({
             </>
           )}
         </button>
-        
-        {/* Security message */}
-        <div className="flex items-center justify-center gap-2 mt-2 text-green-600 font-medium">
-          <Shield size={16} className="text-green-600" />
-          <span>{configCheckout?.mensagem_rodape || "Compra 100% segura e garantida."}</span>
-        </div>
         
         {/* Visitor counter */}
         <div className="flex items-center justify-center gap-2 text-sm text-black">
