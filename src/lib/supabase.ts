@@ -63,6 +63,11 @@ export type ConfigCheckout = {
   mostrar_campo_telefone?: boolean;
   titulo_identificacao?: string;
   titulo_pagamento?: string;
+  // Visitor counter properties
+  mostrar_contador?: boolean;
+  texto_contador?: string;
+  contador_min?: number;
+  contador_max?: number;
   // New properties for icon customization
   cor_icones?: string;
   icone_nome?: string;

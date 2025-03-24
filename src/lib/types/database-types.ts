@@ -66,7 +66,12 @@ export type ConfigCheckout = {
   url_termos_uso?: string;
   url_politica_privacidade?: string;
   mensagem_termos?: string;
-  // New fields for form customization
+  // New fields for visitor counter
+  mostrar_contador?: boolean;
+  texto_contador?: string;
+  contador_min?: number;
+  contador_max?: number;
+  // Form customization fields
   mostrar_campo_documento?: boolean;
   mostrar_campo_telefone?: boolean;
   titulo_identificacao?: string;

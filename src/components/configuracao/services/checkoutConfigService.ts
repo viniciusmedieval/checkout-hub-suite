@@ -26,7 +26,8 @@ export const fetchCheckoutConfig = async (): Promise<ConfigCheckout | null> => {
         mostrar_seguro: Boolean(data[0].mostrar_seguro),
         ativa_banner: Boolean(data[0].ativa_banner),
         mostrar_campo_documento: Boolean(data[0].mostrar_campo_documento),
-        mostrar_campo_telefone: Boolean(data[0].mostrar_campo_telefone)
+        mostrar_campo_telefone: Boolean(data[0].mostrar_campo_telefone),
+        mostrar_contador: Boolean(data[0].mostrar_contador)
       };
       
       console.log("Configurações carregadas:", configData);
@@ -80,6 +81,11 @@ export const saveConfig = async (config: ConfigCheckout): Promise<ConfigCheckout
       mostrar_campo_telefone: Boolean(config.mostrar_campo_telefone),
       titulo_identificacao: config.titulo_identificacao || "Identificação",
       titulo_pagamento: config.titulo_pagamento || "Pagamento",
+      // Visitor counter fields
+      mostrar_contador: Boolean(config.mostrar_contador),
+      texto_contador: config.texto_contador || "{count} pessoas estão vendo este produto agora",
+      contador_min: config.contador_min || 50,
+      contador_max: config.contador_max || 20000,
       // Icon properties
       cor_icones: validateHex(config.cor_icones) ? config.cor_icones : "#8a898c",
       icone_nome: config.icone_nome || "user",
@@ -130,7 +136,8 @@ export const saveConfig = async (config: ConfigCheckout): Promise<ConfigCheckout
         mostrar_seguro: Boolean(refreshedConfig[0].mostrar_seguro),
         ativa_banner: Boolean(refreshedConfig[0].ativa_banner),
         mostrar_campo_documento: Boolean(refreshedConfig[0].mostrar_campo_documento),
-        mostrar_campo_telefone: Boolean(refreshedConfig[0].mostrar_campo_telefone)
+        mostrar_campo_telefone: Boolean(refreshedConfig[0].mostrar_campo_telefone),
+        mostrar_contador: Boolean(refreshedConfig[0].mostrar_contador)
       };
       
       console.log("Configurações atualizadas após salvamento:", updatedConfig);

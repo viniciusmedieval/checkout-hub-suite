@@ -26,6 +26,11 @@ export const defaultConfig: ConfigCheckout = {
   mostrar_campo_telefone: true,
   titulo_identificacao: "Identificação",
   titulo_pagamento: "Pagamento",
+  // Visitor counter
+  mostrar_contador: true,
+  texto_contador: "{count} pessoas estão vendo este produto agora",
+  contador_min: 50,
+  contador_max: 20000,
   // Icon properties
   cor_icones: "#8a898c",
   icone_nome: "user",
