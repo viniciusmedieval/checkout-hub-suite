@@ -72,7 +72,19 @@ export function ResumoCompra({
           )}
         </button>
         
-        {/* Visitor counter - moved below the button to match the image */}
+        {/* Consent message - added below the button */}
+        <div className="text-center text-xs text-gray-500 mt-3">
+          Ao clicar em "{configCheckout?.texto_botao || "ASSINE AGORA"}", você concorda com os{" "}
+          <a href={configCheckout?.url_termos_uso || "#"} className="text-blue-600 hover:underline" target="_blank" rel="noopener noreferrer">
+            Termos de Compra
+          </a>{" "}
+          e está ciente da{" "}
+          <a href={configCheckout?.url_politica_privacidade || "#"} className="text-blue-600 hover:underline" target="_blank" rel="noopener noreferrer">
+            Política de Privacidade
+          </a>.
+        </div>
+        
+        {/* Visitor counter */}
         <div className="flex items-center justify-center gap-2 text-sm text-black">
           <span role="img" aria-label="fire">🔥</span>
           <span>Outras <strong>{visitorCount.toLocaleString()}</strong> pessoas estão finalizando agora</span>
