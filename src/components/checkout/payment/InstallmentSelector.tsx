@@ -24,10 +24,10 @@ export function InstallmentSelector({ productValue, value, onChange }: Installme
     <div className="space-y-2">
       <label className="text-xs font-medium text-gray-700">Parcelamento</label>
       <Select value={value} onValueChange={onChange}>
-        <SelectTrigger className="w-full h-10 bg-white text-black">
+        <SelectTrigger className="w-full h-11 bg-white text-black rounded-lg border-gray-200 focus-visible:ring-gray-300 focus-visible:ring-1 focus-visible:ring-offset-0">
           <SelectValue placeholder="Selecione o parcelamento" />
         </SelectTrigger>
-        <SelectContent className="bg-white text-black">
+        <SelectContent className="bg-white text-black border-gray-200">
           {installments.map((option) => (
             <SelectItem key={option.value} value={option.value}>
               {option.label}
