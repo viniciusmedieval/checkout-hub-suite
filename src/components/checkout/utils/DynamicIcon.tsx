@@ -15,36 +15,30 @@ export function DynamicIcon({ name, size = 16, className = "", color }: DynamicI
     return null;
   }
 
-  // Convert name to kebab-case and ensure it's lowercase
-  const kebabCase = name
-    .replace(/([a-z])([A-Z])/g, '$1-$2')
-    .replace(/\s+/g, '-')
-    .toLowerCase();
+  // Convert kebab-case to PascalCase for Lucide
+  const pascalCase = name
+    .split('-')
+    .map(part => part.charAt(0).toUpperCase() + part.slice(1).toLowerCase())
+    .join('');
   
   // Try different variations of the name to find a match
-  // Lucide React uses PascalCase for its icon components
-  const IconComponent = 
-    icons[kebabCase] || 
-    icons[name.toLowerCase()] || 
-    icons[name] ||
+  // Lucide icon names are in PascalCase in the icons object
+  const LucideIcon = 
+    icons[pascalCase] || 
+    icons[name] || 
+    icons[name.charAt(0).toUpperCase() + name.slice(1)] || 
     icons["Circle"]; // Safe fallback with correct capitalization
   
-  // Ensure we have a valid component before rendering
-  if (!IconComponent) {
-    console.warn(`Icon not found: ${name}, using fallback`);
-    return icons["Circle"] ? 
-      <icons.Circle 
-        size={size} 
-        className={className} 
-        style={color ? { color } : undefined} 
-      /> : null;
+  if (!LucideIcon) {
+    console.warn(`Icon not found: ${name}, using Circle fallback`);
+    return null;
   }
   
   return (
-    <IconComponent 
+    <LucideIcon 
       size={size} 
       className={className} 
-      style={color ? { color } : undefined} 
+      color={color}
     />
   );
 }

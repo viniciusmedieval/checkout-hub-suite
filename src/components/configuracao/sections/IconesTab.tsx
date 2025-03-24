@@ -26,12 +26,11 @@ export function IconesTab({ config, handleConfigChange, handleIconChange }: Icon
   // Function to display the selected icon preview
   const IconPreview = ({ iconName }: { iconName: string }) => {
     return (
-      <div className="flex items-center justify-center h-10 w-10 rounded-md border border-gray-200">
+      <div className="flex items-center justify-center h-10 w-10 rounded-md border border-gray-200 bg-white">
         <DynamicIcon 
           name={iconName} 
           size={18} 
           color={config.cor_icones || "#8a898c"} 
-          className="text-gray-500"
         />
       </div>
     );
@@ -83,8 +82,8 @@ export function IconesTab({ config, handleConfigChange, handleIconChange }: Icon
                     {iconOptions.slice(0, 5).map(icon => (
                       <SelectItem key={icon} value={icon}>
                         <div className="flex items-center gap-2">
-                          <span className="inline-block w-5">
-                            <DynamicIcon name={icon} size={14} />
+                          <span className="inline-flex items-center justify-center w-5 h-5">
+                            <DynamicIcon name={icon} size={14} color={config.cor_icones || "#8a898c"} />
                           </span>
                           <span className="capitalize">{icon.replace(/-/g, ' ')}</span>
                         </div>
@@ -111,8 +110,8 @@ export function IconesTab({ config, handleConfigChange, handleIconChange }: Icon
                     {iconOptions.slice(5, 10).map(icon => (
                       <SelectItem key={icon} value={icon}>
                         <div className="flex items-center gap-2">
-                          <span className="inline-block w-5">
-                            <DynamicIcon name={icon} size={14} />
+                          <span className="inline-flex items-center justify-center w-5 h-5">
+                            <DynamicIcon name={icon} size={14} color={config.cor_icones || "#8a898c"} />
                           </span>
                           <span className="capitalize">{icon.replace(/-/g, ' ')}</span>
                         </div>
@@ -139,8 +138,8 @@ export function IconesTab({ config, handleConfigChange, handleIconChange }: Icon
                     {iconOptions.slice(10, 15).map(icon => (
                       <SelectItem key={icon} value={icon}>
                         <div className="flex items-center gap-2">
-                          <span className="inline-block w-5">
-                            <DynamicIcon name={icon} size={14} />
+                          <span className="inline-flex items-center justify-center w-5 h-5">
+                            <DynamicIcon name={icon} size={14} color={config.cor_icones || "#8a898c"} />
                           </span>
                           <span className="capitalize">{icon.replace(/-/g, ' ')}</span>
                         </div>
@@ -167,8 +166,8 @@ export function IconesTab({ config, handleConfigChange, handleIconChange }: Icon
                     {iconOptions.slice(15, 20).map(icon => (
                       <SelectItem key={icon} value={icon}>
                         <div className="flex items-center gap-2">
-                          <span className="inline-block w-5">
-                            <DynamicIcon name={icon} size={14} />
+                          <span className="inline-flex items-center justify-center w-5 h-5">
+                            <DynamicIcon name={icon} size={14} color={config.cor_icones || "#8a898c"} />
                           </span>
                           <span className="capitalize">{icon.replace(/-/g, ' ')}</span>
                         </div>
