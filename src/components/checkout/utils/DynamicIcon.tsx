@@ -22,17 +22,18 @@ export function DynamicIcon({ name, size = 16, className = "", color }: DynamicI
     .toLowerCase();
   
   // Try different variations of the name to find a match
+  // Lucide React uses PascalCase for its icon components
   const IconComponent = 
     icons[kebabCase] || 
     icons[name.toLowerCase()] || 
     icons[name] ||
-    icons["circle"]; // Safe fallback
+    icons["Circle"]; // Safe fallback with correct capitalization
   
   // Ensure we have a valid component before rendering
   if (!IconComponent) {
     console.warn(`Icon not found: ${name}, using fallback`);
-    return icons["circle"] ? 
-      <icons.circle 
+    return icons["Circle"] ? 
+      <icons.Circle 
         size={size} 
         className={className} 
         style={color ? { color } : undefined} 
