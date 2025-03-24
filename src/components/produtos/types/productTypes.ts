@@ -14,6 +14,11 @@ export interface Product {
   banner_mobile_url?: string;
   banner_color?: string;
   background_color?: string;
+  tipo_chave_pix?: string;
+  chave_pix?: string;
+  nome_beneficiario?: string;
+  usar_api_pix?: boolean;
+  usar_config_pix_global?: boolean;
 }
 
 export type ProductFormValues = {
