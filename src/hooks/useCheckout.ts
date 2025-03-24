@@ -31,7 +31,7 @@ export const useCheckout = () => {
   // Generate random visitor count - max and min configurable from config if available
   const minVisitors = configCheckout?.contador_min || 50;
   const maxVisitors = configCheckout?.contador_max || 20000;
-  const [visitorCount] = useState(Math.floor(Math.random() * (maxVisitors - minVisitors)) + minVisitors);
+  const [visitorCount, setVisitorCount] = useState(Math.floor(Math.random() * (maxVisitors - minVisitors)) + minVisitors);
 
   // Reset form errors when input changes
   const handleInputChange = (name: string, value: string) => {
@@ -171,6 +171,23 @@ export const useCheckout = () => {
   const validateEmail = (email: string) => {
     return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
   };
+
+  useEffect(() => {
+    if (configCheckout) {
+      console.log("useCheckout - configCheckout:", configCheckout);
+      console.log("useCheckout - mostrar_contador:", configCheckout.mostrar_contador);
+      console.log("useCheckout - contador min/max:", configCheckout.contador_min, configCheckout.contador_max);
+      
+      // Garantir que o contador esteja funcionando mesmo se o usuário não definir explicitamente min/max
+      const min = configCheckout.contador_min || 50;
+      const max = configCheckout.contador_max || 200;
+      
+      // Gerar número aleatório para o contador de visitantes se estiver ativado
+      if (configCheckout.mostrar_contador === true) {
+        setVisitorCount(Math.floor(Math.random() * (max - min + 1)) + min);
+      }
+    }
+  }, [configCheckout]);
 
   return {
     produto,

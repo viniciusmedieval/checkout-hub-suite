@@ -1,12 +1,10 @@
-
+import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { ConfigCheckout } from "@/lib/supabase";
 import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
-import { ColorPicker } from "../aparencia/ColorPicker";
-import { Separator } from "@/components/ui/separator";
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
+import { Separator } from "@/components/ui/separator";
+import { ConfigCheckout } from "@/lib/supabase";
 
 interface BotoesTabProps {
   config: ConfigCheckout;
@@ -15,140 +13,126 @@ interface BotoesTabProps {
 }
 
 export function BotoesTab({ config, handleConfigChange, handleSwitchChange }: BotoesTabProps) {
-  // Function to handle color changes and ensure both inputs stay in sync
-  const handleColorChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    handleConfigChange(e);
-  };
+  // Para debugging
+  console.log("BotoesTab - config.mostrar_contador:", config.mostrar_contador);
+  console.log("BotoesTab - config:", config);
 
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle>Botões e Área de Compra</CardTitle>
-        <CardDescription>
-          Configure o botão de compra e mensagens relacionadas
-        </CardDescription>
-      </CardHeader>
-      <CardContent className="space-y-6">
-        {/* Button Section */}
-        <div className="space-y-4">
-          <h3 className="text-sm font-medium">Botão de Compra</h3>
-          
+    <div className="space-y-4">
+      <Card>
+        <CardHeader>
+          <CardTitle>Configurações de Botões e Compra</CardTitle>
+          <CardDescription>
+            Personalize a aparência dos botões de compra do seu checkout
+          </CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-4">
           <div className="space-y-2">
-            <label className="text-sm font-medium">Texto do Botão</label>
+            <label className="text-sm font-medium">Texto do Botão de Compra</label>
             <Input
               name="texto_botao"
-              value={config.texto_botao || ""}
+              value={config.texto_botao}
               onChange={handleConfigChange}
-              placeholder="Ex: FINALIZAR COMPRA AGORA"
+              placeholder="Ex: GARANTIR AGORA"
             />
           </div>
           
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <ColorPicker
-              name="cor_botao"
-              value={config.cor_botao}
-              defaultValue="#8B5CF6"
-              onChange={handleColorChange}
-              label="Cor do Botão"
-              description="Define a cor de fundo do botão de compra"
-            />
+            <div className="space-y-2">
+              <label className="text-sm font-medium">Cor do Botão</label>
+              <div className="flex items-center space-x-2">
+                <input
+                  type="color"
+                  name="cor_botao"
+                  value={config.cor_botao}
+                  onChange={handleConfigChange}
+                  className="w-10 h-10 rounded cursor-pointer"
+                />
+                <Input
+                  name="cor_botao"
+                  value={config.cor_botao}
+                  onChange={handleConfigChange}
+                  className="flex-1"
+                />
+              </div>
+            </div>
             
-            <ColorPicker
-              name="cor_texto_botao"
-              value={config.cor_texto_botao}
-              defaultValue="#FFFFFF"
-              onChange={handleColorChange}
-              label="Cor do Texto do Botão"
-              description="Define a cor do texto do botão de compra"
-            />
+            <div className="space-y-2">
+              <label className="text-sm font-medium">Cor do Texto do Botão</label>
+              <div className="flex items-center space-x-2">
+                <input
+                  type="color"
+                  name="cor_texto_botao"
+                  value={config.cor_texto_botao}
+                  onChange={handleConfigChange}
+                  className="w-10 h-10 rounded cursor-pointer"
+                />
+                <Input
+                  name="cor_texto_botao"
+                  value={config.cor_texto_botao}
+                  onChange={handleConfigChange}
+                  className="flex-1"
+                />
+              </div>
+            </div>
           </div>
-        </div>
-        
-        <Separator />
-        
-        {/* Visitor Counter Section */}
-        <div className="space-y-4">
-          <h3 className="text-sm font-medium">Contador de Visitantes</h3>
           
-          <div className="space-y-2">
-            <div className="flex items-center justify-between mb-2">
-              <Label htmlFor="mostrar-contador">Exibir contador de visitantes</Label>
+          <Separator className="my-4" />
+          
+          {/* Contador de Visitantes */}
+          <div className="space-y-4">
+            <h3 className="text-md font-medium">Contador de Visitantes</h3>
+            <div className="flex items-center space-x-2">
               <Switch 
-                checked={config.mostrar_contador !== false} 
+                checked={config.mostrar_contador === true} 
                 onCheckedChange={(checked) => handleSwitchChange('mostrar_contador', checked)}
                 id="mostrar-contador"
               />
-            </div>
-            <Input
-              name="texto_contador"
-              value={config.texto_contador || "{count} pessoas estão vendo este produto agora"}
-              onChange={handleConfigChange}
-              placeholder="Ex: {count} pessoas estão vendo este produto agora"
-            />
-            <p className="text-xs text-gray-500 mt-1">
-              Use {'{count}'} para representar o número de visitantes. O número será gerado automaticamente.
-            </p>
-          </div>
-          
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div className="space-y-2">
-              <label className="text-sm font-medium">Mínimo de visitantes</label>
-              <Input
-                name="contador_min"
-                type="number"
-                min="1"
-                value={config.contador_min || 50}
-                onChange={handleConfigChange}
-              />
+              <Label htmlFor="mostrar-contador">Exibir contador de visitantes</Label>
             </div>
             
             <div className="space-y-2">
-              <label className="text-sm font-medium">Máximo de visitantes</label>
+              <label className="text-sm font-medium">Texto do Contador</label>
               <Input
-                name="contador_max"
-                type="number"
-                min="100"
-                value={config.contador_max || 20000}
+                name="texto_contador"
+                value={config.texto_contador || "{count} pessoas estão vendo este produto agora"}
                 onChange={handleConfigChange}
+                placeholder="Ex: {count} pessoas estão vendo este produto"
+                disabled={config.mostrar_contador !== true}
               />
+              <p className="text-xs text-gray-500">
+                Use {"{count}"} para inserir o número de visitantes no texto.
+              </p>
+            </div>
+            
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <label className="text-sm font-medium">Mínimo de Visitantes</label>
+                <Input
+                  type="number"
+                  name="contador_min"
+                  value={config.contador_min || 50}
+                  onChange={handleConfigChange}
+                  min="1"
+                  disabled={config.mostrar_contador !== true}
+                />
+              </div>
+              
+              <div className="space-y-2">
+                <label className="text-sm font-medium">Máximo de Visitantes</label>
+                <Input
+                  type="number"
+                  name="contador_max"
+                  value={config.contador_max || 200}
+                  onChange={handleConfigChange}
+                  min="1"
+                  disabled={config.mostrar_contador !== true}
+                />
+              </div>
             </div>
           </div>
-        </div>
-        
-        <Separator />
-        
-        {/* Messages Section */}
-        <div className="space-y-4">
-          <h3 className="text-sm font-medium">Mensagens de Compra</h3>
-          
-          <div className="space-y-2">
-            <label className="text-sm font-medium">Mensagem de Destaque</label>
-            <Input
-              name="mensagem_rodape"
-              value={config.mensagem_rodape || ""}
-              onChange={handleConfigChange}
-              placeholder="Ex: Compra 100% segura e garantida"
-            />
-            <p className="text-xs text-gray-500 mt-1">
-              Esta mensagem será exibida próxima ao botão de compra para criar confiança
-            </p>
-          </div>
-          
-          <div className="space-y-2">
-            <label className="text-sm font-medium">Mensagem de Termos</label>
-            <Textarea
-              name="mensagem_termos"
-              value={config.mensagem_termos || ""}
-              onChange={handleConfigChange}
-              placeholder="Ex: Ao clicar em comprar, você concorda com os Termos de Compra e Política de Privacidade"
-              className="min-h-[80px]"
-            />
-            <p className="text-xs text-gray-500 mt-1">
-              Esta mensagem será exibida abaixo do botão para informar sobre termos
-            </p>
-          </div>
-        </div>
-      </CardContent>
-    </Card>
+        </CardContent>
+      </Card>
+    </div>
   );
 }

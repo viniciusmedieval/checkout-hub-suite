@@ -26,6 +26,13 @@ export function ResumoCompra({
   const buttonColor = configCheckout?.cor_botao || "#00C853"; // Verde por padrão 
   const buttonTextColor = configCheckout?.cor_texto_botao || "#FFFFFF";
   
+  // Para debugging
+  console.log("ResumoCompra - Configurações do checkout:", configCheckout);
+  console.log("ResumoCompra - Contador de visitantes:", visitorCount);
+  console.log("ResumoCompra - Mostrar contador:", configCheckout?.mostrar_contador);
+  console.log("ResumoCompra - Mensagem rodapé:", configCheckout?.mensagem_rodape);
+  console.log("ResumoCompra - Mensagem termos:", configCheckout?.mensagem_termos);
+  
   const handleCompletePurchase = async () => {
     if (onCompletePurchase) {
       onCompletePurchase();
@@ -89,8 +96,8 @@ export function ResumoCompra({
         </div>
       </div>
       
-      {/* Show visitor count if provided and enabled in config */}
-      {visitorCount && configCheckout?.mostrar_contador && (
+      {/* Show visitor count if provided and enabled in config - Corrigindo a lógica do contador */}
+      {visitorCount !== undefined && configCheckout?.mostrar_contador === true && (
         <div className="text-xs text-gray-500 text-center mt-2 mb-2">
           <p>{configCheckout?.texto_contador?.replace('{count}', visitorCount.toString()) || 
               `${visitorCount} pessoas estão vendo este produto agora`}</p>
@@ -122,16 +129,16 @@ export function ResumoCompra({
         )}
       </button>
       
-      {/* Display security message from admin config */}
-      {configCheckout?.mensagem_rodape && (
+      {/* Display security message from admin config - Garantindo que a mensagem apareça */}
+      {configCheckout?.mensagem_rodape && configCheckout.mensagem_rodape.trim() !== "" && (
         <div className="flex items-center justify-center mt-2 text-xs text-gray-500 gap-1.5">
           <Shield size={14} />
           <span>{configCheckout.mensagem_rodape}</span>
         </div>
       )}
       
-      {/* Display terms message from admin config */}
-      {configCheckout?.mensagem_termos && (
+      {/* Display terms message from admin config - Garantindo que a mensagem apareça */}
+      {configCheckout?.mensagem_termos && configCheckout.mensagem_termos.trim() !== "" && (
         <div className="mt-2 text-xs text-gray-400 text-center">
           <p>{configCheckout.mensagem_termos}</p>
         </div>
