@@ -36,7 +36,7 @@ export function CheckoutFooter({ configCheckout }: CheckoutFooterProps) {
           </div>
         )}
         
-        {/* Links section */}
+        {/* Links section - removed duplicated security message */}
         <div className="mt-3 flex flex-wrap justify-center gap-x-4 gap-y-1">
           <a 
             href={configCheckout?.url_termos_uso || "#"} 

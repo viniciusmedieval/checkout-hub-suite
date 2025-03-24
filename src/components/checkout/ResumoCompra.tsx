@@ -84,9 +84,10 @@ export function ResumoCompra({
               Política de Privacidade
             </a>.
           </p>
+          {/* Only show the security message here, removed from footer */}
           <div className="flex items-center justify-center gap-2 mt-2 text-green-600 font-medium">
             <Shield size={16} className="text-green-600" />
-            <span>Compra 100% segura e garantida.</span>
+            <span>{configCheckout?.mensagem_rodape || "Compra 100% segura e garantida."}</span>
           </div>
         </div>
         
