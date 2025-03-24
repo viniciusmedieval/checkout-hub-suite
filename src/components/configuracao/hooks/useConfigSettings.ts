@@ -13,6 +13,7 @@ export function useConfigSettings(initialConfig: ConfigCheckout | null = null) {
   // Atualiza o estado inicial quando o initialConfig mudar
   useEffect(() => {
     if (initialConfig) {
+      console.log('useConfigSettings - Atualizando config inicial:', initialConfig);
       setConfig(initialConfig);
       setLastSavedConfig(initialConfig);
     }
@@ -54,13 +55,19 @@ export function useConfigSettings(initialConfig: ConfigCheckout | null = null) {
       const updatedConfig = await saveConfig(config);
       
       if (updatedConfig) {
+        console.log("Configurações salvas com sucesso:", updatedConfig);
         setConfig(updatedConfig);
         setLastSavedConfig(updatedConfig);
         toast.success("Configurações salvas com sucesso!");
+        return updatedConfig; // Retorna as configurações atualizadas para uso no componente pai
+      } else {
+        toast.error("Erro ao salvar configurações. Verifique o console para mais detalhes.");
+        return null;
       }
     } catch (error) {
       console.error("Erro ao salvar configurações:", error);
       toast.error("Erro ao salvar configurações. Tente novamente.");
+      return null;
     } finally {
       setIsSaving(false);
     }

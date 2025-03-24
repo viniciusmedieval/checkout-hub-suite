@@ -11,17 +11,20 @@ import { RodapeTab } from "@/components/configuracao/sections/RodapeTab";
 import { BotoesTab } from "@/components/configuracao/sections/BotoesTab";
 import { IconesTab } from "@/components/configuracao/sections/IconesTab";
 import { VisualTab } from "@/components/configuracao/sections/VisualTab";
+import { toast } from "sonner";
 
 const Configuracao = () => {
   const {
     config,
     loading,
+    isSaving,
     depoimentos,
     depoimentosSaving,
     handleConfigChange,
     handleSwitchChange,
     handleIconChange,
     handleSaveConfig,
+    hasUnsavedChanges,
     handleDeleteTestimonial,
     handleAddTestimonial,
     handleUpdateTestimonial
@@ -31,11 +34,24 @@ const Configuracao = () => {
     return <LoadingState />;
   }
 
+  const onSaveClick = async () => {
+    if (!hasUnsavedChanges()) {
+      toast.info("Não há alterações para salvar");
+      return;
+    }
+    await handleSaveConfig();
+  };
+
   return (
     <div className="space-y-6 animate-fade-in bg-white p-6 rounded-lg">
       <div className="flex justify-between items-center">
         <h1 className="text-3xl font-bold tracking-tight text-gray-900">Configuração do Checkout</h1>
-        <Button onClick={handleSaveConfig}>Salvar Alterações</Button>
+        <Button 
+          onClick={onSaveClick} 
+          disabled={isSaving || !hasUnsavedChanges()}
+        >
+          {isSaving ? "Salvando..." : "Salvar Alterações"}
+        </Button>
       </div>
 
       <Tabs defaultValue="visual" className="w-full">

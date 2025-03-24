@@ -7,6 +7,7 @@ import { toast } from "sonner";
  */
 export const fetchCheckoutConfig = async (): Promise<ConfigCheckout | null> => {
   try {
+    console.log("Iniciando fetchCheckoutConfig");
     const { data, error } = await supabase
       .from("config_checkout")
       .select("*")
@@ -42,6 +43,7 @@ export const fetchCheckoutConfig = async (): Promise<ConfigCheckout | null> => {
       return configData;
     }
     
+    console.log("Nenhuma configuração encontrada no banco de dados");
     return null;
   } catch (error) {
     console.error("Erro ao carregar configurações:", error);
@@ -55,6 +57,7 @@ export const fetchCheckoutConfig = async (): Promise<ConfigCheckout | null> => {
  */
 export const saveConfig = async (config: ConfigCheckout): Promise<ConfigCheckout | null> => {
   try {
+    console.log("Iniciando saveConfig com dados:", config);
     const validateHex = (color: string) => {
       return color && /^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/.test(color);
     };
@@ -116,11 +119,14 @@ export const saveConfig = async (config: ConfigCheckout): Promise<ConfigCheckout
     let result;
     
     if (config.id) {
+      console.log(`Atualizando configuração existente com ID ${config.id}`);
       result = await supabase
         .from("config_checkout")
         .update(configToSave)
-        .eq('id', config.id);
+        .eq('id', config.id)
+        .select();
     } else {
+      console.log("Criando nova configuração");
       result = await supabase
         .from("config_checkout")
         .insert([configToSave])
@@ -132,9 +138,31 @@ export const saveConfig = async (config: ConfigCheckout): Promise<ConfigCheckout
       throw result.error;
     }
     
-    console.log("Configurações salvas com sucesso:", result);
+    console.log("Resultado da operação de salvamento:", result);
     
-    // Sempre buscar novamente as configurações após salvar
+    if (result.data && result.data.length > 0) {
+      // Se temos dados retornados, use-os diretamente em vez de buscar novamente
+      const updatedConfig = {
+        ...result.data[0],
+        mostrar_seguro: Boolean(result.data[0].mostrar_seguro),
+        ativa_banner: Boolean(result.data[0].ativa_banner),
+        mostrar_campo_documento: Boolean(result.data[0].mostrar_campo_documento),
+        mostrar_campo_telefone: Boolean(result.data[0].mostrar_campo_telefone),
+        mostrar_contador: Boolean(result.data[0].mostrar_contador),
+        mostrar_bandeira_brasil: Boolean(result.data[0].mostrar_bandeira_brasil),
+        mostrar_prefixo_telefone: Boolean(result.data[0].mostrar_prefixo_telefone),
+        validar_cpf: Boolean(result.data[0].validar_cpf),
+        validar_telefone: Boolean(result.data[0].validar_telefone),
+        validar_cartao: Boolean(result.data[0].validar_cartao),
+        mostrar_campo_nascimento: Boolean(result.data[0].mostrar_campo_nascimento),
+        validar_nascimento: Boolean(result.data[0].validar_nascimento)
+      };
+      console.log("Configurações atualizadas após salvamento:", updatedConfig);
+      return updatedConfig;
+    }
+    
+    // Se não temos dados retornados, busque as últimas configurações
+    console.log("Buscando configurações atualizadas após salvamento");
     const { data: refreshedConfig, error: refreshError } = await supabase
       .from("config_checkout")
       .select("*")

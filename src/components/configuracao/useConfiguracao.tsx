@@ -44,6 +44,7 @@ export function useConfiguracao() {
       } else {
         console.log('Usando configuração padrão');
         toast.info('Usando configuração padrão');
+        setConfigData(defaultConfig);
       }
     } catch (error) {
       console.error('Erro ao carregar configurações:', error);
@@ -76,13 +77,24 @@ export function useConfiguracao() {
 
   // Função para salvar as configurações e recarregar
   const saveAndReloadConfig = async () => {
-    await handleSaveConfig();
-    await reloadConfig();
+    try {
+      const savedConfig = await handleSaveConfig();
+      if (savedConfig) {
+        // Não é necessário recarregar já que handleSaveConfig já define o estado
+        toast.success("Configurações aplicadas com sucesso!");
+      } else {
+        toast.error("Configurações não foram salvas. Verifique os erros.");
+      }
+    } catch (error) {
+      console.error("Erro ao salvar e recarregar:", error);
+      toast.error("Erro ao salvar as configurações");
+    }
   };
 
   return {
     config,
     loading,
+    isSaving,
     depoimentos,
     depoimentosSaving,
     handleConfigChange,
