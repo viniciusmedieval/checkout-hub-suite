@@ -69,6 +69,7 @@ export function useConfigSettings(initialConfig: ConfigCheckout | null = null) {
       
       if (updatedConfig) {
         console.log("✅ Configuração salva com sucesso:", updatedConfig);
+        toast.success("Configurações salvas com sucesso!");
         
         // Atualizar o estado com os dados retornados do servidor
         setConfig(updatedConfig);
