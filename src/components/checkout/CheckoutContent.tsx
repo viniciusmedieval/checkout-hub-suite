@@ -6,6 +6,7 @@ import { CheckoutTestimonials } from "@/components/checkout/CheckoutTestimonials
 import { ResumoCompra } from "@/components/checkout/ResumoCompra";
 import { PaymentMethodSelector } from "@/components/checkout/payment/PaymentMethodSelector";
 import { Shield } from "lucide-react";
+import { useVisitorCounter } from "@/hooks/checkout/useVisitorCounter";
 
 interface CheckoutContentProps {
   produto: Produto;
@@ -14,6 +15,10 @@ interface CheckoutContentProps {
 
 export function CheckoutContent({ produto, configCheckout }: CheckoutContentProps) {
   const [paymentMethod, setPaymentMethod] = useState<'card' | 'pix'>('card');
+  const [isProcessing, setIsProcessing] = useState(false);
+  
+  // Use the visitor counter hook to get the current visitor count
+  const { visitorCount } = useVisitorCounter(configCheckout);
   
   // Get title color from config, fallback to black if not set
   const titleColor = configCheckout?.cor_titulo || "#000000";
@@ -24,6 +29,17 @@ export function CheckoutContent({ produto, configCheckout }: CheckoutContentProp
     chave_pix: produto.chave_pix,
     nome_beneficiario: produto.nome_beneficiario
   } : null;
+
+  // Handle purchase completion
+  const handleCompletePurchase = () => {
+    setIsProcessing(true);
+    
+    // Simulate a purchase process (replace with actual implementation)
+    setTimeout(() => {
+      setIsProcessing(false);
+      // Additional logic for purchase completion can be added here
+    }, 2000);
+  };
 
   return (
     <div className="w-full max-w-md mx-auto py-4 px-3 sm:py-6 sm:px-4 bg-white">
@@ -59,7 +75,10 @@ export function CheckoutContent({ produto, configCheckout }: CheckoutContentProp
         {/* Order Summary & CTA Button - Note: Border is now inside the ResumoCompra component */}
         <ResumoCompra 
           produto={produto} 
-          configCheckout={configCheckout} 
+          configCheckout={configCheckout}
+          visitorCount={visitorCount}
+          isProcessing={isProcessing}
+          onCompletePurchase={handleCompletePurchase} 
         />
 
         {/* Security Badge */}
