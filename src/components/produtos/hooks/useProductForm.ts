@@ -2,8 +2,8 @@
 import { useState } from "react";
 import { UseFormReturn } from "react-hook-form";
 import { toast } from "sonner";
-import { Produto } from "@/lib/supabase";
-import { supabase } from "@/integrations/supabase/client";
+import { Produto } from "@/lib/types/database-types";
+import { supabase } from "@/lib/supabase";
 import { ProductFormValues } from "../schemas/productSchema";
 
 interface UseProductFormProps {
@@ -42,11 +42,10 @@ export function useProductForm({
       if (isEditing && product) {
         console.log(`Updating product with ID: ${product.id}`);
         
-        const { data: updatedProduct, error } = await supabase
+        const { error } = await supabase
           .from("produtos")
           .update(data)
-          .eq("id", product.id)
-          .select();
+          .eq("id", product.id);
 
         if (error) {
           console.error("Error updating product:", error);
@@ -54,17 +53,16 @@ export function useProductForm({
           return;
         }
 
-        console.log("Product updated successfully:", updatedProduct);
+        console.log("Product updated successfully");
         toast.success("Produto atualizado com sucesso!");
         onSuccess();
         onClose();
       } else {
         console.log("Creating new product");
         
-        const { data: newProduct, error } = await supabase
+        const { error } = await supabase
           .from("produtos")
-          .insert([data])
-          .select();
+          .insert([data]);
 
         if (error) {
           console.error("Error creating product:", error);
@@ -72,7 +70,7 @@ export function useProductForm({
           return;
         }
 
-        console.log("Product created successfully:", newProduct);
+        console.log("Product created successfully");
         toast.success("Produto criado com sucesso!");
         onSuccess();
         onClose();

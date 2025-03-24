@@ -9,7 +9,254 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
-      [_ in never]: never
+      config_checkout: {
+        Row: {
+          ativa_banner: boolean | null
+          banner_mobile_url: string | null
+          banner_url: string | null
+          contador_max: number | null
+          contador_min: number | null
+          cor_banner: string | null
+          cor_botao: string | null
+          cor_fundo: string | null
+          cor_icones: string | null
+          cor_texto_botao: string | null
+          cor_texto_contador: string | null
+          cor_texto_topo: string | null
+          cor_titulo: string | null
+          cor_topo: string | null
+          criado_em: string | null
+          icone_documento: string | null
+          icone_email: string | null
+          icone_nome: string | null
+          icone_telefone: string | null
+          id: number
+          mensagem_rodape: string | null
+          mensagem_termos: string | null
+          mensagem_topo: string | null
+          mostrar_bandeira_brasil: boolean | null
+          mostrar_campo_documento: boolean | null
+          mostrar_campo_nascimento: boolean | null
+          mostrar_campo_telefone: boolean | null
+          mostrar_contador: boolean | null
+          mostrar_prefixo_telefone: boolean | null
+          mostrar_seguro: boolean | null
+          rodape_ano: string | null
+          rodape_empresa: string | null
+          rodape_texto: string | null
+          texto_botao: string | null
+          texto_contador: string | null
+          titulo_identificacao: string | null
+          titulo_pagamento: string | null
+          url_politica_privacidade: string | null
+          url_termos_uso: string | null
+          validar_cartao: boolean | null
+          validar_cpf: boolean | null
+          validar_nascimento: boolean | null
+          validar_telefone: boolean | null
+        }
+        Insert: {
+          ativa_banner?: boolean | null
+          banner_mobile_url?: string | null
+          banner_url?: string | null
+          contador_max?: number | null
+          contador_min?: number | null
+          cor_banner?: string | null
+          cor_botao?: string | null
+          cor_fundo?: string | null
+          cor_icones?: string | null
+          cor_texto_botao?: string | null
+          cor_texto_contador?: string | null
+          cor_texto_topo?: string | null
+          cor_titulo?: string | null
+          cor_topo?: string | null
+          criado_em?: string | null
+          icone_documento?: string | null
+          icone_email?: string | null
+          icone_nome?: string | null
+          icone_telefone?: string | null
+          id?: number
+          mensagem_rodape?: string | null
+          mensagem_termos?: string | null
+          mensagem_topo?: string | null
+          mostrar_bandeira_brasil?: boolean | null
+          mostrar_campo_documento?: boolean | null
+          mostrar_campo_nascimento?: boolean | null
+          mostrar_campo_telefone?: boolean | null
+          mostrar_contador?: boolean | null
+          mostrar_prefixo_telefone?: boolean | null
+          mostrar_seguro?: boolean | null
+          rodape_ano?: string | null
+          rodape_empresa?: string | null
+          rodape_texto?: string | null
+          texto_botao?: string | null
+          texto_contador?: string | null
+          titulo_identificacao?: string | null
+          titulo_pagamento?: string | null
+          url_politica_privacidade?: string | null
+          url_termos_uso?: string | null
+          validar_cartao?: boolean | null
+          validar_cpf?: boolean | null
+          validar_nascimento?: boolean | null
+          validar_telefone?: boolean | null
+        }
+        Update: {
+          ativa_banner?: boolean | null
+          banner_mobile_url?: string | null
+          banner_url?: string | null
+          contador_max?: number | null
+          contador_min?: number | null
+          cor_banner?: string | null
+          cor_botao?: string | null
+          cor_fundo?: string | null
+          cor_icones?: string | null
+          cor_texto_botao?: string | null
+          cor_texto_contador?: string | null
+          cor_texto_topo?: string | null
+          cor_titulo?: string | null
+          cor_topo?: string | null
+          criado_em?: string | null
+          icone_documento?: string | null
+          icone_email?: string | null
+          icone_nome?: string | null
+          icone_telefone?: string | null
+          id?: number
+          mensagem_rodape?: string | null
+          mensagem_termos?: string | null
+          mensagem_topo?: string | null
+          mostrar_bandeira_brasil?: boolean | null
+          mostrar_campo_documento?: boolean | null
+          mostrar_campo_nascimento?: boolean | null
+          mostrar_campo_telefone?: boolean | null
+          mostrar_contador?: boolean | null
+          mostrar_prefixo_telefone?: boolean | null
+          mostrar_seguro?: boolean | null
+          rodape_ano?: string | null
+          rodape_empresa?: string | null
+          rodape_texto?: string | null
+          texto_botao?: string | null
+          texto_contador?: string | null
+          titulo_identificacao?: string | null
+          titulo_pagamento?: string | null
+          url_politica_privacidade?: string | null
+          url_termos_uso?: string | null
+          validar_cartao?: boolean | null
+          validar_cpf?: boolean | null
+          validar_nascimento?: boolean | null
+          validar_telefone?: boolean | null
+        }
+        Relationships: []
+      }
+      depoimentos: {
+        Row: {
+          criado_em: string | null
+          estrelas: number
+          foto_url: string | null
+          id: number
+          nome: string
+          produto_id: number | null
+          texto: string
+        }
+        Insert: {
+          criado_em?: string | null
+          estrelas: number
+          foto_url?: string | null
+          id?: number
+          nome: string
+          produto_id?: number | null
+          texto: string
+        }
+        Update: {
+          criado_em?: string | null
+          estrelas?: number
+          foto_url?: string | null
+          id?: number
+          nome?: string
+          produto_id?: number | null
+          texto?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "depoimentos_produto_id_fkey"
+            columns: ["produto_id"]
+            isOneToOne: false
+            referencedRelation: "produtos"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      produtos: {
+        Row: {
+          ativo: boolean | null
+          background_color: string | null
+          banner_color: string | null
+          banner_mobile_url: string | null
+          banner_url: string | null
+          chave_pix: string | null
+          checkout_title: string | null
+          criado_em: string | null
+          descricao: string
+          id: number
+          imagem_url: string | null
+          nome: string
+          nome_beneficiario: string | null
+          slug: string
+          tipo: string
+          tipo_chave_pix: string | null
+          url_api_pix: string | null
+          url_pix_api: string | null
+          usar_api_pix: boolean | null
+          usar_config_pix_global: boolean | null
+          valor: number
+        }
+        Insert: {
+          ativo?: boolean | null
+          background_color?: string | null
+          banner_color?: string | null
+          banner_mobile_url?: string | null
+          banner_url?: string | null
+          chave_pix?: string | null
+          checkout_title?: string | null
+          criado_em?: string | null
+          descricao: string
+          id?: number
+          imagem_url?: string | null
+          nome: string
+          nome_beneficiario?: string | null
+          slug: string
+          tipo: string
+          tipo_chave_pix?: string | null
+          url_api_pix?: string | null
+          url_pix_api?: string | null
+          usar_api_pix?: boolean | null
+          usar_config_pix_global?: boolean | null
+          valor: number
+        }
+        Update: {
+          ativo?: boolean | null
+          background_color?: string | null
+          banner_color?: string | null
+          banner_mobile_url?: string | null
+          banner_url?: string | null
+          chave_pix?: string | null
+          checkout_title?: string | null
+          criado_em?: string | null
+          descricao?: string
+          id?: number
+          imagem_url?: string | null
+          nome?: string
+          nome_beneficiario?: string | null
+          slug?: string
+          tipo?: string
+          tipo_chave_pix?: string | null
+          url_api_pix?: string | null
+          url_pix_api?: string | null
+          usar_api_pix?: boolean | null
+          usar_config_pix_global?: boolean | null
+          valor?: number
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never

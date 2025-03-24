@@ -5,7 +5,6 @@ import { createMockClient } from './mock/mock-client';
 // Re-export all types from the database-types file
 export * from './types/database-types';
 
-// Try to get credentials from the integrations file first (this is preferred if available)
 let supabase: SupabaseClient;
 
 try {
@@ -15,7 +14,7 @@ try {
   console.log('Using Supabase integration client');
   supabase = integrationClient;
 } catch (error) {
-  console.log('Supabase integration client not available, using fallback');
+  console.log('Supabase integration client not available, using fallback', error);
   
   // Try to get credentials from localStorage as fallback
   const localSupabaseUrl = typeof window !== 'undefined' ? localStorage.getItem('supabaseUrl') : null;
@@ -33,7 +32,7 @@ try {
   if (supabaseUrl && supabaseAnonKey) {
     try {
       supabase = createClient(supabaseUrl, supabaseAnonKey);
-      console.log('Fallback Supabase client initialized successfully');
+      console.log('Fallback Supabase client initialized successfully with URL:', supabaseUrl);
     } catch (error) {
       console.error('Error initializing fallback Supabase client:', error);
       // Fallback to mock client
