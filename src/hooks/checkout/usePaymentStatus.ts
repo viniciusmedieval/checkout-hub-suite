@@ -22,8 +22,18 @@ export function usePaymentStatus() {
     navigate(`/payment-status/${targetSlug}/${newStatus}`);
   };
 
+  // Nova função para simular pagamentos com diferentes status
+  const simulatePayment = (status: PaymentStatus, productSlug: string) => {
+    // Aqui você poderia adicionar lógica adicional antes do redirecionamento
+    console.log(`Simulando pagamento para o produto ${productSlug} com status: ${status}`);
+    
+    // Redireciona para a página de status correspondente
+    redirectToStatus(status, productSlug);
+  };
+
   return {
     paymentStatus,
-    redirectToStatus
+    redirectToStatus,
+    simulatePayment
   };
 }
