@@ -76,10 +76,12 @@ export function useConfigSettings(initialConfig: ConfigCheckout | null = null) {
         return updatedConfig;
       } else {
         console.error("❌ Erro ao salvar configurações: retorno nulo");
+        toast.error("Erro ao salvar configurações. Verifique o console para mais detalhes.");
         return null;
       }
     } catch (error) {
       console.error("❌ Erro ao salvar configurações:", error);
+      toast.error("Erro ao salvar configurações. Verifique o console para mais detalhes.");
       return null;
     } finally {
       setIsSaving(false);

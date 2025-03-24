@@ -74,7 +74,7 @@ export const saveConfig = async (config: ConfigCheckout): Promise<ConfigCheckout
     if (config.id) {
       console.log(`🔄 Atualizando configuração existente com ID ${config.id}`);
       
-      // IMPORTANTE: Não encadear .select() após update - não é suportado
+      // CORREÇÃO: Não encadear .select() após update - isso não é suportado no Supabase
       const { error } = await supabase
         .from("config_checkout")
         .update(configToSave)
@@ -86,7 +86,7 @@ export const saveConfig = async (config: ConfigCheckout): Promise<ConfigCheckout
         return null;
       }
       
-      // IMPORTANTE: Deve-se fazer uma consulta separada para buscar dados atualizados
+      // CORREÇÃO: Fazer uma consulta separada para buscar os dados atualizados
       console.log("🔄 Buscando configuração atualizada em consulta separada");
       const { data, error: selectError } = await supabase
         .from("config_checkout")
@@ -114,7 +114,7 @@ export const saveConfig = async (config: ConfigCheckout): Promise<ConfigCheckout
     } else {
       console.log("🔄 Criando nova configuração");
       
-      // IMPORTANTE: Não encadear .select() após insert - não é suportado
+      // CORREÇÃO: Não encadear .select() após insert - isso não é suportado no Supabase
       const { error } = await supabase
         .from("config_checkout")
         .insert([configToSave]);
@@ -125,7 +125,7 @@ export const saveConfig = async (config: ConfigCheckout): Promise<ConfigCheckout
         return null;
       }
       
-      // IMPORTANTE: Deve-se fazer uma consulta separada para buscar dados recém-criados
+      // CORREÇÃO: Fazer uma consulta separada para buscar dados recém-criados
       console.log("🔄 Buscando configuração recém-criada em consulta separada");
       const { data, error: selectError } = await supabase
         .from("config_checkout")
