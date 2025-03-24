@@ -116,7 +116,7 @@ export function createMockClient(): SupabaseClient {
         saveMockStorageToLocalStorage();
         
         return {
-          data: null,
+          data: newItems,
           error: null
         };
       },

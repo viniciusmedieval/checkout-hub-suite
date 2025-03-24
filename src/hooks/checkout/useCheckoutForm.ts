@@ -128,7 +128,7 @@ export const useCheckoutForm = (produto: Produto | null, configCheckout?: Config
         criado_em: new Date().toISOString()
       };
 
-      // Inserir na tabela clientes - Fixed: removed .select() after insert
+      // Inserir na tabela clientes - CORRIGIDO: removido .select() após insert
       const { error } = await supabase
         .from('clientes')
         .insert([clienteData]);
