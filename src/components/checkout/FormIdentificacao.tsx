@@ -1,7 +1,7 @@
 
 import { Input } from "@/components/ui/input";
 import { formatPhoneNumber, formatCPF } from "@/utils/formatters";
-import { FormData } from "@/hooks/useCheckout";
+import { FormData } from "@/hooks/checkout"; // Updated import path
 import { ConfigCheckout } from "@/lib/supabase";
 import { DynamicIcon } from "./utils/DynamicIcon";
 

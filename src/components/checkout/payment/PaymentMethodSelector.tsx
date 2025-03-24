@@ -3,7 +3,7 @@ import { useState } from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { CardPaymentForm } from "./CardPaymentForm";
 import { PixPayment } from "./PixPayment";
-import { PaymentMethod } from "@/hooks/useCheckout";
+import { PaymentMethod } from "@/hooks/checkout"; // Updated import path
 import { CreditCard } from "lucide-react";
 import { Separator } from "@/components/ui/separator";
 import { ConfigCheckout } from "@/lib/supabase";
