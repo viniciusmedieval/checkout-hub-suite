@@ -42,7 +42,7 @@ export function PaymentStatusControl({ productSlug }: PaymentStatusControlProps)
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent 
-        className="w-56 bg-white border border-gray-200 shadow-lg z-[100]"
+        className="w-56 bg-white border border-gray-200 shadow-lg z-50"
         align="center"
         forceMount
       >
