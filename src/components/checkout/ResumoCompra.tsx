@@ -1,6 +1,6 @@
 
 import { Produto, ConfigCheckout } from "@/lib/supabase";
-import { LockIcon, Users } from "lucide-react";
+import { LockIcon, Shield } from "lucide-react";
 import { formatCurrency } from "@/utils/formatters";
 
 interface ResumoCompraProps {
@@ -72,16 +72,22 @@ export function ResumoCompra({
           )}
         </button>
         
-        {/* Consent message - added below the button */}
-        <div className="text-center text-xs text-gray-500 mt-3">
-          Ao clicar em "{configCheckout?.texto_botao || "ASSINE AGORA"}", você concorda com os{" "}
-          <a href={configCheckout?.url_termos_uso || "#"} className="text-blue-600 hover:underline" target="_blank" rel="noopener noreferrer">
-            Termos de Compra
-          </a>{" "}
-          e está ciente da{" "}
-          <a href={configCheckout?.url_politica_privacidade || "#"} className="text-blue-600 hover:underline" target="_blank" rel="noopener noreferrer">
-            Política de Privacidade
-          </a>.
+        {/* Consent message - styled according to the image */}
+        <div className="text-center text-sm mt-4 px-2">
+          <p className="text-gray-700">
+            Ao clicar em "{configCheckout?.texto_botao || "Assinar"}", você concorda com os{" "}
+            <a href={configCheckout?.url_termos_uso || "#"} className="text-blue-600 hover:underline" target="_blank" rel="noopener noreferrer">
+              Termos de Compra
+            </a>{" "}
+            e está ciente da{" "}
+            <a href={configCheckout?.url_politica_privacidade || "#"} className="text-blue-600 hover:underline" target="_blank" rel="noopener noreferrer">
+              Política de Privacidade
+            </a>.
+          </p>
+          <div className="flex items-center justify-center gap-2 mt-2 text-green-600 font-medium">
+            <Shield size={16} className="text-green-600" />
+            <span>Compra 100% segura e garantida.</span>
+          </div>
         </div>
         
         {/* Visitor counter */}
