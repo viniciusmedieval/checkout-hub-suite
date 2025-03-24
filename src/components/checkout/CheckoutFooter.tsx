@@ -20,15 +20,14 @@ export function CheckoutFooter({ configCheckout }: CheckoutFooterProps) {
   return (
     <footer className="mt-auto py-4 border-t border-gray-100 text-xs" style={{ borderColor: 'rgba(0,0,0,0.05)' }}>
       <div className="container max-w-md mx-auto px-4">
-        {configCheckout?.mostrar_seguro !== false && (
-          <div className="flex flex-wrap justify-between items-center">
-            <div className="text-gray-500">
-              <p>{footerText}</p>
-            </div>
+        {/* Copyright message from admin panel */}
+        <div className="flex flex-wrap justify-center items-center">
+          <div className="text-gray-500 text-center">
+            <p>{footerText}</p>
           </div>
-        )}
+        </div>
         
-        {/* Links section - removed duplicated security message */}
+        {/* Links section */}
         <div className="mt-3 flex flex-wrap justify-center gap-x-4 gap-y-1">
           <a 
             href={configCheckout?.url_termos_uso || "#"} 
@@ -49,6 +48,16 @@ export function CheckoutFooter({ configCheckout }: CheckoutFooterProps) {
             Política de privacidade
           </a>
         </div>
+        
+        {/* Security message if enabled */}
+        {configCheckout?.mostrar_seguro && (
+          <div className="mt-3 flex justify-center">
+            <div className="flex items-center gap-1 text-xs text-green-600">
+              <Shield size={12} />
+              <span>{configCheckout?.mensagem_rodape || "Compra 100% segura e garantida."}</span>
+            </div>
+          </div>
+        )}
       </div>
     </footer>
   );
