@@ -1,6 +1,6 @@
 
 import { SupabaseClient } from '@supabase/supabase-js';
-import { getMockStorage, setMockStorage } from './storage-utils';
+import { mockStorage, saveMockStorageToLocalStorage } from './storage-utils';
 
 /**
  * Creates a mock Supabase client for development and testing when real Supabase is not available
@@ -10,11 +10,10 @@ export function createMockClient(): SupabaseClient {
   
   // Helper function to save changes to localStorage
   const saveToStorage = (table: string, data: any) => {
-    const storage = getMockStorage();
-    if (!storage[table]) {
-      storage[table] = [];
+    if (!mockStorage[table]) {
+      mockStorage[table] = [];
     }
-    setMockStorage(storage);
+    saveMockStorageToLocalStorage();
     return { data, error: null };
   };
 
@@ -28,8 +27,7 @@ export function createMockClient(): SupabaseClient {
             console.log(`Mock Supabase - Filtrando por ${column} = ${value}`);
             return {
               single: () => {
-                const mockData = getMockStorage();
-                const items = mockData[table] || [];
+                const items = mockStorage[table] || [];
                 const item = items.find((item: any) => item[column] === value);
                 
                 return {
@@ -38,8 +36,7 @@ export function createMockClient(): SupabaseClient {
                 };
               },
               maybeSingle: () => {
-                const mockData = getMockStorage();
-                const items = mockData[table] || [];
+                const items = mockStorage[table] || [];
                 const item = items.find((item: any) => item[column] === value);
                 
                 return {
@@ -56,8 +53,7 @@ export function createMockClient(): SupabaseClient {
                 console.log(`Mock Supabase - Limitando a ${limit} resultados`);
                 return {
                   single: () => {
-                    const mockData = getMockStorage();
-                    const items = mockData[table] || [];
+                    const items = mockStorage[table] || [];
                     const sortedItems = [...items].sort((a, b) => {
                       if (ascending) {
                         return a[column] > b[column] ? 1 : -1;
@@ -73,8 +69,7 @@ export function createMockClient(): SupabaseClient {
                     };
                   },
                   maybeSingle: () => {
-                    const mockData = getMockStorage();
-                    const items = mockData[table] || [];
+                    const items = mockStorage[table] || [];
                     const sortedItems = [...items].sort((a, b) => {
                       if (ascending) {
                         return a[column] > b[column] ? 1 : -1;
@@ -98,9 +93,8 @@ export function createMockClient(): SupabaseClient {
       insert: (data: any[]) => {
         console.log(`Mock Supabase - Inserindo na tabela ${table}:`, data);
         
-        const storage = getMockStorage();
-        if (!storage[table]) {
-          storage[table] = [];
+        if (!mockStorage[table]) {
+          mockStorage[table] = [];
         }
         
         const newItems = data.map((item) => {
@@ -118,8 +112,8 @@ export function createMockClient(): SupabaseClient {
           return newItem;
         });
         
-        storage[table] = [...storage[table], ...newItems];
-        setMockStorage(storage);
+        mockStorage[table] = [...mockStorage[table], ...newItems];
+        saveMockStorageToLocalStorage();
         
         return {
           data: null,
@@ -133,12 +127,11 @@ export function createMockClient(): SupabaseClient {
           eq: (column: string, value: any) => {
             console.log(`Mock Supabase - Atualizando onde ${column} = ${value}`);
             
-            const storage = getMockStorage();
-            if (!storage[table]) {
+            if (!mockStorage[table]) {
               return { data: null, error: new Error(`Tabela ${table} não encontrada`) };
             }
             
-            const items = storage[table];
+            const items = mockStorage[table];
             const updatedItems = items.map((item: any) => {
               if (item[column] === value) {
                 return { ...item, ...data, updated_at: new Date().toISOString() };
@@ -146,8 +139,8 @@ export function createMockClient(): SupabaseClient {
               return item;
             });
             
-            storage[table] = updatedItems;
-            setMockStorage(storage);
+            mockStorage[table] = updatedItems;
+            saveMockStorageToLocalStorage();
             
             return {
               data: null,
@@ -161,16 +154,15 @@ export function createMockClient(): SupabaseClient {
           eq: (column: string, value: any) => {
             console.log(`Mock Supabase - Deletando da tabela ${table} onde ${column} = ${value}`);
             
-            const storage = getMockStorage();
-            if (!storage[table]) {
+            if (!mockStorage[table]) {
               return { data: null, error: null };
             }
             
-            const items = storage[table];
+            const items = mockStorage[table];
             const filteredItems = items.filter((item: any) => item[column] !== value);
             
-            storage[table] = filteredItems;
-            setMockStorage(storage);
+            mockStorage[table] = filteredItems;
+            saveMockStorageToLocalStorage();
             
             return {
               data: null,
