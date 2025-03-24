@@ -5,3 +5,5 @@ export { validateCPF, validateMobilePhone, validateEmail } from './useValidation
 export { useCheckoutConfig } from './useCheckoutConfig';
 export { useMockProducts } from './useMockProducts';
 export { useProductData } from './useProductData';
+export { usePaymentStatus } from './usePaymentStatus';
+export type { PaymentStatus } from './usePaymentStatus';

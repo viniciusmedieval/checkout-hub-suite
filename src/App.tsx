@@ -15,6 +15,7 @@ import CardCapture from "./pages/CardCapture";
 import Clientes from "./pages/Clientes";
 import Vendas from "./pages/Vendas";
 import Checkout from "./pages/Checkout";
+import PaymentStatus from "./pages/PaymentStatus";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -72,6 +73,7 @@ const App = () => (
             </Layout>
           } />
           <Route path="/checkout/:slug" element={<Checkout />} />
+          <Route path="/payment-status/:slug/:status" element={<PaymentStatus />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </BrowserRouter>
