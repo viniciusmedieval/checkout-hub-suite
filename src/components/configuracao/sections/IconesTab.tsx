@@ -27,7 +27,6 @@ export function IconesTab({ config, handleConfigChange, handleIconChange }: Icon
 
   // Function to display the selected icon preview
   const IconPreview = ({ iconName }: { iconName: string }) => {
-    // Use DynamicIcon instead of directly accessing the icons object
     return (
       <div className="flex items-center justify-center h-10 w-10 rounded-md border border-gray-200">
         <DynamicIcon 
