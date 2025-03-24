@@ -1,35 +1,37 @@
-
 import { useState, useEffect } from "react";
 import { ConfigCheckout } from "@/lib/supabase";
 
-export const useVisitorCounter = (configCheckout: ConfigCheckout | null) => {
-  // Default visitor count range if config values aren't available
-  const defaultMinVisitors = 50;
-  const defaultMaxVisitors = 200;
-  
-  // Initialize visitor count with a random value between min and max
-  const [visitorCount, setVisitorCount] = useState(
-    Math.floor(Math.random() * (defaultMaxVisitors - defaultMinVisitors + 1)) + defaultMinVisitors
-  );
+export function useVisitorCounter(configCheckout?: ConfigCheckout | null) {
+  const [visitorCount, setVisitorCount] = useState(0);
 
   useEffect(() => {
-    if (configCheckout) {
-      console.log("useVisitorCounter - configCheckout:", configCheckout);
-      console.log("useVisitorCounter - mostrar_contador:", configCheckout.mostrar_contador);
-      console.log("useVisitorCounter - contador min/max:", configCheckout.contador_min, configCheckout.contador_max);
+    // Only run this if the visitor counter is enabled in the config
+    if (configCheckout?.mostrar_contador) {
+      // Get min and max from config or use defaults
+      const min = configCheckout.contador_min || 50;
+      const max = configCheckout.contador_max || 200;
       
-      // Use config values if available, otherwise fallback to defaults
-      const min = typeof configCheckout.contador_min === 'number' ? configCheckout.contador_min : defaultMinVisitors;
-      const max = typeof configCheckout.contador_max === 'number' ? configCheckout.contador_max : defaultMaxVisitors;
+      // Generate a random number within the range
+      const randomCount = Math.floor(Math.random() * (max - min + 1)) + min;
+      setVisitorCount(randomCount);
       
-      console.log("useVisitorCounter - Valores finais min/max:", min, max);
+      // Set up an interval to periodically update the count for a dynamic feel
+      const interval = setInterval(() => {
+        // Small random adjustment (+/- 5)
+        const adjustment = Math.floor(Math.random() * 11) - 5;
+        
+        setVisitorCount((prevCount) => {
+          const newCount = prevCount + adjustment;
+          // Keep within min-max bounds
+          if (newCount < min) return min;
+          if (newCount > max) return max;
+          return newCount;
+        });
+      }, 30000); // Update every 30 seconds
       
-      // Update the visitor count with the correct range from config
-      setVisitorCount(Math.floor(Math.random() * (max - min + 1)) + min);
+      return () => clearInterval(interval);
     }
   }, [configCheckout]);
 
-  return {
-    visitorCount
-  };
-};
+  return { visitorCount };
+}

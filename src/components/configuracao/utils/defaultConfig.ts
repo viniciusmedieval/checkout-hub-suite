@@ -31,6 +31,7 @@ export const defaultConfig: ConfigCheckout = {
   texto_contador: "{count} pessoas estão vendo este produto agora",
   contador_min: 50,
   contador_max: 20000,
+  cor_texto_contador: "#4B5563", // Default color for visitor counter text
   // Icon properties
   cor_icones: "#8a898c",
   icone_nome: "user",

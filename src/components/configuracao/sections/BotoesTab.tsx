@@ -90,6 +90,15 @@ export function BotoesTab({ config, handleConfigChange, handleSwitchChange }: Bo
               </p>
             </div>
             
+            <ColorPicker
+              name="cor_texto_contador"
+              value={config.cor_texto_contador || "#4B5563"}
+              defaultValue="#4B5563"
+              onChange={handleConfigChange}
+              label="Cor do Texto do Contador"
+              description="Cor do texto da mensagem de contador de visitantes"
+            />
+            
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="space-y-2">
                 <label className="text-sm font-medium">Mínimo de Visitantes</label>
@@ -114,6 +123,48 @@ export function BotoesTab({ config, handleConfigChange, handleSwitchChange }: Bo
                   disabled={config.mostrar_contador !== true}
                 />
               </div>
+            </div>
+          </div>
+
+          <Separator className="my-4" />
+          
+          {/* Mensagens de destaque e termos */}
+          <div className="space-y-4">
+            <h3 className="text-md font-medium">Mensagens de Destaque</h3>
+
+            <div className="space-y-2">
+              <label className="text-sm font-medium">Mensagem de Destaque no Checkout</label>
+              <Input
+                name="mensagem_rodape"
+                value={config.mensagem_rodape || ""}
+                onChange={handleConfigChange}
+                placeholder="Ex: Compra 100% segura e garantida"
+              />
+              <p className="text-xs text-gray-500">
+                Esta mensagem será exibida abaixo do botão de compra ou no rodapé do checkout.
+              </p>
+            </div>
+
+            <div className="space-y-2">
+              <label className="text-sm font-medium">Mensagem de Termos de Compra</label>
+              <Input
+                name="mensagem_termos"
+                value={config.mensagem_termos || ""}
+                onChange={handleConfigChange}
+                placeholder="Ex: Ao clicar em 'Comprar', você concorda com os Termos de Compra"
+              />
+              <p className="text-xs text-gray-500">
+                Esta mensagem será exibida abaixo do botão de compra.
+              </p>
+            </div>
+
+            <div className="flex items-center space-x-2">
+              <Switch 
+                checked={config.mostrar_seguro === true} 
+                onCheckedChange={(checked) => handleSwitchChange('mostrar_seguro', checked)}
+                id="mostrar-seguro-botao"
+              />
+              <Label htmlFor="mostrar-seguro-botao">Mostrar ícone de segurança no rodapé</Label>
             </div>
           </div>
         </CardContent>

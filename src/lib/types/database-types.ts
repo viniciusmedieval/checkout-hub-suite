@@ -71,6 +71,7 @@ export type ConfigCheckout = {
   texto_contador?: string;
   contador_min?: number;
   contador_max?: number;
+  cor_texto_contador?: string; // New field for visitor counter message color
   // Form customization fields
   mostrar_campo_documento?: boolean;
   mostrar_campo_telefone?: boolean;

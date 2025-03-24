@@ -68,6 +68,7 @@ export type ConfigCheckout = {
   texto_contador?: string;
   contador_min?: number;
   contador_max?: number;
+  cor_texto_contador?: string; // New property for visitor counter text color
   // New properties for icon customization
   cor_icones?: string;
   icone_nome?: string;

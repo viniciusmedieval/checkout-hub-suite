@@ -86,6 +86,7 @@ export const saveConfig = async (config: ConfigCheckout): Promise<ConfigCheckout
       texto_contador: config.texto_contador || "{count} pessoas estão vendo este produto agora",
       contador_min: config.contador_min || 50,
       contador_max: config.contador_max || 20000,
+      cor_texto_contador: validateHex(config.cor_texto_contador) ? config.cor_texto_contador : "#4B5563", // Visitor counter text color
       // Icon properties
       cor_icones: validateHex(config.cor_icones) ? config.cor_icones : "#8a898c",
       icone_nome: config.icone_nome || "user",
