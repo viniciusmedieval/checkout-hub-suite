@@ -23,11 +23,20 @@ export function ResumoCompra({
   // Obter as cores personalizadas das configurações
   const buttonColor = configCheckout?.cor_botao || "#8B5CF6";
   const buttonTextColor = configCheckout?.cor_texto_botao || "#FFFFFF";
-  const buttonText = configCheckout?.texto_botao || "GARANTIR AGORA";
+  
+  // Obter o texto do botão do produto, ou do configCheckout, ou usar um padrão
+  const buttonText = produto.checkout_button_text || configCheckout?.texto_botao || "GARANTIR AGORA";
+  
   const counterTextColor = configCheckout?.cor_texto_contador || "#4B5563";
   
   // Para debugging
-  console.log("ResumoCompra - Cores:", { buttonColor, buttonTextColor, counterTextColor });
+  console.log("ResumoCompra - Config:", { 
+    produto_button_text: produto.checkout_button_text, 
+    config_button_text: configCheckout?.texto_botao,
+    buttonColor, 
+    buttonTextColor, 
+    counterTextColor 
+  });
 
   // Processor visitor counter text with the count placeholder
   const getVisitorCountText = () => {

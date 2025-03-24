@@ -36,6 +36,9 @@ export function CheckoutTab({ form }: CheckoutTabProps) {
               <FormControl>
                 <Input placeholder="https://exemplo.com/banner.jpg" {...field} />
               </FormControl>
+              <FormDescription>
+                Imagem exibida no topo do checkout
+              </FormDescription>
               <FormMessage />
             </FormItem>
           )}
@@ -50,6 +53,9 @@ export function CheckoutTab({ form }: CheckoutTabProps) {
               <FormControl>
                 <Input placeholder="https://exemplo.com/banner-mobile.jpg" {...field} />
               </FormControl>
+              <FormDescription>
+                Versão otimizada para dispositivos móveis
+              </FormDescription>
               <FormMessage />
             </FormItem>
           )}
@@ -103,6 +109,23 @@ export function CheckoutTab({ form }: CheckoutTabProps) {
           )}
         />
       </div>
+      
+      <FormField
+        control={form.control}
+        name="checkout_button_text"
+        render={({ field }) => (
+          <FormItem>
+            <FormLabel>Texto do Botão</FormLabel>
+            <FormControl>
+              <Input placeholder="Ex: COMPRAR AGORA" {...field} />
+            </FormControl>
+            <FormDescription>
+              Texto exibido no botão de finalização da compra
+            </FormDescription>
+            <FormMessage />
+          </FormItem>
+        )}
+      />
     </div>
   );
 }

@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from "react";
 import { Produto, supabase, ConfigCheckout } from "@/lib/supabase";
 
@@ -36,8 +37,9 @@ export const useCheckoutData = (slug: string | undefined) => {
           if (!validateHex(config.cor_fundo)) config.cor_fundo = "#FFFFFF";
           if (!validateHex(config.cor_banner)) config.cor_banner = "#3b82f6";
           if (!validateHex(config.cor_titulo)) config.cor_titulo = "#000000";
-          if (!validateHex(config.cor_botao)) config.cor_botao = "#8B5CF6"; // Validando cor do botão
-          if (!validateHex(config.cor_texto_botao)) config.cor_texto_botao = "#FFFFFF"; // Validando cor do texto do botão
+          if (!validateHex(config.cor_botao)) config.cor_botao = "#8B5CF6"; 
+          if (!validateHex(config.cor_texto_botao)) config.cor_texto_botao = "#FFFFFF";
+          if (!validateHex(config.cor_texto_contador)) config.cor_texto_contador = "#4B5563";
           
           console.log("useCheckoutData - Cores validadas:", {
             corTopo: config.cor_topo,
@@ -45,7 +47,8 @@ export const useCheckoutData = (slug: string | undefined) => {
             corBanner: config.cor_banner,
             corTitulo: config.cor_titulo,
             corBotao: config.cor_botao,
-            corTextoBotao: config.cor_texto_botao // Adicionando log para a cor do texto do botão
+            corTextoBotao: config.cor_texto_botao,
+            corTextoContador: config.cor_texto_contador
           });
           
           setConfigCheckout(config);

@@ -12,6 +12,7 @@ export const productSchema = z.object({
       message: 'Slug deve conter apenas letras minúsculas, números e hífens' 
     }),
   checkout_title: z.string().min(3, { message: 'Título deve ter pelo menos 3 caracteres' }),
+  checkout_button_text: z.string().optional().or(z.literal('')),
   imagem_url: z.string().url({ message: 'URL da imagem inválida' }).optional().or(z.literal('')),
   banner_url: z.string().url({ message: 'URL do banner inválida' }).optional().or(z.literal('')),
   banner_mobile_url: z.string().url({ message: 'URL do banner mobile inválida' }).optional().or(z.literal('')),
