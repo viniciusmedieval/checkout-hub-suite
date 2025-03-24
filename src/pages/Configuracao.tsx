@@ -8,6 +8,7 @@ import { ConteudoTab } from "@/components/configuracao/sections/ConteudoTab";
 import { DepoimentosTab } from "@/components/configuracao/DepoimentosTab";
 import { RodapeTab } from "@/components/configuracao/sections/RodapeTab";
 import { BotoesTab } from "@/components/configuracao/sections/BotoesTab";
+import { IconesTab } from "@/components/configuracao/sections/IconesTab";
 
 const Configuracao = () => {
   const {
@@ -17,6 +18,7 @@ const Configuracao = () => {
     depoimentosSaving,
     handleConfigChange,
     handleSwitchChange,
+    handleIconChange,
     handleSaveConfig,
     handleDeleteTestimonial,
     handleAddTestimonial,
@@ -35,9 +37,10 @@ const Configuracao = () => {
       </div>
 
       <Tabs defaultValue="header" className="w-full">
-        <TabsList className="grid w-full grid-cols-5">
+        <TabsList className="grid w-full grid-cols-6">
           <TabsTrigger value="header">Topo e Banner</TabsTrigger>
           <TabsTrigger value="conteudo">Campos e Conteúdo</TabsTrigger>
+          <TabsTrigger value="icones">Ícones</TabsTrigger>
           <TabsTrigger value="depoimentos">Depoimentos</TabsTrigger>
           <TabsTrigger value="botoes">Botões e Compra</TabsTrigger>
           <TabsTrigger value="rodape">Rodapé</TabsTrigger>
@@ -56,6 +59,14 @@ const Configuracao = () => {
             config={config} 
             handleConfigChange={handleConfigChange}
             handleSwitchChange={handleSwitchChange}
+          />
+        </TabsContent>
+
+        <TabsContent value="icones" className="space-y-4 mt-4">
+          <IconesTab 
+            config={config} 
+            handleConfigChange={handleConfigChange}
+            handleIconChange={handleIconChange}
           />
         </TabsContent>
 

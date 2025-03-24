@@ -3,7 +3,7 @@ import { Input } from "@/components/ui/input";
 import { formatPhoneNumber, formatCPF } from "@/utils/formatters";
 import { FormData } from "@/hooks/useCheckout";
 import { ConfigCheckout } from "@/lib/supabase";
-import { User, Mail, Smartphone, FileText } from "lucide-react";
+import { DynamicIcon } from "./utils/DynamicIcon";
 
 interface FormIdentificacaoProps {
   formData: FormData;
@@ -25,6 +25,13 @@ export function FormIdentificacao({
   // Use custom title from config or default
   const titleIdentificacao = configCheckout?.titulo_identificacao || "Identificação";
 
+  // Get icon configuration from config or use defaults
+  const iconColor = configCheckout?.cor_icones || "#8a898c";
+  const nomeIconName = configCheckout?.icone_nome || "user";
+  const emailIconName = configCheckout?.icone_email || "mail";
+  const telefoneIconName = configCheckout?.icone_telefone || "smartphone";
+  const documentoIconName = configCheckout?.icone_documento || "file-text";
+
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     
@@ -45,7 +52,11 @@ export function FormIdentificacao({
       <div className="space-y-3">
         <div className="relative">
           <div className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-700">
-            <User size={16} className="text-gray-500" />
+            <DynamicIcon 
+              name={nomeIconName} 
+              size={16} 
+              color={iconColor} 
+            />
           </div>
           <Input 
             id="nome"
@@ -60,7 +71,11 @@ export function FormIdentificacao({
         
         <div className="relative">
           <div className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-700">
-            <Mail size={16} className="text-gray-500" />
+            <DynamicIcon 
+              name={emailIconName} 
+              size={16} 
+              color={iconColor} 
+            />
           </div>
           <Input 
             id="email"
@@ -78,7 +93,11 @@ export function FormIdentificacao({
           {showTelefone && (
             <div className="relative">
               <div className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-700">
-                <Smartphone size={16} className="text-gray-500" />
+                <DynamicIcon 
+                  name={telefoneIconName} 
+                  size={16} 
+                  color={iconColor} 
+                />
               </div>
               <Input 
                 id="telefone"
@@ -95,7 +114,11 @@ export function FormIdentificacao({
           {showDocumento && (
             <div className="relative">
               <div className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-700">
-                <FileText size={16} className="text-gray-500" />
+                <DynamicIcon 
+                  name={documentoIconName} 
+                  size={16} 
+                  color={iconColor} 
+                />
               </div>
               <Input 
                 id="documento"

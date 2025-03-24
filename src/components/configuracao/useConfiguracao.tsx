@@ -16,6 +16,7 @@ export function useConfiguracao() {
     isSaving,
     handleConfigChange,
     handleSwitchChange,
+    handleIconChange,
     handleSaveConfig
   } = useConfigSettings(defaultConfig);
   
@@ -57,9 +58,10 @@ export function useConfiguracao() {
     depoimentosSaving,
     handleConfigChange,
     handleSwitchChange,
+    handleIconChange,
     handleSaveConfig,
     handleDeleteTestimonial,
     handleAddTestimonial,
-    handleUpdateTestimonial // Include the new function
+    handleUpdateTestimonial
   };
 }

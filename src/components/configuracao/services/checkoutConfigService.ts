@@ -62,11 +62,17 @@ export const saveConfig = async (config: ConfigCheckout): Promise<ConfigCheckout
       mensagem_termos: config.mensagem_termos,
       url_termos_uso: config.url_termos_uso,
       url_politica_privacidade: config.url_politica_privacidade,
-      // Add the new fields
+      // Form fields
       mostrar_campo_documento: config.mostrar_campo_documento,
       mostrar_campo_telefone: config.mostrar_campo_telefone,
       titulo_identificacao: config.titulo_identificacao || "Identificação",
-      titulo_pagamento: config.titulo_pagamento || "Pagamento"
+      titulo_pagamento: config.titulo_pagamento || "Pagamento",
+      // Icon properties
+      cor_icones: validateHex(config.cor_icones) ? config.cor_icones : "#8a898c",
+      icone_nome: config.icone_nome || "user",
+      icone_email: config.icone_email || "mail",
+      icone_telefone: config.icone_telefone || "smartphone",
+      icone_documento: config.icone_documento || "file-text"
     };
     
     console.log("Configurações validadas a serem salvas:", configToSave);

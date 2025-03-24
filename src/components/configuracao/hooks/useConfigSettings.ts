@@ -19,6 +19,11 @@ export function useConfigSettings(initialConfig: ConfigCheckout | null = null) {
     setConfig(prev => ({ ...prev, [name]: checked }));
   };
 
+  const handleIconChange = (name: string, value: string) => {
+    console.log(`useConfigSettings - Alterando ícone ${name} para ${value}`);
+    setConfig(prev => ({ ...prev, [name]: value }));
+  };
+
   const handleSaveConfig = async () => {
     setIsSaving(true);
     try {
@@ -39,6 +44,7 @@ export function useConfigSettings(initialConfig: ConfigCheckout | null = null) {
     isSaving,
     handleConfigChange,
     handleSwitchChange,
+    handleIconChange,
     handleSaveConfig
   };
 }

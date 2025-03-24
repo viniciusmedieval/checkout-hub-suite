@@ -21,9 +21,15 @@ export const defaultConfig: ConfigCheckout = {
   mostrar_seguro: true,
   mensagem_rodape: "Compra 100% segura e garantida.",
   mensagem_termos: "Ao clicar em \"Comprar\", você concorda com os Termos de Compra e está ciente da Política de Privacidade.",
-  // New fields
+  // Form fields
   mostrar_campo_documento: true,
   mostrar_campo_telefone: true,
   titulo_identificacao: "Identificação",
-  titulo_pagamento: "Pagamento"
+  titulo_pagamento: "Pagamento",
+  // Icon properties
+  cor_icones: "#8a898c",
+  icone_nome: "user",
+  icone_email: "mail",
+  icone_telefone: "smartphone",
+  icone_documento: "file-text"
 };
