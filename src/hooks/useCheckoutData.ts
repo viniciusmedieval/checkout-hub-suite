@@ -13,6 +13,12 @@ export const useCheckoutData = (slug: string | undefined) => {
     try {
       console.log("useCheckoutData - Buscando configuração do checkout...");
       
+      // Verificar se o cliente Supabase está inicializado
+      if (!supabase) {
+        console.error("useCheckoutData - Cliente Supabase não inicializado");
+        throw new Error("Cliente Supabase não inicializado");
+      }
+      
       const { data: checkoutConfig, error: configError } = await supabase
         .from("config_checkout")
         .select("*")
@@ -98,6 +104,51 @@ export const useCheckoutData = (slug: string | undefined) => {
     }
   };
 
+  // Função para buscar produto mock para testes
+  const getMockProducts = () => {
+    console.log("useCheckoutData - Tentando carregar produto mock com slug:", slug);
+    
+    try {
+      const mockStorage = localStorage.getItem('mockSupabaseStorage');
+      if (mockStorage) {
+        const parsedStorage = JSON.parse(mockStorage);
+        if (parsedStorage && parsedStorage.produtos) {
+          console.log("useCheckoutData - Dados mockStorage encontrados:", parsedStorage.produtos);
+          return parsedStorage.produtos;
+        }
+      }
+      
+      // Dados de produtos mockados como último recurso
+      return [
+        {
+          id: 1,
+          nome: "Plano Mensal",
+          tipo: "assinatura",
+          valor: 14.90,
+          descricao: "Acesso total à plataforma por 30 dias.",
+          ativo: true,
+          slug: "plano-mensal",
+          checkout_title: "Assine o Plano Mensal",
+          imagem_url: "https://placehold.co/600x400/3b82f6/FFFFFF/png?text=Plano+Mensal",
+          banner_url: null,
+          banner_mobile_url: null,
+          banner_color: null,
+          background_color: null,
+          tipo_chave_pix: null,
+          chave_pix: null,
+          nome_beneficiario: null,
+          usar_api_pix: false,
+          url_pix_api: null,
+          usar_config_pix_global: false,
+          criado_em: new Date().toISOString()
+        }
+      ];
+    } catch (error) {
+      console.error("useCheckoutData - Erro ao obter produtos mock:", error);
+      return [];
+    }
+  };
+
   useEffect(() => {
     const fetchProduto = async () => {
       if (!slug) {
@@ -112,60 +163,40 @@ export const useCheckoutData = (slug: string | undefined) => {
         // Carregar a configuração do checkout primeiro
         await fetchCheckoutConfig();
         
+        // Verificar se o cliente Supabase está inicializado
+        if (!supabase) {
+          console.error("useCheckoutData - Cliente Supabase não inicializado, usando dados mockados");
+          throw new Error("Cliente Supabase não inicializado");
+        }
+        
         // Try to get product from Supabase
         const { data: productData, error: productError } = await supabase
           .from("produtos")
           .select("*")
           .eq("slug", slug)
           .eq("ativo", true)
-          .single();
+          .maybeSingle();
 
         console.log("useCheckoutData - Resposta do Supabase produtos:", { productData, productError });
         
         if (productError) {
           console.error("useCheckoutData - Erro do Supabase:", productError);
-          
-          // Tentar recuperar do localStorage antes de mostrar erro
-          const mockStorage = localStorage.getItem('mockSupabaseStorage');
-          if (mockStorage) {
-            const parsedStorage = JSON.parse(mockStorage);
-            if (parsedStorage && parsedStorage.produtos) {
-              console.log("useCheckoutData - Tentando recuperar de mockStorage após erro");
-              const produtoEncontrado = parsedStorage.produtos.find(
-                (p: Produto) => p.slug === slug && p.ativo
-              );
-              
-              if (produtoEncontrado) {
-                console.log("useCheckoutData - Produto encontrado nos dados mockStorage:", produtoEncontrado);
-                setProduto(produtoEncontrado);
-                setLoading(false);
-                return;
-              }
-            }
-          }
-          
           throw productError;
         }
         
         if (!productData) {
           // Recupera dados do localStorage como fallback
-          console.log("useCheckoutData - Produto não encontrado no Supabase, tentando localStorage");
-          const mockStorage = localStorage.getItem('mockSupabaseStorage');
-          if (mockStorage) {
-            const parsedStorage = JSON.parse(mockStorage);
-            if (parsedStorage && parsedStorage.produtos) {
-              console.log("useCheckoutData - Dados mockStorage encontrados:", parsedStorage.produtos);
-              const produtoEncontrado = parsedStorage.produtos.find(
-                (p: Produto) => p.slug === slug && p.ativo
-              );
-              
-              if (produtoEncontrado) {
-                console.log("useCheckoutData - Produto encontrado nos dados mockStorage:", produtoEncontrado);
-                setProduto(produtoEncontrado);
-                setLoading(false);
-                return;
-              }
-            }
+          console.log("useCheckoutData - Produto não encontrado no Supabase, tentando mock data");
+          const mockProducts = getMockProducts();
+          const produtoEncontrado = mockProducts.find(
+            (p: Produto) => p.slug === slug && p.ativo
+          );
+          
+          if (produtoEncontrado) {
+            console.log("useCheckoutData - Produto encontrado nos dados mockados:", produtoEncontrado);
+            setProduto(produtoEncontrado);
+            setLoading(false);
+            return;
           }
           
           setError("Produto não encontrado");
@@ -175,6 +206,21 @@ export const useCheckoutData = (slug: string | undefined) => {
         }
       } catch (error) {
         console.error("useCheckoutData - Erro ao buscar produto:", error);
+        
+        // Tentar usar dados mock em caso de erro de conexão
+        console.log("useCheckoutData - Tentando recuperar de dados mockados após erro");
+        const mockProducts = getMockProducts();
+        const produtoEncontrado = mockProducts.find(
+          (p: Produto) => p.slug === slug && p.ativo
+        );
+        
+        if (produtoEncontrado) {
+          console.log("useCheckoutData - Produto encontrado nos dados mockados após erro:", produtoEncontrado);
+          setProduto(produtoEncontrado);
+          setLoading(false);
+          return;
+        }
+        
         setError("Erro ao carregar o produto. Tente novamente mais tarde.");
       } finally {
         setLoading(false);

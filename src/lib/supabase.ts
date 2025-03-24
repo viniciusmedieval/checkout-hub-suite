@@ -6,9 +6,10 @@ import { checkSupabaseCredentials } from './env-check';
 // Re-export all types from the database-types file
 export * from './types/database-types';
 
+// Variável global para o cliente Supabase
 let supabase: SupabaseClient;
 
-// Função para inicializar o cliente Supabase
+// Função para inicializar o cliente Supabase de forma síncrona
 const initializeSupabaseClient = (): SupabaseClient | null => {
   try {
     // 1. Tentar obter credenciais do localStorage (fallback 1)
@@ -21,6 +22,14 @@ const initializeSupabaseClient = (): SupabaseClient | null => {
 
     // 3. Verificar credenciais usando checkSupabaseCredentials
     const hasEnvCredentials = checkSupabaseCredentials();
+    
+    // 4. Logar o estado das credenciais para debugging
+    console.log("🔑 Estado das credenciais Supabase:", {
+      localStorage: { url: !!localSupabaseUrl, key: !!localSupabaseKey },
+      envVars: { url: !!envSupabaseUrl, key: !!envSupabaseKey },
+      hasEnvCredentials
+    });
+    
     if (!hasEnvCredentials && !localSupabaseUrl && !localSupabaseKey) {
       console.error('❌ Nenhuma credencial do Supabase encontrada (nem no localStorage, nem nas variáveis de ambiente).');
       console.error('❌ Variáveis de ambiente verificadas:');
@@ -32,7 +41,7 @@ const initializeSupabaseClient = (): SupabaseClient | null => {
       return null;
     }
 
-    // 4. Usar credenciais do localStorage se disponíveis, caso contrário usar variáveis de ambiente
+    // 5. Usar credenciais do localStorage se disponíveis, caso contrário usar variáveis de ambiente
     const supabaseUrl = localSupabaseUrl || envSupabaseUrl;
     const supabaseAnonKey = localSupabaseKey || envSupabaseKey;
 
@@ -41,7 +50,7 @@ const initializeSupabaseClient = (): SupabaseClient | null => {
       return null;
     }
 
-    // 5. Inicializar o cliente Supabase
+    // 6. Inicializar o cliente Supabase
     try {
       const client = createClient(supabaseUrl, supabaseAnonKey);
       console.log('✅ Cliente Supabase inicializado com sucesso. URL:', supabaseUrl);
@@ -56,30 +65,34 @@ const initializeSupabaseClient = (): SupabaseClient | null => {
   }
 };
 
-// Função para importar o cliente Supabase integrado de forma assíncrona
-const importIntegratedClient = async (): Promise<SupabaseClient | null> => {
-  try {
-    const { supabase: integrationClient } = await import('@/integrations/supabase/client');
-    console.log('✅ Usando cliente Supabase integrado');
-    return integrationClient;
-  } catch (error) {
-    console.error('❌ Cliente Supabase integrado não disponível, usando fallback', error);
-    return null;
+// Inicialização síncrona do cliente Supabase com fallback
+supabase = initializeSupabaseClient() as SupabaseClient;
+
+// Função para tentar importar o cliente Supabase integrado de forma assíncrona
+const importIntegratedClient = () => {
+  // Verificar se o cliente já foi inicializado
+  if (!supabase) {
+    console.warn("⚠️ Nenhum cliente Supabase inicializado, não será possível carregar o cliente integrado");
+    return;
+  }
+
+  // Importar o cliente integrado apenas no navegador
+  if (typeof window !== 'undefined') {
+    import('@/integrations/supabase/client')
+      .then(({ supabase: integrationClient }) => {
+        if (integrationClient) {
+          console.log('✅ Usando cliente Supabase integrado');
+          supabase = integrationClient;
+        }
+      })
+      .catch(error => {
+        console.error('❌ Cliente Supabase integrado não disponível, usando fallback', error);
+      });
   }
 };
 
-// Inicializar o cliente Supabase de forma síncrona primeiro
-supabase = initializeSupabaseClient() as SupabaseClient;
+// Tentar carregar o cliente integrado
+importIntegratedClient();
 
-// Tentar atualizar para o cliente integrado de forma assíncrona
-if (typeof window !== 'undefined') {
-  // Executar apenas no navegador
-  importIntegratedClient().then(client => {
-    if (client) {
-      supabase = client;
-    }
-  });
-}
-
-// Exportar o cliente inicializado
+// Exportar o cliente Supabase
 export { supabase };

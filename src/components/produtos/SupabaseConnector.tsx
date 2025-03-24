@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
-import { AlertCircle, Database, ExternalLink } from "lucide-react";
+import { AlertCircle, Database, ExternalLink, RefreshCw } from "lucide-react";
 import { toast } from "sonner";
 
 interface SupabaseCredentials {
@@ -20,16 +20,25 @@ interface SupabaseConnectorProps {
 
 export function SupabaseConnector({ onConnect, isConnected }: SupabaseConnectorProps) {
   const [supabaseUrl, setSupabaseUrl] = useState<string>(() => 
-    localStorage.getItem('supabaseUrl') || ''
+    localStorage.getItem('supabaseUrl') || 'https://wqijkkbxqkpbjbqehlqw.supabase.co'
   );
   const [supabaseKey, setSupabaseKey] = useState<string>(() => 
-    localStorage.getItem('supabaseKey') || ''
+    localStorage.getItem('supabaseKey') || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6IndxaWpra2J4cWtwYmpicWVobHF3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDI2ODcwNDYsImV4cCI6MjA1ODI2MzA0Nn0.IerDihb1CqSIVqootaphhkBUG4maAhLiVkqapvGWLhU'
   );
   const [showForm, setShowForm] = useState<boolean>(!isConnected);
 
   useEffect(() => {
+    // Preencher com valores padrão se estiverem vazios
+    if (!supabaseUrl) {
+      setSupabaseUrl('https://wqijkkbxqkpbjbqehlqw.supabase.co');
+    }
+    if (!supabaseKey) {
+      setSupabaseKey('eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6IndxaWpra2J4cWtwYmpicWVobHF3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDI2ODcwNDYsImV4cCI6MjA1ODI2MzA0Nn0.IerDihb1CqSIVqootaphhkBUG4maAhLiVkqapvGWLhU');
+    }
+
     // Se já temos credenciais salvas e não estamos conectados, tente conectar
     if (supabaseUrl && supabaseKey && !isConnected) {
+      console.log("SupabaseConnector - Tentando conectar com credenciais existentes");
       onConnect({ supabaseUrl, supabaseKey });
     }
   }, [supabaseUrl, supabaseKey, isConnected, onConnect]);
@@ -43,6 +52,7 @@ export function SupabaseConnector({ onConnect, isConnected }: SupabaseConnectorP
     // Salvar no localStorage
     localStorage.setItem('supabaseUrl', supabaseUrl);
     localStorage.setItem('supabaseKey', supabaseKey);
+    console.log("SupabaseConnector - Credenciais salvas no localStorage");
 
     // Notificar o componente pai
     onConnect({ supabaseUrl, supabaseKey });
@@ -58,6 +68,28 @@ export function SupabaseConnector({ onConnect, isConnected }: SupabaseConnectorP
     setShowForm(true);
     toast.info("Desconectado do Supabase");
     window.location.reload();
+  };
+
+  const handleUseDefaultCredentials = () => {
+    const defaultUrl = 'https://wqijkkbxqkpbjbqehlqw.supabase.co';
+    const defaultKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6IndxaWpra2J4cWtwYmpicWVobHF3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDI2ODcwNDYsImV4cCI6MjA1ODI2MzA0Nn0.IerDihb1CqSIVqootaphhkBUG4maAhLiVkqapvGWLhU';
+    
+    setSupabaseUrl(defaultUrl);
+    setSupabaseKey(defaultKey);
+    
+    // Salvar no localStorage
+    localStorage.setItem('supabaseUrl', defaultUrl);
+    localStorage.setItem('supabaseKey', defaultKey);
+    
+    // Notificar o componente pai
+    onConnect({ supabaseUrl: defaultUrl, supabaseKey: defaultKey });
+    setShowForm(false);
+    toast.success("Credenciais padrão aplicadas! Tentando conectar ao Supabase...");
+    
+    // Recarregar a página para aplicar as novas credenciais
+    setTimeout(() => {
+      window.location.reload();
+    }, 2000);
   };
 
   if (!showForm && isConnected) {
@@ -131,6 +163,16 @@ export function SupabaseConnector({ onConnect, isConnected }: SupabaseConnectorP
             Encontre sua chave anônima em: Configurações do Projeto &gt; API &gt; Project API keys
           </p>
         </div>
+
+        <Button 
+          variant="outline" 
+          size="sm" 
+          className="w-full flex items-center gap-2 mt-2"
+          onClick={handleUseDefaultCredentials}
+        >
+          <RefreshCw className="h-4 w-4" />
+          Usar credenciais padrão
+        </Button>
 
         <div className="mt-2">
           <a 
