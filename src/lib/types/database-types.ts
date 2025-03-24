@@ -1,4 +1,3 @@
-
 // Types for our database tables
 export type Cliente = {
   id: number;
@@ -63,6 +62,8 @@ export type ConfigCheckout = {
   rodape_ano: string;
   mostrar_seguro: boolean;
   mensagem_rodape: string;
+  url_termos_uso?: string;
+  url_politica_privacidade?: string;
 };
 
 export type Depoimento = {

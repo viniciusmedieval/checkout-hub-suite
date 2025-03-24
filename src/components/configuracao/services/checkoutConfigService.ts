@@ -1,4 +1,3 @@
-
 import { supabase, ConfigCheckout } from "@/lib/supabase";
 import { toast } from "sonner";
 
@@ -58,7 +57,9 @@ export const saveConfig = async (config: ConfigCheckout): Promise<ConfigCheckout
       rodape_empresa: config.rodape_empresa,
       rodape_ano: config.rodape_ano,
       mostrar_seguro: config.mostrar_seguro,
-      mensagem_rodape: config.mensagem_rodape
+      mensagem_rodape: config.mensagem_rodape,
+      url_termos_uso: config.url_termos_uso,
+      url_politica_privacidade: config.url_politica_privacidade
     };
     
     console.log("Configurações validadas a serem salvas:", configToSave);

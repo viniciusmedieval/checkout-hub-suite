@@ -6,6 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
 import { ConfigCheckout } from "@/lib/supabase";
+import { Separator } from "@/components/ui/separator";
 
 interface GeralTabProps {
   config: ConfigCheckout;
@@ -69,6 +70,34 @@ export function GeralTab({ config, handleConfigChange, handleSwitchChange }: Ger
             />
           </div>
         </div>
+        
+        <Separator className="my-2" />
+        
+        <div className="space-y-4">
+          <h3 className="text-sm font-medium">Links do Rodapé</h3>
+          
+          <div className="space-y-2">
+            <label className="text-sm font-medium">URL dos Termos de Uso</label>
+            <Input
+              name="url_termos_uso"
+              value={config.url_termos_uso || ""}
+              onChange={handleConfigChange}
+              placeholder="https://seusite.com/termos"
+            />
+          </div>
+          
+          <div className="space-y-2">
+            <label className="text-sm font-medium">URL da Política de Privacidade</label>
+            <Input
+              name="url_politica_privacidade"
+              value={config.url_politica_privacidade || ""}
+              onChange={handleConfigChange}
+              placeholder="https://seusite.com/privacidade"
+            />
+          </div>
+        </div>
+        
+        <Separator className="my-2" />
         
         <div className="space-y-2">
           <label className="text-sm font-medium">Mensagem de Segurança</label>

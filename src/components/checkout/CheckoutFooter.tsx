@@ -1,5 +1,5 @@
 
-import { Shield } from "lucide-react";
+import { Shield, FileText, Lock } from "lucide-react";
 import { ConfigCheckout } from "@/lib/supabase";
 
 interface CheckoutFooterProps {
@@ -24,10 +24,22 @@ export function CheckoutFooter({ configCheckout }: CheckoutFooterProps) {
               </div>
               
               <div className="flex flex-wrap justify-center gap-x-4 gap-y-1">
-                <a href="#" className="text-gray-400 hover:text-gray-600 hover:underline transition-colors text-xs">
+                <a 
+                  href={configCheckout?.url_termos_uso || "#"} 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                  className="text-gray-400 hover:text-gray-600 hover:underline transition-colors text-xs flex items-center gap-1"
+                >
+                  <FileText size={12} />
                   Termos de uso
                 </a>
-                <a href="#" className="text-gray-400 hover:text-gray-600 hover:underline transition-colors text-xs">
+                <a 
+                  href={configCheckout?.url_politica_privacidade || "#"} 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                  className="text-gray-400 hover:text-gray-600 hover:underline transition-colors text-xs flex items-center gap-1"
+                >
+                  <Lock size={12} />
                   Política de privacidade
                 </a>
               </div>
