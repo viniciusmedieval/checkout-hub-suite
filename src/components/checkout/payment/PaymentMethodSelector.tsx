@@ -66,18 +66,12 @@ export function PaymentMethodSelector({
             value="pix" 
             className="data-[state=active]:bg-white data-[state=active]:text-gray-900 data-[state=active]:border-b-2 data-[state=active]:border-blue-500 text-sm py-2.5 rounded-md"
           >
-            <span className="inline-flex items-center justify-center w-4 h-4 mr-2">
-              <svg 
-                viewBox="0 0 512 512" 
-                className="w-full h-full"
-                aria-hidden="true"
-              >
-                <path 
-                  d="M242.525 418.907h25.811v-320h-25.811v320zm144.744-268.444h-88.727v25.811h88.746c11.968 0 21.7 9.714 21.7 21.7v71.72c0 11.968-9.714 21.7-21.7 21.7h-35.536v-40.413l-50.078 44.455 50.078 44.455v-40.413h35.536c36.739 0 66.598-29.877 66.598-66.598v-71.72c.019-36.739-29.859-66.616-66.598-66.616l-.019.019zm-292.343 0h-35.555c-36.739 0-66.598 29.877-66.598 66.598v71.72c0 36.739 29.877 66.598 66.598 66.598h88.727v-25.811h-88.727c-11.987 0-21.7-9.714-21.7-21.7v-71.72c0-11.968 9.714-21.7 21.7-21.7h35.555v40.413l50.078-44.455-50.078-44.455v40.432z" 
-                  fill="#32BCAD"
-                />
-              </svg>
-            </span>
+            <img 
+              src="/lovable-uploads/87f7c293-494d-43e1-b889-35b9ba85e548.png" 
+              alt="Pix" 
+              className="w-5 h-5 mr-2 inline-block" 
+              loading="eager"
+            />
             Pix
           </TabsTrigger>
           {/* Separator line between tab options */}
