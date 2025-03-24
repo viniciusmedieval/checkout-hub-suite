@@ -1,31 +1,39 @@
 
 import { Depoimento } from "@/lib/supabase";
 
-export const getDefaultTestimonials = (): Depoimento[] => {
-  return [
-    {
-      id: 1,
-      nome: "Carlos Mendes",
-      texto: "Simplesmente excelente! O conteúdo superou todas as minhas expectativas. Vale cada centavo investido.",
-      estrelas: 5,
-      foto_url: "https://randomuser.me/api/portraits/men/32.jpg",
-      criado_em: new Date().toISOString()
-    },
-    {
-      id: 2,
-      nome: "Ana Paula Silva",
-      texto: "Melhor compra que fiz este ano. O suporte é excelente e o material é completo e atualizado.",
-      estrelas: 5,
-      foto_url: "https://randomuser.me/api/portraits/women/44.jpg",
-      criado_em: new Date().toISOString()
-    },
-    {
-      id: 3,
-      nome: "Roberto Almeida",
-      texto: "Já estou aplicando o conhecimento e vendo resultados. Recomendo fortemente!",
-      estrelas: 4,
-      foto_url: "https://randomuser.me/api/portraits/men/22.jpg",
-      criado_em: new Date().toISOString()
-    }
-  ];
-};
+// Exporting as a function to maintain compatibility with existing imports
+export const getDefaultTestimonials = (): Depoimento[] => [
+  {
+    id: 1,
+    nome: "João Silva",
+    email: "joao@example.com",
+    texto: "Produto excelente! Superou todas as minhas expectativas. Recomendo muito.",
+    avatar_url: "https://randomuser.me/api/portraits/men/1.jpg",
+    nota: 5,
+    produto_id: null,
+    criado_em: new Date().toISOString()
+  },
+  {
+    id: 2,
+    nome: "Maria Oliveira",
+    email: "maria@example.com",
+    texto: "Muito bom! Atendeu perfeitamente às minhas necessidades.",
+    avatar_url: "https://randomuser.me/api/portraits/women/1.jpg",
+    nota: 4,
+    produto_id: null,
+    criado_em: new Date().toISOString()
+  },
+  {
+    id: 3,
+    nome: "Pedro Santos",
+    email: "pedro@example.com",
+    texto: "Recomendo fortemente! O suporte ao cliente é excelente.",
+    avatar_url: "https://randomuser.me/api/portraits/men/2.jpg",
+    nota: 5,
+    produto_id: null,
+    criado_em: new Date().toISOString()
+  }
+];
+
+// Also export as defaultTestimonials for backward compatibility
+export const defaultTestimonials = getDefaultTestimonials();
