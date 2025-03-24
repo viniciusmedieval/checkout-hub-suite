@@ -71,6 +71,14 @@ export function ResumoCompra({
             </>
           )}
         </button>
+        
+        {/* Visitor message - agora usando a mensagem do painel do admin */}
+        {configCheckout?.mensagem_rodape && (
+          <div className="flex items-center justify-center gap-2 text-sm text-gray-600 text-center mt-3">
+            <span role="img" aria-label="fire">🔥</span>
+            <span dangerouslySetInnerHTML={{ __html: configCheckout.mensagem_rodape }} />
+          </div>
+        )}
       </div>
     </div>
   );

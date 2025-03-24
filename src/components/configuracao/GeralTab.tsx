@@ -100,12 +100,16 @@ export function GeralTab({ config, handleConfigChange, handleSwitchChange }: Ger
         <Separator className="my-2" />
         
         <div className="space-y-2">
-          <label className="text-sm font-medium">Mensagem de Segurança</label>
+          <label className="text-sm font-medium">Mensagem de Destaque no Checkout</label>
           <Input
             name="mensagem_rodape"
-            value={config.mensagem_rodape}
+            value={config.mensagem_rodape || ""}
             onChange={handleConfigChange}
+            placeholder="Ex: Outras 47 pessoas estão finalizando agora"
           />
+          <p className="text-xs text-gray-500 mt-1">
+            Esta mensagem será exibida abaixo do botão de compra no checkout. Use-a para criar senso de urgência.
+          </p>
         </div>
         
         <div className="flex items-center space-x-2">
