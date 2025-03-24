@@ -67,17 +67,18 @@ export type ConfigCheckout = {
   url_termos_uso?: string;
   url_politica_privacidade?: string;
   mensagem_termos?: string;
-  // New fields for visitor counter
+  // Visitor counter fields
   mostrar_contador?: boolean;
   texto_contador?: string;
   contador_min?: number;
   contador_max?: number;
-  cor_texto_contador?: string; // New field for visitor counter message color
+  cor_texto_contador?: string;
   // Form customization fields
   mostrar_campo_documento?: boolean;
   mostrar_campo_telefone?: boolean;
-  mostrar_bandeira_brasil?: boolean; // New field for showing Brazil flag in phone input
-  mostrar_prefixo_telefone?: boolean; // New field for showing +55 prefix in phone input
+  mostrar_bandeira_brasil?: boolean;
+  mostrar_prefixo_telefone?: boolean;
+  mostrar_campo_nascimento?: boolean;
   titulo_identificacao?: string;
   titulo_pagamento?: string;
   // Icon properties
@@ -90,7 +91,6 @@ export type ConfigCheckout = {
   validar_cpf?: boolean;
   validar_telefone?: boolean;
   validar_cartao?: boolean;
-  mostrar_campo_nascimento?: boolean;
   validar_nascimento?: boolean;
   created_at?: string;
   criado_em?: string;

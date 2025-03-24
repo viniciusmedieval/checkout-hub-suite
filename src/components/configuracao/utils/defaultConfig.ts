@@ -26,6 +26,7 @@ export const defaultConfig: ConfigCheckout = {
   mostrar_campo_telefone: true,
   mostrar_bandeira_brasil: true,
   mostrar_prefixo_telefone: true,
+  mostrar_campo_nascimento: false,
   titulo_identificacao: "Identificação",
   titulo_pagamento: "Pagamento",
   // Visitor counter
@@ -33,11 +34,16 @@ export const defaultConfig: ConfigCheckout = {
   texto_contador: "{count} pessoas estão vendo este produto agora",
   contador_min: 50,
   contador_max: 20000,
-  cor_texto_contador: "#4B5563", // Default color for visitor counter text
+  cor_texto_contador: "#4B5563",
   // Icon properties
   cor_icones: "#8a898c",
   icone_nome: "user",
   icone_email: "mail",
   icone_telefone: "smartphone",
-  icone_documento: "file-text"
+  icone_documento: "file-text",
+  // Validation fields
+  validar_cpf: false,
+  validar_telefone: false,
+  validar_cartao: false,
+  validar_nascimento: false
 };

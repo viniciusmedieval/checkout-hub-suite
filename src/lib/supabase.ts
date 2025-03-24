@@ -36,47 +36,5 @@ if (supabaseUrl && supabaseAnonKey) {
   supabase = createMockClient();
 }
 
-export type ConfigCheckout = {
-  id: number;
-  mensagem_topo: string;
-  cor_topo: string;
-  cor_texto_topo: string;
-  ativa_banner: boolean;
-  banner_url: string;
-  banner_mobile_url: string;
-  cor_banner: string;
-  cor_fundo: string;
-  cor_titulo: string;
-  texto_botao: string;
-  cor_botao: string; // Propriedade para cor do botão CTA
-  cor_texto_botao: string; // Nova propriedade para cor do texto do botão CTA
-  rodape_texto: string;
-  rodape_empresa: string;
-  rodape_ano: string;
-  mostrar_seguro: boolean;
-  mensagem_rodape: string;
-  mensagem_termos?: string; // Nova propriedade para mensagem de termos
-  url_termos_uso?: string;
-  url_politica_privacidade?: string;
-  // Form customization properties
-  mostrar_campo_documento?: boolean;
-  mostrar_campo_telefone?: boolean;
-  mostrar_bandeira_brasil?: boolean; // Nova propriedade para mostrar bandeira do Brasil
-  mostrar_prefixo_telefone?: boolean; // Nova propriedade para mostrar prefixo +55
-  titulo_identificacao?: string;
-  titulo_pagamento?: string;
-  // Visitor counter properties
-  mostrar_contador?: boolean;
-  texto_contador?: string;
-  contador_min?: number;
-  contador_max?: number;
-  cor_texto_contador?: string; // New property for visitor counter text color
-  // New properties for icon customization
-  cor_icones?: string;
-  icone_nome?: string;
-  icone_email?: string;
-  icone_telefone?: string;
-  icone_documento?: string;
-};
-
+// Using the types from database-types.ts
 export { supabase };
