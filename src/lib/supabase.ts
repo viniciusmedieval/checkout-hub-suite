@@ -61,6 +61,8 @@ export type ConfigCheckout = {
   // Form customization properties
   mostrar_campo_documento?: boolean;
   mostrar_campo_telefone?: boolean;
+  mostrar_bandeira_brasil?: boolean; // Nova propriedade para mostrar bandeira do Brasil
+  mostrar_prefixo_telefone?: boolean; // Nova propriedade para mostrar prefixo +55
   titulo_identificacao?: string;
   titulo_pagamento?: string;
   // Visitor counter properties

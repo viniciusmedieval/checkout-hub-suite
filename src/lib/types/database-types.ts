@@ -75,8 +75,16 @@ export type ConfigCheckout = {
   // Form customization fields
   mostrar_campo_documento?: boolean;
   mostrar_campo_telefone?: boolean;
+  mostrar_bandeira_brasil?: boolean; // New field for showing Brazil flag in phone input
+  mostrar_prefixo_telefone?: boolean; // New field for showing +55 prefix in phone input
   titulo_identificacao?: string;
   titulo_pagamento?: string;
+  // Icon properties
+  cor_icones?: string;
+  icone_nome?: string;
+  icone_email?: string;
+  icone_telefone?: string;
+  icone_documento?: string;
 };
 
 export type Depoimento = {
