@@ -37,13 +37,14 @@ export function PaymentStatusControl({ productSlug }: PaymentStatusControlProps)
   return (
     <DropdownMenu open={open} onOpenChange={setOpen}>
       <DropdownMenuTrigger asChild>
-        <Button variant="outline" className="w-full bg-white hover:bg-gray-100">
-          Status de Pagamento <ChevronDown className="ml-2 h-4 w-4" />
+        <Button variant="outline" className="w-full bg-white hover:bg-gray-100 flex justify-between items-center">
+          <span>Status de Pagamento</span> <ChevronDown className="h-4 w-4" />
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent 
-        className="w-56 bg-white border border-gray-200 shadow-lg z-50"
+        className="w-56 bg-white border border-gray-200 shadow-lg z-[100]"
         align="center"
+        forceMount
       >
         <DropdownMenuItem 
           onClick={() => handleStatusSelect('analyzing')}

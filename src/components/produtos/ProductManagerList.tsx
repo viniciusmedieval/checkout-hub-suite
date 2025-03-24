@@ -99,14 +99,14 @@ export function ProductList({
         </TableBody>
       </Table>
 
-      <div className="p-4 border-t">
-        <h3 className="font-medium mb-2">Controle de Status de Pagamento</h3>
-        <p className="text-sm text-gray-500 mb-4">
+      <div className="p-6 border-t bg-gray-50">
+        <h3 className="text-lg font-medium mb-3">Controle de Status de Pagamento</h3>
+        <p className="text-sm text-gray-500 mb-5">
           Selecione um produto abaixo para simular diferentes status de pagamento.
         </p>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           {filteredProducts.map((product) => (
-            <div key={`status-${product.id}`} className="border rounded-md p-4 shadow-sm hover:shadow-md transition-shadow">
+            <div key={`status-${product.id}`} className="border rounded-md p-4 bg-white shadow-sm hover:shadow-md transition-shadow">
               <h4 className="font-medium mb-3 truncate">{product.nome}</h4>
               <PaymentStatusControl productSlug={product.slug} />
             </div>
