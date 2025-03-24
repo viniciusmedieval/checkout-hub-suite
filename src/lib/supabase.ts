@@ -40,4 +40,32 @@ const initializeSupabaseClient = async (): Promise<SupabaseClient> => {
   }
 
   // 5. Usar credenciais do localStorage se disponíveis, caso contrário usar variáveis de ambiente
-  const sup
+  const supabaseUrl = localSupabaseUrl || envSupabaseUrl;
+  const supabaseAnonKey = localSupabaseKey || envSupabaseKey;
+
+  if (!supabaseUrl || !supabaseAnonKey) {
+    console.error('❌ Credenciais incompletas para inicializar o cliente Supabase.');
+    throw new Error('Credenciais do Supabase incompletas. Verifique o localStorage ou as variáveis de ambiente.');
+  }
+
+  // 6. Inicializar o cliente Supabase
+  try {
+    const client = createClient(supabaseUrl, supabaseAnonKey);
+    console.log('✅ Cliente Supabase inicializado com sucesso. URL:', supabaseUrl);
+    return client;
+  } catch (error) {
+    console.error('❌ Erro ao inicializar cliente Supabase:', error);
+    throw new Error('Falha ao inicializar o cliente Supabase: ' + error.message);
+  }
+};
+
+// Inicializar o cliente Supabase
+try {
+  supabase = await initializeSupabaseClient();
+} catch (error) {
+  console.error('❌ Falha crítica ao inicializar o cliente Supabase:', error);
+  throw error; // Lançar erro para interromper a execução
+}
+
+// Exportar o cliente inicializado
+export { supabase };
