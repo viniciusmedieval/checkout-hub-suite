@@ -56,13 +56,11 @@ export function CheckoutContent({ produto, configCheckout }: CheckoutContentProp
           <CheckoutTestimonials produto_id={produto.id} />
         </div>
         
-        {/* Order Summary & CTA Button */}
-        <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-4">
-          <ResumoCompra 
-            produto={produto} 
-            configCheckout={configCheckout} 
-          />
-        </div>
+        {/* Order Summary & CTA Button - Note: Border is now inside the ResumoCompra component */}
+        <ResumoCompra 
+          produto={produto} 
+          configCheckout={configCheckout} 
+        />
 
         {/* Security Badge */}
         <div className="text-center">

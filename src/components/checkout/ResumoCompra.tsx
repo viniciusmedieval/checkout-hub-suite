@@ -66,7 +66,7 @@ export function ResumoCompra({
   };
   
   return (
-    <div className="space-y-3">
+    <div className="space-y-3 bg-white rounded-lg shadow-sm border border-gray-200 p-4">
       <div className="flex items-center justify-between border-b pb-2 mb-2">
         <span className="text-sm font-medium text-black">Sua Compra</span>
         <span className="text-sm text-black">1 item</span>

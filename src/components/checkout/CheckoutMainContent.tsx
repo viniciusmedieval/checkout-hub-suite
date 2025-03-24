@@ -75,7 +75,7 @@ export function CheckoutMainContent({
         />
       </div>
       
-      {/* Order Summary & CTA Button */}
+      {/* Order Summary & CTA Button - Note: Border is now directly in the ResumoCompra component */}
       <ResumoCompra 
         produto={produto} 
         configCheckout={configCheckout}
