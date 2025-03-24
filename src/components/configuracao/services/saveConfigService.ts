@@ -74,54 +74,69 @@ export const saveConfig = async (config: ConfigCheckout): Promise<ConfigCheckout
     if (config.id) {
       console.log(`Atualizando configuração existente com ID ${config.id}`);
       
-      // Use update with explicit selection
-      const { data, error } = await supabase
+      // Fix: Split update and select operations for compatibility
+      const { error: updateError } = await supabase
         .from("config_checkout")
         .update(configToSave)
-        .eq('id', config.id)
-        .select('*');
+        .eq('id', config.id);
         
-      if (error) {
-        console.error("Erro ao atualizar configurações:", error);
-        toast.error("Erro ao atualizar configurações: " + error.message);
+      if (updateError) {
+        console.error("Erro ao atualizar configurações:", updateError);
+        toast.error("Erro ao atualizar configurações: " + updateError.message);
         return null;
       }
       
-      // Check if we have data and return the first item
-      if (data && data.length > 0) {
-        const processedData = ensureBooleanFields(data[0]);
-        console.log("Configuração atualizada com sucesso:", processedData);
-        toast.success("Configurações salvas com sucesso!");
-        return processedData;
+      // After successful update, fetch the updated record
+      const { data, error: selectError } = await supabase
+        .from("config_checkout")
+        .select('*')
+        .eq('id', config.id)
+        .single();
+        
+      if (selectError) {
+        console.error("Erro ao buscar configuração atualizada:", selectError);
+        toast.error("Configuração atualizada, mas houve erro ao buscar os dados atualizados.");
+        return null;
       }
+      
+      const processedData = ensureBooleanFields(data);
+      console.log("Configuração atualizada com sucesso:", processedData);
+      toast.success("Configurações salvas com sucesso!");
+      return processedData;
       
     } else {
       console.log("Criando nova configuração");
       
-      // Use insert with explicit selection
-      const { data, error } = await supabase
+      // Fix: Split insert and select operations for compatibility
+      const { error: insertError } = await supabase
         .from("config_checkout")
-        .insert([configToSave])
-        .select('*');
+        .insert([configToSave]);
         
-      if (error) {
-        console.error("Erro ao criar configurações:", error);
-        toast.error("Erro ao criar configurações: " + error.message);
+      if (insertError) {
+        console.error("Erro ao criar configurações:", insertError);
+        toast.error("Erro ao criar configurações: " + insertError.message);
         return null;
       }
       
-      // Check if we have data and return the first item
-      if (data && data.length > 0) {
-        const processedData = ensureBooleanFields(data[0]);
-        console.log("Configuração criada com sucesso:", processedData);
-        toast.success("Configurações salvas com sucesso!");
-        return processedData;
+      // After successful insert, fetch the most recently created record
+      const { data, error: selectError } = await supabase
+        .from("config_checkout")
+        .select('*')
+        .order('id', { ascending: false })
+        .limit(1)
+        .single();
+        
+      if (selectError) {
+        console.error("Erro ao buscar configuração criada:", selectError);
+        toast.error("Configuração criada, mas houve erro ao buscar os dados criados.");
+        return null;
       }
+      
+      const processedData = ensureBooleanFields(data);
+      console.log("Configuração criada com sucesso:", processedData);
+      toast.success("Configurações salvas com sucesso!");
+      return processedData;
     }
-    
-    console.error("Nenhum dado retornado após salvar");
-    toast.error("Erro ao salvar: nenhum dado retornado");
-    return null;
   } catch (error) {
     console.error("Erro no saveConfig:", error);
     toast.error("Erro ao salvar configurações. Tente novamente.");

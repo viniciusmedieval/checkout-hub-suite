@@ -42,6 +42,7 @@ export function useProductForm({
       if (isEditing && product) {
         console.log(`Updating product with ID: ${product.id}`);
         
+        // Fix: Split update and select operations for compatibility
         const { error } = await supabase
           .from("produtos")
           .update(data)
@@ -60,6 +61,7 @@ export function useProductForm({
       } else {
         console.log("Creating new product");
         
+        // Fix: Split insert operation for compatibility
         const { error } = await supabase
           .from("produtos")
           .insert([data]);
