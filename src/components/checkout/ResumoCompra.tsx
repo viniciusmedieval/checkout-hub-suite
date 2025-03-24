@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { formatCurrency } from "@/utils/formatters";
@@ -25,13 +24,13 @@ export function ResumoCompra({
   const buttonTextColor = configCheckout?.cor_texto_botao || "#FFFFFF";
   
   // Obter o texto do botão do produto, ou do configCheckout, ou usar um padrão
-  const buttonText = produto.checkout_button_text || configCheckout?.texto_botao || "GARANTIR AGORA";
+  const buttonText = (produto as any).checkout_button_text || configCheckout?.texto_botao || "GARANTIR AGORA";
   
   const counterTextColor = configCheckout?.cor_texto_contador || "#4B5563";
   
   // Para debugging
   console.log("ResumoCompra - Config:", { 
-    produto_button_text: produto.checkout_button_text, 
+    produto_button_text: (produto as any).checkout_button_text, 
     config_button_text: configCheckout?.texto_botao,
     buttonColor, 
     buttonTextColor, 

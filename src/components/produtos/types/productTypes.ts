@@ -8,6 +8,7 @@ export interface Product {
   ativo: boolean;
   slug: string;
   checkout_title: string;
+  checkout_button_text?: string;
   imagem_url: string;
   banner_url?: string;
   banner_mobile_url?: string;
@@ -23,6 +24,7 @@ export type ProductFormValues = {
   ativo: boolean;
   slug: string;
   checkout_title: string;
+  checkout_button_text?: string;
   imagem_url: string;
   banner_url: string;
   banner_mobile_url: string;
