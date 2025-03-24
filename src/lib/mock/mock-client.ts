@@ -7,7 +7,7 @@ import {
   createInsertOperation, 
   createUpdateOperation,
   createDeleteOperation 
-} from './query-operations';
+} from './operations';
 import { mockAuthService, mockStorageService } from './services';
 
 // Create a mock Supabase client for local development and testing
