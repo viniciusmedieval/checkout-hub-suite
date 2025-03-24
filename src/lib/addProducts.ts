@@ -135,33 +135,44 @@ export const addProductsToSupabase = async () => {
       return { success: true, message: 'Todos os produtos já existem no banco de dados.' };
     }
     
-    // Insert new products - handle the case where .select() might not be available
-    try {
-      const { data: insertedData, error } = await supabase
-        .from('produtos')
-        .insert(newProducts)
-        .select();
+    // Insert new products - CORRIGIDO: removido .select() após insert
+    const { error } = await supabase
+      .from('produtos')
+      .insert(newProducts);
+    
+    if (error) throw error;
+    
+    // Separate query to get the inserted products
+    const { data: insertedData, error: selectError } = await supabase
+      .from('produtos')
+      .select('*')
+      .in('slug', newProducts.map(p => p.slug));
       
-      if (error) throw error;
-      
-      // Ensure we have an array of inserted data
-      const safeInsertedData = Array.isArray(insertedData) ? insertedData : [];
-      
-      console.log(`Added ${safeInsertedData.length} new products to the database.`);
-      return { 
-        success: true, 
-        message: `Adicionados ${safeInsertedData.length} novos produtos ao banco de dados.`,
-        addedProducts: safeInsertedData
-      };
-    } catch (selectError) {
-      // Se .select() não for suportado, apenas retornamos sucesso sem os produtos adicionados
-      console.log(`Added new products to the database, but couldn't fetch them.`);
+    if (selectError) {
+      console.error("Erro ao buscar produtos inseridos:", selectError);
+      console.log(`Added ${newProducts.length} new products to the database, but couldn't fetch them.`);
       return { 
         success: true, 
         message: `Adicionados ${newProducts.length} novos produtos ao banco de dados.`,
         addedProducts: newProducts
       };
     }
+    
+    if (!insertedData) {
+      console.error("Erro: Retorno nulo do Supabase após inserção de produtos");
+      return { 
+        success: true, 
+        message: `Adicionados ${newProducts.length} novos produtos ao banco de dados.`,
+        addedProducts: newProducts
+      };
+    }
+    
+    console.log(`Added ${insertedData.length} new products to the database.`);
+    return { 
+      success: true, 
+      message: `Adicionados ${insertedData.length} novos produtos ao banco de dados.`,
+      addedProducts: insertedData
+    };
     
   } catch (error) {
     console.error('Error adding products:', error);
