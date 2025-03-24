@@ -2,9 +2,8 @@
 import { ConfigCheckout } from "@/lib/supabase";
 import { Input } from "@/components/ui/input";
 import { useState } from "react";
-import { formatPhoneNumber, formatCPF } from "@/utils/formatters";
+import { formatPhoneNumber, formatCPF, formatBirthDate } from "@/utils/formatters";
 import { DynamicIcon } from "./utils/DynamicIcon";
-import { formatBirthDate } from "@/hooks/checkout/useValidation";
 import { Calendar } from "lucide-react";
 
 interface CheckoutFormProps {

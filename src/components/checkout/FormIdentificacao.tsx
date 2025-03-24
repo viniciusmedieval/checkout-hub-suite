@@ -6,6 +6,7 @@ import { FormData } from "@/hooks/checkout";
 import { cn } from "@/lib/utils";
 import { DynamicIcon } from "./utils/DynamicIcon";
 import { useEffect, useState } from "react";
+import { formatCPF } from "@/utils/formatters";
 
 interface FormIdentificacaoProps {
   formData: FormData;
@@ -42,7 +43,15 @@ export function FormIdentificacao({
   
   // Handle form field changes
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    onChange(e.target.name, e.target.value);
+    const { name, value } = e.target;
+    
+    // Format CPF with punctuation if it's the documento field
+    if (name === 'documento') {
+      const formattedValue = formatCPF(value);
+      onChange(name, formattedValue);
+    } else {
+      onChange(name, value);
+    }
   };
 
   return (

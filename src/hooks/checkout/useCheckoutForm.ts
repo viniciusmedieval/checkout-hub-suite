@@ -4,6 +4,7 @@ import { toast } from "sonner";
 import { validateEmail, validateCPF, validateMobilePhone, validateBirthDate } from "./useValidation";
 import { supabase } from "@/lib/supabase";
 import { Produto, ConfigCheckout } from "@/lib/supabase";
+import { formatCPF, formatPhoneNumber, formatBirthDate } from "@/utils/formatters";
 
 export type FormData = {
   nome: string;
@@ -35,7 +36,19 @@ export const useCheckoutForm = (produto: Produto | null, configCheckout?: Config
 
   // Reset form errors when input changes
   const handleInputChange = (name: string, value: string) => {
-    setFormData(prev => ({ ...prev, [name]: value }));
+    let formattedValue = value;
+
+    // Format values according to their type
+    if (name === 'telefone') {
+      formattedValue = formatPhoneNumber(value);
+    } else if (name === 'documento') {
+      formattedValue = formatCPF(value);
+    } else if (name === 'data_nascimento') {
+      formattedValue = formatBirthDate(value);
+    }
+
+    setFormData(prev => ({ ...prev, [name]: formattedValue }));
+    
     if (formErrors[name]) {
       setFormErrors(prev => ({ ...prev, [name]: false }));
     }

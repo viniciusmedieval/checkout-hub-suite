@@ -1,85 +1,109 @@
 
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { CardPaymentForm } from "./CardPaymentForm";
-import { PixPayment } from "./PixPayment";
-import { CreditCard, QrCode } from "lucide-react";
-import { Produto, ConfigCheckout } from "@/lib/supabase";
-import { useState } from "react";
+import React, { useState, useEffect } from 'react';
+import { CreditCard, QrCode } from 'lucide-react';
+import { CardPaymentForm } from './CardPaymentForm';
+import { PixPayment } from './PixPayment';
+import { ConfigCheckout, Produto } from '@/lib/supabase';
+
+type PaymentMethod = 'card' | 'pix';
+type PixProps = {
+  tipo_chave_pix: string;
+  chave_pix: string;
+  nome_beneficiario: string;
+};
 
 interface PaymentMethodSelectorProps {
   productValue: number;
-  pixConfig: {
-    tipo_chave_pix?: string;
-    chave_pix?: string;
-    nome_beneficiario?: string;
-  } | null;
-  onPaymentMethodChange?: (method: 'card' | 'pix') => void;
-  produto: Produto;
+  productName?: string;
+  productImage?: string;
+  selectedMethod: PaymentMethod;
+  onMethodChange: (method: PaymentMethod) => void;
+  produto?: Produto | null;
   configCheckout?: ConfigCheckout | null;
 }
 
-export function PaymentMethodSelector({ 
-  productValue, 
-  pixConfig, 
-  onPaymentMethodChange,
+export function PaymentMethodSelector({
+  productValue,
+  productName,
+  productImage,
+  selectedMethod = 'card',
+  onMethodChange,
   produto,
   configCheckout
 }: PaymentMethodSelectorProps) {
-  const [activeTab, setActiveTab] = useState<'card' | 'pix'>('card');
+  const [pixData, setPixData] = useState<PixProps | null>(null);
   
-  // Use custom title from config or default
-  const titlePagamento = configCheckout?.titulo_pagamento || "Pagamento";
-  
-  const handleTabChange = (value: string) => {
-    if (value === 'card' || value === 'pix') {
-      setActiveTab(value);
-      if (onPaymentMethodChange) {
-        onPaymentMethodChange(value);
-      }
+  useEffect(() => {
+    if (produto) {
+      // Default PIX values, ensuring they are strings
+      const defaultPixData: PixProps = {
+        tipo_chave_pix: produto.tipo_chave_pix || '',
+        chave_pix: produto.chave_pix || '',
+        nome_beneficiario: produto.nome_beneficiario || ''
+      };
+      
+      setPixData(defaultPixData);
     }
+  }, [produto]);
+
+  const handleMethodClick = (method: PaymentMethod) => {
+    onMethodChange(method);
   };
 
   return (
-    <div className="p-4">
-      <h3 className="font-medium text-gray-800 mb-4">{titlePagamento}</h3>
-      
-      <Tabs 
-        defaultValue="card" 
-        className="w-full"
-        onValueChange={handleTabChange}
-      >
-        <TabsList className="grid w-full grid-cols-2 mb-4">
-          <TabsTrigger 
-            value="card" 
-            className="flex items-center gap-2 py-2.5 data-[state=active]:bg-violet-50 data-[state=active]:text-violet-800"
-          >
-            <CreditCard size={16} />
-            <span>Cartão</span>
-          </TabsTrigger>
-          <TabsTrigger 
-            value="pix" 
-            className="flex items-center gap-2 py-2.5 data-[state=active]:bg-violet-50 data-[state=active]:text-violet-800"
-          >
-            <QrCode size={16} />
-            <span>Pix</span>
-          </TabsTrigger>
-        </TabsList>
+    <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-4 space-y-4">
+      <div className="flex items-center gap-2 mb-3">
+        <CreditCard size={18} className="text-gray-700" />
+        <h2 className="text-base font-semibold text-black">
+          {configCheckout?.titulo_pagamento || "Forma de Pagamento"}
+        </h2>
+      </div>
+
+      <div className="flex gap-2">
+        <button
+          type="button"
+          onClick={() => handleMethodClick('card')}
+          className={`flex-1 flex items-center justify-center gap-2 py-3 px-4 rounded-lg border transition-colors ${
+            selectedMethod === 'card' 
+              ? 'bg-primary/10 border-primary text-primary'
+              : 'bg-white border-gray-200 text-gray-700 hover:bg-gray-50'
+          }`}
+        >
+          <CreditCard size={18} />
+          <span>Cartão</span>
+        </button>
         
-        <TabsContent value="card" className="mt-0">
+        <button
+          type="button"
+          onClick={() => handleMethodClick('pix')}
+          className={`flex-1 flex items-center justify-center gap-2 py-3 px-4 rounded-lg border transition-colors ${
+            selectedMethod === 'pix' 
+              ? 'bg-primary/10 border-primary text-primary' 
+              : 'bg-white border-gray-200 text-gray-700 hover:bg-gray-50'
+          }`}
+        >
+          <QrCode size={18} />
+          <span>PIX</span>
+        </button>
+      </div>
+
+      <div className="py-2">
+        {selectedMethod === 'card' && (
           <CardPaymentForm 
-            productValue={productValue} 
+            productValue={productValue}
             configCheckout={configCheckout}
           />
-        </TabsContent>
+        )}
         
-        <TabsContent value="pix" className="mt-0">
+        {selectedMethod === 'pix' && pixData && (
           <PixPayment 
             productValue={productValue}
-            pixConfig={pixConfig || {}}
-            produto={produto} 
+            productName={productName}
+            productImage={productImage}
+            pixData={pixData as PixProps}
           />
-        </TabsContent>
-      </Tabs>
+        )}
+      </div>
     </div>
   );
 }
