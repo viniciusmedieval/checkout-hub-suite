@@ -6,8 +6,6 @@ import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { ConfigCheckout } from "@/lib/supabase";
 import { ColorPicker } from "../aparencia/ColorPicker";
-import { icons } from "lucide-react";
-import { cn } from "@/lib/utils";
 import { DynamicIcon } from "../../checkout/utils/DynamicIcon";
 
 interface IconesTabProps {
