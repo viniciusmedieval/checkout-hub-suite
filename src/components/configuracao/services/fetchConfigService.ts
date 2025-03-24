@@ -9,22 +9,24 @@ import { ensureBooleanFields, handleConfigError } from "./utils/configValidation
 export const fetchCheckoutConfig = async (): Promise<ConfigCheckout | null> => {
   try {
     console.log("Iniciando fetchCheckoutConfig");
-    const result = await supabase
+    
+    // Get the most recent configuration
+    const { data, error } = await supabase
       .from("config_checkout")
       .select("*")
       .order('created_at', { ascending: false })
       .limit(1);
       
-    if (result.error) {
-      console.error("Erro ao carregar configurações do checkout:", result.error);
+    if (error) {
+      console.error("Erro ao carregar configurações do checkout:", error);
       toast.error("Erro ao carregar configurações do checkout");
       return null;
     }
     
     // Check if we have data and use the first item
-    if (result.data && result.data.length > 0) {
+    if (data && data.length > 0) {
       // Ensure boolean fields are properly typed and log the data
-      const configData = ensureBooleanFields(result.data[0]);
+      const configData = ensureBooleanFields(data[0]);
       console.log("Configurações carregadas com sucesso:", configData);
       return configData;
     }

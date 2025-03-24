@@ -71,41 +71,52 @@ export const saveConfig = async (config: ConfigCheckout): Promise<ConfigCheckout
     
     const configToSave = prepareConfigForSave(config);
     
-    let result;
-    
     if (config.id) {
       console.log(`Atualizando configuração existente com ID ${config.id}`);
       
-      // Use update and then get the first result
-      result = await supabase
+      // Use update with explicit selection
+      const { data, error } = await supabase
         .from("config_checkout")
         .update(configToSave)
         .eq('id', config.id)
         .select('*');
         
+      if (error) {
+        console.error("Erro ao atualizar configurações:", error);
+        toast.error("Erro ao atualizar configurações: " + error.message);
+        return null;
+      }
+      
+      // Check if we have data and return the first item
+      if (data && data.length > 0) {
+        const processedData = ensureBooleanFields(data[0]);
+        console.log("Configuração atualizada com sucesso:", processedData);
+        toast.success("Configurações salvas com sucesso!");
+        return processedData;
+      }
+      
     } else {
       console.log("Criando nova configuração");
       
-      // Use insert and then get the first result
-      result = await supabase
+      // Use insert with explicit selection
+      const { data, error } = await supabase
         .from("config_checkout")
         .insert([configToSave])
         .select('*');
-    }
-    
-    if (result.error) {
-      console.error("Erro ao salvar configurações:", result.error);
-      toast.error("Erro ao salvar configurações: " + result.error.message);
-      return null;
-    }
-    
-    // Check if we have data and use the first item
-    if (result.data && result.data.length > 0) {
-      // Process and return the data from the response
-      const processedData = ensureBooleanFields(result.data[0]);
-      console.log("Configuração salva com sucesso:", processedData);
-      toast.success("Configurações salvas com sucesso!");
-      return processedData;
+        
+      if (error) {
+        console.error("Erro ao criar configurações:", error);
+        toast.error("Erro ao criar configurações: " + error.message);
+        return null;
+      }
+      
+      // Check if we have data and return the first item
+      if (data && data.length > 0) {
+        const processedData = ensureBooleanFields(data[0]);
+        console.log("Configuração criada com sucesso:", processedData);
+        toast.success("Configurações salvas com sucesso!");
+        return processedData;
+      }
     }
     
     console.error("Nenhum dado retornado após salvar");

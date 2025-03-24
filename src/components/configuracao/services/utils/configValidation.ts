@@ -13,6 +13,11 @@ export const validateHex = (color: string): boolean => {
  * Ensures boolean fields are properly typed
  */
 export const ensureBooleanFields = (data: any): ConfigCheckout => {
+  if (!data) {
+    console.warn("ensureBooleanFields recebeu dados nulos ou indefinidos");
+    return data;
+  }
+  
   return {
     ...data,
     mostrar_seguro: Boolean(data.mostrar_seguro),
