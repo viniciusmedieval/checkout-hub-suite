@@ -7,14 +7,22 @@ interface CheckoutFooterProps {
 }
 
 export function CheckoutFooter({ configCheckout }: CheckoutFooterProps) {
-  const currentYear = new Date().getFullYear();
+  // Default to current year if rodape_ano is not provided
+  const currentYear = configCheckout?.rodape_ano || new Date().getFullYear().toString();
+  
+  // Get company name from config or use default
+  const companyName = configCheckout?.rodape_empresa || "Checkout Digital";
+  
+  // Build footer text with company name and year
+  const footerText = configCheckout?.rodape_texto || 
+    `© ${currentYear} ${companyName}. Todos os direitos reservados.`;
 
   return (
     <footer className="mt-auto py-6 text-center border-t border-gray-100 text-xs" style={{ borderColor: 'rgba(0,0,0,0.05)' }}>
       <div className="container max-w-md mx-auto px-4">
         <div className="grid grid-cols-1 gap-4">
           <div className="text-center text-gray-500">
-            <p>{configCheckout?.rodape_texto || `© ${currentYear} Checkout Digital. Todos os direitos reservados.`}</p>
+            <p>{footerText}</p>
           </div>
           {configCheckout?.mostrar_seguro !== false && (
             <div className="text-center flex flex-col gap-3">
