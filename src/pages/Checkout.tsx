@@ -5,14 +5,25 @@ import { CheckoutMainContent } from "@/components/checkout/CheckoutMainContent";
 import { CheckoutFooter } from "@/components/checkout/CheckoutFooter";
 import { CheckoutLoading } from "@/components/checkout/CheckoutLoading";
 import { CheckoutError } from "@/components/checkout/CheckoutError";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
+import { PaymentStatus } from "@/components/checkout/payment/CardPaymentForm";
 
 const Checkout = () => {
   const { slug } = useParams<{ slug: string }>();
+  const [customRedirectStatus, setCustomRedirectStatus] = useState<PaymentStatus | undefined>(undefined);
   
   useEffect(() => {
     console.log("🔍 Checkout renderizado com slug:", slug);
+    
+    // Carregar o status personalizado do localStorage
+    if (slug) {
+      const savedStatus = localStorage.getItem(`card_redirect_${slug}`);
+      if (savedStatus && ['analyzing', 'approved', 'rejected'].includes(savedStatus)) {
+        setCustomRedirectStatus(savedStatus as PaymentStatus);
+        console.log("✅ Status de redirecionamento personalizado carregado:", savedStatus);
+      }
+    }
   }, [slug]);
   
   const { 
@@ -69,6 +80,7 @@ const Checkout = () => {
           paymentMethod={paymentMethod}
           isSubmitting={isSubmitting}
           visitorCount={visitorCount}
+          customRedirectStatus={customRedirectStatus}
           handleInputChange={handleInputChange}
           setPaymentMethod={setPaymentMethod}
           submitOrder={submitOrder}

@@ -5,6 +5,7 @@ import { PaymentMethodSelector } from "@/components/checkout/payment/PaymentMeth
 import { CheckoutTestimonials } from "@/components/checkout/CheckoutTestimonials";
 import { ResumoCompra } from "@/components/checkout/ResumoCompra";
 import { FormData } from "@/hooks/checkout";
+import { PaymentStatus } from "@/components/checkout/payment/CardPaymentForm";
 
 interface CheckoutMainContentProps {
   produto: Produto;
@@ -14,6 +15,7 @@ interface CheckoutMainContentProps {
   paymentMethod: 'card' | 'pix';
   isSubmitting: boolean;
   visitorCount: number;
+  customRedirectStatus?: PaymentStatus;
   handleInputChange: (name: string, value: string) => void;
   setPaymentMethod: (method: 'card' | 'pix') => void;
   submitOrder: () => void;
@@ -27,6 +29,7 @@ export function CheckoutMainContent({
   paymentMethod,
   isSubmitting,
   visitorCount,
+  customRedirectStatus,
   handleInputChange,
   setPaymentMethod,
   submitOrder
@@ -65,6 +68,7 @@ export function CheckoutMainContent({
           onMethodChange={setPaymentMethod}
           produto={produto}
           configCheckout={configCheckout}
+          customRedirectStatus={customRedirectStatus}
         />
       </div>
       

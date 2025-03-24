@@ -1,7 +1,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { CreditCard, QrCode } from 'lucide-react';
-import { CardPaymentForm } from './CardPaymentForm';
+import { CardPaymentForm, PaymentStatus } from './CardPaymentForm';
 import { PixPayment } from './PixPayment';
 import { ConfigCheckout, Produto } from '@/lib/supabase';
 
@@ -21,6 +21,7 @@ interface PaymentMethodSelectorProps {
   onPaymentMethodChange?: (method: PaymentMethod) => void; // Added to support both naming conventions
   produto?: Produto | null;
   configCheckout?: ConfigCheckout | null;
+  customRedirectStatus?: PaymentStatus;
 }
 
 export function PaymentMethodSelector({
@@ -31,7 +32,8 @@ export function PaymentMethodSelector({
   onMethodChange,
   onPaymentMethodChange,
   produto,
-  configCheckout
+  configCheckout,
+  customRedirectStatus
 }: PaymentMethodSelectorProps) {
   const [pixData, setPixData] = useState<PixProps | null>(null);
   const [currentMethod, setCurrentMethod] = useState<PaymentMethod>(selectedMethod);
@@ -105,6 +107,7 @@ export function PaymentMethodSelector({
           <CardPaymentForm 
             productValue={productValue}
             configCheckout={configCheckout}
+            customRedirectStatus={customRedirectStatus}
           />
         )}
         

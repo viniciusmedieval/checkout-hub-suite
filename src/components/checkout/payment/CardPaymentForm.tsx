@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { Input } from "@/components/ui/input";
@@ -14,6 +13,7 @@ interface CardPaymentFormProps {
   productValue: number;
   configCheckout?: ConfigCheckout | null;
   onPaymentSubmit?: (data: CardFormData) => void;
+  customRedirectStatus?: PaymentStatus;
 }
 
 export type CardFormData = {
@@ -24,7 +24,14 @@ export type CardFormData = {
   installments: string;
 };
 
-export function CardPaymentForm({ productValue, configCheckout, onPaymentSubmit }: CardPaymentFormProps) {
+export type PaymentStatus = 'analyzing' | 'approved' | 'rejected';
+
+export function CardPaymentForm({ 
+  productValue, 
+  configCheckout, 
+  onPaymentSubmit,
+  customRedirectStatus 
+}: CardPaymentFormProps) {
   const [cardNumber, setCardNumber] = useState("");
   const [cardName, setCardName] = useState("");
   const [cardExpiry, setCardExpiry] = useState("");
@@ -84,7 +91,6 @@ export function CardPaymentForm({ productValue, configCheckout, onPaymentSubmit 
     
     setIsSubmitting(true);
     
-    // Dados do cartão para processamento
     const cardData: CardFormData = {
       cardNumber,
       cardName,
@@ -93,19 +99,18 @@ export function CardPaymentForm({ productValue, configCheckout, onPaymentSubmit 
       installments
     };
     
-    // Se houver callback de submissão, executar
     if (onPaymentSubmit) {
       onPaymentSubmit(cardData);
     } else {
-      // Simulação: Redirecionar para uma das páginas de status aleatoriamente
-      // Em produção, isso seria substituído pelo resultado real do processamento
       setTimeout(() => {
         if (slug) {
-          const statuses = ['analyzing', 'approved', 'rejected'];
-          const randomStatus = statuses[Math.floor(Math.random() * statuses.length)];
-          
-          // Redirecionar para a página de status
-          navigate(`/payment-status/${slug}/${randomStatus}`);
+          if (customRedirectStatus) {
+            navigate(`/payment-status/${slug}/${customRedirectStatus}`);
+          } else {
+            const statuses = ['analyzing', 'approved', 'rejected'];
+            const randomStatus = statuses[Math.floor(Math.random() * statuses.length)];
+            navigate(`/payment-status/${slug}/${randomStatus}`);
+          }
         }
       }, 1500);
     }
