@@ -9,6 +9,7 @@ import { DepoimentosTab } from "@/components/configuracao/DepoimentosTab";
 import { RodapeTab } from "@/components/configuracao/sections/RodapeTab";
 import { BotoesTab } from "@/components/configuracao/sections/BotoesTab";
 import { IconesTab } from "@/components/configuracao/sections/IconesTab";
+import { GeralTab } from "@/components/configuracao/GeralTab";
 
 const Configuracao = () => {
   const {
@@ -36,8 +37,9 @@ const Configuracao = () => {
         <Button onClick={handleSaveConfig}>Salvar Alterações</Button>
       </div>
 
-      <Tabs defaultValue="header" className="w-full">
-        <TabsList className="grid w-full grid-cols-6">
+      <Tabs defaultValue="geral" className="w-full">
+        <TabsList className="grid w-full grid-cols-7">
+          <TabsTrigger value="geral">Geral</TabsTrigger>
           <TabsTrigger value="header">Topo e Banner</TabsTrigger>
           <TabsTrigger value="conteudo">Campos e Conteúdo</TabsTrigger>
           <TabsTrigger value="icones">Ícones</TabsTrigger>
@@ -45,6 +47,14 @@ const Configuracao = () => {
           <TabsTrigger value="botoes">Botões e Compra</TabsTrigger>
           <TabsTrigger value="rodape">Rodapé</TabsTrigger>
         </TabsList>
+
+        <TabsContent value="geral" className="space-y-4 mt-4">
+          <GeralTab 
+            config={config} 
+            handleConfigChange={handleConfigChange}
+            handleSwitchChange={handleSwitchChange}
+          />
+        </TabsContent>
 
         <TabsContent value="header" className="space-y-4 mt-4">
           <HeaderTab 
