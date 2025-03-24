@@ -24,18 +24,29 @@ export function CheckoutTestimonials({ produto_id }: CheckoutTestimonialsProps) 
         const data = await fetchTestimonials();
         console.log("CheckoutTestimonials - Depoimentos carregados:", data);
         
-        // Se temos um produto_id específico, filtrar os depoimentos pelo produto_id
+        // Se temos um produto_id específico, filtrar os depoimentos pelo produto_id ou pegar os que não têm produto_id
         if (produto_id) {
           const filteredData = data.filter(item => 
             // Permitir depoimentos com produto_id igual ao atual OU depoimentos sem produto_id específico (null/undefined)
-            item.produto_id === produto_id || !item.produto_id
+            item.produto_id === produto_id || item.produto_id === null || item.produto_id === undefined
           );
-          setTestimonials(filteredData.length > 0 ? filteredData : data);
+          
+          if (filteredData.length > 0) {
+            setTestimonials(filteredData);
+          } else {
+            // Se não encontramos depoimentos específicos, usamos os genéricos
+            const genericTestimonials = data.filter(item => 
+              item.produto_id === null || item.produto_id === undefined
+            );
+            
+            setTestimonials(genericTestimonials.length > 0 ? genericTestimonials : data);
+          }
         } else {
           setTestimonials(data);
         }
       } catch (error) {
         console.error("Erro ao buscar depoimentos no checkout:", error);
+        setTestimonials([]);
       } finally {
         setLoading(false);
       }
@@ -43,6 +54,11 @@ export function CheckoutTestimonials({ produto_id }: CheckoutTestimonialsProps) 
 
     loadTestimonials();
   }, [produto_id]);
+
+  // Se não temos depoimentos, não mostrar o componente
+  if (!loading && testimonials.length === 0) {
+    return null;
+  }
 
   return (
     <div className="p-4">

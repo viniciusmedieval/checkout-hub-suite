@@ -21,7 +21,7 @@ export const useCheckoutData = (slug: string | undefined) => {
         
       if (configError) {
         console.error("useCheckoutData - Erro ao carregar configurações do checkout:", configError);
-        // Não definimos um erro aqui, apenas logamos e continuamos
+        // Continuamos sem definir erro, apenas logar para não interromper o fluxo
       } else if (checkoutConfig && checkoutConfig.length > 0) {
         console.log("useCheckoutData - Config carregada:", checkoutConfig[0]);
         
@@ -56,10 +56,45 @@ export const useCheckoutData = (slug: string | undefined) => {
         }
       } else {
         console.log("useCheckoutData - Nenhuma configuração encontrada");
+        // Definir configuração padrão como fallback
+        setConfigCheckout({
+          id: 0,
+          cor_topo: "#3b82f6",
+          cor_fundo: "#FFFFFF",
+          cor_banner: "#3b82f6",
+          cor_titulo: "#000000",
+          cor_botao: "#8B5CF6",
+          cor_texto_botao: "#FFFFFF",
+          cor_texto_contador: "#4B5563",
+          mensagem_topo: "Oferta por tempo limitado!",
+          texto_botao: "Finalizar Compra",
+          rodape_texto: "Todos os direitos reservados",
+          rodape_empresa: "Sua Empresa",
+          rodape_ano: new Date().getFullYear().toString(),
+          mostrar_seguro: true,
+          ativa_banner: true
+        } as ConfigCheckout);
       }
     } catch (error) {
       console.error("useCheckoutData - Erro ao buscar configuração do checkout:", error);
-      // Não definimos um erro aqui, apenas logamos e continuamos
+      // Definir configuração padrão em caso de erro
+      setConfigCheckout({
+        id: 0,
+        cor_topo: "#3b82f6",
+        cor_fundo: "#FFFFFF",
+        cor_banner: "#3b82f6",
+        cor_titulo: "#000000",
+        cor_botao: "#8B5CF6",
+        cor_texto_botao: "#FFFFFF",
+        cor_texto_contador: "#4B5563",
+        mensagem_topo: "Oferta por tempo limitado!",
+        texto_botao: "Finalizar Compra",
+        rodape_texto: "Todos os direitos reservados",
+        rodape_empresa: "Sua Empresa",
+        rodape_ano: new Date().getFullYear().toString(),
+        mostrar_seguro: true,
+        ativa_banner: true
+      } as ConfigCheckout);
     }
   };
 
@@ -89,6 +124,26 @@ export const useCheckoutData = (slug: string | undefined) => {
         
         if (productError) {
           console.error("useCheckoutData - Erro do Supabase:", productError);
+          
+          // Tentar recuperar do localStorage antes de mostrar erro
+          const mockStorage = localStorage.getItem('mockSupabaseStorage');
+          if (mockStorage) {
+            const parsedStorage = JSON.parse(mockStorage);
+            if (parsedStorage && parsedStorage.produtos) {
+              console.log("useCheckoutData - Tentando recuperar de mockStorage após erro");
+              const produtoEncontrado = parsedStorage.produtos.find(
+                (p: Produto) => p.slug === slug && p.ativo
+              );
+              
+              if (produtoEncontrado) {
+                console.log("useCheckoutData - Produto encontrado nos dados mockStorage:", produtoEncontrado);
+                setProduto(produtoEncontrado);
+                setLoading(false);
+                return;
+              }
+            }
+          }
+          
           throw productError;
         }
         

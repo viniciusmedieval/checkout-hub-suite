@@ -8,8 +8,8 @@ export interface Product {
   ativo: boolean;
   slug: string;
   checkout_title: string;
-  checkout_button_text?: string;
-  imagem_url: string;
+  checkout_button_text?: string | null;
+  imagem_url: string | null;
   banner_url?: string | null;
   banner_mobile_url?: string | null;
   banner_color?: string | null;
@@ -19,6 +19,9 @@ export interface Product {
   nome_beneficiario?: string | null;
   usar_api_pix?: boolean;
   usar_config_pix_global?: boolean;
+  url_pix_api?: string | null;
+  url_api_pix?: string | null;
+  criado_em?: string;
 }
 
 export type ProductFormValues = {
