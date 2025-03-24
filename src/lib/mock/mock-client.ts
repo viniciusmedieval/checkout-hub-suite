@@ -25,6 +25,12 @@ export function createMockClient(): SupabaseClient {
                 return buildQueryObject(filtered); // Retorna um novo objeto de consulta com os itens filtrados
               },
               
+              // Implementa o método in para filtrar por valores em um array
+              in: (column: string, values: any[]) => {
+                const filtered = items.filter((item: any) => values.includes(item[column]));
+                return buildQueryObject(filtered);
+              },
+              
               // Implementa o método gte (greater than or equal)
               gte: (column: string, value: any) => {
                 const filtered = items.filter((item: any) => item[column] >= value);
@@ -51,10 +57,7 @@ export function createMockClient(): SupabaseClient {
               
               // Implementa o método limit
               limit: (limit: number) => {
-                return {
-                  data: items.slice(0, limit),
-                  error: null
-                };
+                return buildQueryObject(items.slice(0, limit));
               },
               
               // Implementa o método single para obter apenas um resultado
@@ -95,13 +98,7 @@ export function createMockClient(): SupabaseClient {
           
           return {
             data: newRecords,
-            error: null,
-            select: () => {
-              return {
-                data: newRecords,
-                error: null
-              };
-            }
+            error: null
           };
         },
         
