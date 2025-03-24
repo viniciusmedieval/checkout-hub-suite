@@ -14,7 +14,7 @@ interface HeaderTabProps {
 }
 
 export function HeaderTab({ config, handleConfigChange, handleSwitchChange }: HeaderTabProps) {
-  // Function to handle color changes and ensure both inputs stay in sync
+  // Function to handle color changes
   const handleColorChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     handleConfigChange(e);
   };
@@ -40,6 +40,9 @@ export function HeaderTab({ config, handleConfigChange, handleSwitchChange }: He
               onChange={handleConfigChange}
               placeholder="Ex: Oferta por tempo limitado!"
             />
+            <p className="text-xs text-gray-500">
+              Mensagem exibida na barra colorida no topo do checkout.
+            </p>
           </div>
           
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -69,6 +72,15 @@ export function HeaderTab({ config, handleConfigChange, handleSwitchChange }: He
         <div className="space-y-4">
           <h3 className="text-sm font-medium">Banner</h3>
           
+          <div className="flex items-center space-x-2 mb-4">
+            <Switch 
+              checked={config.ativa_banner} 
+              onCheckedChange={(checked) => handleSwitchChange('ativa_banner', checked)}
+              id="ativa-banner"
+            />
+            <Label htmlFor="ativa-banner">Ativar banner global (quando produto não tem banner)</Label>
+          </div>
+          
           <div className="space-y-2">
             <label className="text-sm font-medium">URL do Banner (Desktop)</label>
             <Input
@@ -76,8 +88,9 @@ export function HeaderTab({ config, handleConfigChange, handleSwitchChange }: He
               value={config.banner_url || ""}
               onChange={handleConfigChange}
               placeholder="https://exemplo.com/banner.jpg"
+              disabled={!config.ativa_banner}
             />
-            {config.banner_url && (
+            {config.banner_url && config.ativa_banner && (
               <div className="mt-2 rounded-md overflow-hidden">
                 <img 
                   src={config.banner_url} 
@@ -95,8 +108,9 @@ export function HeaderTab({ config, handleConfigChange, handleSwitchChange }: He
               value={config.banner_mobile_url || ""}
               onChange={handleConfigChange}
               placeholder="https://exemplo.com/banner-mobile.jpg"
+              disabled={!config.ativa_banner}
             />
-            {config.banner_mobile_url && (
+            {config.banner_mobile_url && config.ativa_banner && (
               <div className="mt-2 rounded-md overflow-hidden">
                 <img 
                   src={config.banner_mobile_url}
@@ -114,16 +128,8 @@ export function HeaderTab({ config, handleConfigChange, handleSwitchChange }: He
             onChange={handleColorChange}
             label="Cor de Fundo do Banner"
             description="Define a cor de fundo do banner quando exibido"
+            disabled={!config.ativa_banner}
           />
-          
-          <div className="flex items-center space-x-2">
-            <Switch 
-              checked={config.ativa_banner} 
-              onCheckedChange={(checked) => handleSwitchChange('ativa_banner', checked)}
-              id="ativa-banner"
-            />
-            <Label htmlFor="ativa-banner">Ativar banner global (quando produto não tem banner)</Label>
-          </div>
         </div>
       </CardContent>
     </Card>

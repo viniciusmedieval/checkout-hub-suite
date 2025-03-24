@@ -2,8 +2,6 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { ConfigCheckout } from "@/lib/supabase";
 import { Input } from "@/components/ui/input";
-import { Switch } from "@/components/ui/switch";
-import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
 
 interface RodapeTabProps {
@@ -12,12 +10,7 @@ interface RodapeTabProps {
   handleSwitchChange: (name: string, checked: boolean) => void;
 }
 
-export function RodapeTab({ config, handleConfigChange, handleSwitchChange }: RodapeTabProps) {
-  const handleToggleSecurityMessage = (checked: boolean) => {
-    console.log("RodapeTab - Toggling security message:", checked);
-    handleSwitchChange('mostrar_seguro', checked);
-  };
-
+export function RodapeTab({ config, handleConfigChange }: RodapeTabProps) {
   return (
     <Card>
       <CardHeader>
@@ -71,7 +64,7 @@ export function RodapeTab({ config, handleConfigChange, handleSwitchChange }: Ro
         
         {/* Links Section */}
         <div className="space-y-4">
-          <h3 className="text-sm font-medium">Links do Rodapé</h3>
+          <h3 className="text-sm font-medium">Links Legais</h3>
           
           <div className="space-y-2">
             <label className="text-sm font-medium">URL dos Termos de Uso</label>
@@ -81,6 +74,9 @@ export function RodapeTab({ config, handleConfigChange, handleSwitchChange }: Ro
               onChange={handleConfigChange}
               placeholder="https://seusite.com/termos"
             />
+            <p className="text-xs text-gray-500">
+              Link para seus termos de uso que serão exibidos no rodapé.
+            </p>
           </div>
           
           <div className="space-y-2">
@@ -91,35 +87,8 @@ export function RodapeTab({ config, handleConfigChange, handleSwitchChange }: Ro
               onChange={handleConfigChange}
               placeholder="https://seusite.com/privacidade"
             />
-          </div>
-        </div>
-        
-        <Separator />
-        
-        {/* Security Message */}
-        <div className="space-y-4">
-          <h3 className="text-sm font-medium">Mensagem de Segurança</h3>
-          
-          <div className="flex items-center space-x-2">
-            <Switch 
-              checked={Boolean(config.mostrar_seguro)} 
-              onCheckedChange={handleToggleSecurityMessage}
-              id="mostrar-seguro"
-            />
-            <Label htmlFor="mostrar-seguro">Mostrar mensagem de segurança no rodapé</Label>
-          </div>
-          
-          <div className="space-y-2 pl-7">
-            <label className="text-sm font-medium">Mensagem de segurança</label>
-            <Input
-              name="mensagem_rodape"
-              value={config.mensagem_rodape || ""}
-              onChange={handleConfigChange}
-              placeholder="Compra 100% segura e garantida."
-            />
-            <p className="text-xs text-gray-500 mt-1">
-              Esta mensagem será usada no rodapé quando a opção acima estiver ativada.
-              Caso contrário, poderá aparecer próximo ao botão de compra.
+            <p className="text-xs text-gray-500">
+              Link para sua política de privacidade que será exibida no rodapé.
             </p>
           </div>
         </div>

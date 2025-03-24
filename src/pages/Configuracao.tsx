@@ -5,11 +5,12 @@ import { useConfiguracao } from "@/components/configuracao/useConfiguracao";
 import { LoadingState } from "@/components/configuracao/LoadingState";
 import { HeaderTab } from "@/components/configuracao/sections/HeaderTab";
 import { ConteudoTab } from "@/components/configuracao/sections/ConteudoTab";
+import { FormularioTab } from "@/components/configuracao/sections/FormularioTab";
 import { DepoimentosTab } from "@/components/configuracao/DepoimentosTab";
 import { RodapeTab } from "@/components/configuracao/sections/RodapeTab";
 import { BotoesTab } from "@/components/configuracao/sections/BotoesTab";
 import { IconesTab } from "@/components/configuracao/sections/IconesTab";
-import { GeralTab } from "@/components/configuracao/GeralTab";
+import { VisualTab } from "@/components/configuracao/sections/VisualTab";
 
 const Configuracao = () => {
   const {
@@ -37,19 +38,19 @@ const Configuracao = () => {
         <Button onClick={handleSaveConfig}>Salvar Alterações</Button>
       </div>
 
-      <Tabs defaultValue="geral" className="w-full">
+      <Tabs defaultValue="visual" className="w-full">
         <TabsList className="grid w-full grid-cols-7">
-          <TabsTrigger value="geral">Geral</TabsTrigger>
-          <TabsTrigger value="header">Topo e Banner</TabsTrigger>
-          <TabsTrigger value="conteudo">Campos e Conteúdo</TabsTrigger>
-          <TabsTrigger value="icones">Ícones</TabsTrigger>
+          <TabsTrigger value="visual">Visual</TabsTrigger>
+          <TabsTrigger value="header">Topo</TabsTrigger>
+          <TabsTrigger value="formulario">Formulário</TabsTrigger>
           <TabsTrigger value="depoimentos">Depoimentos</TabsTrigger>
-          <TabsTrigger value="botoes">Botões e Compra</TabsTrigger>
+          <TabsTrigger value="botoes">Botões</TabsTrigger>
+          <TabsTrigger value="icones">Ícones</TabsTrigger>
           <TabsTrigger value="rodape">Rodapé</TabsTrigger>
         </TabsList>
 
-        <TabsContent value="geral" className="space-y-4 mt-4">
-          <GeralTab 
+        <TabsContent value="visual" className="space-y-4 mt-4">
+          <VisualTab 
             config={config} 
             handleConfigChange={handleConfigChange}
             handleSwitchChange={handleSwitchChange}
@@ -64,8 +65,8 @@ const Configuracao = () => {
           />
         </TabsContent>
 
-        <TabsContent value="conteudo" className="space-y-4 mt-4">
-          <ConteudoTab 
+        <TabsContent value="formulario" className="space-y-4 mt-4">
+          <FormularioTab 
             config={config} 
             handleConfigChange={handleConfigChange}
             handleSwitchChange={handleSwitchChange}
