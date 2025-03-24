@@ -57,16 +57,16 @@ const prepareConfigForSave = (config: ConfigCheckout) => {
 /**
  * Fetches the recently updated configuration after saving
  */
-const fetchUpdatedConfig = async (id?: string): Promise<ConfigCheckout | null> => {
+const fetchUpdatedConfig = async (id?: string | number): Promise<ConfigCheckout | null> => {
   try {
     let result;
     
     if (id) {
-      // Fetch the specific updated record
+      // Fetch the specific updated record - convert id to string if it's a number
       result = await supabase
         .from("config_checkout")
         .select('*')
-        .eq('id', id)
+        .eq('id', id.toString())
         .single();
     } else {
       // Fetch the most recent record
