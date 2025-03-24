@@ -15,8 +15,15 @@ interface OrderSummaryProps {
 export function OrderSummary({ produto, configCheckout }: OrderSummaryProps) {
   const [loading, setLoading] = useState(false);
   
-  // Obter a cor do botão das configurações ou usar o padrão
+  // Obter a cor do botão e texto das configurações ou usar o padrão
   const buttonColor = configCheckout?.cor_botao || "#8B5CF6";
+  const buttonTextColor = configCheckout?.cor_texto_botao || "#FFFFFF";
+  const buttonText = configCheckout?.texto_botao || "GARANTIR AGORA";
+  
+  // Para debugging
+  console.log("OrderSummary - Cor do botão:", buttonColor);
+  console.log("OrderSummary - Cor do texto do botão:", buttonTextColor);
+  console.log("OrderSummary - Texto do botão:", buttonText);
   
   const handleComprar = async () => {
     setLoading(true);
@@ -59,9 +66,12 @@ export function OrderSummary({ produto, configCheckout }: OrderSummaryProps) {
       
       <Button 
         onClick={handleComprar}
-        className="w-full text-white font-bold py-4 text-base h-auto"
+        className="w-full font-bold py-4 text-base h-auto"
         disabled={loading}
-        style={{ backgroundColor: buttonColor }}
+        style={{ 
+          backgroundColor: buttonColor,
+          color: buttonTextColor
+        }}
       >
         {loading ? (
           <>
@@ -72,16 +82,22 @@ export function OrderSummary({ produto, configCheckout }: OrderSummaryProps) {
             Processando...
           </>
         ) : (
-          configCheckout?.texto_botao || "GARANTIR AGORA"
+          buttonText
         )}
       </Button>
       
-      {/* Remove the fixed security message here which was causing duplication */}
-      {/* Only show this message if it's not already displayed in the footer */}
-      {!configCheckout?.mostrar_seguro && configCheckout?.mensagem_rodape && (
+      {/* Only show security message if it's not already displayed in the footer */}
+      {configCheckout?.mensagem_rodape && (
         <div className="flex items-center justify-center mt-2 text-xs text-gray-500 gap-1.5">
           <Shield size={14} />
           <span>{configCheckout.mensagem_rodape}</span>
+        </div>
+      )}
+      
+      {/* Display terms message if available */}
+      {configCheckout?.mensagem_termos && configCheckout.mensagem_termos.trim() !== "" && (
+        <div className="mt-2 text-xs text-gray-400 text-center">
+          <p>{configCheckout.mensagem_termos}</p>
         </div>
       )}
     </div>

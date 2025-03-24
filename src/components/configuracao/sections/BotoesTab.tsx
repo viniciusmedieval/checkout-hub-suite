@@ -1,3 +1,4 @@
+
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -5,6 +6,7 @@ import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
 import { ConfigCheckout } from "@/lib/supabase";
+import { ColorPicker } from "@/components/configuracao/aparencia/ColorPicker";
 
 interface BotoesTabProps {
   config: ConfigCheckout;
@@ -38,43 +40,23 @@ export function BotoesTab({ config, handleConfigChange, handleSwitchChange }: Bo
           </div>
           
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div className="space-y-2">
-              <label className="text-sm font-medium">Cor do Botão</label>
-              <div className="flex items-center space-x-2">
-                <input
-                  type="color"
-                  name="cor_botao"
-                  value={config.cor_botao}
-                  onChange={handleConfigChange}
-                  className="w-10 h-10 rounded cursor-pointer"
-                />
-                <Input
-                  name="cor_botao"
-                  value={config.cor_botao}
-                  onChange={handleConfigChange}
-                  className="flex-1"
-                />
-              </div>
-            </div>
+            <ColorPicker
+              name="cor_botao"
+              value={config.cor_botao}
+              defaultValue="#8B5CF6"
+              onChange={handleConfigChange}
+              label="Cor do Botão"
+              description="Cor de fundo do botão principal"
+            />
             
-            <div className="space-y-2">
-              <label className="text-sm font-medium">Cor do Texto do Botão</label>
-              <div className="flex items-center space-x-2">
-                <input
-                  type="color"
-                  name="cor_texto_botao"
-                  value={config.cor_texto_botao}
-                  onChange={handleConfigChange}
-                  className="w-10 h-10 rounded cursor-pointer"
-                />
-                <Input
-                  name="cor_texto_botao"
-                  value={config.cor_texto_botao}
-                  onChange={handleConfigChange}
-                  className="flex-1"
-                />
-              </div>
-            </div>
+            <ColorPicker
+              name="cor_texto_botao"
+              value={config.cor_texto_botao}
+              defaultValue="#FFFFFF"
+              onChange={handleConfigChange}
+              label="Cor do Texto do Botão"
+              description="Cor do texto do botão principal"
+            />
           </div>
           
           <Separator className="my-4" />
@@ -85,7 +67,10 @@ export function BotoesTab({ config, handleConfigChange, handleSwitchChange }: Bo
             <div className="flex items-center space-x-2">
               <Switch 
                 checked={config.mostrar_contador === true} 
-                onCheckedChange={(checked) => handleSwitchChange('mostrar_contador', checked)}
+                onCheckedChange={(checked) => {
+                  console.log("Switch contador alterado para:", checked);
+                  handleSwitchChange('mostrar_contador', checked);
+                }}
                 id="mostrar-contador"
               />
               <Label htmlFor="mostrar-contador">Exibir contador de visitantes</Label>

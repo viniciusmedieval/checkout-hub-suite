@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import { useCheckoutData } from "./useCheckoutData";
@@ -28,10 +29,14 @@ export const useCheckout = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [countdown, setCountdown] = useState(15 * 60); // 15 minutes in seconds
   
-  // Generate random visitor count - max and min configurable from config if available
-  const minVisitors = configCheckout?.contador_min || 50;
-  const maxVisitors = configCheckout?.contador_max || 20000;
-  const [visitorCount, setVisitorCount] = useState(Math.floor(Math.random() * (maxVisitors - minVisitors)) + minVisitors);
+  // Default visitor count range if config values aren't available
+  const defaultMinVisitors = 50;
+  const defaultMaxVisitors = 200;
+  
+  // Initialize visitor count with a random value between min and max
+  const [visitorCount, setVisitorCount] = useState(
+    Math.floor(Math.random() * (defaultMaxVisitors - defaultMinVisitors + 1)) + defaultMinVisitors
+  );
 
   // Reset form errors when input changes
   const handleInputChange = (name: string, value: string) => {
@@ -178,14 +183,14 @@ export const useCheckout = () => {
       console.log("useCheckout - mostrar_contador:", configCheckout.mostrar_contador);
       console.log("useCheckout - contador min/max:", configCheckout.contador_min, configCheckout.contador_max);
       
-      // Garantir que o contador esteja funcionando mesmo se o usuário não definir explicitamente min/max
-      const min = configCheckout.contador_min || 50;
-      const max = configCheckout.contador_max || 200;
+      // Use config values if available, otherwise fallback to defaults
+      const min = typeof configCheckout.contador_min === 'number' ? configCheckout.contador_min : defaultMinVisitors;
+      const max = typeof configCheckout.contador_max === 'number' ? configCheckout.contador_max : defaultMaxVisitors;
       
-      // Gerar número aleatório para o contador de visitantes se estiver ativado
-      if (configCheckout.mostrar_contador === true) {
-        setVisitorCount(Math.floor(Math.random() * (max - min + 1)) + min);
-      }
+      console.log("useCheckout - Valores finais min/max:", min, max);
+      
+      // Update the visitor count with the correct range from config
+      setVisitorCount(Math.floor(Math.random() * (max - min + 1)) + min);
     }
   }, [configCheckout]);
 

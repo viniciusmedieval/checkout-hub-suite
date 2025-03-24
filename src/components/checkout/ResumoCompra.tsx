@@ -25,13 +25,15 @@ export function ResumoCompra({
   // Obter a cor do botão e do texto do botão das configurações ou usar o padrão
   const buttonColor = configCheckout?.cor_botao || "#00C853"; // Verde por padrão 
   const buttonTextColor = configCheckout?.cor_texto_botao || "#FFFFFF";
+  const buttonText = configCheckout?.texto_botao || "ASSINAR AGORA";
   
   // Para debugging
   console.log("ResumoCompra - Configurações do checkout:", configCheckout);
   console.log("ResumoCompra - Contador de visitantes:", visitorCount);
   console.log("ResumoCompra - Mostrar contador:", configCheckout?.mostrar_contador);
-  console.log("ResumoCompra - Mensagem rodapé:", configCheckout?.mensagem_rodape);
-  console.log("ResumoCompra - Mensagem termos:", configCheckout?.mensagem_termos);
+  console.log("ResumoCompra - Cor do botão:", buttonColor);
+  console.log("ResumoCompra - Cor do texto do botão:", buttonTextColor);
+  console.log("ResumoCompra - Texto do botão:", buttonText);
   
   const handleCompletePurchase = async () => {
     if (onCompletePurchase) {
@@ -96,9 +98,9 @@ export function ResumoCompra({
         </div>
       </div>
       
-      {/* Show visitor count if provided and enabled in config - Corrigindo a lógica do contador */}
+      {/* Show visitor count if provided and enabled in config */}
       {visitorCount !== undefined && configCheckout?.mostrar_contador === true && (
-        <div className="text-xs text-gray-500 text-center mt-2 mb-2">
+        <div className="text-xs text-orange-500 text-center mt-2 mb-2 font-medium">
           <p>{configCheckout?.texto_contador?.replace('{count}', visitorCount.toString()) || 
               `${visitorCount} pessoas estão vendo este produto agora`}</p>
         </div>
@@ -124,12 +126,12 @@ export function ResumoCompra({
         ) : (
           <>
             <LockIcon size={14} />
-            {configCheckout?.texto_botao || "ASSINAR AGORA"}
+            {buttonText}
           </>
         )}
       </button>
       
-      {/* Display security message from admin config - Garantindo que a mensagem apareça */}
+      {/* Display security message from admin config */}
       {configCheckout?.mensagem_rodape && configCheckout.mensagem_rodape.trim() !== "" && (
         <div className="flex items-center justify-center mt-2 text-xs text-gray-500 gap-1.5">
           <Shield size={14} />
@@ -137,7 +139,7 @@ export function ResumoCompra({
         </div>
       )}
       
-      {/* Display terms message from admin config - Garantindo que a mensagem apareça */}
+      {/* Display terms message from admin config */}
       {configCheckout?.mensagem_termos && configCheckout.mensagem_termos.trim() !== "" && (
         <div className="mt-2 text-xs text-gray-400 text-center">
           <p>{configCheckout.mensagem_termos}</p>
