@@ -3,6 +3,7 @@ import { ConfigCheckout } from "@/lib/supabase";
 import { Input } from "@/components/ui/input";
 import { useState } from "react";
 import { formatPhoneNumber, formatCPF } from "@/utils/formatters";
+import { User, Mail, Smartphone, FileText } from "lucide-react";
 
 interface CheckoutFormProps {
   configCheckout?: ConfigCheckout | null;
@@ -58,7 +59,7 @@ export function CheckoutForm({ configCheckout, formData = { nome: "", email: "",
       <div className="space-y-3">
         <div className="relative">
           <div className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-700">
-            👤
+            <User size={16} className="text-purple-500" />
           </div>
           <Input 
             id="nome"
@@ -73,7 +74,7 @@ export function CheckoutForm({ configCheckout, formData = { nome: "", email: "",
         
         <div className="relative">
           <div className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-700">
-            ✉️
+            <Mail size={16} className="text-purple-500" />
           </div>
           <Input 
             id="email"
@@ -91,7 +92,7 @@ export function CheckoutForm({ configCheckout, formData = { nome: "", email: "",
           {showTelefone && (
             <div className="relative">
               <div className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-700">
-                📱
+                <Smartphone size={16} className="text-purple-500" />
               </div>
               <Input 
                 id="telefone"
@@ -108,7 +109,7 @@ export function CheckoutForm({ configCheckout, formData = { nome: "", email: "",
           {showDocumento && (
             <div className="relative">
               <div className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-700">
-                📝
+                <FileText size={16} className="text-purple-500" />
               </div>
               <Input 
                 id="documento"
