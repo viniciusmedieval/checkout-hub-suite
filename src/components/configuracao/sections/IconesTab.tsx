@@ -27,12 +27,15 @@ export function IconesTab({ config, handleConfigChange, handleIconChange }: Icon
 
   // Function to display the selected icon preview
   const IconPreview = ({ iconName }: { iconName: string }) => {
-    const IconComponent = icons[iconName as keyof typeof icons];
-    if (!IconComponent) return null;
-    
+    // Use DynamicIcon instead of directly accessing the icons object
     return (
       <div className="flex items-center justify-center h-10 w-10 rounded-md border border-gray-200">
-        <IconComponent size={18} className={cn("text-gray-500")} style={{ color: config.cor_icones || "#8a898c" }} />
+        <DynamicIcon 
+          name={iconName} 
+          size={18} 
+          color={config.cor_icones || "#8a898c"} 
+          className="text-gray-500"
+        />
       </div>
     );
   };
@@ -84,7 +87,6 @@ export function IconesTab({ config, handleConfigChange, handleIconChange }: Icon
                       <SelectItem key={icon} value={icon}>
                         <div className="flex items-center gap-2">
                           <span className="inline-block w-5">
-                            {/* Fix: Create the component first before using it */}
                             <DynamicIcon name={icon} size={14} />
                           </span>
                           <span className="capitalize">{icon.replace(/-/g, ' ')}</span>
