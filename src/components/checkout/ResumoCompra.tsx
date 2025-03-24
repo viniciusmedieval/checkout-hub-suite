@@ -60,8 +60,13 @@ export function ResumoCompra({
         </div>
         <div className="flex-1">
           <p className="text-xs text-gray-500">Produto Digital</p>
-          <div className="flex justify-between items-center">
-            <p className="text-base font-medium text-gray-800">{produto.nome}</p>
+          <div className="flex justify-between items-start">
+            <div>
+              <p className="text-base font-medium text-gray-800">{produto.nome}</p>
+              {produto.descricao && (
+                <p className="text-xs text-gray-500 mt-0.5 line-clamp-2">{produto.descricao}</p>
+              )}
+            </div>
             <p className="text-lg font-bold text-blue-600">{formatCurrency(produto.valor)}</p>
           </div>
         </div>
