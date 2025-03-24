@@ -14,14 +14,9 @@ export const fetchCheckoutConfig = async (): Promise<ConfigCheckout | null> => {
       .select("*")
       .order('created_at', { ascending: false })
       .limit(1)
-      .single();
+      .maybeSingle();
       
     if (result.error) {
-      if (result.error.code === 'PGRST116') {
-        console.log("Nenhuma configuração encontrada no banco de dados");
-        return null;
-      }
-      
       console.error("Erro ao carregar configurações do checkout:", result.error);
       toast.error("Erro ao carregar configurações do checkout");
       return null;

@@ -46,7 +46,6 @@ export function useConfiguracao() {
         console.log('Configuração atualizada no estado:', fetchedConfig);
       } else {
         console.log('Usando configuração padrão no reloadConfig');
-        toast.info('Usando configuração padrão');
         setConfigData(defaultConfig);
         setConfig(defaultConfig);
       }
@@ -102,6 +101,9 @@ export function useConfiguracao() {
         // Garantir que o estado local seja atualizado com os dados retornados
         setConfigData(savedConfig);
         setConfig(savedConfig);
+        
+        // Força recarregar do banco de dados para garantir consistência
+        await reloadConfig();
       } else {
         console.log("Falha ao salvar configurações");
         toast.error("Configurações não foram salvas. Verifique os erros.");

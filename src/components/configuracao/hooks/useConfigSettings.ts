@@ -33,9 +33,6 @@ export function useConfigSettings(initialConfig: ConfigCheckout | null = null) {
   
   const handleSwitchChange = (name: string, checked: boolean) => {
     console.log(`useConfigSettings - Alterando switch ${name} para ${checked}`);
-    // Log before setting the state to debug
-    console.log("Estado atual do config antes da mudança:", config);
-    
     setConfig(prev => {
       const updated = { ...prev, [name]: checked };
       console.log("Novo estado do config após a mudança:", updated);
@@ -56,10 +53,10 @@ export function useConfigSettings(initialConfig: ConfigCheckout | null = null) {
       
       if (updatedConfig) {
         console.log("Configurações salvas com sucesso:", updatedConfig);
-        // Importante: atualizar o estado com os dados retornados do servidor
+        // Atualizar o estado com os dados retornados do servidor
         setConfig(updatedConfig);
         setLastSavedConfig(updatedConfig);
-        return updatedConfig; // Retorna as configurações atualizadas para uso no componente pai
+        return updatedConfig;
       } else {
         console.error("Erro ao salvar configurações: retorno nulo");
         return null;

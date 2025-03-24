@@ -1,36 +1,40 @@
 
 import { supabase, ConfigCheckout } from "@/lib/supabase";
 import { toast } from "sonner";
-import { validateHex, ensureBooleanFields, handleConfigError } from "./utils/configValidation";
+import { validateHex, ensureBooleanFields } from "./utils/configValidation";
 
 /**
  * Prepares config data for saving with all necessary validations
  */
 const prepareConfigForSave = (config: ConfigCheckout) => {
   console.log("Preparando configuração para salvar:", config);
-  console.log("Valor mostrar_seguro antes de salvar:", config.mostrar_seguro, typeof config.mostrar_seguro);
+  
+  // Always ensure ID is not included in the data when saving to Supabase
+  // This avoids conflicts between string and number IDs
+  const { id, ...configWithoutId } = config;
   
   return {
+    ...configWithoutId,
     mensagem_topo: config.mensagem_topo,
     cor_topo: validateHex(config.cor_topo) ? config.cor_topo : "#3b82f6",
     cor_texto_topo: validateHex(config.cor_texto_topo) ? config.cor_texto_topo : "#FFFFFF",
     ativa_banner: Boolean(config.ativa_banner),
-    banner_url: config.banner_url,
-    banner_mobile_url: config.banner_mobile_url,
+    banner_url: config.banner_url || "",
+    banner_mobile_url: config.banner_mobile_url || "",
     cor_banner: validateHex(config.cor_banner) ? config.cor_banner : "#3b82f6",
     cor_fundo: validateHex(config.cor_fundo) ? config.cor_fundo : "#FFFFFF",
     cor_titulo: validateHex(config.cor_titulo) ? config.cor_titulo : "#000000",
-    texto_botao: config.texto_botao,
+    texto_botao: config.texto_botao || "COMPRAR AGORA",
     cor_botao: validateHex(config.cor_botao) ? config.cor_botao : "#8B5CF6",
     cor_texto_botao: validateHex(config.cor_texto_botao) ? config.cor_texto_botao : "#FFFFFF",
-    rodape_texto: config.rodape_texto,
-    rodape_empresa: config.rodape_empresa,
-    rodape_ano: config.rodape_ano,
+    rodape_texto: config.rodape_texto || "",
+    rodape_empresa: config.rodape_empresa || "",
+    rodape_ano: config.rodape_ano || new Date().getFullYear().toString(),
     mostrar_seguro: Boolean(config.mostrar_seguro),
-    mensagem_rodape: config.mensagem_rodape,
-    mensagem_termos: config.mensagem_termos,
-    url_termos_uso: config.url_termos_uso,
-    url_politica_privacidade: config.url_politica_privacidade,
+    mensagem_rodape: config.mensagem_rodape || "",
+    mensagem_termos: config.mensagem_termos || "",
+    url_termos_uso: config.url_termos_uso || "",
+    url_politica_privacidade: config.url_politica_privacidade || "",
     mostrar_campo_documento: Boolean(config.mostrar_campo_documento),
     mostrar_campo_telefone: Boolean(config.mostrar_campo_telefone),
     mostrar_bandeira_brasil: Boolean(config.mostrar_bandeira_brasil),
@@ -65,47 +69,35 @@ export const saveConfig = async (config: ConfigCheckout): Promise<ConfigCheckout
     const configToSave = prepareConfigForSave(config);
     console.log("Configurações validadas a serem salvas:", configToSave);
     
-    // Make a copy of the ID before attempting to save
-    const configId = config.id;
-    
     let result;
     
-    if (configId) {
-      console.log(`Atualizando configuração existente com ID ${configId}`);
-      // Update existing record - ensuring ID is a string
-      const idStr = typeof configId === 'number' ? configId.toString() : configId;
+    if (config.id) {
+      console.log(`Atualizando configuração existente com ID ${config.id}`);
       
       result = await supabase
         .from("config_checkout")
         .update(configToSave)
-        .eq('id', idStr)
+        .eq('id', config.id)
         .select('*')
         .single();
         
-      if (result.error) {
-        console.error("Erro ao atualizar configurações:", result.error);
-        toast.error("Erro ao atualizar configurações: " + result.error.message);
-        throw result.error;
-      }
-      
-      console.log("Configuração atualizada com sucesso, resposta:", result.data);
     } else {
       console.log("Criando nova configuração");
-      // Insert new record
+      
       result = await supabase
         .from("config_checkout")
         .insert([configToSave])
         .select('*')
         .single();
-        
-      if (result.error) {
-        console.error("Erro ao criar configurações:", result.error);
-        toast.error("Erro ao criar configurações: " + result.error.message);
-        throw result.error;
-      }
-      
-      console.log("Nova configuração criada com sucesso:", result.data);
     }
+    
+    if (result.error) {
+      console.error("Erro ao salvar configurações:", result.error);
+      toast.error("Erro ao salvar configurações: " + result.error.message);
+      return null;
+    }
+    
+    console.log("Configuração salva com sucesso, resposta:", result.data);
     
     if (result.data) {
       // Process and return the data from the response
