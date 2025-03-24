@@ -92,6 +92,8 @@ export type ConfigCheckout = {
   validar_cartao?: boolean;
   mostrar_campo_nascimento?: boolean;
   validar_nascimento?: boolean;
+  created_at?: string;
+  criado_em?: string;
 };
 
 export type Depoimento = {
