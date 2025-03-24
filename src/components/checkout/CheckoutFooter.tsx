@@ -18,6 +18,16 @@ export function CheckoutFooter({ configCheckout }: CheckoutFooterProps) {
   const footerText = configCheckout?.rodape_texto || 
     `Todos os direitos reservados. ${companyName} ${currentYear}`;
 
+  // Explicitly check if mostrar_seguro is true (using strict equality)
+  const showSecurityMessage = configCheckout?.mostrar_seguro === true;
+  
+  // Add debugging to help identify issues
+  console.log("Footer config:", {
+    mostrar_seguro: configCheckout?.mostrar_seguro,
+    showSecurityMessage,
+    mensagem_rodape: configCheckout?.mensagem_rodape
+  });
+
   return (
     <footer className="mt-auto py-4 border-t border-gray-100 text-xs" style={{ borderColor: 'rgba(0,0,0,0.05)' }}>
       <div className="container max-w-md mx-auto px-4">
@@ -65,8 +75,8 @@ export function CheckoutFooter({ configCheckout }: CheckoutFooterProps) {
           </Button>
         </div>
         
-        {/* Security message if enabled */}
-        {configCheckout?.mostrar_seguro && (
+        {/* Security message if enabled - use strict equality check */}
+        {showSecurityMessage && (
           <div className="mt-3 flex justify-center">
             <div className="flex items-center gap-1 text-xs text-green-600">
               <Shield size={12} />

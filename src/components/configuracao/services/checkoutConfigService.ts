@@ -41,6 +41,9 @@ export const saveConfig = async (config: ConfigCheckout): Promise<ConfigCheckout
       return color && /^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/.test(color);
     };
     
+    // Log the mostrar_seguro value to check its type and value
+    console.log("Valor mostrar_seguro antes de salvar:", config.mostrar_seguro, typeof config.mostrar_seguro);
+    
     const configToSave = {
       mensagem_topo: config.mensagem_topo,
       cor_topo: validateHex(config.cor_topo) ? config.cor_topo : "#3b82f6",
@@ -57,7 +60,8 @@ export const saveConfig = async (config: ConfigCheckout): Promise<ConfigCheckout
       rodape_texto: config.rodape_texto,
       rodape_empresa: config.rodape_empresa,
       rodape_ano: config.rodape_ano,
-      mostrar_seguro: config.mostrar_seguro,
+      // Explicitly set to a boolean value to ensure it's saved correctly
+      mostrar_seguro: Boolean(config.mostrar_seguro),
       mensagem_rodape: config.mensagem_rodape,
       mensagem_termos: config.mensagem_termos,
       url_termos_uso: config.url_termos_uso,
@@ -76,6 +80,7 @@ export const saveConfig = async (config: ConfigCheckout): Promise<ConfigCheckout
     };
     
     console.log("Configurações validadas a serem salvas:", configToSave);
+    console.log("Valor final de mostrar_seguro:", configToSave.mostrar_seguro, typeof configToSave.mostrar_seguro);
     
     let result;
     

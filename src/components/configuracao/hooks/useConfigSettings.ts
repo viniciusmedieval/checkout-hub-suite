@@ -16,7 +16,14 @@ export function useConfigSettings(initialConfig: ConfigCheckout | null = null) {
   
   const handleSwitchChange = (name: string, checked: boolean) => {
     console.log(`useConfigSettings - Alterando switch ${name} para ${checked}`);
-    setConfig(prev => ({ ...prev, [name]: checked }));
+    // Log before setting the state to debug
+    console.log("Estado atual do config antes da mudança:", config);
+    
+    setConfig(prev => {
+      const updated = { ...prev, [name]: checked };
+      console.log("Novo estado do config após a mudança:", updated);
+      return updated;
+    });
   };
 
   const handleIconChange = (name: string, value: string) => {
