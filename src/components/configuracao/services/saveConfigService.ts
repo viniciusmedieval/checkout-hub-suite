@@ -9,13 +9,13 @@ import { validateHex, ensureBooleanFields } from "./utils/configValidation";
 const prepareConfigForSave = (config: ConfigCheckout) => {
   console.log("Preparando configuração para salvar:", config);
   
-  // Always ensure ID is not included in the data when saving to Supabase
-  // This avoids conflicts between string and number IDs
+  // Always ensure ID is not included when saving to avoid conflicts
   const { id, ...configWithoutId } = config;
   
-  return {
+  // Create a clean object with all required fields and proper types
+  const preparedConfig = {
     ...configWithoutId,
-    mensagem_topo: config.mensagem_topo,
+    mensagem_topo: config.mensagem_topo || "",
     cor_topo: validateHex(config.cor_topo) ? config.cor_topo : "#3b82f6",
     cor_texto_topo: validateHex(config.cor_texto_topo) ? config.cor_texto_topo : "#FFFFFF",
     ativa_banner: Boolean(config.ativa_banner),
@@ -43,8 +43,8 @@ const prepareConfigForSave = (config: ConfigCheckout) => {
     titulo_pagamento: config.titulo_pagamento || "Pagamento",
     mostrar_contador: Boolean(config.mostrar_contador),
     texto_contador: config.texto_contador || "{count} pessoas estão vendo este produto agora",
-    contador_min: config.contador_min || 50,
-    contador_max: config.contador_max || 20000,
+    contador_min: Number(config.contador_min) || 50,
+    contador_max: Number(config.contador_max) || 20000,
     cor_texto_contador: validateHex(config.cor_texto_contador) ? config.cor_texto_contador : "#4B5563",
     cor_icones: validateHex(config.cor_icones) ? config.cor_icones : "#8a898c",
     icone_nome: config.icone_nome || "user",
@@ -57,6 +57,9 @@ const prepareConfigForSave = (config: ConfigCheckout) => {
     mostrar_campo_nascimento: Boolean(config.mostrar_campo_nascimento),
     validar_nascimento: Boolean(config.validar_nascimento)
   };
+  
+  console.log("Configuração preparada para salvar:", preparedConfig);
+  return preparedConfig;
 };
 
 /**
@@ -67,7 +70,6 @@ export const saveConfig = async (config: ConfigCheckout): Promise<ConfigCheckout
     console.log("Iniciando saveConfig com dados:", config);
     
     const configToSave = prepareConfigForSave(config);
-    console.log("Configurações validadas a serem salvas:", configToSave);
     
     let result;
     
@@ -79,7 +81,7 @@ export const saveConfig = async (config: ConfigCheckout): Promise<ConfigCheckout
         .update(configToSave)
         .eq('id', config.id)
         .select('*')
-        .single();
+        .maybeSingle();
         
     } else {
       console.log("Criando nova configuração");
@@ -88,7 +90,7 @@ export const saveConfig = async (config: ConfigCheckout): Promise<ConfigCheckout
         .from("config_checkout")
         .insert([configToSave])
         .select('*')
-        .single();
+        .maybeSingle();
     }
     
     if (result.error) {
@@ -97,12 +99,10 @@ export const saveConfig = async (config: ConfigCheckout): Promise<ConfigCheckout
       return null;
     }
     
-    console.log("Configuração salva com sucesso, resposta:", result.data);
-    
     if (result.data) {
       // Process and return the data from the response
       const processedData = ensureBooleanFields(result.data);
-      console.log("Dados processados a serem retornados:", processedData);
+      console.log("Configuração salva com sucesso:", processedData);
       toast.success("Configurações salvas com sucesso!");
       return processedData;
     }

@@ -25,7 +25,9 @@ export function useConfigSettings(initialConfig: ConfigCheckout | null = null) {
     
     // Handle numeric fields
     if (name === 'contador_min' || name === 'contador_max') {
-      setConfig(prev => ({ ...prev, [name]: parseInt(value) || 0 }));
+      const numValue = parseInt(value) || 0;
+      console.log(`Convertendo ${name} para número: ${numValue}`);
+      setConfig(prev => ({ ...prev, [name]: numValue }));
     } else {
       setConfig(prev => ({ ...prev, [name]: value }));
     }
@@ -35,7 +37,7 @@ export function useConfigSettings(initialConfig: ConfigCheckout | null = null) {
     console.log(`useConfigSettings - Alterando switch ${name} para ${checked}`);
     setConfig(prev => {
       const updated = { ...prev, [name]: checked };
-      console.log("Novo estado do config após a mudança:", updated);
+      console.log(`Novo valor de ${name}:`, checked);
       return updated;
     });
   };
@@ -48,11 +50,26 @@ export function useConfigSettings(initialConfig: ConfigCheckout | null = null) {
   const handleSaveConfig = async () => {
     setIsSaving(true);
     try {
-      console.log("Salvando configurações:", config);
-      const updatedConfig = await saveConfig(config);
+      console.log("Iniciando salvamento da configuração:", config);
+      
+      // Clone config to avoid reference issues
+      const configToSave = JSON.parse(JSON.stringify(config));
+      
+      // Ensure boolean and number fields are correctly typed
+      Object.keys(configToSave).forEach(key => {
+        if (typeof configToSave[key] === 'string' && (configToSave[key] === 'true' || configToSave[key] === 'false')) {
+          configToSave[key] = configToSave[key] === 'true';
+        }
+        if ((key === 'contador_min' || key === 'contador_max') && typeof configToSave[key] === 'string') {
+          configToSave[key] = parseInt(configToSave[key]) || 0;
+        }
+      });
+      
+      const updatedConfig = await saveConfig(configToSave);
       
       if (updatedConfig) {
-        console.log("Configurações salvas com sucesso:", updatedConfig);
+        console.log("Configuração salva com sucesso:", updatedConfig);
+        
         // Atualizar o estado com os dados retornados do servidor
         setConfig(updatedConfig);
         setLastSavedConfig(updatedConfig);
@@ -72,13 +89,8 @@ export function useConfigSettings(initialConfig: ConfigCheckout | null = null) {
   const hasUnsavedChanges = () => {
     if (!lastSavedConfig) return Object.keys(config).length > 0;
     
-    // Compare significant fields in the config
-    for (const key in config) {
-      if (config[key] !== lastSavedConfig[key]) {
-        return true;
-      }
-    }
-    return false;
+    // Use JSON.stringify to properly compare objects
+    return JSON.stringify(config) !== JSON.stringify(lastSavedConfig);
   };
 
   return {

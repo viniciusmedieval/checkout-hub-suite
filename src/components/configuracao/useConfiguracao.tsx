@@ -43,7 +43,6 @@ export function useConfiguracao() {
       if (fetchedConfig) {
         setConfigData(fetchedConfig);
         setConfig(fetchedConfig);
-        console.log('Configuração atualizada no estado:', fetchedConfig);
       } else {
         console.log('Usando configuração padrão no reloadConfig');
         setConfigData(defaultConfig);
@@ -88,24 +87,28 @@ export function useConfiguracao() {
     fetchData();
   }, []);
 
-  // Função para salvar as configurações e recarregar
+  // Função para salvar as configurações e forçar recarregamento
   const saveAndReloadConfig = async () => {
     try {
       console.log("Iniciando saveAndReloadConfig com:", config);
+      
+      // Salvar a configuração
       const savedConfig = await handleSaveConfig();
       
       if (savedConfig) {
         console.log("Configurações salvas com sucesso:", savedConfig);
         toast.success("Configurações aplicadas com sucesso!");
         
-        // Garantir que o estado local seja atualizado com os dados retornados
+        // Atualizar o estado local com os dados salvos
         setConfigData(savedConfig);
         setConfig(savedConfig);
         
         // Força recarregar do banco de dados para garantir consistência
-        await reloadConfig();
+        setTimeout(() => {
+          reloadConfig();
+        }, 500);
       } else {
-        console.log("Falha ao salvar configurações");
+        console.error("Falha ao salvar configurações");
         toast.error("Configurações não foram salvas. Verifique os erros.");
       }
     } catch (error) {

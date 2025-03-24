@@ -23,9 +23,9 @@ export const fetchCheckoutConfig = async (): Promise<ConfigCheckout | null> => {
     }
     
     if (result.data) {
-      // Ensure boolean fields are properly typed using the utility function
+      // Ensure boolean fields are properly typed and log the data
       const configData = ensureBooleanFields(result.data);
-      console.log("Configurações carregadas:", configData);
+      console.log("Configurações carregadas com sucesso:", configData);
       return configData;
     }
     
