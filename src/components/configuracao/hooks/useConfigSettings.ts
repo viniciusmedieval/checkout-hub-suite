@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { ConfigCheckout } from "@/lib/supabase";
 import { saveConfig } from "../services";
