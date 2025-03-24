@@ -1,5 +1,5 @@
 
-import { useCheckout } from "@/hooks/useCheckout";
+import { useCheckout } from "@/hooks/checkout";
 import { CheckoutHeader } from "@/components/checkout/CheckoutHeader";
 import { CheckoutMainContent } from "@/components/checkout/CheckoutMainContent";
 import { CheckoutFooter } from "@/components/checkout/CheckoutFooter";

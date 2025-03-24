@@ -1,10 +1,9 @@
-
 import { Produto, ConfigCheckout } from "@/lib/supabase";
 import { FormIdentificacao } from "@/components/checkout/FormIdentificacao";
 import { PaymentMethodSelector } from "@/components/checkout/payment/PaymentMethodSelector";
 import { CheckoutTestimonials } from "@/components/checkout/CheckoutTestimonials";
 import { ResumoCompra } from "@/components/checkout/ResumoCompra";
-import { FormData } from "@/hooks/useCheckout";
+import { FormData } from "@/hooks/checkout";
 
 interface CheckoutMainContentProps {
   produto: Produto;
