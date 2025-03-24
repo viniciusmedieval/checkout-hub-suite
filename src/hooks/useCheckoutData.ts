@@ -16,11 +16,12 @@ export const useCheckoutData = (slug: string | undefined) => {
       const { data: checkoutConfig, error: configError } = await supabase
         .from("config_checkout")
         .select("*")
-        .order('created_at', { ascending: false })
+        .order('criado_em', { ascending: false })
         .limit(1);
         
       if (configError) {
         console.error("useCheckoutData - Erro ao carregar configurações do checkout:", configError);
+        // Não definimos um erro aqui, apenas logamos e continuamos
       } else if (checkoutConfig && checkoutConfig.length > 0) {
         console.log("useCheckoutData - Config carregada:", checkoutConfig[0]);
         
@@ -58,6 +59,7 @@ export const useCheckoutData = (slug: string | undefined) => {
       }
     } catch (error) {
       console.error("useCheckoutData - Erro ao buscar configuração do checkout:", error);
+      // Não definimos um erro aqui, apenas logamos e continuamos
     }
   };
 
