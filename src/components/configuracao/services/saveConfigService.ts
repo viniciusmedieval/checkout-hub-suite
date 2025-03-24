@@ -76,21 +76,23 @@ export const saveConfig = async (config: ConfigCheckout): Promise<ConfigCheckout
     if (config.id) {
       console.log(`Atualizando configuração existente com ID ${config.id}`);
       
+      // Fix: Change maybeSingle to single
       result = await supabase
         .from("config_checkout")
         .update(configToSave)
         .eq('id', config.id)
         .select('*')
-        .maybeSingle();
+        .single();
         
     } else {
       console.log("Criando nova configuração");
       
+      // Fix: Change maybeSingle to single
       result = await supabase
         .from("config_checkout")
         .insert([configToSave])
         .select('*')
-        .maybeSingle();
+        .single();
     }
     
     if (result.error) {

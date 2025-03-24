@@ -14,7 +14,7 @@ export const fetchCheckoutConfig = async (): Promise<ConfigCheckout | null> => {
       .select("*")
       .order('created_at', { ascending: false })
       .limit(1)
-      .maybeSingle();
+      .single();
       
     if (result.error) {
       console.error("Erro ao carregar configurações do checkout:", result.error);
