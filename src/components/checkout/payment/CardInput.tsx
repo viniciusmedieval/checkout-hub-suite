@@ -71,7 +71,7 @@ export function CardInput({ value, onChange }: CardInputProps) {
       <Input 
         id="cardNumber" 
         placeholder="Número do cartão" 
-        className="pl-9 h-11 text-sm bg-white text-black rounded-lg" 
+        className="pl-9 h-11 text-sm bg-white text-black rounded-lg border-gray-200 focus-visible:ring-gray-300" 
         value={value}
         onChange={handleChange}
         type="tel" 

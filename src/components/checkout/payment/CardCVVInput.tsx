@@ -51,7 +51,7 @@ export function CardCVVInput({ value, onChange }: CardCVVInputProps) {
       <Input 
         id="cardCVV" 
         placeholder="CVV" 
-        className="pl-9 h-11 text-sm bg-white text-black rounded-lg" 
+        className="pl-9 h-11 text-sm bg-white text-black rounded-lg border-gray-200 focus-visible:ring-gray-300" 
         value={value}
         onChange={handleChange}
         type="tel"

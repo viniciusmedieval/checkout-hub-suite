@@ -76,7 +76,7 @@ export function CardExpiryInput({ value, onChange }: CardExpiryInputProps) {
       <Input 
         id="cardExpiry" 
         placeholder="MM/AA" 
-        className="pl-9 h-11 text-sm bg-white text-black rounded-lg" 
+        className="pl-9 h-11 text-sm bg-white text-black rounded-lg border-gray-200 focus-visible:ring-gray-300" 
         value={value}
         onChange={handleChange}
         type="tel"
