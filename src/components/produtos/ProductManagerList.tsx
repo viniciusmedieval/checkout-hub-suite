@@ -1,3 +1,4 @@
+
 import React from "react";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
@@ -105,8 +106,8 @@ export function ProductList({
         </p>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           {filteredProducts.map((product) => (
-            <div key={`status-${product.id}`} className="border rounded-md p-3">
-              <h4 className="font-medium mb-2 truncate">{product.nome}</h4>
+            <div key={`status-${product.id}`} className="border rounded-md p-4 shadow-sm hover:shadow-md transition-shadow">
+              <h4 className="font-medium mb-3 truncate">{product.nome}</h4>
               <PaymentStatusControl productSlug={product.slug} />
             </div>
           ))}
