@@ -100,7 +100,7 @@ export function PaymentMethodSelector({
             productValue={productValue}
             productName={productName}
             productImage={productImage}
-            pixData={pixData as PixProps}
+            pixData={pixData}
           />
         )}
       </div>
