@@ -16,7 +16,7 @@ export const useCheckout = () => {
   const [paymentMethod, setPaymentMethod] = useState<PaymentMethod>('card');
   const [countdown, setCountdown] = useState(15 * 60); // 15 minutes in seconds
   
-  // Import form handling from the separate hook
+  // Pass configCheckout to the form hook so it can respect field visibility settings
   const {
     formData,
     formErrors,
@@ -24,7 +24,7 @@ export const useCheckout = () => {
     handleInputChange,
     submitOrder,
     validateForm
-  } = useCheckoutForm(produto);
+  } = useCheckoutForm(produto, configCheckout);
   
   // Import visitor counter from the separate hook
   const { visitorCount } = useVisitorCounter(configCheckout);

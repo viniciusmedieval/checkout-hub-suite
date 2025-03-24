@@ -1,9 +1,9 @@
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { toast } from "sonner";
 import { validateEmail, validateCPF, validateMobilePhone } from "./useValidation";
 import { supabase } from "@/lib/supabase";
-import { Produto } from "@/lib/types/database-types";
+import { Produto, ConfigCheckout } from "@/lib/supabase";
 
 export type FormData = {
   nome: string;
@@ -12,7 +12,7 @@ export type FormData = {
   documento: string;
 };
 
-export const useCheckoutForm = (produto: Produto | null) => {
+export const useCheckoutForm = (produto: Produto | null, configCheckout?: ConfigCheckout | null) => {
   const [formData, setFormData] = useState<FormData>({
     nome: "",
     email: "",
@@ -22,6 +22,10 @@ export const useCheckoutForm = (produto: Produto | null) => {
   
   const [formErrors, setFormErrors] = useState<Record<string, boolean>>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
+
+  // Determine which fields to validate based on config
+  const shouldValidateDocumento = configCheckout?.mostrar_campo_documento !== false;
+  const shouldValidateTelefone = configCheckout?.mostrar_campo_telefone !== false;
 
   // Reset form errors when input changes
   const handleInputChange = (name: string, value: string) => {
@@ -38,25 +42,29 @@ export const useCheckoutForm = (produto: Produto | null) => {
     if (!formData.nome.trim()) errors.nome = true;
     if (!formData.email.trim() || !validateEmail(formData.email)) errors.email = true;
     
-    // Enhanced mobile phone validation
-    if (!formData.telefone.trim()) {
-      errors.telefone = true;
-    } else {
-      const telefoneDigits = formData.telefone.replace(/\D/g, '');
-      if (!validateMobilePhone(telefoneDigits)) {
+    // Only validate phone if it's required by config
+    if (shouldValidateTelefone) {
+      if (!formData.telefone.trim()) {
         errors.telefone = true;
+      } else {
+        const telefoneDigits = formData.telefone.replace(/\D/g, '');
+        if (!validateMobilePhone(telefoneDigits)) {
+          errors.telefone = true;
+        }
       }
     }
     
-    // Enhanced document validation with CPF check
-    if (!formData.documento.trim()) {
-      errors.documento = true;
-    } else {
-      const documentoDigits = formData.documento.replace(/\D/g, '');
-      if (documentoDigits.length === 11 && !validateCPF(formData.documento)) {
+    // Only validate document if it's required by config
+    if (shouldValidateDocumento) {
+      if (!formData.documento.trim()) {
         errors.documento = true;
-      } else if (documentoDigits.length !== 11 && documentoDigits.length !== 14) {
-        errors.documento = true;
+      } else {
+        const documentoDigits = formData.documento.replace(/\D/g, '');
+        if (documentoDigits.length === 11 && !validateCPF(formData.documento)) {
+          errors.documento = true;
+        } else if (documentoDigits.length !== 11 && documentoDigits.length !== 14) {
+          errors.documento = true;
+        }
       }
     }
     
