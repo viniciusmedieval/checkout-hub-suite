@@ -29,7 +29,7 @@ export function GeralTab({ config, handleConfigChange, handleSwitchChange }: Ger
           <label className="text-sm font-medium">Mensagem de Topo</label>
           <Input
             name="mensagem_topo"
-            value={config.mensagem_topo}
+            value={config.mensagem_topo || ""}
             onChange={handleConfigChange}
           />
         </div>
@@ -38,7 +38,7 @@ export function GeralTab({ config, handleConfigChange, handleSwitchChange }: Ger
           <label className="text-sm font-medium">Texto do Botão de Compra</label>
           <Input
             name="texto_botao"
-            value={config.texto_botao}
+            value={config.texto_botao || ""}
             onChange={handleConfigChange}
           />
         </div>
@@ -47,7 +47,7 @@ export function GeralTab({ config, handleConfigChange, handleSwitchChange }: Ger
           <label className="text-sm font-medium">Texto do Rodapé</label>
           <Input
             name="rodape_texto"
-            value={config.rodape_texto}
+            value={config.rodape_texto || ""}
             onChange={handleConfigChange}
           />
         </div>
@@ -57,7 +57,7 @@ export function GeralTab({ config, handleConfigChange, handleSwitchChange }: Ger
             <label className="text-sm font-medium">Nome da Empresa</label>
             <Input
               name="rodape_empresa"
-              value={config.rodape_empresa}
+              value={config.rodape_empresa || ""}
               onChange={handleConfigChange}
             />
           </div>
@@ -66,7 +66,7 @@ export function GeralTab({ config, handleConfigChange, handleSwitchChange }: Ger
             <label className="text-sm font-medium">Ano do Rodapé</label>
             <Input
               name="rodape_ano"
-              value={config.rodape_ano}
+              value={config.rodape_ano || ""}
               onChange={handleConfigChange}
             />
           </div>
@@ -131,7 +131,7 @@ export function GeralTab({ config, handleConfigChange, handleSwitchChange }: Ger
         
         <div className="flex items-center space-x-2">
           <Switch 
-            checked={config.mostrar_seguro} 
+            checked={config.mostrar_seguro === true} 
             onCheckedChange={(checked) => handleSwitchChange('mostrar_seguro', checked)}
             id="mostrar-seguro"
           />

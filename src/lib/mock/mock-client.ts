@@ -97,7 +97,7 @@ export function createMockClient(): SupabaseClient {
           saveMockStorageToLocalStorage();
           
           return {
-            data: newRecords,
+            data: null,
             error: null
           };
         },
@@ -117,7 +117,7 @@ export function createMockClient(): SupabaseClient {
                 saveMockStorageToLocalStorage();
                 
                 return {
-                  data: mockStorage[table as keyof typeof mockStorage][index],
+                  data: null,
                   error: null
                 };
               }
