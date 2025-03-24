@@ -10,11 +10,11 @@ export const fetchCheckoutConfig = async (): Promise<ConfigCheckout | null> => {
   try {
     console.log("Iniciando fetchCheckoutConfig");
     
-    // Get the most recent configuration
+    // Get the most recent configuration - use criado_em instead of created_at
     const { data, error } = await supabase
       .from("config_checkout")
       .select("*")
-      .order('created_at', { ascending: false })
+      .order('criado_em', { ascending: false })
       .limit(1);
       
     if (error) {
