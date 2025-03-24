@@ -1,10 +1,9 @@
-
 import React from "react";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
 import { Copy, Pencil, ExternalLink } from "lucide-react";
 import { PaymentStatusControl } from "./PaymentStatusControl";
-import { formatCurrency } from "@/lib/utils";
+import { formatCurrency } from "@/utils/formatters";
 
 export function ProductList({ 
   products, 
