@@ -80,8 +80,9 @@ export function useConfiguracao() {
     try {
       const savedConfig = await handleSaveConfig();
       if (savedConfig) {
-        // Não é necessário recarregar já que handleSaveConfig já define o estado
         toast.success("Configurações aplicadas com sucesso!");
+        // Garantir que o estado local seja atualizado com os dados retornados
+        setConfigData(savedConfig);
       } else {
         toast.error("Configurações não foram salvas. Verifique os erros.");
       }

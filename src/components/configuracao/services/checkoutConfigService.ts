@@ -120,79 +120,68 @@ export const saveConfig = async (config: ConfigCheckout): Promise<ConfigCheckout
     
     if (config.id) {
       console.log(`Atualizando configuração existente com ID ${config.id}`);
-      result = await supabase
+      // FIX: Split the update and select operations for Supabase client
+      const { error } = await supabase
         .from("config_checkout")
         .update(configToSave)
-        .eq('id', config.id)
-        .select();
-    } else {
-      console.log("Criando nova configuração");
+        .eq('id', config.id);
+        
+      if (error) {
+        console.error("Erro ao atualizar configurações:", error);
+        throw error;
+      }
+      
+      // Fetch the updated record separately
       result = await supabase
         .from("config_checkout")
-        .insert([configToSave])
-        .select();
+        .select('*')
+        .eq('id', config.id)
+        .single();
+    } else {
+      console.log("Criando nova configuração");
+      // FIX: Split the insert and select operations for Supabase client
+      const { error, data } = await supabase
+        .from("config_checkout")
+        .insert([configToSave]);
+        
+      if (error) {
+        console.error("Erro ao criar configurações:", error);
+        throw error;
+      }
+      
+      // Fetch the most recent record
+      result = await supabase
+        .from("config_checkout")
+        .select('*')
+        .order('created_at', { ascending: false })
+        .limit(1)
+        .single();
     }
     
     if (result.error) {
-      console.error("Erro ao salvar configurações:", result.error);
+      console.error("Erro ao buscar configuração atualizada:", result.error);
       throw result.error;
     }
     
     console.log("Resultado da operação de salvamento:", result);
     
-    if (result.data && result.data.length > 0) {
-      // Se temos dados retornados, use-os diretamente em vez de buscar novamente
+    if (result.data) {
+      // Se temos dados retornados, use-os diretamente
       const updatedConfig = {
-        ...result.data[0],
-        mostrar_seguro: Boolean(result.data[0].mostrar_seguro),
-        ativa_banner: Boolean(result.data[0].ativa_banner),
-        mostrar_campo_documento: Boolean(result.data[0].mostrar_campo_documento),
-        mostrar_campo_telefone: Boolean(result.data[0].mostrar_campo_telefone),
-        mostrar_contador: Boolean(result.data[0].mostrar_contador),
-        mostrar_bandeira_brasil: Boolean(result.data[0].mostrar_bandeira_brasil),
-        mostrar_prefixo_telefone: Boolean(result.data[0].mostrar_prefixo_telefone),
-        validar_cpf: Boolean(result.data[0].validar_cpf),
-        validar_telefone: Boolean(result.data[0].validar_telefone),
-        validar_cartao: Boolean(result.data[0].validar_cartao),
-        mostrar_campo_nascimento: Boolean(result.data[0].mostrar_campo_nascimento),
-        validar_nascimento: Boolean(result.data[0].validar_nascimento)
+        ...result.data,
+        mostrar_seguro: Boolean(result.data.mostrar_seguro),
+        ativa_banner: Boolean(result.data.ativa_banner),
+        mostrar_campo_documento: Boolean(result.data.mostrar_campo_documento),
+        mostrar_campo_telefone: Boolean(result.data.mostrar_campo_telefone),
+        mostrar_contador: Boolean(result.data.mostrar_contador),
+        mostrar_bandeira_brasil: Boolean(result.data.mostrar_bandeira_brasil),
+        mostrar_prefixo_telefone: Boolean(result.data.mostrar_prefixo_telefone),
+        validar_cpf: Boolean(result.data.validar_cpf),
+        validar_telefone: Boolean(result.data.validar_telefone),
+        validar_cartao: Boolean(result.data.validar_cartao),
+        mostrar_campo_nascimento: Boolean(result.data.mostrar_campo_nascimento),
+        validar_nascimento: Boolean(result.data.validar_nascimento)
       };
-      console.log("Configurações atualizadas após salvamento:", updatedConfig);
-      return updatedConfig;
-    }
-    
-    // Se não temos dados retornados, busque as últimas configurações
-    console.log("Buscando configurações atualizadas após salvamento");
-    const { data: refreshedConfig, error: refreshError } = await supabase
-      .from("config_checkout")
-      .select("*")
-      .order('created_at', { ascending: false })
-      .limit(1);
-    
-    if (refreshError) {
-      console.error("Erro ao recarregar config após salvar:", refreshError);
-      return null;
-    }  
-    
-    if (refreshedConfig && refreshedConfig.length > 0) {
-      // Ensure boolean fields are properly typed in the refreshed config
-      const updatedConfig = {
-        ...refreshedConfig[0],
-        mostrar_seguro: Boolean(refreshedConfig[0].mostrar_seguro),
-        ativa_banner: Boolean(refreshedConfig[0].ativa_banner),
-        mostrar_campo_documento: Boolean(refreshedConfig[0].mostrar_campo_documento),
-        mostrar_campo_telefone: Boolean(refreshedConfig[0].mostrar_campo_telefone),
-        mostrar_contador: Boolean(refreshedConfig[0].mostrar_contador),
-        mostrar_bandeira_brasil: Boolean(refreshedConfig[0].mostrar_bandeira_brasil),
-        mostrar_prefixo_telefone: Boolean(refreshedConfig[0].mostrar_prefixo_telefone),
-        // New validation fields
-        validar_cpf: Boolean(refreshedConfig[0].validar_cpf),
-        validar_telefone: Boolean(refreshedConfig[0].validar_telefone),
-        validar_cartao: Boolean(refreshedConfig[0].validar_cartao),
-        mostrar_campo_nascimento: Boolean(refreshedConfig[0].mostrar_campo_nascimento),
-        validar_nascimento: Boolean(refreshedConfig[0].validar_nascimento)
-      };
-      
       console.log("Configurações atualizadas após salvamento:", updatedConfig);
       return updatedConfig;
     }
