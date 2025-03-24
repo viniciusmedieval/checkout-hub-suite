@@ -9,6 +9,7 @@ interface ColorPickerProps {
   onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   label: string;
   description: string;
+  disabled?: boolean; // Added disabled as an optional prop
 }
 
 export function ColorPicker({ 
@@ -17,10 +18,13 @@ export function ColorPicker({
   defaultValue, 
   onChange, 
   label, 
-  description 
+  description,
+  disabled = false // Default value is false
 }: ColorPickerProps) {
   // Function to handle color changes and ensure both inputs (color picker and text field) stay in sync
   const handleColorChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (disabled) return; // Don't process changes if disabled
+    
     const { name, value } = e.target;
     console.log(`ColorPicker - Alterando cor ${name} para ${value}`);
     
@@ -53,12 +57,14 @@ export function ColorPicker({
           value={colorValue}
           onChange={handleColorChange}
           className="w-16 h-10 p-1"
+          disabled={disabled}
         />
         <Input
           name={name}
           value={colorValue}
           onChange={handleColorChange}
           placeholder={defaultValue}
+          disabled={disabled}
         />
       </div>
       <p className="text-xs text-gray-500">{description}</p>
