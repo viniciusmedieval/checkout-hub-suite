@@ -66,7 +66,11 @@ export function PaymentMethodSelector({
             value="pix" 
             className="data-[state=active]:bg-white data-[state=active]:text-gray-900 data-[state=active]:border-b-2 data-[state=active]:border-blue-500 text-sm py-2.5 rounded-md"
           >
-            <span className="mr-2">📱</span>
+            <img 
+              src="https://pay.kirvano.com/img/pix.svg" 
+              alt="Pix" 
+              className="w-4 h-4 mr-2 inline-block"
+            />
             Pix
           </TabsTrigger>
           {/* Separator line between tab options */}
