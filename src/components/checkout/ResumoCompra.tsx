@@ -72,10 +72,10 @@ export function ResumoCompra({
           )}
         </button>
         
-        {/* Consent message - styled according to the image */}
+        {/* Consent message - updated to match the first image */}
         <div className="text-center text-sm mt-4 px-2">
           <p className="text-gray-700">
-            Ao clicar em "{configCheckout?.texto_botao || "Assinar"}", você concorda com os{" "}
+            Ao clicar em "{configCheckout?.texto_botao || "Compre Agora"}", você concorda com os{" "}
             <a href={configCheckout?.url_termos_uso || "#"} className="text-blue-600 hover:underline" target="_blank" rel="noopener noreferrer">
               Termos de Compra
             </a>{" "}
@@ -84,7 +84,7 @@ export function ResumoCompra({
               Política de Privacidade
             </a>.
           </p>
-          {/* Only show the security message here, removed from footer */}
+          {/* Security message */}
           <div className="flex items-center justify-center gap-2 mt-2 text-green-600 font-medium">
             <Shield size={16} className="text-green-600" />
             <span>{configCheckout?.mensagem_rodape || "Compra 100% segura e garantida."}</span>
