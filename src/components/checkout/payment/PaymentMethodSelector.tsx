@@ -64,15 +64,14 @@ export function PaymentMethodSelector({
           </TabsTrigger>
           <TabsTrigger 
             value="pix" 
-            className="data-[state=active]:bg-white data-[state=active]:text-gray-900 data-[state=active]:border-b-2 data-[state=active]:border-blue-500 text-sm py-2.5 rounded-md"
+            className="data-[state=active]:bg-white data-[state=active]:text-gray-900 data-[state=active]:border-b-2 data-[state=active]:border-blue-500 text-sm py-2.5 rounded-md flex items-center justify-center"
           >
             <img 
               src="/lovable-uploads/87f7c293-494d-43e1-b889-35b9ba85e548.png" 
               alt="Pix" 
-              className="w-5 h-5 mr-2 inline-block" 
+              className="w-5 h-5" 
               loading="eager"
             />
-            Pix
           </TabsTrigger>
           {/* Separator line between tab options */}
           <Separator 
