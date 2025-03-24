@@ -72,14 +72,14 @@ export function ResumoCompra({
           )}
         </button>
         
-        {/* Consent message - updated to match the first image */}
-        <div className="text-center text-sm mt-4 px-2">
-          <p className="text-gray-700">
-            Ao clicar em "{configCheckout?.texto_botao || "Compre Agora"}", você concorda com os{" "}
+        {/* Consent message - usando o texto da primeira imagem */}
+        <div className="text-center text-xs mt-4 px-2">
+          <p className="text-gray-600">
+            Ao continuar, você concorda com os nossos{" "}
             <a href={configCheckout?.url_termos_uso || "#"} className="text-blue-600 hover:underline" target="_blank" rel="noopener noreferrer">
-              Termos de Compra
+              Termos de Uso
             </a>{" "}
-            e está ciente da{" "}
+            e confirma que leu nossa{" "}
             <a href={configCheckout?.url_politica_privacidade || "#"} className="text-blue-600 hover:underline" target="_blank" rel="noopener noreferrer">
               Política de Privacidade
             </a>.

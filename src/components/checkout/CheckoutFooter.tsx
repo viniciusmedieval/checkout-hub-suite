@@ -17,9 +17,6 @@ export function CheckoutFooter({ configCheckout }: CheckoutFooterProps) {
   const footerText = configCheckout?.rodape_texto || 
     `© ${currentYear} ${companyName}. Todos os direitos reservados.`;
 
-  // Get security message from admin panel config
-  const securityMessage = configCheckout?.mensagem_rodape || "Pagamento 100% seguro";
-
   return (
     <footer className="mt-auto py-4 border-t border-gray-100 text-xs" style={{ borderColor: 'rgba(0,0,0,0.05)' }}>
       <div className="container max-w-md mx-auto px-4">
@@ -27,11 +24,6 @@ export function CheckoutFooter({ configCheckout }: CheckoutFooterProps) {
           <div className="flex flex-wrap justify-between items-center">
             <div className="text-gray-500">
               <p>{footerText}</p>
-            </div>
-            
-            <div className="flex items-center gap-1.5 text-xs text-green-600">
-              <Shield size={14} className="text-green-600" />
-              <span>{securityMessage}</span>
             </div>
           </div>
         )}
