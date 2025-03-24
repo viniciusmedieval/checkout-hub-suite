@@ -96,6 +96,7 @@ export function createMockClient(): SupabaseClient {
           // Salvar no localStorage após inserir
           saveMockStorageToLocalStorage();
           
+          // FIXED: Return null data to match Supabase behavior for insert
           return {
             data: null,
             error: null
@@ -116,6 +117,7 @@ export function createMockClient(): SupabaseClient {
                 // Salvar no localStorage após atualizar
                 saveMockStorageToLocalStorage();
                 
+                // FIXED: Return null data to match Supabase behavior for update
                 return {
                   data: null,
                   error: null
