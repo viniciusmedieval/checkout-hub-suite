@@ -70,11 +70,6 @@ export function CardPaymentForm({ productValue }: CardPaymentFormProps) {
   
   return (
     <div className="space-y-3">
-      <CardInput 
-        value={cardNumber}
-        onChange={handleCardNumberChange}
-      />
-      
       <div className="relative">
         <div className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500">
           <User size={18} />
@@ -92,6 +87,11 @@ export function CardPaymentForm({ productValue }: CardPaymentFormProps) {
           onChange={handleCardNameChange}
         />
       </div>
+      
+      <CardInput 
+        value={cardNumber}
+        onChange={handleCardNumberChange}
+      />
       
       <div className="grid grid-cols-2 gap-3">
         <CardExpiryInput
