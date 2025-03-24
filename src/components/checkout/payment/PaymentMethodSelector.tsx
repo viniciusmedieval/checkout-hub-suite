@@ -6,6 +6,7 @@ import { PixPayment } from "./PixPayment";
 import { PaymentMethod } from "@/hooks/useCheckout";
 import { CreditCard } from "lucide-react";
 import { Separator } from "@/components/ui/separator";
+import { ConfigCheckout } from "@/lib/supabase";
 
 interface PaymentMethodSelectorProps {
   productValue: number;
@@ -20,13 +21,15 @@ interface PaymentMethodSelectorProps {
     nome?: string;
     valor?: number;
   };
+  configCheckout?: ConfigCheckout | null;
 }
 
 export function PaymentMethodSelector({ 
   productValue, 
   pixConfig, 
   onPaymentMethodChange,
-  produto
+  produto,
+  configCheckout
 }: PaymentMethodSelectorProps) {
   const [activeTab, setActiveTab] = useState<PaymentMethod>("card");
   const [countdown] = useState(15 * 60); // 15 minutes in seconds
@@ -36,12 +39,15 @@ export function PaymentMethodSelector({
     onPaymentMethodChange(value as PaymentMethod);
   };
   
+  // Use title from config or default
+  const paymentTitle = configCheckout?.titulo_pagamento || "Pagamento";
+  
   return (
     <div className="p-4">
       <div className="flex items-center justify-between mb-3">
         <div className="flex items-center gap-2">
           <CreditCard size={18} className="text-gray-700" />
-          <h2 className="text-base font-semibold text-black">Pagamento</h2>
+          <h2 className="text-base font-semibold text-black">{paymentTitle}</h2>
         </div>
         <span className="text-sm text-black font-medium">
           {activeTab === "card" ? "Cartão de crédito" : "Pix"}

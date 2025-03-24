@@ -55,7 +55,8 @@ export function CheckoutMainContent({
       <FormIdentificacao 
         formData={formData} 
         errors={formErrors} 
-        onChange={handleInputChange} 
+        onChange={handleInputChange}
+        configCheckout={configCheckout}
       />
       
       {/* Testimonials Section */}
@@ -70,6 +71,7 @@ export function CheckoutMainContent({
           pixConfig={pixConfig}
           onPaymentMethodChange={setPaymentMethod}
           produto={produto}
+          configCheckout={configCheckout}
         />
       </div>
       
