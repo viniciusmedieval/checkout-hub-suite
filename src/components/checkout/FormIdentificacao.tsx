@@ -42,7 +42,7 @@ export function FormIdentificacao({
   };
 
   return (
-    <div className="p-4">
+    <div className="p-4 bg-white rounded-xl border border-gray-200 shadow-sm">
       <div className="flex items-center gap-2 mb-3">
         <User size={18} className="text-gray-700" />
         <h2 className="text-base font-semibold text-black">{sectionTitle}</h2>
@@ -58,7 +58,7 @@ export function FormIdentificacao({
             name="nome"
             placeholder="Seu nome completo"
             className={cn(
-              "pl-9 h-11",
+              "pl-9 h-11 bg-white text-black border border-gray-200",
               errors.nome ? "border-red-500" : ""
             )}
             value={formData.nome}
@@ -80,7 +80,7 @@ export function FormIdentificacao({
             name="email"
             placeholder="Seu melhor e-mail"
             className={cn(
-              "pl-9 h-11",
+              "pl-9 h-11 bg-white text-black border border-gray-200",
               errors.email ? "border-red-500" : ""
             )}
             value={formData.email}
@@ -103,7 +103,7 @@ export function FormIdentificacao({
               name="telefone"
               placeholder="Seu telefone com DDD"
               className={cn(
-                "pl-9 h-11",
+                "pl-9 h-11 bg-white text-black border border-gray-200",
                 errors.telefone ? "border-red-500" : ""
               )}
               value={formData.telefone}
@@ -127,7 +127,7 @@ export function FormIdentificacao({
               name="documento"
               placeholder="CPF ou CNPJ"
               className={cn(
-                "pl-9 h-11",
+                "pl-9 h-11 bg-white text-black border border-gray-200",
                 errors.documento ? "border-red-500" : ""
               )}
               value={formData.documento}

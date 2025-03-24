@@ -1,3 +1,4 @@
+
 import { Produto, ConfigCheckout } from "@/lib/supabase";
 import { FormIdentificacao } from "@/components/checkout/FormIdentificacao";
 import { PaymentMethodSelector } from "@/components/checkout/payment/PaymentMethodSelector";
@@ -74,7 +75,7 @@ export function CheckoutMainContent({
         />
       </div>
       
-      {/* Order Summary & CTA Button - Note: Border is now directly in the ResumoCompra component */}
+      {/* Order Summary & CTA Button */}
       <ResumoCompra 
         produto={produto} 
         configCheckout={configCheckout}
