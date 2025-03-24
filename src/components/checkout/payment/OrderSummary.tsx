@@ -56,10 +56,12 @@ export function OrderSummary({ produto, configCheckout }: OrderSummaryProps) {
               }}
             />
           </div>
-          <div>
+          <div className="flex-1">
             <p className="text-xs text-gray-500">Produto Digital</p>
-            <p className="text-base font-medium text-gray-800">{produto.nome}</p>
-            <p className="text-lg font-bold text-blue-600">{formatCurrency(produto.valor)}</p>
+            <div className="flex justify-between items-center">
+              <p className="text-base font-medium text-gray-800">{produto.nome}</p>
+              <p className="text-lg font-bold text-blue-600">{formatCurrency(produto.valor)}</p>
+            </div>
           </div>
         </div>
       </div>
