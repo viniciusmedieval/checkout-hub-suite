@@ -104,27 +104,6 @@ export function CheckoutForm({ configCheckout, formData = { nome: "", email: "",
         </div>
         
         <div className={`grid ${showDocumento && showTelefone ? 'grid-cols-2' : 'grid-cols-1'} gap-3`}>
-          {showTelefone && (
-            <div className="relative">
-              <div className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-700 flex items-center">
-                <DynamicIcon 
-                  name={telefoneIconName} 
-                  size={14}
-                />
-                <span className="ml-1">+55</span>
-              </div>
-              <Input 
-                id="telefone"
-                name="telefone"
-                placeholder="Celular"
-                value={onChange ? formData.telefone : localFormData.telefone}
-                onChange={handleChange}
-                className={`pl-16 h-10 text-sm ${errors.telefone || localErrors.telefone ? 'border-red-500' : 'border-gray-200'} bg-white text-black focus-visible:ring-gray-300`}
-              />
-              {(errors.telefone || localErrors.telefone) && <p className="text-red-500 text-xs mt-1">Celular inválido</p>}
-            </div>
-          )}
-          
           {showDocumento && (
             <div className="relative">
               <div className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-700">
@@ -143,6 +122,27 @@ export function CheckoutForm({ configCheckout, formData = { nome: "", email: "",
                 className={`pl-9 h-10 text-sm ${errors.documento || localErrors.documento ? 'border-red-500' : 'border-gray-200'} bg-white text-black focus-visible:ring-gray-300`}
               />
               {(errors.documento || localErrors.documento) && <p className="text-red-500 text-xs mt-1">Documento inválido</p>}
+            </div>
+          )}
+          
+          {showTelefone && (
+            <div className="relative">
+              <div className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-700 flex items-center">
+                <DynamicIcon 
+                  name={telefoneIconName} 
+                  size={14}
+                />
+                <span className="ml-1">+55</span>
+              </div>
+              <Input 
+                id="telefone"
+                name="telefone"
+                placeholder="Celular"
+                value={onChange ? formData.telefone : localFormData.telefone}
+                onChange={handleChange}
+                className={`pl-16 h-10 text-sm ${errors.telefone || localErrors.telefone ? 'border-red-500' : 'border-gray-200'} bg-white text-black focus-visible:ring-gray-300`}
+              />
+              {(errors.telefone || localErrors.telefone) && <p className="text-red-500 text-xs mt-1">Celular inválido</p>}
             </div>
           )}
         </div>
