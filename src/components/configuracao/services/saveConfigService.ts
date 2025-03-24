@@ -74,7 +74,7 @@ export const saveConfig = async (config: ConfigCheckout): Promise<ConfigCheckout
     if (config.id) {
       console.log(`Atualizando configuração existente com ID ${config.id}`);
       
-      // FIXED: Now using separate update and select queries
+      // IMPORTANT: Don't chain .select() after update - it's not supported
       const { error } = await supabase
         .from("config_checkout")
         .update(configToSave)
@@ -86,7 +86,8 @@ export const saveConfig = async (config: ConfigCheckout): Promise<ConfigCheckout
         return null;
       }
       
-      // FIXED: Separate query to fetch updated data
+      // IMPORTANT: Must do a separate query to fetch the updated data
+      console.log("Buscando configuração atualizada em consulta separada");
       const { data, error: selectError } = await supabase
         .from("config_checkout")
         .select('*')
@@ -113,7 +114,7 @@ export const saveConfig = async (config: ConfigCheckout): Promise<ConfigCheckout
     } else {
       console.log("Criando nova configuração");
       
-      // FIXED: Now using separate insert and select queries
+      // IMPORTANT: Don't chain .select() after insert - it's not supported
       const { error } = await supabase
         .from("config_checkout")
         .insert([configToSave]);
@@ -124,7 +125,8 @@ export const saveConfig = async (config: ConfigCheckout): Promise<ConfigCheckout
         return null;
       }
       
-      // FIXED: Separate query to fetch newly created data
+      // IMPORTANT: Must do a separate query to fetch the newly created data
+      console.log("Buscando configuração recém-criada em consulta separada");
       const { data, error: selectError } = await supabase
         .from("config_checkout")
         .select('*')
@@ -155,3 +157,4 @@ export const saveConfig = async (config: ConfigCheckout): Promise<ConfigCheckout
     return null;
   }
 };
+

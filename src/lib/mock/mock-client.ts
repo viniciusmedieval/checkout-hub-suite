@@ -1,161 +1,198 @@
 
 import { SupabaseClient } from '@supabase/supabase-js';
-import { mockStorage, saveMockStorageToLocalStorage } from './storage-utils';
+import { getMockStorage, setMockStorage } from './storage-utils';
 
-// Função para criar o cliente mock
+/**
+ * Creates a mock Supabase client for development and testing when real Supabase is not available
+ */
 export function createMockClient(): SupabaseClient {
+  console.log('Criando mock client para o Supabase');
+  
+  // Helper function to save changes to localStorage
+  const saveToStorage = (table: string, data: any) => {
+    const storage = getMockStorage();
+    if (!storage[table]) {
+      storage[table] = [];
+    }
+    setMockStorage(storage);
+    return { data, error: null };
+  };
+
+  // Mock client implementation
   return {
-    from: (table: string) => {
-      // Garantir que a tabela existe no storage mock
-      if (!mockStorage[table as keyof typeof mockStorage]) {
-        mockStorage[table as keyof typeof mockStorage] = [];
-      }
-      
-      return {
-        select: (columns?: string) => {
-          // Criamos uma função que pode ser encadeada com filtros
-          const buildQueryObject = (items = [...mockStorage[table as keyof typeof mockStorage]]) => {
+    from: (table: string) => ({
+      select: (columns: string = '*') => {
+        console.log(`Mock Supabase - Selecionando ${columns} da tabela ${table}`);
+        return {
+          eq: (column: string, value: any) => {
+            console.log(`Mock Supabase - Filtrando por ${column} = ${value}`);
             return {
-              data: items,
-              error: null,
-              
-              // Implementa o método eq para filtrar
-              eq: (column: string, value: any) => {
-                const filtered = items.filter((item: any) => item[column] === value);
-                return buildQueryObject(filtered); // Retorna um novo objeto de consulta com os itens filtrados
-              },
-              
-              // Implementa o método in para filtrar por valores em um array
-              in: (column: string, values: any[]) => {
-                const filtered = items.filter((item: any) => values.includes(item[column]));
-                return buildQueryObject(filtered);
-              },
-              
-              // Implementa o método gte (greater than or equal)
-              gte: (column: string, value: any) => {
-                const filtered = items.filter((item: any) => item[column] >= value);
-                return buildQueryObject(filtered);
-              },
-              
-              // Implementa o método lte (less than or equal)
-              lte: (column: string, value: any) => {
-                const filtered = items.filter((item: any) => item[column] <= value);
-                return buildQueryObject(filtered);
-              },
-              
-              // Implementa o método order
-              order: (column: string, { ascending = true } = {}) => {
-                const sorted = [...items].sort((a: any, b: any) => {
-                  if (ascending) {
-                    return a[column] > b[column] ? 1 : -1;
-                  } else {
-                    return a[column] < b[column] ? 1 : -1;
-                  }
-                });
-                return buildQueryObject(sorted);
-              },
-              
-              // Implementa o método limit
-              limit: (limit: number) => {
-                return buildQueryObject(items.slice(0, limit));
-              },
-              
-              // Implementa o método single para obter apenas um resultado
               single: () => {
-                if (items.length === 0) {
-                  return {
-                    data: null,
-                    error: new Error(`No results found for ${table}`)
-                  };
-                }
+                const mockData = getMockStorage();
+                const items = mockData[table] || [];
+                const item = items.find((item: any) => item[column] === value);
+                
                 return {
-                  data: items[0],
+                  data: item || null,
+                  error: item ? null : new Error(`Item não encontrado com ${column}=${value}`)
+                };
+              },
+              maybeSingle: () => {
+                const mockData = getMockStorage();
+                const items = mockData[table] || [];
+                const item = items.find((item: any) => item[column] === value);
+                
+                return {
+                  data: item || null,
                   error: null
                 };
               }
             };
-          };
-          
-          return buildQueryObject();
-        },
-        
-        insert: (records: any[] | any) => {
-          const recordsArray = Array.isArray(records) ? records : [records];
-          const nextId = mockStorage[table as keyof typeof mockStorage].length > 0 
-            ? Math.max(...mockStorage[table as keyof typeof mockStorage].map((item: any) => item.id)) + 1 
-            : 1;
-          
-          const newRecords = recordsArray.map((record: any, index: number) => ({
-            id: record.id || (nextId + index),
-            ...record,
-            criado_em: record.criado_em || new Date().toISOString()
-          }));
-          
-          mockStorage[table as keyof typeof mockStorage].push(...newRecords);
-          
-          // Salvar no localStorage após inserir
-          saveMockStorageToLocalStorage();
-          
-          // FIXED: Return null data to match Supabase behavior for insert
-          return {
-            data: null,
-            error: null
-          };
-        },
-        
-        update: (updates: any) => {
-          return {
-            eq: (column: string, value: any) => {
-              const index = mockStorage[table as keyof typeof mockStorage].findIndex((item: any) => item[column] === value);
-              
-              if (index !== -1) {
-                mockStorage[table as keyof typeof mockStorage][index] = {
-                  ...mockStorage[table as keyof typeof mockStorage][index],
-                  ...updates
-                };
-                
-                // Salvar no localStorage após atualizar
-                saveMockStorageToLocalStorage();
-                
-                // FIXED: Return null data to match Supabase behavior for update
+          },
+          order: (column: string, { ascending }: { ascending: boolean }) => {
+            console.log(`Mock Supabase - Ordenando por ${column}, ascending: ${ascending}`);
+            return {
+              limit: (limit: number) => {
+                console.log(`Mock Supabase - Limitando a ${limit} resultados`);
                 return {
-                  data: null,
-                  error: null
+                  single: () => {
+                    const mockData = getMockStorage();
+                    const items = mockData[table] || [];
+                    const sortedItems = [...items].sort((a, b) => {
+                      if (ascending) {
+                        return a[column] > b[column] ? 1 : -1;
+                      } else {
+                        return a[column] < b[column] ? 1 : -1;
+                      }
+                    });
+                    
+                    const limitedItems = sortedItems.slice(0, limit);
+                    return {
+                      data: limitedItems[0] || null,
+                      error: limitedItems.length === 0 ? new Error('Nenhum item encontrado') : null
+                    };
+                  },
+                  maybeSingle: () => {
+                    const mockData = getMockStorage();
+                    const items = mockData[table] || [];
+                    const sortedItems = [...items].sort((a, b) => {
+                      if (ascending) {
+                        return a[column] > b[column] ? 1 : -1;
+                      } else {
+                        return a[column] < b[column] ? 1 : -1;
+                      }
+                    });
+                    
+                    const limitedItems = sortedItems.slice(0, limit);
+                    return {
+                      data: limitedItems[0] || null,
+                      error: null
+                    };
+                  }
                 };
               }
-              
-              return {
-                data: null,
-                error: new Error(`Item with ${column} = ${value} not found`)
-              };
-            }
-          };
-        },
+            };
+          }
+        };
+      },
+      insert: (data: any[]) => {
+        console.log(`Mock Supabase - Inserindo na tabela ${table}:`, data);
         
-        delete: () => {
-          return {
-            eq: (column: string, value: any) => {
-              const initialLength = mockStorage[table as keyof typeof mockStorage].length;
-              mockStorage[table as keyof typeof mockStorage] = mockStorage[table as keyof typeof mockStorage]
-                .filter((item: any) => item[column] !== value);
-              
-              const deletedCount = initialLength - mockStorage[table as keyof typeof mockStorage].length;
-              
-              // Salvar no localStorage após deletar
-              saveMockStorageToLocalStorage();
-              
-              return {
-                data: { count: deletedCount },
-                error: null
-              };
-            }
-          };
+        const storage = getMockStorage();
+        if (!storage[table]) {
+          storage[table] = [];
         }
-      };
+        
+        const newItems = data.map((item) => {
+          // Generate random ID if doesn't exist
+          const newItem = { ...item };
+          if (!newItem.id) {
+            newItem.id = Date.now() + Math.floor(Math.random() * 1000);
+          }
+          
+          // Add timestamps if they don't exist
+          if (!newItem.created_at) {
+            newItem.created_at = new Date().toISOString();
+          }
+          
+          return newItem;
+        });
+        
+        storage[table] = [...storage[table], ...newItems];
+        setMockStorage(storage);
+        
+        return {
+          data: null,
+          error: null
+        };
+      },
+      update: (data: any) => {
+        console.log(`Mock Supabase - Atualizando tabela ${table}:`, data);
+        
+        return {
+          eq: (column: string, value: any) => {
+            console.log(`Mock Supabase - Atualizando onde ${column} = ${value}`);
+            
+            const storage = getMockStorage();
+            if (!storage[table]) {
+              return { data: null, error: new Error(`Tabela ${table} não encontrada`) };
+            }
+            
+            const items = storage[table];
+            const updatedItems = items.map((item: any) => {
+              if (item[column] === value) {
+                return { ...item, ...data, updated_at: new Date().toISOString() };
+              }
+              return item;
+            });
+            
+            storage[table] = updatedItems;
+            setMockStorage(storage);
+            
+            return {
+              data: null,
+              error: null
+            };
+          }
+        };
+      },
+      delete: () => {
+        return {
+          eq: (column: string, value: any) => {
+            console.log(`Mock Supabase - Deletando da tabela ${table} onde ${column} = ${value}`);
+            
+            const storage = getMockStorage();
+            if (!storage[table]) {
+              return { data: null, error: null };
+            }
+            
+            const items = storage[table];
+            const filteredItems = items.filter((item: any) => item[column] !== value);
+            
+            storage[table] = filteredItems;
+            setMockStorage(storage);
+            
+            return {
+              data: null,
+              error: null
+            };
+          }
+        };
+      }
+    }),
+    storage: {
+      from: (bucket: string) => ({
+        // Implement storage methods if needed
+        upload: (_path: string, _file: File) => Promise.resolve({ data: { path: 'mock-file-path' }, error: null }),
+        getPublicUrl: (_path: string) => ({ data: { publicUrl: 'https://mock-url.com/mock-file.jpg' } })
+      })
     },
     auth: {
-      getUser: () => Promise.resolve({ data: { user: null }, error: null }),
-      onAuthStateChange: () => ({ data: { subscription: { unsubscribe: () => {} } } }),
+      // Implement auth methods if needed
+      signUp: () => Promise.resolve({ data: null, error: null }),
+      signIn: () => Promise.resolve({ data: null, error: null }),
+      signOut: () => Promise.resolve({ error: null })
     },
+    // Add other mock methods as needed
   } as unknown as SupabaseClient;
 }

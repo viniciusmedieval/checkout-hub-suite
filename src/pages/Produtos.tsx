@@ -54,6 +54,7 @@ const Produtos = () => {
       
       console.log(`Toggling status for product ${id} from ${currentProduto.ativo} to ${!currentProduto.ativo}`);
       
+      // Don't chain .select() after .update()
       const { error } = await supabase
         .from('produtos')
         .update({ ativo: !currentProduto.ativo })
@@ -134,6 +135,6 @@ const Produtos = () => {
       />
     </div>
   );
-}
+};
 
 export default Produtos;

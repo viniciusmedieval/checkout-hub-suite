@@ -42,7 +42,7 @@ export function useProductForm({
       if (isEditing && product) {
         console.log(`Updating product with ID: ${product.id}`);
         
-        // FIXED: Separated update and select operations
+        // IMPORTANT: Don't chain .select() after update
         const { error } = await supabase
           .from("produtos")
           .update(data)
@@ -54,7 +54,7 @@ export function useProductForm({
           return;
         }
 
-        // FIXED: Separate query to get updated product
+        // IMPORTANT: Must do a separate query to get the updated product
         const { data: updatedProduct, error: fetchError } = await supabase
           .from("produtos")
           .select("*")
@@ -78,7 +78,7 @@ export function useProductForm({
       } else {
         console.log("Creating new product");
         
-        // FIXED: Separated insert and select operations
+        // IMPORTANT: Don't chain .select() after insert
         const { error } = await supabase
           .from("produtos")
           .insert([data]);
@@ -89,7 +89,7 @@ export function useProductForm({
           return;
         }
 
-        // FIXED: Separate query to get the newly created product
+        // IMPORTANT: Must do a separate query to get the newly created product
         const { data: newProduct, error: fetchError } = await supabase
           .from("produtos")
           .select("*")
