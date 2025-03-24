@@ -93,11 +93,11 @@ export function FormIdentificacao({
           {showTelefone && (
             <div className="relative">
               <div className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-700 flex items-center">
-                <span className="mr-1">+55</span>
                 <DynamicIcon 
                   name={telefoneIconName} 
                   size={14}
                 />
+                <span className="ml-1">+55</span>
               </div>
               <Input 
                 id="telefone"
