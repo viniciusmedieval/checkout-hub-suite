@@ -67,9 +67,9 @@ export function PaymentMethodSelector({
             className="data-[state=active]:bg-white data-[state=active]:text-gray-900 data-[state=active]:border-b-2 data-[state=active]:border-blue-500 text-sm py-2.5 rounded-md flex items-center justify-center"
           >
             <img 
-              src="/lovable-uploads/87f7c293-494d-43e1-b889-35b9ba85e548.png" 
+              src="/lovable-uploads/1045f0c2-529d-43c2-b02a-1aa4579f091f.png" 
               alt="Pix" 
-              className="w-5 h-5" 
+              className="w-8 h-8 object-contain" 
               loading="eager"
             />
           </TabsTrigger>
