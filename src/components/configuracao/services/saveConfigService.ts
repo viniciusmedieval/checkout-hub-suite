@@ -103,34 +103,46 @@ export const saveConfig = async (config: ConfigCheckout): Promise<ConfigCheckout
     const configToSave = prepareConfigForSave(config);
     console.log("Configurações validadas a serem salvas:", configToSave);
     
-    if (config.id) {
-      console.log(`Atualizando configuração existente com ID ${config.id}`);
+    // Make a copy of the ID before attempting to save
+    const configId = config.id;
+    
+    if (configId) {
+      console.log(`Atualizando configuração existente com ID ${configId}`);
       // Update existing record
       const { error } = await supabase
         .from("config_checkout")
         .update(configToSave)
-        .eq('id', config.id);
+        .eq('id', configId.toString());
         
       if (error) {
         console.error("Erro ao atualizar configurações:", error);
         throw error;
       }
       
+      console.log("Configuração atualizada com sucesso, recuperando dados...");
       // Fetch the updated record separately
-      return await fetchUpdatedConfig(config.id);
+      return await fetchUpdatedConfig(configId);
     } else {
       console.log("Criando nova configuração");
       // Insert new record
-      const { error } = await supabase
+      const { data, error } = await supabase
         .from("config_checkout")
-        .insert([configToSave]);
+        .insert([configToSave])
+        .select();
         
       if (error) {
         console.error("Erro ao criar configurações:", error);
         throw error;
       }
       
-      // Fetch the most recent record
+      console.log("Nova configuração criada com sucesso:", data);
+      
+      if (data && data.length > 0) {
+        // Return the newly created record
+        return ensureBooleanFields(data[0]);
+      }
+      
+      // Fallback to fetching the most recent record
       return await fetchUpdatedConfig();
     }
   } catch (error) {
