@@ -21,11 +21,13 @@ export function CheckoutFooter({ configCheckout }: CheckoutFooterProps) {
   // Explicitly check if mostrar_seguro is true (using strict equality)
   const showSecurityMessage = configCheckout?.mostrar_seguro === true;
   
-  // Add debugging to help identify issues
-  console.log("Footer config:", {
+  // Add extensive debugging to help identify issues
+  console.log("Footer config in CheckoutFooter:", {
+    configCheckout,
     mostrar_seguro: configCheckout?.mostrar_seguro,
     showSecurityMessage,
-    mensagem_rodape: configCheckout?.mensagem_rodape
+    mensagem_rodape: configCheckout?.mensagem_rodape,
+    footerText
   });
 
   return (

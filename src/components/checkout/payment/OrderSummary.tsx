@@ -76,10 +76,14 @@ export function OrderSummary({ produto, configCheckout }: OrderSummaryProps) {
         )}
       </Button>
       
-      <div className="flex items-center justify-center mt-2 text-xs text-gray-500 gap-1.5">
-        <Shield size={14} />
-        <span>Quase 10.946 usuários ativos finalizaram a compra neste momento.</span>
-      </div>
+      {/* Remove the fixed security message here which was causing duplication */}
+      {/* Only show this message if it's not already displayed in the footer */}
+      {!configCheckout?.mostrar_seguro && configCheckout?.mensagem_rodape && (
+        <div className="flex items-center justify-center mt-2 text-xs text-gray-500 gap-1.5">
+          <Shield size={14} />
+          <span>{configCheckout.mensagem_rodape}</span>
+        </div>
+      )}
     </div>
   );
 }

@@ -13,6 +13,11 @@ interface RodapeTabProps {
 }
 
 export function RodapeTab({ config, handleConfigChange, handleSwitchChange }: RodapeTabProps) {
+  const handleToggleSecurityMessage = (checked: boolean) => {
+    console.log("RodapeTab - Toggling security message:", checked);
+    handleSwitchChange('mostrar_seguro', checked);
+  };
+
   return (
     <Card>
       <CardHeader>
@@ -97,24 +102,26 @@ export function RodapeTab({ config, handleConfigChange, handleSwitchChange }: Ro
           
           <div className="flex items-center space-x-2">
             <Switch 
-              checked={config.mostrar_seguro || false} 
-              onCheckedChange={(checked) => handleSwitchChange('mostrar_seguro', checked)}
+              checked={Boolean(config.mostrar_seguro)} 
+              onCheckedChange={handleToggleSecurityMessage}
               id="mostrar-seguro"
             />
             <Label htmlFor="mostrar-seguro">Mostrar mensagem de segurança no rodapé</Label>
           </div>
           
-          {(config.mostrar_seguro || false) && (
-            <div className="space-y-2 pl-7">
-              <label className="text-sm font-medium">Mensagem de segurança</label>
-              <Input
-                name="mensagem_rodape"
-                value={config.mensagem_rodape || ""}
-                onChange={handleConfigChange}
-                placeholder="Compra 100% segura e garantida."
-              />
-            </div>
-          )}
+          <div className="space-y-2 pl-7">
+            <label className="text-sm font-medium">Mensagem de segurança</label>
+            <Input
+              name="mensagem_rodape"
+              value={config.mensagem_rodape || ""}
+              onChange={handleConfigChange}
+              placeholder="Compra 100% segura e garantida."
+            />
+            <p className="text-xs text-gray-500 mt-1">
+              Esta mensagem será usada no rodapé quando a opção acima estiver ativada.
+              Caso contrário, poderá aparecer próximo ao botão de compra.
+            </p>
+          </div>
         </div>
       </CardContent>
     </Card>

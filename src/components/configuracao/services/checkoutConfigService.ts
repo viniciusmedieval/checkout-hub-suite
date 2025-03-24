@@ -20,8 +20,17 @@ export const fetchCheckoutConfig = async (): Promise<ConfigCheckout | null> => {
     }
     
     if (data && data.length > 0) {
-      console.log("Configurações carregadas:", data[0]);
-      return data[0];
+      // Ensure boolean fields are properly typed
+      const configData = {
+        ...data[0],
+        mostrar_seguro: Boolean(data[0].mostrar_seguro),
+        ativa_banner: Boolean(data[0].ativa_banner),
+        mostrar_campo_documento: Boolean(data[0].mostrar_campo_documento),
+        mostrar_campo_telefone: Boolean(data[0].mostrar_campo_telefone)
+      };
+      
+      console.log("Configurações carregadas:", configData);
+      return configData;
     }
     
     return null;
@@ -48,7 +57,7 @@ export const saveConfig = async (config: ConfigCheckout): Promise<ConfigCheckout
       mensagem_topo: config.mensagem_topo,
       cor_topo: validateHex(config.cor_topo) ? config.cor_topo : "#3b82f6",
       cor_texto_topo: validateHex(config.cor_texto_topo) ? config.cor_texto_topo : "#FFFFFF",
-      ativa_banner: config.ativa_banner,
+      ativa_banner: Boolean(config.ativa_banner),
       banner_url: config.banner_url,
       banner_mobile_url: config.banner_mobile_url,
       cor_banner: validateHex(config.cor_banner) ? config.cor_banner : "#3b82f6",
@@ -67,8 +76,8 @@ export const saveConfig = async (config: ConfigCheckout): Promise<ConfigCheckout
       url_termos_uso: config.url_termos_uso,
       url_politica_privacidade: config.url_politica_privacidade,
       // Form fields
-      mostrar_campo_documento: config.mostrar_campo_documento,
-      mostrar_campo_telefone: config.mostrar_campo_telefone,
+      mostrar_campo_documento: Boolean(config.mostrar_campo_documento),
+      mostrar_campo_telefone: Boolean(config.mostrar_campo_telefone),
       titulo_identificacao: config.titulo_identificacao || "Identificação",
       titulo_pagamento: config.titulo_pagamento || "Pagamento",
       // Icon properties
@@ -115,8 +124,17 @@ export const saveConfig = async (config: ConfigCheckout): Promise<ConfigCheckout
     }  
     
     if (refreshedConfig && refreshedConfig.length > 0) {
-      console.log("Configurações atualizadas após salvamento:", refreshedConfig[0]);
-      return refreshedConfig[0];
+      // Ensure boolean fields are properly typed in the refreshed config
+      const updatedConfig = {
+        ...refreshedConfig[0],
+        mostrar_seguro: Boolean(refreshedConfig[0].mostrar_seguro),
+        ativa_banner: Boolean(refreshedConfig[0].ativa_banner),
+        mostrar_campo_documento: Boolean(refreshedConfig[0].mostrar_campo_documento),
+        mostrar_campo_telefone: Boolean(refreshedConfig[0].mostrar_campo_telefone)
+      };
+      
+      console.log("Configurações atualizadas após salvamento:", updatedConfig);
+      return updatedConfig;
     }
     
     return null;
