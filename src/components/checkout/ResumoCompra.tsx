@@ -1,6 +1,6 @@
 
 import { Produto, ConfigCheckout } from "@/lib/supabase";
-import { LockIcon } from "lucide-react";
+import { LockIcon, ShieldCheckIcon } from "lucide-react";
 import { formatCurrency } from "@/utils/formatters";
 
 interface ResumoCompraProps {
@@ -75,7 +75,7 @@ export function ResumoCompra({
         {/* Mensagem de destaque do checkout - vindo do painel admin */}
         {configCheckout?.mensagem_rodape && (
           <div className="flex items-center justify-center gap-2 text-sm text-gray-600 text-center mt-3">
-            <span role="img" aria-label="fire">🔥</span>
+            <ShieldCheckIcon size={16} className="text-green-500" />
             <span dangerouslySetInnerHTML={{ __html: configCheckout.mensagem_rodape }} />
           </div>
         )}
