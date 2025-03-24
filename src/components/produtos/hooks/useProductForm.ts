@@ -42,7 +42,7 @@ export function useProductForm({
       if (isEditing && product) {
         console.log(`Updating product with ID: ${product.id}`);
         
-        // First update the product
+        // Update operation - do not chain with select()
         const { error } = await supabase
           .from("produtos")
           .update(data)
@@ -54,6 +54,20 @@ export function useProductForm({
           return;
         }
 
+        // Fetch the updated product in a separate query if needed
+        const { data: updatedProduct, error: fetchError } = await supabase
+          .from("produtos")
+          .select("*")
+          .eq("id", product.id)
+          .single();
+          
+        if (fetchError) {
+          console.error("Error fetching updated product:", fetchError);
+          // Still consider the update successful even if fetching fails
+        } else {
+          console.log("Updated product data:", updatedProduct);
+        }
+
         console.log("Product updated successfully");
         toast.success("Produto atualizado com sucesso!");
         onSuccess();
@@ -61,7 +75,7 @@ export function useProductForm({
       } else {
         console.log("Creating new product");
         
-        // Insert the new product
+        // Insert operation - do not chain with select()
         const { error } = await supabase
           .from("produtos")
           .insert([data]);

@@ -74,19 +74,19 @@ export const saveConfig = async (config: ConfigCheckout): Promise<ConfigCheckout
     if (config.id) {
       console.log(`Atualizando configuração existente com ID ${config.id}`);
       
-      // Fix: Split update and select operations for compatibility
-      const { error: updateError } = await supabase
+      // Update operation - do not use .select() here
+      const { error } = await supabase
         .from("config_checkout")
         .update(configToSave)
         .eq('id', config.id);
         
-      if (updateError) {
-        console.error("Erro ao atualizar configurações:", updateError);
-        toast.error("Erro ao atualizar configurações: " + updateError.message);
+      if (error) {
+        console.error("Erro ao atualizar configurações:", error);
+        toast.error("Erro ao atualizar configurações: " + error.message);
         return null;
       }
       
-      // After successful update, fetch the updated record
+      // After successful update, fetch the updated record in a separate query
       const { data, error: selectError } = await supabase
         .from("config_checkout")
         .select('*')
@@ -107,18 +107,18 @@ export const saveConfig = async (config: ConfigCheckout): Promise<ConfigCheckout
     } else {
       console.log("Criando nova configuração");
       
-      // Fix: Split insert and select operations for compatibility
-      const { error: insertError } = await supabase
+      // Insert operation - do not use .select() here
+      const { error } = await supabase
         .from("config_checkout")
         .insert([configToSave]);
         
-      if (insertError) {
-        console.error("Erro ao criar configurações:", insertError);
-        toast.error("Erro ao criar configurações: " + insertError.message);
+      if (error) {
+        console.error("Erro ao criar configurações:", error);
+        toast.error("Erro ao criar configurações: " + error.message);
         return null;
       }
       
-      // After successful insert, fetch the most recently created record
+      // After successful insert, fetch the most recently created record in a separate query
       const { data, error: selectError } = await supabase
         .from("config_checkout")
         .select('*')
