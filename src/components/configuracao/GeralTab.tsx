@@ -106,11 +106,57 @@ export function GeralTab({ config, handleConfigChange, handleSwitchChange }: Ger
             name="mensagem_rodape"
             value={config.mensagem_rodape || ""}
             onChange={handleConfigChange}
-            placeholder="Ex: Outras 47 pessoas estão finalizando agora"
+            placeholder="Ex: Compra 100% segura e garantida"
           />
           <p className="text-xs text-gray-500 mt-1">
-            Esta mensagem será exibida abaixo do botão de compra no checkout. Use-a para criar senso de urgência.
+            Esta mensagem será exibida abaixo do botão de compra no checkout.
           </p>
+        </div>
+        
+        <Separator className="my-2" />
+        
+        <div className="space-y-2">
+          <div className="flex items-center justify-between mb-2">
+            <Label htmlFor="mostrar-contador">Exibir contador de visitantes</Label>
+            <Switch 
+              checked={config.mostrar_contador !== false} 
+              onCheckedChange={(checked) => handleSwitchChange('mostrar_contador', checked)}
+              id="mostrar-contador"
+            />
+          </div>
+          <Input
+            name="texto_contador"
+            value={config.texto_contador || "{count} pessoas estão vendo este produto agora"}
+            onChange={handleConfigChange}
+            placeholder="Ex: {count} pessoas estão vendo este produto agora"
+          />
+          <p className="text-xs text-gray-500 mt-1">
+            Use {'{count}'} para representar o número de visitantes. O número será gerado automaticamente.
+          </p>
+        </div>
+        
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="space-y-2">
+            <label className="text-sm font-medium">Mínimo de visitantes</label>
+            <Input
+              name="contador_min"
+              type="number"
+              min="1"
+              value={config.contador_min || 50}
+              onChange={handleConfigChange}
+            />
+          </div>
+          
+          <div className="space-y-2">
+            <label className="text-sm font-medium">Máximo de visitantes</label>
+            <Input
+              name="contador_max"
+              type="number"
+              min="100"
+              value={config.contador_max || 20000}
+              onChange={handleConfigChange}
+            />
+          </div>
         </div>
         
         <div className="space-y-2">

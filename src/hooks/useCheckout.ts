@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import { useCheckoutData } from "./useCheckoutData";
@@ -28,7 +27,11 @@ export const useCheckout = () => {
   const [paymentMethod, setPaymentMethod] = useState<PaymentMethod>('card');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [countdown, setCountdown] = useState(15 * 60); // 15 minutes in seconds
-  const [visitorCount] = useState(Math.floor(Math.random() * 20000) + 10000);
+  
+  // Generate random visitor count - max and min configurable from config if available
+  const minVisitors = configCheckout?.contador_min || 50;
+  const maxVisitors = configCheckout?.contador_max || 20000;
+  const [visitorCount] = useState(Math.floor(Math.random() * (maxVisitors - minVisitors)) + minVisitors);
 
   // Reset form errors when input changes
   const handleInputChange = (name: string, value: string) => {

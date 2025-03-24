@@ -11,7 +11,13 @@ export function useConfigSettings(initialConfig: ConfigCheckout | null = null) {
   const handleConfigChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
     console.log(`useConfigSettings - Alterando ${name} para ${value}`);
-    setConfig(prev => ({ ...prev, [name]: value }));
+    
+    // Handle numeric fields
+    if (name === 'contador_min' || name === 'contador_max') {
+      setConfig(prev => ({ ...prev, [name]: parseInt(value) || 0 }));
+    } else {
+      setConfig(prev => ({ ...prev, [name]: value }));
+    }
   };
   
   const handleSwitchChange = (name: string, checked: boolean) => {

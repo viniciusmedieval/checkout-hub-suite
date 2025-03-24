@@ -89,10 +89,11 @@ export function ResumoCompra({
         </div>
       </div>
       
-      {/* Show visitor count if provided */}
-      {visitorCount && (
+      {/* Show visitor count if provided and enabled in config */}
+      {visitorCount && configCheckout?.mostrar_contador !== false && (
         <div className="text-xs text-gray-500 text-center">
-          <p>{visitorCount} pessoas estão vendo este produto agora</p>
+          <p>{configCheckout?.texto_contador?.replace('{count}', visitorCount.toString()) || 
+              `${visitorCount} pessoas estão vendo este produto agora`}</p>
         </div>
       )}
       
