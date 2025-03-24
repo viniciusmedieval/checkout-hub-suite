@@ -2,7 +2,7 @@
 import { useState } from "react";
 import { Produto, ConfigCheckout } from "@/lib/supabase";
 import { toast } from "sonner";
-import { LockIcon } from "lucide-react";
+import { LockIcon, Shield } from "lucide-react";
 import { supabase } from "@/lib/supabase";
 import { formatCurrency } from "@/utils/formatters";
 
@@ -90,8 +90,8 @@ export function ResumoCompra({
       </div>
       
       {/* Show visitor count if provided and enabled in config */}
-      {visitorCount && configCheckout?.mostrar_contador !== false && (
-        <div className="text-xs text-gray-500 text-center">
+      {visitorCount && configCheckout?.mostrar_contador && (
+        <div className="text-xs text-gray-500 text-center mt-2 mb-2">
           <p>{configCheckout?.texto_contador?.replace('{count}', visitorCount.toString()) || 
               `${visitorCount} pessoas estão vendo este produto agora`}</p>
         </div>
@@ -121,6 +121,21 @@ export function ResumoCompra({
           </>
         )}
       </button>
+      
+      {/* Display security message from admin config */}
+      {configCheckout?.mensagem_rodape && (
+        <div className="flex items-center justify-center mt-2 text-xs text-gray-500 gap-1.5">
+          <Shield size={14} />
+          <span>{configCheckout.mensagem_rodape}</span>
+        </div>
+      )}
+      
+      {/* Display terms message from admin config */}
+      {configCheckout?.mensagem_termos && (
+        <div className="mt-2 text-xs text-gray-400 text-center">
+          <p>{configCheckout.mensagem_termos}</p>
+        </div>
+      )}
     </div>
   );
 }
