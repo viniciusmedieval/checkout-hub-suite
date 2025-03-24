@@ -18,10 +18,10 @@ export function CheckoutFooter({ configCheckout }: CheckoutFooterProps) {
   const footerText = configCheckout?.rodape_texto || 
     `Todos os direitos reservados. ${companyName} ${currentYear}`;
 
-  // Explicitly check if mostrar_seguro is true (using strict equality)
+  // Fix the security message logic to properly check boolean value
+  // The main issue was here - we need to handle boolean properly, not just checking for truthy values
   const showSecurityMessage = configCheckout?.mostrar_seguro === true;
   
-  // Add extensive debugging to help identify issues
   console.log("Footer config in CheckoutFooter:", {
     configCheckout,
     mostrar_seguro: configCheckout?.mostrar_seguro,
