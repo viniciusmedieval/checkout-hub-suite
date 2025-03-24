@@ -12,10 +12,10 @@ try {
   // Import from the integration path
   const { supabase: integrationClient } = await import('@/integrations/supabase/client');
   
-  console.log('Using Supabase integration client');
+  console.log('✅ Usando cliente Supabase integrado');
   supabase = integrationClient;
 } catch (error) {
-  console.error('Supabase integration client not available, using fallback', error);
+  console.error('❌ Cliente Supabase integrado não disponível, usando fallback', error);
   
   // Try to get credentials from localStorage as fallback
   const localSupabaseUrl = typeof window !== 'undefined' ? localStorage.getItem('supabaseUrl') : null;
@@ -36,18 +36,18 @@ try {
   if (supabaseUrl && supabaseAnonKey) {
     try {
       supabase = createClient(supabaseUrl, supabaseAnonKey);
-      console.log('Fallback Supabase client initialized successfully with URL:', supabaseUrl);
+      console.log('✅ Cliente Supabase fallback inicializado com sucesso. URL:', supabaseUrl);
     } catch (error) {
-      console.error('Error initializing fallback Supabase client:', error);
-      console.error('Usando mock client devido a falha na inicialização do Supabase');
+      console.error('❌ Erro ao inicializar cliente Supabase fallback:', error);
+      console.error('❌ Usando mock client devido a falha na inicialização do Supabase');
       // Fallback to mock client
       supabase = createMockClient();
     }
   } else {
-    console.warn('Credenciais do Supabase não encontradas. Verifique se as variáveis de ambiente estão configuradas:');
+    console.warn('⚠️ Credenciais do Supabase não encontradas. Verifique se as variáveis de ambiente estão configuradas:');
     console.warn('- VITE_SUPABASE_URL: ' + (envSupabaseUrl ? 'Configurada' : 'NÃO CONFIGURADA'));
     console.warn('- VITE_SUPABASE_ANON_KEY: ' + (envSupabaseKey ? 'Configurada' : 'NÃO CONFIGURADA'));
-    console.warn('Usando mock client por falta de credenciais.');
+    console.warn('⚠️ Usando mock client por falta de credenciais.');
     // Create a mock client
     supabase = createMockClient();
   }

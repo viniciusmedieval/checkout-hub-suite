@@ -7,7 +7,7 @@ import { validateHex, ensureBooleanFields } from "./utils/configValidation";
  * Prepares config data for saving with all necessary validations
  */
 const prepareConfigForSave = (config: ConfigCheckout) => {
-  console.log("Preparando configuração para salvar:", config);
+  console.log("🔄 Preparando configuração para salvar:", config);
   
   // Always ensure ID is not included when saving to avoid conflicts
   const { id, ...configWithoutId } = config;
@@ -58,7 +58,7 @@ const prepareConfigForSave = (config: ConfigCheckout) => {
     validar_nascimento: Boolean(config.validar_nascimento)
   };
   
-  console.log("Configuração preparada para salvar:", preparedConfig);
+  console.log("✅ Configuração preparada para salvar:", preparedConfig);
   return preparedConfig;
 };
 
@@ -67,12 +67,12 @@ const prepareConfigForSave = (config: ConfigCheckout) => {
  */
 export const saveConfig = async (config: ConfigCheckout): Promise<ConfigCheckout | null> => {
   try {
-    console.log("Iniciando saveConfig com dados:", config);
+    console.log("🔄 Iniciando saveConfig com dados:", config);
     
     const configToSave = prepareConfigForSave(config);
     
     if (config.id) {
-      console.log(`Atualizando configuração existente com ID ${config.id}`);
+      console.log(`🔄 Atualizando configuração existente com ID ${config.id}`);
       
       // IMPORTANTE: Não encadear .select() após update - não é suportado
       const { error } = await supabase
@@ -81,13 +81,13 @@ export const saveConfig = async (config: ConfigCheckout): Promise<ConfigCheckout
         .eq('id', config.id);
         
       if (error) {
-        console.error("Erro ao atualizar configurações:", error);
+        console.error("❌ Erro ao atualizar configurações:", error);
         toast.error("Erro ao atualizar configurações: " + error.message);
         return null;
       }
       
       // IMPORTANTE: Deve-se fazer uma consulta separada para buscar dados atualizados
-      console.log("Buscando configuração atualizada em consulta separada");
+      console.log("🔄 Buscando configuração atualizada em consulta separada");
       const { data, error: selectError } = await supabase
         .from("config_checkout")
         .select('*')
@@ -95,24 +95,24 @@ export const saveConfig = async (config: ConfigCheckout): Promise<ConfigCheckout
         .single();
         
       if (selectError) {
-        console.error("Erro ao buscar configuração atualizada:", selectError);
+        console.error("❌ Erro ao buscar configuração atualizada:", selectError);
         toast.error("Configuração atualizada, mas houve erro ao buscar os dados atualizados.");
         return null;
       }
       
       if (!data) {
-        console.error("Erro: Retorno nulo do Supabase após atualização");
+        console.error("❌ Erro: Retorno nulo do Supabase após atualização");
         toast.error("Erro ao recuperar dados atualizados. Tente novamente.");
         return null;
       }
       
       const processedData = ensureBooleanFields(data);
-      console.log("Configuração atualizada com sucesso:", processedData);
+      console.log("✅ Configuração atualizada com sucesso:", processedData);
       toast.success("Configurações salvas com sucesso!");
       return processedData;
       
     } else {
-      console.log("Criando nova configuração");
+      console.log("🔄 Criando nova configuração");
       
       // IMPORTANTE: Não encadear .select() após insert - não é suportado
       const { error } = await supabase
@@ -120,13 +120,13 @@ export const saveConfig = async (config: ConfigCheckout): Promise<ConfigCheckout
         .insert([configToSave]);
         
       if (error) {
-        console.error("Erro ao criar configurações:", error);
+        console.error("❌ Erro ao criar configurações:", error);
         toast.error("Erro ao criar configurações: " + error.message);
         return null;
       }
       
       // IMPORTANTE: Deve-se fazer uma consulta separada para buscar dados recém-criados
-      console.log("Buscando configuração recém-criada em consulta separada");
+      console.log("🔄 Buscando configuração recém-criada em consulta separada");
       const { data, error: selectError } = await supabase
         .from("config_checkout")
         .select('*')
@@ -135,24 +135,24 @@ export const saveConfig = async (config: ConfigCheckout): Promise<ConfigCheckout
         .single();
         
       if (selectError) {
-        console.error("Erro ao buscar configuração criada:", selectError);
+        console.error("❌ Erro ao buscar configuração criada:", selectError);
         toast.error("Configuração criada, mas houve erro ao buscar os dados criados.");
         return null;
       }
       
       if (!data) {
-        console.error("Erro: Retorno nulo do Supabase após inserção");
+        console.error("❌ Erro: Retorno nulo do Supabase após inserção");
         toast.error("Erro ao recuperar dados criados. Tente novamente.");
         return null;
       }
       
       const processedData = ensureBooleanFields(data);
-      console.log("Configuração criada com sucesso:", processedData);
+      console.log("✅ Configuração criada com sucesso:", processedData);
       toast.success("Configurações salvas com sucesso!");
       return processedData;
     }
   } catch (error) {
-    console.error("Erro no saveConfig:", error);
+    console.error("❌ Erro no saveConfig:", error);
     toast.error("Erro ao salvar configurações. Tente novamente.");
     return null;
   }

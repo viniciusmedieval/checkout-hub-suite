@@ -8,11 +8,11 @@ export function checkSupabaseCredentials(): boolean {
   const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
   
   if (!supabaseUrl || !supabaseAnonKey) {
-    console.error("❌ Supabase credentials not found in environment variables!");
-    console.error("Please ensure VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY are set in your .env file");
+    console.error("❌ Credenciais do Supabase não encontradas nas variáveis de ambiente!");
+    console.error("Por favor, verifique se VITE_SUPABASE_URL e VITE_SUPABASE_ANON_KEY estão definidas no arquivo .env");
     return false;
   }
   
-  console.log("✅ Supabase credentials found");
+  console.log("✅ Credenciais do Supabase encontradas");
   return true;
 }
