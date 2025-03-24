@@ -8,6 +8,7 @@ import { ConfigCheckout } from "@/lib/supabase";
 import { ColorPicker } from "../aparencia/ColorPicker";
 import { icons } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { DynamicIcon } from "../../checkout/utils/DynamicIcon";
 
 interface IconesTabProps {
   config: ConfigCheckout;
@@ -83,7 +84,8 @@ export function IconesTab({ config, handleConfigChange, handleIconChange }: Icon
                       <SelectItem key={icon} value={icon}>
                         <div className="flex items-center gap-2">
                           <span className="inline-block w-5">
-                            {(icons as any)[icon]({ size: 14 })}
+                            {/* Fix: Create the component first before using it */}
+                            <DynamicIcon name={icon} size={14} />
                           </span>
                           <span className="capitalize">{icon.replace(/-/g, ' ')}</span>
                         </div>
@@ -111,7 +113,7 @@ export function IconesTab({ config, handleConfigChange, handleIconChange }: Icon
                       <SelectItem key={icon} value={icon}>
                         <div className="flex items-center gap-2">
                           <span className="inline-block w-5">
-                            {(icons as any)[icon]({ size: 14 })}
+                            <DynamicIcon name={icon} size={14} />
                           </span>
                           <span className="capitalize">{icon.replace(/-/g, ' ')}</span>
                         </div>
@@ -139,7 +141,7 @@ export function IconesTab({ config, handleConfigChange, handleIconChange }: Icon
                       <SelectItem key={icon} value={icon}>
                         <div className="flex items-center gap-2">
                           <span className="inline-block w-5">
-                            {(icons as any)[icon]({ size: 14 })}
+                            <DynamicIcon name={icon} size={14} />
                           </span>
                           <span className="capitalize">{icon.replace(/-/g, ' ')}</span>
                         </div>
@@ -167,7 +169,7 @@ export function IconesTab({ config, handleConfigChange, handleIconChange }: Icon
                       <SelectItem key={icon} value={icon}>
                         <div className="flex items-center gap-2">
                           <span className="inline-block w-5">
-                            {(icons as any)[icon]({ size: 14 })}
+                            <DynamicIcon name={icon} size={14} />
                           </span>
                           <span className="capitalize">{icon.replace(/-/g, ' ')}</span>
                         </div>
