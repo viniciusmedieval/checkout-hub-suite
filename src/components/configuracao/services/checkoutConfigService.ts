@@ -1,3 +1,4 @@
+
 import { supabase, ConfigCheckout } from "@/lib/supabase";
 import { toast } from "sonner";
 
@@ -58,6 +59,7 @@ export const saveConfig = async (config: ConfigCheckout): Promise<ConfigCheckout
       rodape_ano: config.rodape_ano,
       mostrar_seguro: config.mostrar_seguro,
       mensagem_rodape: config.mensagem_rodape,
+      mensagem_termos: config.mensagem_termos, // Novo campo
       url_termos_uso: config.url_termos_uso,
       url_politica_privacidade: config.url_politica_privacidade
     };

@@ -19,5 +19,6 @@ export const defaultConfig: ConfigCheckout = {
   rodape_empresa: "Minha Empresa LTDA",
   rodape_ano: "2023",
   mostrar_seguro: true,
-  mensagem_rodape: "Compra 100% segura e garantida."
+  mensagem_rodape: "Compra 100% segura e garantida.",
+  mensagem_termos: "Ao clicar em \"Comprar\", você concorda com os Termos de Compra e está ciente da Política de Privacidade."
 };

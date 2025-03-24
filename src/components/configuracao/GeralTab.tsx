@@ -7,6 +7,7 @@ import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
 import { ConfigCheckout } from "@/lib/supabase";
 import { Separator } from "@/components/ui/separator";
+import { Textarea } from "@/components/ui/textarea";
 
 interface GeralTabProps {
   config: ConfigCheckout;
@@ -109,6 +110,20 @@ export function GeralTab({ config, handleConfigChange, handleSwitchChange }: Ger
           />
           <p className="text-xs text-gray-500 mt-1">
             Esta mensagem será exibida abaixo do botão de compra no checkout. Use-a para criar senso de urgência.
+          </p>
+        </div>
+        
+        <div className="space-y-2">
+          <label className="text-sm font-medium">Mensagem de Termos de Compra</label>
+          <Textarea
+            name="mensagem_termos"
+            value={config.mensagem_termos || ""}
+            onChange={handleConfigChange}
+            placeholder="Ex: Ao clicar em 'Comprar', você concorda com os Termos de Compra e está ciente da Política de Privacidade."
+            className="min-h-[80px]"
+          />
+          <p className="text-xs text-gray-500 mt-1">
+            Esta mensagem será exibida abaixo do botão de compra com links para seus termos e política de privacidade.
           </p>
         </div>
         

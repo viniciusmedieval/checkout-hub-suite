@@ -79,6 +79,19 @@ export function ResumoCompra({
             <span dangerouslySetInnerHTML={{ __html: configCheckout.mensagem_rodape }} />
           </div>
         )}
+        
+        {/* Mensagem de termos de compra - vindo do painel admin */}
+        {configCheckout?.mensagem_termos && (
+          <div className="text-xs text-gray-500 text-center mt-3">
+            <span 
+              dangerouslySetInnerHTML={{ 
+                __html: configCheckout.mensagem_termos
+                  .replace('Termos de Compra', `<a href="${configCheckout.url_termos_uso || '#'}" class="text-blue-500 hover:underline">Termos de Compra</a>`)
+                  .replace('Política de Privacidade', `<a href="${configCheckout.url_politica_privacidade || '#'}" class="text-blue-500 hover:underline">Política de Privacidade</a>`)
+              }} 
+            />
+          </div>
+        )}
       </div>
     </div>
   );
