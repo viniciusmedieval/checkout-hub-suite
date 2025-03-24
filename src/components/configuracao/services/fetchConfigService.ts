@@ -13,8 +13,7 @@ export const fetchCheckoutConfig = async (): Promise<ConfigCheckout | null> => {
       .from("config_checkout")
       .select("*")
       .order('created_at', { ascending: false })
-      .limit(1)
-      .single();
+      .limit(1);
       
     if (result.error) {
       console.error("Erro ao carregar configurações do checkout:", result.error);
@@ -22,9 +21,10 @@ export const fetchCheckoutConfig = async (): Promise<ConfigCheckout | null> => {
       return null;
     }
     
-    if (result.data) {
+    // Check if we have data and use the first item
+    if (result.data && result.data.length > 0) {
       // Ensure boolean fields are properly typed and log the data
-      const configData = ensureBooleanFields(result.data);
+      const configData = ensureBooleanFields(result.data[0]);
       console.log("Configurações carregadas com sucesso:", configData);
       return configData;
     }

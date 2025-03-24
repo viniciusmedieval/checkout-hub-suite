@@ -76,23 +76,21 @@ export const saveConfig = async (config: ConfigCheckout): Promise<ConfigCheckout
     if (config.id) {
       console.log(`Atualizando configuração existente com ID ${config.id}`);
       
-      // Fix: Change maybeSingle to single
+      // Use update and then get the first result
       result = await supabase
         .from("config_checkout")
         .update(configToSave)
         .eq('id', config.id)
-        .select('*')
-        .single();
+        .select('*');
         
     } else {
       console.log("Criando nova configuração");
       
-      // Fix: Change maybeSingle to single
+      // Use insert and then get the first result
       result = await supabase
         .from("config_checkout")
         .insert([configToSave])
-        .select('*')
-        .single();
+        .select('*');
     }
     
     if (result.error) {
@@ -101,9 +99,10 @@ export const saveConfig = async (config: ConfigCheckout): Promise<ConfigCheckout
       return null;
     }
     
-    if (result.data) {
+    // Check if we have data and use the first item
+    if (result.data && result.data.length > 0) {
       // Process and return the data from the response
-      const processedData = ensureBooleanFields(result.data);
+      const processedData = ensureBooleanFields(result.data[0]);
       console.log("Configuração salva com sucesso:", processedData);
       toast.success("Configurações salvas com sucesso!");
       return processedData;
