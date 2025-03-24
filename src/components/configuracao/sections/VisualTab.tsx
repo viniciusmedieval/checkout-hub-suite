@@ -17,7 +17,7 @@ export function VisualTab({ config, handleConfigChange, handleSwitchChange }: Vi
   };
 
   return (
-    <Card>
+    <Card className="bg-white border border-gray-200">
       <CardHeader>
         <CardTitle>Configurações Visuais</CardTitle>
         <CardDescription>

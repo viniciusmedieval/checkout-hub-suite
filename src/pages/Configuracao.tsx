@@ -32,21 +32,21 @@ const Configuracao = () => {
   }
 
   return (
-    <div className="space-y-6 animate-fade-in">
+    <div className="space-y-6 animate-fade-in bg-white p-6 rounded-lg">
       <div className="flex justify-between items-center">
-        <h1 className="text-3xl font-bold tracking-tight">Configuração do Checkout</h1>
+        <h1 className="text-3xl font-bold tracking-tight text-gray-900">Configuração do Checkout</h1>
         <Button onClick={handleSaveConfig}>Salvar Alterações</Button>
       </div>
 
       <Tabs defaultValue="visual" className="w-full">
-        <TabsList className="grid w-full grid-cols-7">
-          <TabsTrigger value="visual">Visual</TabsTrigger>
-          <TabsTrigger value="header">Topo</TabsTrigger>
-          <TabsTrigger value="formulario">Formulário</TabsTrigger>
-          <TabsTrigger value="depoimentos">Depoimentos</TabsTrigger>
-          <TabsTrigger value="botoes">Botões</TabsTrigger>
-          <TabsTrigger value="icones">Ícones</TabsTrigger>
-          <TabsTrigger value="rodape">Rodapé</TabsTrigger>
+        <TabsList className="grid w-full grid-cols-7 bg-gray-100 p-1 rounded-lg">
+          <TabsTrigger value="visual" className="data-[state=active]:bg-white">Visual</TabsTrigger>
+          <TabsTrigger value="header" className="data-[state=active]:bg-white">Topo</TabsTrigger>
+          <TabsTrigger value="formulario" className="data-[state=active]:bg-white">Formulário</TabsTrigger>
+          <TabsTrigger value="depoimentos" className="data-[state=active]:bg-white">Depoimentos</TabsTrigger>
+          <TabsTrigger value="botoes" className="data-[state=active]:bg-white">Botões</TabsTrigger>
+          <TabsTrigger value="icones" className="data-[state=active]:bg-white">Ícones</TabsTrigger>
+          <TabsTrigger value="rodape" className="data-[state=active]:bg-white">Rodapé</TabsTrigger>
         </TabsList>
 
         <TabsContent value="visual" className="space-y-4 mt-4">
