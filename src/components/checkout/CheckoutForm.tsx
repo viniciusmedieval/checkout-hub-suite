@@ -51,7 +51,7 @@ export function CheckoutForm({ configCheckout }: CheckoutFormProps) {
       
       <div className="space-y-3">
         <div className="relative">
-          <div className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-700 z-10">
+          <div className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-700">
             👤
           </div>
           <Input 
@@ -60,13 +60,13 @@ export function CheckoutForm({ configCheckout }: CheckoutFormProps) {
             placeholder="Nome completo"
             value={formData.nome}
             onChange={handleChange}
-            className={`pl-10 h-10 text-sm ${errors.nome ? 'border-red-500' : 'border-gray-200'} bg-white text-black focus-visible:ring-gray-300`}
+            className={`pl-9 h-10 text-sm ${errors.nome ? 'border-red-500' : 'border-gray-200'} bg-white text-black focus-visible:ring-gray-300`}
           />
           {errors.nome && <p className="text-red-500 text-xs mt-1">Nome é obrigatório</p>}
         </div>
         
         <div className="relative">
-          <div className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-700 z-10">
+          <div className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-700">
             ✉️
           </div>
           <Input 
@@ -76,14 +76,14 @@ export function CheckoutForm({ configCheckout }: CheckoutFormProps) {
             placeholder="Seu e-mail"
             value={formData.email}
             onChange={handleChange}
-            className={`pl-10 h-10 text-sm ${errors.email ? 'border-red-500' : 'border-gray-200'} bg-white text-black focus-visible:ring-gray-300`}
+            className={`pl-9 h-10 text-sm ${errors.email ? 'border-red-500' : 'border-gray-200'} bg-white text-black focus-visible:ring-gray-300`}
           />
           {errors.email && <p className="text-red-500 text-xs mt-1">E-mail inválido</p>}
         </div>
         
         <div className="grid grid-cols-2 gap-3">
           <div className="relative">
-            <div className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-700 z-10">
+            <div className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-700">
               📱
             </div>
             <Input 
@@ -92,13 +92,13 @@ export function CheckoutForm({ configCheckout }: CheckoutFormProps) {
               placeholder="Celular"
               value={formData.telefone}
               onChange={handleChange}
-              className={`pl-10 h-10 text-sm ${errors.telefone ? 'border-red-500' : 'border-gray-200'} bg-white text-black focus-visible:ring-gray-300`}
+              className={`pl-9 h-10 text-sm ${errors.telefone ? 'border-red-500' : 'border-gray-200'} bg-white text-black focus-visible:ring-gray-300`}
             />
             {errors.telefone && <p className="text-red-500 text-xs mt-1">Celular inválido</p>}
           </div>
           
           <div className="relative">
-            <div className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-700 z-10">
+            <div className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-700">
               📝
             </div>
             <Input 
@@ -107,7 +107,7 @@ export function CheckoutForm({ configCheckout }: CheckoutFormProps) {
               placeholder="CPF/CNPJ"
               value={formData.documento}
               onChange={handleChange}
-              className={`pl-10 h-10 text-sm ${errors.documento ? 'border-red-500' : 'border-gray-200'} bg-white text-black focus-visible:ring-gray-300`}
+              className={`pl-9 h-10 text-sm ${errors.documento ? 'border-red-500' : 'border-gray-200'} bg-white text-black focus-visible:ring-gray-300`}
             />
             {errors.documento && <p className="text-red-500 text-xs mt-1">Documento inválido</p>}
           </div>

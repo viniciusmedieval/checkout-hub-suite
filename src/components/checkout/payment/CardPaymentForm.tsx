@@ -69,20 +69,20 @@ export function CardPaymentForm({ productValue }: CardPaymentFormProps) {
   }, [isValid]);
   
   return (
-    <div className="space-y-4">
+    <div className="space-y-3">
       <div className="relative">
-        <div className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500 z-10">
+        <div className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500">
           <User size={18} />
         </div>
         {isValid.cardName && (
-          <div className="absolute right-3 top-1/2 -translate-y-1/2 text-green-500 z-10">
+          <div className="absolute right-3 top-1/2 -translate-y-1/2 text-green-500">
             <CheckCircle2 size={16} />
           </div>
         )}
         <Input 
           id="cardName" 
           placeholder="Nome impresso no cartão" 
-          className="pl-10 h-11 text-sm bg-white text-black rounded-lg" 
+          className="pl-9 h-11 text-sm bg-white text-black rounded-lg" 
           value={cardName}
           onChange={handleCardNameChange}
         />
