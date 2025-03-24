@@ -22,6 +22,7 @@ export function useProductManager() {
       if (error) {
         console.error("Erro ao buscar produtos:", error);
         toast.error("Erro ao buscar produtos. Tente novamente.");
+        return;
       }
 
       if (!data) {
@@ -52,7 +53,7 @@ export function useProductManager() {
   const handleFormSubmit = async (values: ProductFormValues) => {
     try {
       if (isCreating) {
-        // Step 1: Insert the new product
+        // Step 1: Insert the new product - CORRIGIDO: removido .select() após insert
         const { error } = await supabase
           .from("produtos")
           .insert([values]);
@@ -63,7 +64,7 @@ export function useProductManager() {
           return;
         }
 
-        // Step 2: Fetch the newly created product
+        // Step 2: Fetch the newly created product em uma consulta separada
         const { data, error: selectError } = await supabase
           .from("produtos")
           .select("*")
@@ -90,7 +91,7 @@ export function useProductManager() {
       }
 
       if (isEditing && selectedProduct) {
-        // Step 1: Update the product
+        // Step 1: Update the product - CORRIGIDO: removido .select() após update
         const { error } = await supabase
           .from("produtos")
           .update(values)
@@ -102,7 +103,7 @@ export function useProductManager() {
           return;
         }
 
-        // Step 2: Fetch the updated product
+        // Step 2: Fetch the updated product em uma consulta separada
         const { data, error: selectError } = await supabase
           .from("produtos")
           .select("*")

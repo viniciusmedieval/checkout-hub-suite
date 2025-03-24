@@ -74,7 +74,7 @@ export const saveConfig = async (config: ConfigCheckout): Promise<ConfigCheckout
     if (config.id) {
       console.log(`Atualizando configuração existente com ID ${config.id}`);
       
-      // Step 1: Update the record
+      // Step 1: Update the record - CORRIGIDO: removido .select() após update
       const { error } = await supabase
         .from("config_checkout")
         .update(configToSave)
@@ -113,7 +113,7 @@ export const saveConfig = async (config: ConfigCheckout): Promise<ConfigCheckout
     } else {
       console.log("Criando nova configuração");
       
-      // Step 1: Insert the new record
+      // Step 1: Insert the new record - CORRIGIDO: removido .select() após insert
       const { error } = await supabase
         .from("config_checkout")
         .insert([configToSave]);

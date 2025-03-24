@@ -33,7 +33,7 @@ export const fetchTestimonials = async (): Promise<Depoimento[]> => {
         criado_em: new Date().toISOString()
       }));
       
-      // Step 1: Insert default testimonials
+      // Step 1: Insert default testimonials - CORRIGIDO: removido .select() após insert
       const { error: insertError } = await supabase
         .from("depoimentos")
         .insert(depoimentosParaInserir);
@@ -43,7 +43,7 @@ export const fetchTestimonials = async (): Promise<Depoimento[]> => {
         return [];
       }
       
-      // Step 2: Fetch the newly inserted testimonials
+      // Step 2: Fetch the newly inserted testimonials em uma consulta separada
       const { data: insertedData, error: selectError } = await supabase
         .from("depoimentos")
         .select("*")
@@ -98,14 +98,14 @@ export const deleteTestimonial = async (id: number): Promise<boolean> => {
  */
 export const addTestimonial = async (depoimento: Omit<Depoimento, "id" | "criado_em">): Promise<Depoimento | null> => {
   try {
-    // Step 1: Insert the new testimonial
+    // Step 1: Insert the new testimonial - CORRIGIDO: removido .select() após insert
     const { error } = await supabase
       .from("depoimentos")
       .insert([depoimento]);
       
     if (error) throw error;
     
-    // Step 2: Fetch the newly created testimonial
+    // Step 2: Fetch the newly created testimonial em uma consulta separada
     const { data, error: selectError } = await supabase
       .from("depoimentos")
       .select("*")
@@ -135,7 +135,7 @@ export const addTestimonial = async (depoimento: Omit<Depoimento, "id" | "criado
  */
 export const updateTestimonial = async (id: number, depoimento: Partial<Depoimento>): Promise<Depoimento | null> => {
   try {
-    // Step 1: Update the testimonial
+    // Step 1: Update the testimonial - CORRIGIDO: removido .select() após update
     const { error } = await supabase
       .from("depoimentos")
       .update(depoimento)
@@ -143,7 +143,7 @@ export const updateTestimonial = async (id: number, depoimento: Partial<Depoimen
       
     if (error) throw error;
     
-    // Step 2: Fetch the updated testimonial
+    // Step 2: Fetch the updated testimonial em uma consulta separada
     const { data, error: fetchError } = await supabase
       .from("depoimentos")
       .select("*")
