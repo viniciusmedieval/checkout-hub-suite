@@ -59,16 +59,13 @@ export function useConfigSettings(initialConfig: ConfigCheckout | null = null) {
         // Importante: atualizar o estado com os dados retornados do servidor
         setConfig(updatedConfig);
         setLastSavedConfig(updatedConfig);
-        toast.success("Configurações salvas com sucesso!");
         return updatedConfig; // Retorna as configurações atualizadas para uso no componente pai
       } else {
         console.error("Erro ao salvar configurações: retorno nulo");
-        toast.error("Erro ao salvar configurações. Verifique o console para mais detalhes.");
         return null;
       }
     } catch (error) {
       console.error("Erro ao salvar configurações:", error);
-      toast.error("Erro ao salvar configurações. Tente novamente.");
       return null;
     } finally {
       setIsSaving(false);

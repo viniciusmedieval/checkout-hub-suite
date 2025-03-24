@@ -38,16 +38,16 @@ export function useConfiguracao() {
     setLoading(true);
     try {
       const fetchedConfig = await fetchCheckoutConfig();
+      console.log('Configuração carregada no reloadConfig:', fetchedConfig);
+      
       if (fetchedConfig) {
-        console.log('Configuração carregada:', fetchedConfig);
         setConfigData(fetchedConfig);
-        // Certifica que o config atual também é atualizado
         setConfig(fetchedConfig);
+        console.log('Configuração atualizada no estado:', fetchedConfig);
       } else {
-        console.log('Usando configuração padrão');
+        console.log('Usando configuração padrão no reloadConfig');
         toast.info('Usando configuração padrão');
         setConfigData(defaultConfig);
-        // Certifica que o config atual também é atualizado
         setConfig(defaultConfig);
       }
     } catch (error) {
@@ -63,7 +63,17 @@ export function useConfiguracao() {
       setLoading(true);
       try {
         // Fetch config
-        await reloadConfig();
+        const fetchedConfig = await fetchCheckoutConfig();
+        console.log('Configuração inicial carregada:', fetchedConfig);
+        
+        if (fetchedConfig) {
+          setConfigData(fetchedConfig);
+          setConfig(fetchedConfig);
+        } else {
+          console.log('Usando configuração padrão no useEffect inicial');
+          setConfigData(defaultConfig);
+          setConfig(defaultConfig);
+        }
         
         // Fetch testimonials
         const testimonialsData = await fetchTestimonials();
@@ -84,12 +94,13 @@ export function useConfiguracao() {
     try {
       console.log("Iniciando saveAndReloadConfig com:", config);
       const savedConfig = await handleSaveConfig();
+      
       if (savedConfig) {
         console.log("Configurações salvas com sucesso:", savedConfig);
         toast.success("Configurações aplicadas com sucesso!");
+        
         // Garantir que o estado local seja atualizado com os dados retornados
         setConfigData(savedConfig);
-        // Certifica que o config atual também é atualizado
         setConfig(savedConfig);
       } else {
         console.log("Falha ao salvar configurações");

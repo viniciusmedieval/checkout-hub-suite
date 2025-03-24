@@ -7,6 +7,7 @@ import { validateHex, ensureBooleanFields, handleConfigError } from "./utils/con
  * Prepares config data for saving with all necessary validations
  */
 const prepareConfigForSave = (config: ConfigCheckout) => {
+  console.log("Preparando configuração para salvar:", config);
   console.log("Valor mostrar_seguro antes de salvar:", config.mostrar_seguro, typeof config.mostrar_seguro);
   
   return {
@@ -55,56 +56,6 @@ const prepareConfigForSave = (config: ConfigCheckout) => {
 };
 
 /**
- * Fetches the recently updated configuration after saving
- */
-const fetchUpdatedConfig = async (id?: string | number): Promise<ConfigCheckout | null> => {
-  try {
-    console.log("Buscando config atualizada para ID:", id);
-    
-    let result;
-    
-    if (id) {
-      // Fetch the specific updated record - convert id to string if it's a number
-      const idStr = typeof id === 'number' ? id.toString() : id;
-      console.log(`Buscando configuração específica com ID ${idStr}`);
-      
-      result = await supabase
-        .from("config_checkout")
-        .select('*')
-        .eq('id', idStr)
-        .single();
-    } else {
-      // Fetch the most recent record
-      console.log("Buscando configuração mais recente");
-      
-      result = await supabase
-        .from("config_checkout")
-        .select('*')
-        .order('created_at', { ascending: false })
-        .limit(1)
-        .single();
-    }
-    
-    if (result.error) {
-      console.error("Erro ao buscar configuração atualizada:", result.error);
-      throw result.error;
-    }
-    
-    console.log("Configuração recuperada com sucesso:", result.data);
-    
-    if (result.data) {
-      return ensureBooleanFields(result.data);
-    }
-    
-    console.log("Nenhuma configuração encontrada");
-    return null;
-  } catch (error) {
-    console.error("Erro ao buscar configuração:", error);
-    return handleConfigError(error, "recuperar");
-  }
-};
-
-/**
  * Saves checkout configuration to the database
  */
 export const saveConfig = async (config: ConfigCheckout): Promise<ConfigCheckout | null> => {
@@ -117,56 +68,59 @@ export const saveConfig = async (config: ConfigCheckout): Promise<ConfigCheckout
     // Make a copy of the ID before attempting to save
     const configId = config.id;
     
+    let result;
+    
     if (configId) {
       console.log(`Atualizando configuração existente com ID ${configId}`);
       // Update existing record - ensuring ID is a string
-      const { data, error } = await supabase
+      const idStr = typeof configId === 'number' ? configId.toString() : configId;
+      
+      result = await supabase
         .from("config_checkout")
         .update(configToSave)
-        .eq('id', configId.toString())
-        .select();
+        .eq('id', idStr)
+        .select('*')
+        .single();
         
-      if (error) {
-        console.error("Erro ao atualizar configurações:", error);
-        throw error;
+      if (result.error) {
+        console.error("Erro ao atualizar configurações:", result.error);
+        toast.error("Erro ao atualizar configurações: " + result.error.message);
+        throw result.error;
       }
       
-      console.log("Configuração atualizada com sucesso, resposta:", data);
-      
-      if (data && data.length > 0) {
-        // Process and return the updated record from the response
-        return ensureBooleanFields(data[0]);
-      }
-      
-      // Fallback to separate fetch if no data returned
-      console.log("Nenhum dado retornado na atualização, recuperando separadamente...");
-      return await fetchUpdatedConfig(configId);
+      console.log("Configuração atualizada com sucesso, resposta:", result.data);
     } else {
       console.log("Criando nova configuração");
       // Insert new record
-      const { data, error } = await supabase
+      result = await supabase
         .from("config_checkout")
         .insert([configToSave])
-        .select();
+        .select('*')
+        .single();
         
-      if (error) {
-        console.error("Erro ao criar configurações:", error);
-        throw error;
+      if (result.error) {
+        console.error("Erro ao criar configurações:", result.error);
+        toast.error("Erro ao criar configurações: " + result.error.message);
+        throw result.error;
       }
       
-      console.log("Nova configuração criada com sucesso:", data);
-      
-      if (data && data.length > 0) {
-        // Return the newly created record
-        return ensureBooleanFields(data[0]);
-      }
-      
-      // Fallback to fetching the most recent record
-      console.log("Nenhum dado retornado na criação, buscando o mais recente...");
-      return await fetchUpdatedConfig();
+      console.log("Nova configuração criada com sucesso:", result.data);
     }
+    
+    if (result.data) {
+      // Process and return the data from the response
+      const processedData = ensureBooleanFields(result.data);
+      console.log("Dados processados a serem retornados:", processedData);
+      toast.success("Configurações salvas com sucesso!");
+      return processedData;
+    }
+    
+    console.error("Nenhum dado retornado após salvar");
+    toast.error("Erro ao salvar: nenhum dado retornado");
+    return null;
   } catch (error) {
     console.error("Erro no saveConfig:", error);
-    return handleConfigError(error, "salvar");
+    toast.error("Erro ao salvar configurações. Tente novamente.");
+    return null;
   }
 };
