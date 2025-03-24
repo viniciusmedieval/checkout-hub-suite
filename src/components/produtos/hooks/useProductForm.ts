@@ -42,7 +42,7 @@ export function useProductForm({
       if (isEditing && product) {
         console.log(`Updating product with ID: ${product.id}`);
         
-        // Step 1: Update the record - CORRIGIDO: removido .select() após update
+        // Step 1: Update the record - Fixed: removed .select() after update
         const { error } = await supabase
           .from("produtos")
           .update(data)
@@ -78,7 +78,7 @@ export function useProductForm({
       } else {
         console.log("Creating new product");
         
-        // Step 1: Insert the new record - CORRIGIDO: removido .select() após insert
+        // Step 1: Insert the new record - Fixed: removed .select() after insert
         const { error } = await supabase
           .from("produtos")
           .insert([data]);

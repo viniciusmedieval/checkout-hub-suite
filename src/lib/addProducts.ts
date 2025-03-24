@@ -135,7 +135,7 @@ export const addProductsToSupabase = async () => {
       return { success: true, message: 'Todos os produtos já existem no banco de dados.' };
     }
     
-    // Insert new products - CORRIGIDO: removido .select() após insert
+    // Insert new products - Fix: removed .select() after insert
     const { error } = await supabase
       .from('produtos')
       .insert(newProducts);
