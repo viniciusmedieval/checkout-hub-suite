@@ -65,18 +65,18 @@ export function CardExpiryInput({ value, onChange }: CardExpiryInputProps) {
   
   return (
     <div className="relative">
-      <div className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500">
+      <div className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500 z-10">
         <CalendarDays size={18} />
       </div>
       {isValid && (
-        <div className="absolute right-3 top-1/2 -translate-y-1/2 text-green-500">
+        <div className="absolute right-3 top-1/2 -translate-y-1/2 text-green-500 z-10">
           <CheckCircle2 size={16} />
         </div>
       )}
       <Input 
         id="cardExpiry" 
         placeholder="MM/AA" 
-        className="pl-9 h-11 text-sm bg-white text-black rounded-lg border-gray-200 focus-visible:ring-gray-300" 
+        className="pl-10 h-11 text-sm bg-white text-black rounded-lg border-gray-200 focus-visible:ring-gray-300" 
         value={value}
         onChange={handleChange}
         type="tel"

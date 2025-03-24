@@ -70,7 +70,7 @@ export function PaymentMethodSelector({
               <img 
                 src="/lovable-uploads/39a4f176-daeb-4a4b-8d5d-2e2e1995a1fa.png" 
                 alt="Pix" 
-                className="w-10 h-10 object-contain"
+                className="w-12 h-12 object-contain mx-auto"
                 loading="eager"
               />
             </div>
