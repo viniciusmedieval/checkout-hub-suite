@@ -70,6 +70,7 @@ export function PaymentMethodSelector({
               src="https://pay.kirvano.com/img/pix.svg" 
               alt="Pix" 
               className="w-4 h-4 mr-2 inline-block"
+              loading="eager"
             />
             Pix
           </TabsTrigger>
