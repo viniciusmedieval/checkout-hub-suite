@@ -3,9 +3,11 @@ import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useConfiguracao } from "@/components/configuracao/useConfiguracao";
 import { LoadingState } from "@/components/configuracao/LoadingState";
-import { GeralTab } from "@/components/configuracao/GeralTab";
-import { AparenciaTab } from "@/components/configuracao/AparenciaTab";
+import { HeaderTab } from "@/components/configuracao/sections/HeaderTab";
+import { ConteudoTab } from "@/components/configuracao/sections/ConteudoTab";
 import { DepoimentosTab } from "@/components/configuracao/DepoimentosTab";
+import { RodapeTab } from "@/components/configuracao/sections/RodapeTab";
+import { BotoesTab } from "@/components/configuracao/sections/BotoesTab";
 
 const Configuracao = () => {
   const {
@@ -18,7 +20,7 @@ const Configuracao = () => {
     handleSaveConfig,
     handleDeleteTestimonial,
     handleAddTestimonial,
-    handleUpdateTestimonial // New function
+    handleUpdateTestimonial
   } = useConfiguracao();
 
   if (loading) {
@@ -32,23 +34,25 @@ const Configuracao = () => {
         <Button onClick={handleSaveConfig}>Salvar Alterações</Button>
       </div>
 
-      <Tabs defaultValue="geral" className="w-full">
-        <TabsList className="grid w-full grid-cols-3">
-          <TabsTrigger value="geral">Geral</TabsTrigger>
-          <TabsTrigger value="aparencia">Aparência</TabsTrigger>
+      <Tabs defaultValue="header" className="w-full">
+        <TabsList className="grid w-full grid-cols-5">
+          <TabsTrigger value="header">Topo e Banner</TabsTrigger>
+          <TabsTrigger value="conteudo">Campos e Conteúdo</TabsTrigger>
           <TabsTrigger value="depoimentos">Depoimentos</TabsTrigger>
+          <TabsTrigger value="botoes">Botões e Compra</TabsTrigger>
+          <TabsTrigger value="rodape">Rodapé</TabsTrigger>
         </TabsList>
 
-        <TabsContent value="geral" className="space-y-4 mt-4">
-          <GeralTab 
+        <TabsContent value="header" className="space-y-4 mt-4">
+          <HeaderTab 
             config={config} 
             handleConfigChange={handleConfigChange}
             handleSwitchChange={handleSwitchChange}
           />
         </TabsContent>
 
-        <TabsContent value="aparencia" className="space-y-4 mt-4">
-          <AparenciaTab 
+        <TabsContent value="conteudo" className="space-y-4 mt-4">
+          <ConteudoTab 
             config={config} 
             handleConfigChange={handleConfigChange}
             handleSwitchChange={handleSwitchChange}
@@ -61,7 +65,23 @@ const Configuracao = () => {
             depoimentosSaving={depoimentosSaving}
             handleDeleteTestimonial={handleDeleteTestimonial}
             handleAddTestimonial={handleAddTestimonial}
-            handleUpdateTestimonial={handleUpdateTestimonial} // Pass the new function
+            handleUpdateTestimonial={handleUpdateTestimonial}
+          />
+        </TabsContent>
+
+        <TabsContent value="botoes" className="space-y-4 mt-4">
+          <BotoesTab 
+            config={config} 
+            handleConfigChange={handleConfigChange}
+            handleSwitchChange={handleSwitchChange}
+          />
+        </TabsContent>
+
+        <TabsContent value="rodape" className="space-y-4 mt-4">
+          <RodapeTab 
+            config={config} 
+            handleConfigChange={handleConfigChange}
+            handleSwitchChange={handleSwitchChange}
           />
         </TabsContent>
       </Tabs>
