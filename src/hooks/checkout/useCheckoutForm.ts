@@ -1,7 +1,7 @@
 
 import { useState, useEffect } from "react";
 import { toast } from "sonner";
-import { validateEmail, validateCPF, validateMobilePhone } from "./useValidation";
+import { validateEmail, validateCPF, validateMobilePhone, validateBirthDate } from "./useValidation";
 import { supabase } from "@/lib/supabase";
 import { Produto, ConfigCheckout } from "@/lib/supabase";
 
@@ -10,6 +10,7 @@ export type FormData = {
   email: string;
   telefone: string;
   documento: string;
+  data_nascimento?: string;
 };
 
 export const useCheckoutForm = (produto: Produto | null, configCheckout?: ConfigCheckout | null) => {
@@ -17,7 +18,8 @@ export const useCheckoutForm = (produto: Produto | null, configCheckout?: Config
     nome: "",
     email: "",
     telefone: "",
-    documento: ""
+    documento: "",
+    data_nascimento: ""
   });
   
   const [formErrors, setFormErrors] = useState<Record<string, boolean>>({});
@@ -26,6 +28,10 @@ export const useCheckoutForm = (produto: Produto | null, configCheckout?: Config
   // Determine which fields to validate based on config
   const shouldValidateDocumento = configCheckout?.mostrar_campo_documento !== false;
   const shouldValidateTelefone = configCheckout?.mostrar_campo_telefone !== false;
+  const shouldShowDataNascimento = configCheckout?.mostrar_campo_nascimento === true;
+  const shouldValidateCpf = configCheckout?.validar_cpf === true;
+  const shouldValidateTelefoneFormat = configCheckout?.validar_telefone === true;
+  const shouldValidateDataNascimento = configCheckout?.validar_nascimento === true;
 
   // Reset form errors when input changes
   const handleInputChange = (name: string, value: string) => {
@@ -46,7 +52,7 @@ export const useCheckoutForm = (produto: Produto | null, configCheckout?: Config
     if (shouldValidateTelefone) {
       if (!formData.telefone.trim()) {
         errors.telefone = true;
-      } else {
+      } else if (shouldValidateTelefoneFormat) {
         const telefoneDigits = formData.telefone.replace(/\D/g, '');
         if (!validateMobilePhone(telefoneDigits)) {
           errors.telefone = true;
@@ -58,12 +64,23 @@ export const useCheckoutForm = (produto: Produto | null, configCheckout?: Config
     if (shouldValidateDocumento) {
       if (!formData.documento.trim()) {
         errors.documento = true;
-      } else {
+      } else if (shouldValidateCpf) {
         const documentoDigits = formData.documento.replace(/\D/g, '');
         if (documentoDigits.length === 11 && !validateCPF(formData.documento)) {
           errors.documento = true;
         } else if (documentoDigits.length !== 11 && documentoDigits.length !== 14) {
           errors.documento = true;
+        }
+      }
+    }
+    
+    // Validate birth date if field is shown and validation is enabled
+    if (shouldShowDataNascimento) {
+      if (!formData.data_nascimento?.trim()) {
+        errors.data_nascimento = true;
+      } else if (shouldValidateDataNascimento) {
+        if (!validateBirthDate(formData.data_nascimento)) {
+          errors.data_nascimento = true;
         }
       }
     }
@@ -93,6 +110,7 @@ export const useCheckoutForm = (produto: Produto | null, configCheckout?: Config
         email: formData.email,
         celular: formData.telefone,
         documento: formData.documento,
+        data_nascimento: formData.data_nascimento,
         produto_id: produto.id,
         criado_em: new Date().toISOString()
       };
@@ -111,7 +129,8 @@ export const useCheckoutForm = (produto: Produto | null, configCheckout?: Config
         nome: "",
         email: "",
         telefone: "",
-        documento: ""
+        documento: "",
+        data_nascimento: ""
       });
       
       // Redirect to thank you page or show success message

@@ -42,3 +42,78 @@ export const validateMobilePhone = (phone: string): boolean => {
   // Brazilian mobile phones have 11 digits (with DDD)
   return cleanPhone.length === 11;
 };
+
+export const validateCreditCard = (cardNumber: string): boolean => {
+  const cleanCardNumber = cardNumber.replace(/\D/g, '');
+  
+  // Card number should be between 13 and 19 digits
+  if (cleanCardNumber.length < 13 || cleanCardNumber.length > 19) {
+    return false;
+  }
+  
+  // Luhn algorithm (mod 10)
+  let sum = 0;
+  let shouldDouble = false;
+  
+  // Loop from right to left
+  for (let i = cleanCardNumber.length - 1; i >= 0; i--) {
+    let digit = parseInt(cleanCardNumber.charAt(i));
+    
+    if (shouldDouble) {
+      digit *= 2;
+      if (digit > 9) {
+        digit -= 9;
+      }
+    }
+    
+    sum += digit;
+    shouldDouble = !shouldDouble;
+  }
+  
+  return sum % 10 === 0;
+};
+
+export const validateBirthDate = (date: string): boolean => {
+  // Check if the date is in the format DD/MM/YYYY
+  if (!/^\d{2}\/\d{2}\/\d{4}$/.test(date)) {
+    return false;
+  }
+  
+  const [day, month, year] = date.split('/').map(part => parseInt(part, 10));
+  
+  // Create date object and check if it's valid
+  const dateObj = new Date(year, month - 1, day);
+  if (
+    dateObj.getFullYear() !== year ||
+    dateObj.getMonth() !== month - 1 ||
+    dateObj.getDate() !== day
+  ) {
+    return false;
+  }
+  
+  // Check if the person is at least 18 years old
+  const today = new Date();
+  const minAge = 18;
+  const minBirthDate = new Date(
+    today.getFullYear() - minAge,
+    today.getMonth(),
+    today.getDate()
+  );
+  
+  return dateObj <= minBirthDate;
+};
+
+export const formatBirthDate = (value: string): string => {
+  if (!value) return '';
+  
+  // Remove all non-digits
+  const digits = value.replace(/\D/g, '');
+  
+  if (digits.length <= 2) {
+    return digits;
+  } else if (digits.length <= 4) {
+    return `${digits.slice(0, 2)}/${digits.slice(2)}`;
+  } else {
+    return `${digits.slice(0, 2)}/${digits.slice(2, 4)}/${digits.slice(4, 8)}`;
+  }
+};

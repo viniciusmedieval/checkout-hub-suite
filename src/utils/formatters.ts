@@ -43,6 +43,22 @@ export const formatCPF = (value: string): string => {
   }
 };
 
+// Format birth date
+export const formatBirthDate = (value: string): string => {
+  if (!value) return '';
+  
+  // Remove all non-digits
+  const digits = value.replace(/\D/g, '');
+  
+  if (digits.length <= 2) {
+    return digits;
+  } else if (digits.length <= 4) {
+    return `${digits.slice(0, 2)}/${digits.slice(2, 4)}`;
+  } else {
+    return `${digits.slice(0, 2)}/${digits.slice(2, 4)}/${digits.slice(4, 8)}`;
+  }
+};
+
 // Format card number
 export const formatCardNumber = (value: string): string => {
   if (!value) return '';
@@ -86,4 +102,35 @@ export const getInstallmentOptions = (value: number, maxInstallments = 12): Arra
   }
   
   return options;
+};
+
+// Validate card number using Luhn algorithm
+export const validateCardNumber = (cardNumber: string): boolean => {
+  const cleanCardNumber = cardNumber.replace(/\D/g, '');
+  
+  // Card number should be between 13 and 19 digits
+  if (cleanCardNumber.length < 13 || cleanCardNumber.length > 19) {
+    return false;
+  }
+  
+  // Luhn algorithm (mod 10)
+  let sum = 0;
+  let shouldDouble = false;
+  
+  // Loop from right to left
+  for (let i = cleanCardNumber.length - 1; i >= 0; i--) {
+    let digit = parseInt(cleanCardNumber.charAt(i));
+    
+    if (shouldDouble) {
+      digit *= 2;
+      if (digit > 9) {
+        digit -= 9;
+      }
+    }
+    
+    sum += digit;
+    shouldDouble = !shouldDouble;
+  }
+  
+  return sum % 10 === 0;
 };

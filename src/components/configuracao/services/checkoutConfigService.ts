@@ -29,7 +29,13 @@ export const fetchCheckoutConfig = async (): Promise<ConfigCheckout | null> => {
         mostrar_campo_telefone: Boolean(data[0].mostrar_campo_telefone),
         mostrar_contador: Boolean(data[0].mostrar_contador),
         mostrar_bandeira_brasil: Boolean(data[0].mostrar_bandeira_brasil),
-        mostrar_prefixo_telefone: Boolean(data[0].mostrar_prefixo_telefone)
+        mostrar_prefixo_telefone: Boolean(data[0].mostrar_prefixo_telefone),
+        // New validation fields
+        validar_cpf: Boolean(data[0].validar_cpf),
+        validar_telefone: Boolean(data[0].validar_telefone),
+        validar_cartao: Boolean(data[0].validar_cartao),
+        mostrar_campo_nascimento: Boolean(data[0].mostrar_campo_nascimento),
+        validar_nascimento: Boolean(data[0].validar_nascimento)
       };
       
       console.log("Configurações carregadas:", configData);
@@ -96,7 +102,13 @@ export const saveConfig = async (config: ConfigCheckout): Promise<ConfigCheckout
       icone_nome: config.icone_nome || "user",
       icone_email: config.icone_email || "mail",
       icone_telefone: config.icone_telefone || "smartphone",
-      icone_documento: config.icone_documento || "file-text"
+      icone_documento: config.icone_documento || "file-text",
+      // New validation fields
+      validar_cpf: Boolean(config.validar_cpf),
+      validar_telefone: Boolean(config.validar_telefone),
+      validar_cartao: Boolean(config.validar_cartao),
+      mostrar_campo_nascimento: Boolean(config.mostrar_campo_nascimento),
+      validar_nascimento: Boolean(config.validar_nascimento)
     };
     
     console.log("Configurações validadas a serem salvas:", configToSave);
@@ -143,7 +155,13 @@ export const saveConfig = async (config: ConfigCheckout): Promise<ConfigCheckout
         mostrar_campo_telefone: Boolean(refreshedConfig[0].mostrar_campo_telefone),
         mostrar_contador: Boolean(refreshedConfig[0].mostrar_contador),
         mostrar_bandeira_brasil: Boolean(refreshedConfig[0].mostrar_bandeira_brasil),
-        mostrar_prefixo_telefone: Boolean(refreshedConfig[0].mostrar_prefixo_telefone)
+        mostrar_prefixo_telefone: Boolean(refreshedConfig[0].mostrar_prefixo_telefone),
+        // New validation fields
+        validar_cpf: Boolean(refreshedConfig[0].validar_cpf),
+        validar_telefone: Boolean(refreshedConfig[0].validar_telefone),
+        validar_cartao: Boolean(refreshedConfig[0].validar_cartao),
+        mostrar_campo_nascimento: Boolean(refreshedConfig[0].mostrar_campo_nascimento),
+        validar_nascimento: Boolean(refreshedConfig[0].validar_nascimento)
       };
       
       console.log("Configurações atualizadas após salvamento:", updatedConfig);

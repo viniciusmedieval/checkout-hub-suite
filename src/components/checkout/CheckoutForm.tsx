@@ -4,6 +4,8 @@ import { Input } from "@/components/ui/input";
 import { useState } from "react";
 import { formatPhoneNumber, formatCPF } from "@/utils/formatters";
 import { DynamicIcon } from "./utils/DynamicIcon";
+import { formatBirthDate } from "@/hooks/checkout/useValidation";
+import { Calendar } from "lucide-react";
 
 interface CheckoutFormProps {
   configCheckout?: ConfigCheckout | null;
@@ -12,18 +14,31 @@ interface CheckoutFormProps {
     email: string;
     telefone: string;
     documento: string;
+    data_nascimento?: string;
   };
   onChange?: (name: string, value: string) => void;
   errors?: Record<string, boolean>;
 }
 
-export function CheckoutForm({ configCheckout, formData = { nome: "", email: "", telefone: "", documento: "" }, onChange, errors = {} }: CheckoutFormProps) {
+export function CheckoutForm({ 
+  configCheckout, 
+  formData = { 
+    nome: "", 
+    email: "", 
+    telefone: "", 
+    documento: "", 
+    data_nascimento: "" 
+  }, 
+  onChange, 
+  errors = {} 
+}: CheckoutFormProps) {
   const [localFormData, setLocalFormData] = useState(formData);
   const [localErrors, setLocalErrors] = useState(errors);
 
   // Determine whether to show optional fields
   const showDocumento = configCheckout?.mostrar_campo_documento !== false;
   const showTelefone = configCheckout?.mostrar_campo_telefone !== false;
+  const showDataNascimento = configCheckout?.mostrar_campo_nascimento === true;
   
   // Use custom title from config or default
   const titleIdentificacao = configCheckout?.titulo_identificacao || "Identificação";
@@ -49,6 +64,8 @@ export function CheckoutForm({ configCheckout, formData = { nome: "", email: "",
       formattedValue = formatPhoneNumber(value);
     } else if (name === 'documento') {
       formattedValue = formatCPF(value);
+    } else if (name === 'data_nascimento') {
+      formattedValue = formatBirthDate(value);
     }
     
     setLocalFormData(prev => ({ ...prev, [name]: formattedValue }));
@@ -103,7 +120,7 @@ export function CheckoutForm({ configCheckout, formData = { nome: "", email: "",
           {(errors.email || localErrors.email) && <p className="text-red-500 text-xs mt-1">E-mail inválido</p>}
         </div>
         
-        <div className={`grid ${showDocumento && showTelefone ? 'grid-cols-2' : 'grid-cols-1'} gap-3`}>
+        <div className={`grid ${(showDocumento && showTelefone) || (showDocumento && showDataNascimento) || (showTelefone && showDataNascimento) ? 'grid-cols-2' : 'grid-cols-1'} gap-3`}>
           {showDocumento && (
             <div className="relative">
               <div className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-700">
@@ -121,7 +138,11 @@ export function CheckoutForm({ configCheckout, formData = { nome: "", email: "",
                 onChange={handleChange}
                 className={`pl-9 h-10 text-sm ${errors.documento || localErrors.documento ? 'border-red-500' : 'border-gray-200'} bg-white text-black focus-visible:ring-gray-300`}
               />
-              {(errors.documento || localErrors.documento) && <p className="text-red-500 text-xs mt-1">Documento inválido</p>}
+              {(errors.documento || localErrors.documento) && (
+                <p className="text-red-500 text-xs mt-1">
+                  {configCheckout?.validar_cpf ? 'CPF inválido' : 'Documento inválido'}
+                </p>
+              )}
             </div>
           )}
           
@@ -142,7 +163,33 @@ export function CheckoutForm({ configCheckout, formData = { nome: "", email: "",
                 onChange={handleChange}
                 className={`pl-16 h-10 text-sm ${errors.telefone || localErrors.telefone ? 'border-red-500' : 'border-gray-200'} bg-white text-black focus-visible:ring-gray-300`}
               />
-              {(errors.telefone || localErrors.telefone) && <p className="text-red-500 text-xs mt-1">Celular inválido</p>}
+              {(errors.telefone || localErrors.telefone) && (
+                <p className="text-red-500 text-xs mt-1">
+                  {configCheckout?.validar_telefone ? 'Celular inválido' : 'Celular é obrigatório'}
+                </p>
+              )}
+            </div>
+          )}
+          
+          {showDataNascimento && (
+            <div className="relative">
+              <div className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-700">
+                <Calendar size={16} className="text-gray-500" />
+              </div>
+              <Input 
+                id="data_nascimento"
+                name="data_nascimento"
+                placeholder="Data de Nascimento"
+                value={onChange ? formData.data_nascimento || '' : localFormData.data_nascimento || ''}
+                onChange={handleChange}
+                className={`pl-9 h-10 text-sm ${errors.data_nascimento || localErrors.data_nascimento ? 'border-red-500' : 'border-gray-200'} bg-white text-black focus-visible:ring-gray-300`}
+                maxLength={10}
+              />
+              {(errors.data_nascimento || localErrors.data_nascimento) && (
+                <p className="text-red-500 text-xs mt-1">
+                  {configCheckout?.validar_nascimento ? 'Você deve ter pelo menos 18 anos' : 'Data de nascimento inválida'}
+                </p>
+              )}
             </div>
           )}
         </div>

@@ -8,6 +8,7 @@ export type Cliente = {
   documento: string;
   produto_id: number;
   criado_em: string;
+  data_nascimento?: string;
 };
 
 export type Produto = {
@@ -85,6 +86,12 @@ export type ConfigCheckout = {
   icone_email?: string;
   icone_telefone?: string;
   icone_documento?: string;
+  // Validation options
+  validar_cpf?: boolean;
+  validar_telefone?: boolean;
+  validar_cartao?: boolean;
+  mostrar_campo_nascimento?: boolean;
+  validar_nascimento?: boolean;
 };
 
 export type Depoimento = {

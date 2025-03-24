@@ -35,13 +35,65 @@ export function FormularioTab({ config, handleConfigChange, handleSwitchChange }
             <Label htmlFor="mostrar-campo-documento">Mostrar campo de documento (CPF/CNPJ)</Label>
           </div>
           
-          <div className="flex items-center space-x-2">
+          <div className="flex items-center space-x-2 mb-4">
             <Switch 
               checked={config.mostrar_campo_telefone || false} 
               onCheckedChange={(checked) => handleSwitchChange('mostrar_campo_telefone', checked)}
               id="mostrar-campo-telefone"
             />
             <Label htmlFor="mostrar-campo-telefone">Mostrar campo de telefone</Label>
+          </div>
+          
+          <div className="flex items-center space-x-2">
+            <Switch 
+              checked={config.mostrar_campo_nascimento || false} 
+              onCheckedChange={(checked) => handleSwitchChange('mostrar_campo_nascimento', checked)}
+              id="mostrar-campo-nascimento"
+            />
+            <Label htmlFor="mostrar-campo-nascimento">Mostrar campo de data de nascimento</Label>
+          </div>
+        </div>
+
+        <Separator />
+
+        {/* Validation Configuration */}
+        <div className="space-y-4">
+          <h3 className="text-sm font-medium">Validações</h3>
+          
+          <div className="flex items-center space-x-2 mb-4">
+            <Switch 
+              checked={config.validar_cpf || false} 
+              onCheckedChange={(checked) => handleSwitchChange('validar_cpf', checked)}
+              id="validar-cpf"
+            />
+            <Label htmlFor="validar-cpf">Validar CPF</Label>
+          </div>
+          
+          <div className="flex items-center space-x-2 mb-4">
+            <Switch 
+              checked={config.validar_telefone || false} 
+              onCheckedChange={(checked) => handleSwitchChange('validar_telefone', checked)}
+              id="validar-telefone"
+            />
+            <Label htmlFor="validar-telefone">Validar telefone</Label>
+          </div>
+          
+          <div className="flex items-center space-x-2 mb-4">
+            <Switch 
+              checked={config.validar_cartao || false} 
+              onCheckedChange={(checked) => handleSwitchChange('validar_cartao', checked)}
+              id="validar-cartao"
+            />
+            <Label htmlFor="validar-cartao">Validar cartão de crédito</Label>
+          </div>
+          
+          <div className="flex items-center space-x-2">
+            <Switch 
+              checked={config.validar_nascimento || false} 
+              onCheckedChange={(checked) => handleSwitchChange('validar_nascimento', checked)}
+              id="validar-nascimento"
+            />
+            <Label htmlFor="validar-nascimento">Validar data de nascimento (18+)</Label>
           </div>
         </div>
 

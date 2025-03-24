@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { Input } from "@/components/ui/input";
 import { CardInput } from "./CardInput";
@@ -6,12 +5,15 @@ import { CardExpiryInput } from "./CardExpiryInput";
 import { CardCVVInput } from "./CardCVVInput";
 import { InstallmentSelector } from "./InstallmentSelector";
 import { User, CheckCircle2 } from "lucide-react";
+import { validateCardNumber } from "@/utils/formatters";
+import { ConfigCheckout } from "@/lib/supabase";
 
 interface CardPaymentFormProps {
   productValue: number;
+  configCheckout?: ConfigCheckout | null;
 }
 
-export function CardPaymentForm({ productValue }: CardPaymentFormProps) {
+export function CardPaymentForm({ productValue, configCheckout }: CardPaymentFormProps) {
   const [cardNumber, setCardNumber] = useState("");
   const [cardName, setCardName] = useState("");
   const [cardExpiry, setCardExpiry] = useState("");
@@ -25,11 +27,18 @@ export function CardPaymentForm({ productValue }: CardPaymentFormProps) {
   });
   const [formIsComplete, setFormIsComplete] = useState(false);
 
+  const validateCard = configCheckout?.validar_cartao === true;
+
   const handleCardNumberChange = (value: string, isValid: boolean) => {
     setCardNumber(value);
+    
+    const cardIsValid = validateCard 
+      ? validateCardNumber(value) 
+      : isValid;
+    
     setIsValid(prev => ({
       ...prev,
-      cardNumber: isValid
+      cardNumber: cardIsValid
     }));
   };
 
@@ -58,7 +67,6 @@ export function CardPaymentForm({ productValue }: CardPaymentFormProps) {
     }));
   };
   
-  // Check if all form fields are valid
   useEffect(() => {
     setFormIsComplete(
       isValid.cardNumber && 
@@ -91,6 +99,7 @@ export function CardPaymentForm({ productValue }: CardPaymentFormProps) {
       <CardInput 
         value={cardNumber}
         onChange={handleCardNumberChange}
+        validateCard={validateCard}
       />
       
       <div className="grid grid-cols-2 gap-3">
