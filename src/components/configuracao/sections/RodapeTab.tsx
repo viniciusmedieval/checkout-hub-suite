@@ -32,8 +32,11 @@ export function RodapeTab({ config, handleConfigChange, handleSwitchChange }: Ro
               name="rodape_texto"
               value={config.rodape_texto || ""}
               onChange={handleConfigChange}
-              placeholder="Ex: © 2023 Sua Empresa. Todos os direitos reservados."
+              placeholder="Ex: Todos os direitos reservados. Minha Empresa LTDA 2023"
             />
+            <p className="text-xs text-gray-500">
+              Ou configure individualmente abaixo:
+            </p>
           </div>
           
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -43,7 +46,7 @@ export function RodapeTab({ config, handleConfigChange, handleSwitchChange }: Ro
                 name="rodape_empresa"
                 value={config.rodape_empresa || ""}
                 onChange={handleConfigChange}
-                placeholder="Ex: Sua Empresa"
+                placeholder="Ex: Minha Empresa LTDA"
               />
             </div>
             
@@ -96,8 +99,20 @@ export function RodapeTab({ config, handleConfigChange, handleSwitchChange }: Ro
               onCheckedChange={(checked) => handleSwitchChange('mostrar_seguro', checked)}
               id="mostrar-seguro"
             />
-            <Label htmlFor="mostrar-seguro">Mostrar ícone de segurança no rodapé</Label>
+            <Label htmlFor="mostrar-seguro">Mostrar mensagem de segurança no rodapé</Label>
           </div>
+          
+          {config.mostrar_seguro && (
+            <div className="space-y-2 pl-7">
+              <label className="text-sm font-medium">Mensagem de segurança</label>
+              <Input
+                name="mensagem_rodape"
+                value={config.mensagem_rodape || ""}
+                onChange={handleConfigChange}
+                placeholder="Compra 100% segura e garantida."
+              />
+            </div>
+          )}
         </div>
       </CardContent>
     </Card>

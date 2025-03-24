@@ -16,12 +16,12 @@ export function CheckoutFooter({ configCheckout }: CheckoutFooterProps) {
   
   // Build footer text with company name and year
   const footerText = configCheckout?.rodape_texto || 
-    `© ${currentYear} ${companyName}. Todos os direitos reservados.`;
+    `Todos os direitos reservados. ${companyName} ${currentYear}`;
 
   return (
     <footer className="mt-auto py-4 border-t border-gray-100 text-xs" style={{ borderColor: 'rgba(0,0,0,0.05)' }}>
       <div className="container max-w-md mx-auto px-4">
-        {/* Copyright message from admin panel */}
+        {/* Company name and year */}
         <div className="flex flex-wrap justify-center items-center">
           <div className="text-gray-500 text-center">
             <p>{footerText}</p>
