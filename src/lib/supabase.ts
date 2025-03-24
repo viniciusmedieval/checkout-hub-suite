@@ -1,6 +1,7 @@
 
 import { createClient, SupabaseClient } from '@supabase/supabase-js';
 import { createMockClient } from './mock/mock-client';
+import { checkSupabaseCredentials } from './env-check';
 
 // Re-export all types from the database-types file
 export * from './types/database-types';
@@ -23,6 +24,9 @@ try {
   // Try to get credentials from environment variables as second fallback
   const envSupabaseUrl = import.meta.env.VITE_SUPABASE_URL;
   const envSupabaseKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
+
+  // Check if environment variables are configured
+  checkSupabaseCredentials();
 
   // Use localStorage credentials if available, otherwise use environment variables
   const supabaseUrl = localSupabaseUrl || envSupabaseUrl;
