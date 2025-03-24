@@ -46,7 +46,7 @@ export function createMockClient() {
                     error: null
                   };
                 },
-                then: (callback: Function) => {
+                then: (callback: (value: { data: any[]; error: null | any }) => any) => {
                   return Promise.resolve({
                     data: filteredData,
                     error: null
@@ -82,7 +82,7 @@ export function createMockClient() {
                         error: result ? null : { message: 'No rows found' }
                       };
                     },
-                    then: (callback: Function) => {
+                    then: (callback: (value: { data: any[]; error: null | any }) => any) => {
                       return Promise.resolve({
                         data: limitedData,
                         error: null
@@ -90,7 +90,7 @@ export function createMockClient() {
                     }
                   };
                 },
-                then: (callback: Function) => {
+                then: (callback: (value: { data: any[]; error: null | any }) => any) => {
                   return Promise.resolve({
                     data: sortedData,
                     error: null
@@ -104,7 +104,7 @@ export function createMockClient() {
               const limitedData = data.slice(0, limit);
               
               return {
-                then: (callback: Function) => {
+                then: (callback: (value: { data: any[]; error: null | any }) => any) => {
                   return Promise.resolve({
                     data: limitedData,
                     error: null
@@ -112,7 +112,7 @@ export function createMockClient() {
                 }
               };
             },
-            then: (callback: Function) => {
+            then: (callback: (value: { data: any[]; error: null | any }) => any) => {
               const data = mockStorage[table] || [];
               return Promise.resolve({
                 data: data,
@@ -155,7 +155,7 @@ export function createMockClient() {
           saveMockStorageToLocalStorage();
           
           return {
-            then: (callback: Function) => {
+            then: (callback: (value: { data: null; error: null | any }) => any) => {
               return Promise.resolve({
                 data: null,
                 error: null
@@ -172,7 +172,7 @@ export function createMockClient() {
               
               if (!mockStorage[table]) {
                 return {
-                  then: (callback: Function) => {
+                  then: (callback: (value: { data: null; error: { message: string } }) => any) => {
                     return Promise.resolve({
                       data: null,
                       error: { message: 'Table not found' }
@@ -193,7 +193,7 @@ export function createMockClient() {
               saveMockStorageToLocalStorage();
               
               return {
-                then: (callback: Function) => {
+                then: (callback: (value: { data: null; error: null | any }) => any) => {
                   return Promise.resolve({
                     data: null,
                     error: null
@@ -212,7 +212,7 @@ export function createMockClient() {
               
               if (!mockStorage[table]) {
                 return {
-                  then: (callback: Function) => {
+                  then: (callback: (value: { data: null; error: { message: string } }) => any) => {
                     return Promise.resolve({
                       data: null,
                       error: { message: 'Table not found' }
@@ -230,7 +230,7 @@ export function createMockClient() {
               saveMockStorageToLocalStorage();
               
               return {
-                then: (callback: Function) => {
+                then: (callback: (value: { data: null; error: null | any }) => any) => {
                   return Promise.resolve({
                     data: null,
                     error: null
