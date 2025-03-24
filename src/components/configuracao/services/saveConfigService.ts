@@ -74,7 +74,7 @@ export const saveConfig = async (config: ConfigCheckout): Promise<ConfigCheckout
     if (config.id) {
       console.log(`Atualizando configuração existente com ID ${config.id}`);
       
-      // Update operation - do not use .select() here
+      // FIXED: Do not chain .select() directly after update
       const { error } = await supabase
         .from("config_checkout")
         .update(configToSave)
@@ -86,7 +86,7 @@ export const saveConfig = async (config: ConfigCheckout): Promise<ConfigCheckout
         return null;
       }
       
-      // After successful update, fetch the updated record in a separate query
+      // Do a separate query to fetch the updated record
       const { data, error: selectError } = await supabase
         .from("config_checkout")
         .select('*')
@@ -107,7 +107,7 @@ export const saveConfig = async (config: ConfigCheckout): Promise<ConfigCheckout
     } else {
       console.log("Criando nova configuração");
       
-      // Insert operation - do not use .select() here
+      // FIXED: Do not chain .select() directly after insert
       const { error } = await supabase
         .from("config_checkout")
         .insert([configToSave]);
@@ -118,7 +118,7 @@ export const saveConfig = async (config: ConfigCheckout): Promise<ConfigCheckout
         return null;
       }
       
-      // After successful insert, fetch the most recently created record in a separate query
+      // Do a separate query to fetch the newly created record
       const { data, error: selectError } = await supabase
         .from("config_checkout")
         .select('*')
