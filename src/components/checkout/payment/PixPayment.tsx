@@ -6,13 +6,13 @@ import { toast } from "sonner";
 import { formatCurrency } from "@/utils/formatters";
 
 interface PixPaymentProps {
+  productValue: number;
+  countdown: number; // seconds
   pixConfig: {
     tipo_chave_pix: string;
     chave_pix: string;
     nome_beneficiario: string;
   } | null;
-  countdown: number; // seconds
-  productValue: number;
 }
 
 export function PixPayment({ pixConfig, countdown: initialCountdown, productValue }: PixPaymentProps) {

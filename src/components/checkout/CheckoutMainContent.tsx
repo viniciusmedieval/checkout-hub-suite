@@ -34,13 +34,6 @@ export function CheckoutMainContent({
   // Determinar a cor do texto a ser usada (default: black)
   const textColor = configCheckout?.cor_titulo || "#000000";
 
-  // PixConfig para o produto atual
-  const pixConfig = produto ? {
-    tipo_chave_pix: produto.tipo_chave_pix,
-    chave_pix: produto.chave_pix,
-    nome_beneficiario: produto.nome_beneficiario
-  } : null;
-
   return (
     <div className="w-full max-w-md mx-auto py-6 px-4 space-y-5">
       {/* Product Title with configurable color */}
@@ -67,9 +60,9 @@ export function CheckoutMainContent({
       {/* Payment Section */}
       <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
         <PaymentMethodSelector 
-          productValue={produto.valor} 
-          pixConfig={pixConfig}
-          onPaymentMethodChange={setPaymentMethod}
+          productValue={produto.valor}
+          selectedMethod={paymentMethod}
+          onMethodChange={setPaymentMethod}
           produto={produto}
           configCheckout={configCheckout}
         />

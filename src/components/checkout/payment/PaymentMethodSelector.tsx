@@ -16,8 +16,9 @@ interface PaymentMethodSelectorProps {
   productValue: number;
   productName?: string;
   productImage?: string;
-  selectedMethod: PaymentMethod;
-  onMethodChange: (method: PaymentMethod) => void;
+  selectedMethod?: PaymentMethod;
+  onMethodChange?: (method: PaymentMethod) => void;
+  onPaymentMethodChange?: (method: PaymentMethod) => void; // Added to support both naming conventions
   produto?: Produto | null;
   configCheckout?: ConfigCheckout | null;
 }
@@ -28,10 +29,12 @@ export function PaymentMethodSelector({
   productImage,
   selectedMethod = 'card',
   onMethodChange,
+  onPaymentMethodChange,
   produto,
   configCheckout
 }: PaymentMethodSelectorProps) {
   const [pixData, setPixData] = useState<PixProps | null>(null);
+  const [currentMethod, setCurrentMethod] = useState<PaymentMethod>(selectedMethod);
   
   useEffect(() => {
     if (produto) {
@@ -46,8 +49,18 @@ export function PaymentMethodSelector({
     }
   }, [produto]);
 
+  // Use the provided method change handler or fallback to internal state
   const handleMethodClick = (method: PaymentMethod) => {
-    onMethodChange(method);
+    setCurrentMethod(method);
+    
+    // Call the appropriate prop method based on what's provided
+    if (onMethodChange) {
+      onMethodChange(method);
+    }
+    
+    if (onPaymentMethodChange) {
+      onPaymentMethodChange(method);
+    }
   };
 
   return (
@@ -64,7 +77,7 @@ export function PaymentMethodSelector({
           type="button"
           onClick={() => handleMethodClick('card')}
           className={`flex-1 flex items-center justify-center gap-2 py-3 px-4 rounded-lg border transition-colors ${
-            selectedMethod === 'card' 
+            currentMethod === 'card' 
               ? 'bg-primary/10 border-primary text-primary'
               : 'bg-white border-gray-200 text-gray-700 hover:bg-gray-50'
           }`}
@@ -77,7 +90,7 @@ export function PaymentMethodSelector({
           type="button"
           onClick={() => handleMethodClick('pix')}
           className={`flex-1 flex items-center justify-center gap-2 py-3 px-4 rounded-lg border transition-colors ${
-            selectedMethod === 'pix' 
+            currentMethod === 'pix' 
               ? 'bg-primary/10 border-primary text-primary' 
               : 'bg-white border-gray-200 text-gray-700 hover:bg-gray-50'
           }`}
@@ -88,19 +101,18 @@ export function PaymentMethodSelector({
       </div>
 
       <div className="py-2">
-        {selectedMethod === 'card' && (
+        {currentMethod === 'card' && (
           <CardPaymentForm 
             productValue={productValue}
             configCheckout={configCheckout}
           />
         )}
         
-        {selectedMethod === 'pix' && pixData && (
+        {currentMethod === 'pix' && pixData && (
           <PixPayment 
             productValue={productValue}
-            productName={productName}
-            productImage={productImage}
-            pixData={pixData}
+            countdown={15 * 60} // Default 15 minutes countdown in seconds
+            pixConfig={pixData}
           />
         )}
       </div>
