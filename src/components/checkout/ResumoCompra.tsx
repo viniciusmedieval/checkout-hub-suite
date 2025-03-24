@@ -72,23 +72,10 @@ export function ResumoCompra({
           )}
         </button>
         
-        {/* Consent message - usando o texto da primeira imagem */}
-        <div className="text-center text-xs mt-4 px-2">
-          <p className="text-gray-600">
-            Ao continuar, você concorda com os nossos{" "}
-            <a href={configCheckout?.url_termos_uso || "#"} className="text-blue-600 hover:underline" target="_blank" rel="noopener noreferrer">
-              Termos de Uso
-            </a>{" "}
-            e confirma que leu nossa{" "}
-            <a href={configCheckout?.url_politica_privacidade || "#"} className="text-blue-600 hover:underline" target="_blank" rel="noopener noreferrer">
-              Política de Privacidade
-            </a>.
-          </p>
-          {/* Security message */}
-          <div className="flex items-center justify-center gap-2 mt-2 text-green-600 font-medium">
-            <Shield size={16} className="text-green-600" />
-            <span>{configCheckout?.mensagem_rodape || "Compra 100% segura e garantida."}</span>
-          </div>
+        {/* Security message */}
+        <div className="flex items-center justify-center gap-2 mt-2 text-green-600 font-medium">
+          <Shield size={16} className="text-green-600" />
+          <span>{configCheckout?.mensagem_rodape || "Compra 100% segura e garantida."}</span>
         </div>
         
         {/* Visitor counter */}
