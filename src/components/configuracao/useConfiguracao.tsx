@@ -9,8 +9,9 @@ import { toast } from "sonner";
 
 export function useConfiguracao() {
   const [loading, setLoading] = useState(true);
+  const [configData, setConfigData] = useState<ConfigCheckout | null>(null);
   
-  // Initialize with default config, will be updated in useEffect
+  // Inicialize com configurações default, será atualizado no useEffect
   const {
     config,
     setConfig,
@@ -18,10 +19,11 @@ export function useConfiguracao() {
     handleConfigChange,
     handleSwitchChange,
     handleIconChange,
-    handleSaveConfig
-  } = useConfigSettings(defaultConfig);
+    handleSaveConfig,
+    hasUnsavedChanges
+  } = useConfigSettings(configData);
   
-  // Initialize with empty array, will be updated in useEffect
+  // Inicialize com array vazio, será atualizado no useEffect
   const {
     depoimentos,
     setDepoimentos,
@@ -31,19 +33,32 @@ export function useConfiguracao() {
     handleUpdateTestimonial
   } = useTestimonials([]);
 
+  // Função para recarregar as configurações do banco de dados
+  const reloadConfig = async () => {
+    setLoading(true);
+    try {
+      const fetchedConfig = await fetchCheckoutConfig();
+      if (fetchedConfig) {
+        console.log('Configuração carregada:', fetchedConfig);
+        setConfigData(fetchedConfig);
+      } else {
+        console.log('Usando configuração padrão');
+        toast.info('Usando configuração padrão');
+      }
+    } catch (error) {
+      console.error('Erro ao carregar configurações:', error);
+      toast.error('Erro ao carregar configurações');
+    } finally {
+      setLoading(false);
+    }
+  };
+
   useEffect(() => {
     const fetchData = async () => {
       setLoading(true);
       try {
         // Fetch config
-        const configData = await fetchCheckoutConfig();
-        if (configData) {
-          console.log('Configuração carregada:', configData);
-          setConfig(configData);
-        } else {
-          console.log('Usando configuração padrão');
-          toast.info('Usando configuração padrão');
-        }
+        await reloadConfig();
         
         // Fetch testimonials
         const testimonialsData = await fetchTestimonials();
@@ -59,6 +74,12 @@ export function useConfiguracao() {
     fetchData();
   }, []);
 
+  // Função para salvar as configurações e recarregar
+  const saveAndReloadConfig = async () => {
+    await handleSaveConfig();
+    await reloadConfig();
+  };
+
   return {
     config,
     loading,
@@ -67,7 +88,9 @@ export function useConfiguracao() {
     handleConfigChange,
     handleSwitchChange,
     handleIconChange,
-    handleSaveConfig,
+    handleSaveConfig: saveAndReloadConfig,
+    hasUnsavedChanges,
+    reloadConfig,
     handleDeleteTestimonial,
     handleAddTestimonial,
     handleUpdateTestimonial

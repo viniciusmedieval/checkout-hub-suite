@@ -123,7 +123,8 @@ export const saveConfig = async (config: ConfigCheckout): Promise<ConfigCheckout
     } else {
       result = await supabase
         .from("config_checkout")
-        .insert([configToSave]);
+        .insert([configToSave])
+        .select();
     }
     
     if (result.error) {
@@ -132,8 +133,8 @@ export const saveConfig = async (config: ConfigCheckout): Promise<ConfigCheckout
     }
     
     console.log("Configurações salvas com sucesso:", result);
-    toast.success("Configurações salvas com sucesso!");
     
+    // Sempre buscar novamente as configurações após salvar
     const { data: refreshedConfig, error: refreshError } = await supabase
       .from("config_checkout")
       .select("*")

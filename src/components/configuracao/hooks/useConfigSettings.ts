@@ -1,12 +1,22 @@
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { ConfigCheckout } from "@/lib/supabase";
 import { saveConfig } from "../services";
 import { defaultConfig } from "../utils/defaultConfig";
+import { toast } from "sonner";
 
 export function useConfigSettings(initialConfig: ConfigCheckout | null = null) {
   const [config, setConfig] = useState<ConfigCheckout>(initialConfig || defaultConfig);
   const [isSaving, setIsSaving] = useState(false);
+  const [lastSavedConfig, setLastSavedConfig] = useState<ConfigCheckout | null>(null);
+
+  // Atualiza o estado inicial quando o initialConfig mudar
+  useEffect(() => {
+    if (initialConfig) {
+      setConfig(initialConfig);
+      setLastSavedConfig(initialConfig);
+    }
+  }, [initialConfig]);
 
   const handleConfigChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
@@ -45,10 +55,27 @@ export function useConfigSettings(initialConfig: ConfigCheckout | null = null) {
       
       if (updatedConfig) {
         setConfig(updatedConfig);
+        setLastSavedConfig(updatedConfig);
+        toast.success("Configurações salvas com sucesso!");
       }
+    } catch (error) {
+      console.error("Erro ao salvar configurações:", error);
+      toast.error("Erro ao salvar configurações. Tente novamente.");
     } finally {
       setIsSaving(false);
     }
+  };
+
+  const hasUnsavedChanges = () => {
+    if (!lastSavedConfig) return Object.keys(config).length > 0;
+    
+    // Compare significant fields in the config
+    for (const key in config) {
+      if (config[key] !== lastSavedConfig[key]) {
+        return true;
+      }
+    }
+    return false;
   };
 
   return {
@@ -58,6 +85,7 @@ export function useConfigSettings(initialConfig: ConfigCheckout | null = null) {
     handleConfigChange,
     handleSwitchChange,
     handleIconChange,
-    handleSaveConfig
+    handleSaveConfig,
+    hasUnsavedChanges
   };
 }
