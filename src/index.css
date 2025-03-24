@@ -57,6 +57,7 @@
     --checkout-text: 0 0% 20%; /* Dark text for form */
     --checkout-text-light: 0 0% 40%; /* Dark gray for secondary text */
     --checkout-button-bg: 151 55% 41.6%; /* Green button background */
+    --checkout-divider: 0 0% 83%; /* Soft black for dividers */
   }
 }
 
@@ -129,5 +130,9 @@
   
   .checkout-button {
     @apply bg-green-600 hover:bg-green-700 text-white font-medium py-3 px-4 rounded w-full transition-colors;
+  }
+  
+  .checkout-divider {
+    @apply bg-gray-300/50;
   }
 }

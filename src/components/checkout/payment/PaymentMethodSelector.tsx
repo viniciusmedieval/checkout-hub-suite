@@ -5,6 +5,7 @@ import { CardPaymentForm } from "./CardPaymentForm";
 import { PixPayment } from "./PixPayment";
 import { PaymentMethod } from "@/hooks/useCheckout";
 import { CreditCard } from "lucide-react";
+import { Separator } from "@/components/ui/separator";
 
 interface PaymentMethodSelectorProps {
   productValue: number;
@@ -53,7 +54,7 @@ export function PaymentMethodSelector({
         className="w-full"
         onValueChange={handleTabChange}
       >
-        <TabsList className="grid w-full grid-cols-2 mb-4 rounded-md border border-gray-100 p-0 overflow-hidden">
+        <TabsList className="grid w-full grid-cols-2 mb-4 rounded-md border border-gray-100 p-0 overflow-hidden relative">
           <TabsTrigger 
             value="card" 
             className="data-[state=active]:bg-white data-[state=active]:text-gray-900 data-[state=active]:border-b-2 data-[state=active]:border-blue-500 text-sm py-2.5 rounded-md"
@@ -68,6 +69,11 @@ export function PaymentMethodSelector({
             <span className="mr-2">📱</span>
             Pix
           </TabsTrigger>
+          {/* Separator line between tab options */}
+          <Separator 
+            orientation="vertical" 
+            className="absolute left-1/2 transform -translate-x-1/2 h-2/3 my-auto top-0 bottom-0 bg-gray-300/50 w-[1px]" 
+          />
         </TabsList>
         
         <TabsContent value="card" className="mt-0">
