@@ -59,9 +59,14 @@ export const saveConfig = async (config: ConfigCheckout): Promise<ConfigCheckout
       rodape_ano: config.rodape_ano,
       mostrar_seguro: config.mostrar_seguro,
       mensagem_rodape: config.mensagem_rodape,
-      mensagem_termos: config.mensagem_termos, // Novo campo
+      mensagem_termos: config.mensagem_termos,
       url_termos_uso: config.url_termos_uso,
-      url_politica_privacidade: config.url_politica_privacidade
+      url_politica_privacidade: config.url_politica_privacidade,
+      // Add the new fields
+      mostrar_campo_documento: config.mostrar_campo_documento,
+      mostrar_campo_telefone: config.mostrar_campo_telefone,
+      titulo_identificacao: config.titulo_identificacao || "Identificação",
+      titulo_pagamento: config.titulo_pagamento || "Pagamento"
     };
     
     console.log("Configurações validadas a serem salvas:", configToSave);

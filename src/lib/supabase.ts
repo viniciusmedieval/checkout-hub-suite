@@ -58,6 +58,11 @@ export type ConfigCheckout = {
   mensagem_termos?: string; // Nova propriedade para mensagem de termos
   url_termos_uso?: string;
   url_politica_privacidade?: string;
+  // New properties for form customization
+  mostrar_campo_documento?: boolean;
+  mostrar_campo_telefone?: boolean;
+  titulo_identificacao?: string;
+  titulo_pagamento?: string;
 };
 
 export { supabase };

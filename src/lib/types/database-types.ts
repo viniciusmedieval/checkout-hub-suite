@@ -1,3 +1,4 @@
+
 // Types for our database tables
 export type Cliente = {
   id: number;
@@ -64,6 +65,12 @@ export type ConfigCheckout = {
   mensagem_rodape: string;
   url_termos_uso?: string;
   url_politica_privacidade?: string;
+  mensagem_termos?: string;
+  // New fields for form customization
+  mostrar_campo_documento?: boolean;
+  mostrar_campo_telefone?: boolean;
+  titulo_identificacao?: string;
+  titulo_pagamento?: string;
 };
 
 export type Depoimento = {
