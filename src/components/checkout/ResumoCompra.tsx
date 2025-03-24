@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { Produto, ConfigCheckout } from "@/lib/supabase";
 import { toast } from "sonner";
@@ -5,21 +6,33 @@ import { LockIcon } from "lucide-react";
 import { supabase } from "@/lib/supabase";
 import { formatCurrency } from "@/utils/formatters";
 
-interface CheckoutSummaryProps {
+interface ResumoCompraProps {
   produto: Produto;
   configCheckout?: ConfigCheckout | null;
+  visitorCount?: number;
+  isProcessing?: boolean;
+  onCompletePurchase?: () => void;
 }
 
-export function CheckoutSummary({ produto, configCheckout }: CheckoutSummaryProps) {
-  const [isProcessing, setIsProcessing] = useState(false);
+export function ResumoCompra({ 
+  produto, 
+  configCheckout,
+  visitorCount,
+  isProcessing = false,
+  onCompletePurchase
+}: ResumoCompraProps) {
   
   // Obter a cor do botão e do texto do botão das configurações ou usar o padrão
   const buttonColor = configCheckout?.cor_botao || "#00C853"; // Verde por padrão 
   const buttonTextColor = configCheckout?.cor_texto_botao || "#FFFFFF";
   
   const handleCompletePurchase = async () => {
-    setIsProcessing(true);
+    if (onCompletePurchase) {
+      onCompletePurchase();
+      return;
+    }
     
+    // Default behavior if no onCompletePurchase is provided
     try {
       // Dados do formulário (em uma aplicação real, estes seriam coletados do formulário)
       const clienteData = {
@@ -49,8 +62,6 @@ export function CheckoutSummary({ produto, configCheckout }: CheckoutSummaryProp
     } catch (error) {
       console.error("Erro ao processar pagamento:", error);
       toast.error("Ocorreu um erro ao processar seu pedido. Tente novamente.");
-    } finally {
-      setIsProcessing(false);
     }
   };
   
@@ -77,6 +88,13 @@ export function CheckoutSummary({ produto, configCheckout }: CheckoutSummaryProp
           </div>
         </div>
       </div>
+      
+      {/* Show visitor count if provided */}
+      {visitorCount && (
+        <div className="text-xs text-gray-500 text-center">
+          <p>{visitorCount} pessoas estão vendo este produto agora</p>
+        </div>
+      )}
       
       <button 
         className="w-full py-3 px-4 text-sm font-medium rounded-md transition-colors flex items-center justify-center gap-2"
