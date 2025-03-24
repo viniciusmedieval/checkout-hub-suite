@@ -59,17 +59,24 @@ const prepareConfigForSave = (config: ConfigCheckout) => {
  */
 const fetchUpdatedConfig = async (id?: string | number): Promise<ConfigCheckout | null> => {
   try {
+    console.log("Buscando config atualizada para ID:", id);
+    
     let result;
     
     if (id) {
       // Fetch the specific updated record - convert id to string if it's a number
+      const idStr = typeof id === 'number' ? id.toString() : id;
+      console.log(`Buscando configuração específica com ID ${idStr}`);
+      
       result = await supabase
         .from("config_checkout")
         .select('*')
-        .eq('id', id.toString())
+        .eq('id', idStr)
         .single();
     } else {
       // Fetch the most recent record
+      console.log("Buscando configuração mais recente");
+      
       result = await supabase
         .from("config_checkout")
         .select('*')
@@ -83,12 +90,16 @@ const fetchUpdatedConfig = async (id?: string | number): Promise<ConfigCheckout 
       throw result.error;
     }
     
+    console.log("Configuração recuperada com sucesso:", result.data);
+    
     if (result.data) {
       return ensureBooleanFields(result.data);
     }
     
+    console.log("Nenhuma configuração encontrada");
     return null;
   } catch (error) {
+    console.error("Erro ao buscar configuração:", error);
     return handleConfigError(error, "recuperar");
   }
 };
@@ -108,19 +119,27 @@ export const saveConfig = async (config: ConfigCheckout): Promise<ConfigCheckout
     
     if (configId) {
       console.log(`Atualizando configuração existente com ID ${configId}`);
-      // Update existing record
-      const { error } = await supabase
+      // Update existing record - ensuring ID is a string
+      const { data, error } = await supabase
         .from("config_checkout")
         .update(configToSave)
-        .eq('id', configId.toString());
+        .eq('id', configId.toString())
+        .select();
         
       if (error) {
         console.error("Erro ao atualizar configurações:", error);
         throw error;
       }
       
-      console.log("Configuração atualizada com sucesso, recuperando dados...");
-      // Fetch the updated record separately
+      console.log("Configuração atualizada com sucesso, resposta:", data);
+      
+      if (data && data.length > 0) {
+        // Process and return the updated record from the response
+        return ensureBooleanFields(data[0]);
+      }
+      
+      // Fallback to separate fetch if no data returned
+      console.log("Nenhum dado retornado na atualização, recuperando separadamente...");
       return await fetchUpdatedConfig(configId);
     } else {
       console.log("Criando nova configuração");
@@ -143,9 +162,11 @@ export const saveConfig = async (config: ConfigCheckout): Promise<ConfigCheckout
       }
       
       // Fallback to fetching the most recent record
+      console.log("Nenhum dado retornado na criação, buscando o mais recente...");
       return await fetchUpdatedConfig();
     }
   } catch (error) {
+    console.error("Erro no saveConfig:", error);
     return handleConfigError(error, "salvar");
   }
 };

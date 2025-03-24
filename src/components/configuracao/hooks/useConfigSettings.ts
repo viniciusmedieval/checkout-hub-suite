@@ -62,6 +62,7 @@ export function useConfigSettings(initialConfig: ConfigCheckout | null = null) {
         toast.success("Configurações salvas com sucesso!");
         return updatedConfig; // Retorna as configurações atualizadas para uso no componente pai
       } else {
+        console.error("Erro ao salvar configurações: retorno nulo");
         toast.error("Erro ao salvar configurações. Verifique o console para mais detalhes.");
         return null;
       }
