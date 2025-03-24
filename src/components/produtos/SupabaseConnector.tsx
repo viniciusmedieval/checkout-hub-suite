@@ -7,6 +7,7 @@ import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { AlertCircle, Database, ExternalLink, RefreshCw } from "lucide-react";
 import { toast } from "sonner";
+import { supabase, reinitializeSupabaseClient, isSupabaseInitialized } from "@/lib/supabase";
 
 interface SupabaseCredentials {
   supabaseUrl: string;
@@ -19,45 +20,95 @@ interface SupabaseConnectorProps {
 }
 
 export function SupabaseConnector({ onConnect, isConnected }: SupabaseConnectorProps) {
+  // Valores padrão para facilitar a conexão
+  const defaultUrl = 'https://wqijkkbxqkpbjbqehlqw.supabase.co';
+  const defaultKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6IndxaWpra2J4cWtwYmpicWVobHF3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDI2ODcwNDYsImV4cCI6MjA1ODI2MzA0Nn0.IerDihb1CqSIVqootaphhkBUG4maAhLiVkqapvGWLhU';
+
   const [supabaseUrl, setSupabaseUrl] = useState<string>(() => 
-    localStorage.getItem('supabaseUrl') || 'https://wqijkkbxqkpbjbqehlqw.supabase.co'
+    localStorage.getItem('supabaseUrl') || defaultUrl
   );
   const [supabaseKey, setSupabaseKey] = useState<string>(() => 
-    localStorage.getItem('supabaseKey') || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6IndxaWpra2J4cWtwYmpicWVobHF3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDI2ODcwNDYsImV4cCI6MjA1ODI2MzA0Nn0.IerDihb1CqSIVqootaphhkBUG4maAhLiVkqapvGWLhU'
+    localStorage.getItem('supabaseKey') || defaultKey
   );
   const [showForm, setShowForm] = useState<boolean>(!isConnected);
+  const [connecting, setConnecting] = useState<boolean>(false);
 
   useEffect(() => {
     // Preencher com valores padrão se estiverem vazios
     if (!supabaseUrl) {
-      setSupabaseUrl('https://wqijkkbxqkpbjbqehlqw.supabase.co');
+      setSupabaseUrl(defaultUrl);
     }
     if (!supabaseKey) {
-      setSupabaseKey('eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6IndxaWpra2J4cWtwYmpicWVobHF3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDI2ODcwNDYsImV4cCI6MjA1ODI2MzA0Nn0.IerDihb1CqSIVqootaphhkBUG4maAhLiVkqapvGWLhU');
+      setSupabaseKey(defaultKey);
     }
 
-    // Se já temos credenciais salvas e não estamos conectados, tente conectar
-    if (supabaseUrl && supabaseKey && !isConnected) {
-      console.log("SupabaseConnector - Tentando conectar com credenciais existentes");
-      onConnect({ supabaseUrl, supabaseKey });
-    }
+    // Verificar conexão atual
+    const checkConnection = async () => {
+      if (isSupabaseInitialized()) {
+        try {
+          // Tentar uma consulta simples para verificar a conexão
+          const { error } = await supabase.from('produtos').select('id').limit(1);
+          
+          if (!error) {
+            console.log("SupabaseConnector - Conexão verificada com sucesso");
+            onConnect({ supabaseUrl, supabaseKey });
+          } else {
+            console.warn("SupabaseConnector - Erro ao verificar conexão:", error);
+            setShowForm(true);
+          }
+        } catch (err) {
+          console.error("SupabaseConnector - Erro ao testar conexão:", err);
+          setShowForm(true);
+        }
+      } else {
+        console.warn("SupabaseConnector - Cliente Supabase não inicializado");
+        setShowForm(true);
+      }
+    };
+
+    checkConnection();
   }, [supabaseUrl, supabaseKey, isConnected, onConnect]);
 
-  const handleConnect = () => {
+  const handleConnect = async () => {
     if (!supabaseUrl || !supabaseKey) {
       toast.error("Preencha todos os campos");
       return;
     }
 
-    // Salvar no localStorage
-    localStorage.setItem('supabaseUrl', supabaseUrl);
-    localStorage.setItem('supabaseKey', supabaseKey);
-    console.log("SupabaseConnector - Credenciais salvas no localStorage");
-
-    // Notificar o componente pai
-    onConnect({ supabaseUrl, supabaseKey });
-    setShowForm(false);
-    toast.success("Credenciais salvas! Tentando conectar ao Supabase...");
+    setConnecting(true);
+    try {
+      // Salvar no localStorage
+      localStorage.setItem('supabaseUrl', supabaseUrl);
+      localStorage.setItem('supabaseKey', supabaseKey);
+      
+      // Reinicializar o cliente
+      const newClient = reinitializeSupabaseClient(supabaseUrl, supabaseKey);
+      
+      if (!newClient) {
+        throw new Error("Falha ao criar novo cliente Supabase");
+      }
+      
+      // Testar a conexão
+      const { error } = await newClient.from('produtos').select('id').limit(1);
+      if (error) {
+        throw new Error(`Erro ao testar conexão: ${error.message}`);
+      }
+      
+      // Notificar o componente pai
+      onConnect({ supabaseUrl, supabaseKey });
+      setShowForm(false);
+      toast.success("Conectado ao Supabase com sucesso!");
+      
+      // Recarregar a página para aplicar as novas credenciais em todo o aplicativo
+      setTimeout(() => {
+        window.location.reload();
+      }, 1500);
+    } catch (error) {
+      console.error("Erro ao conectar ao Supabase:", error);
+      toast.error(`Erro ao conectar: ${error.message || "Verifique as credenciais"}`);
+    } finally {
+      setConnecting(false);
+    }
   };
 
   const handleDisconnect = () => {
@@ -67,13 +118,12 @@ export function SupabaseConnector({ onConnect, isConnected }: SupabaseConnectorP
     setSupabaseKey('');
     setShowForm(true);
     toast.info("Desconectado do Supabase");
-    window.location.reload();
+    setTimeout(() => {
+      window.location.reload();
+    }, 1000);
   };
 
-  const handleUseDefaultCredentials = () => {
-    const defaultUrl = 'https://wqijkkbxqkpbjbqehlqw.supabase.co';
-    const defaultKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6IndxaWpra2J4cWtwYmpicWVobHF3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDI2ODcwNDYsImV4cCI6MjA1ODI2MzA0Nn0.IerDihb1CqSIVqootaphhkBUG4maAhLiVkqapvGWLhU';
-    
+  const handleUseDefaultCredentials = async () => {
     setSupabaseUrl(defaultUrl);
     setSupabaseKey(defaultKey);
     
@@ -81,15 +131,30 @@ export function SupabaseConnector({ onConnect, isConnected }: SupabaseConnectorP
     localStorage.setItem('supabaseUrl', defaultUrl);
     localStorage.setItem('supabaseKey', defaultKey);
     
-    // Notificar o componente pai
-    onConnect({ supabaseUrl: defaultUrl, supabaseKey: defaultKey });
-    setShowForm(false);
-    toast.success("Credenciais padrão aplicadas! Tentando conectar ao Supabase...");
-    
-    // Recarregar a página para aplicar as novas credenciais
-    setTimeout(() => {
-      window.location.reload();
-    }, 2000);
+    // Reinicializar o cliente
+    setConnecting(true);
+    try {
+      const newClient = reinitializeSupabaseClient(defaultUrl, defaultKey);
+      
+      if (!newClient) {
+        throw new Error("Falha ao criar cliente com credenciais padrão");
+      }
+      
+      // Notificar o componente pai
+      onConnect({ supabaseUrl: defaultUrl, supabaseKey: defaultKey });
+      setShowForm(false);
+      toast.success("Credenciais padrão aplicadas! Conectado ao Supabase.");
+      
+      // Recarregar a página para aplicar as novas credenciais
+      setTimeout(() => {
+        window.location.reload();
+      }, 1500);
+    } catch (error) {
+      console.error("Erro ao usar credenciais padrão:", error);
+      toast.error(`Erro ao conectar: ${error.message || "Verifique as credenciais"}`);
+    } finally {
+      setConnecting(false);
+    }
   };
 
   if (!showForm && isConnected) {
@@ -169,8 +234,9 @@ export function SupabaseConnector({ onConnect, isConnected }: SupabaseConnectorP
           size="sm" 
           className="w-full flex items-center gap-2 mt-2"
           onClick={handleUseDefaultCredentials}
+          disabled={connecting}
         >
-          <RefreshCw className="h-4 w-4" />
+          <RefreshCw className={`h-4 w-4 ${connecting ? 'animate-spin' : ''}`} />
           Usar credenciais padrão
         </Button>
 
@@ -186,8 +252,19 @@ export function SupabaseConnector({ onConnect, isConnected }: SupabaseConnectorP
         </div>
       </CardContent>
       <CardFooter>
-        <Button onClick={handleConnect} className="w-full">
-          Conectar ao Supabase
+        <Button 
+          onClick={handleConnect} 
+          className="w-full"
+          disabled={connecting}
+        >
+          {connecting ? (
+            <>
+              <RefreshCw className="h-4 w-4 mr-2 animate-spin" />
+              Conectando...
+            </>
+          ) : (
+            "Conectar ao Supabase"
+          )}
         </Button>
       </CardFooter>
     </Card>

@@ -7,92 +7,125 @@ import { checkSupabaseCredentials } from './env-check';
 export * from './types/database-types';
 
 // Variável global para o cliente Supabase
-let supabase: SupabaseClient;
+let supabase: SupabaseClient | null = null;
 
-// Função para inicializar o cliente Supabase de forma síncrona
-const initializeSupabaseClient = (): SupabaseClient | null => {
+/**
+ * Configura e inicializa o cliente Supabase com as credenciais disponíveis
+ * @returns Cliente Supabase configurado ou null se falhar
+ */
+const createSupabaseClient = (): SupabaseClient | null => {
   try {
-    // 1. Tentar obter credenciais do localStorage (fallback 1)
+    // 1. Obter credenciais do localStorage (primeira opção)
     const localSupabaseUrl = typeof window !== 'undefined' ? localStorage.getItem('supabaseUrl') : null;
     const localSupabaseKey = typeof window !== 'undefined' ? localStorage.getItem('supabaseKey') : null;
 
-    // 2. Tentar obter credenciais das variáveis de ambiente (fallback 2)
+    // 2. Obter credenciais das variáveis de ambiente (segunda opção)
     const envSupabaseUrl = import.meta.env.VITE_SUPABASE_URL;
     const envSupabaseKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
 
-    // 3. Verificar credenciais usando checkSupabaseCredentials
-    const hasEnvCredentials = checkSupabaseCredentials();
+    // 3. Definir valores padrão (terceira opção)
+    const defaultUrl = 'https://wqijkkbxqkpbjbqehlqw.supabase.co';
+    const defaultKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6IndxaWpra2J4cWtwYmpicWVobHF3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDI2ODcwNDYsImV4cCI6MjA1ODI2MzA0Nn0.IerDihb1CqSIVqootaphhkBUG4maAhLiVkqapvGWLhU';
     
-    // 4. Logar o estado das credenciais para debugging
-    console.log("🔑 Estado das credenciais Supabase:", {
-      localStorage: { url: !!localSupabaseUrl, key: !!localSupabaseKey },
-      envVars: { url: !!envSupabaseUrl, key: !!envSupabaseKey },
-      hasEnvCredentials
+    // 4. Usar a primeira credencial disponível na ordem: localStorage > env > padrão
+    const supabaseUrl = localSupabaseUrl || envSupabaseUrl || defaultUrl;
+    const supabaseKey = localSupabaseKey || envSupabaseKey || defaultKey;
+
+    // 5. Logar o estado das credenciais para debugging
+    console.log("🔑 Origem das credenciais Supabase:", {
+      usandoLocalStorage: !!(localSupabaseUrl && localSupabaseKey),
+      usandoEnvVars: !!(envSupabaseUrl && envSupabaseKey) && !(localSupabaseUrl && localSupabaseKey),
+      usandoPadrao: !localSupabaseUrl && !envSupabaseUrl && !localSupabaseKey && !envSupabaseKey,
+      url: supabaseUrl.substring(0, 15) + '...' // Mostrar apenas parte da URL para segurança
     });
-    
-    if (!hasEnvCredentials && !localSupabaseUrl && !localSupabaseKey) {
-      console.error('❌ Nenhuma credencial do Supabase encontrada (nem no localStorage, nem nas variáveis de ambiente).');
-      console.error('❌ Variáveis de ambiente verificadas:');
-      console.error('- VITE_SUPABASE_URL:', envSupabaseUrl || 'NÃO CONFIGURADA');
-      console.error('- VITE_SUPABASE_ANON_KEY:', envSupabaseKey || 'NÃO CONFIGURADA');
-      console.error('❌ Credenciais no localStorage:');
-      console.error('- supabaseUrl:', localSupabaseUrl || 'NÃO CONFIGURADA');
-      console.error('- supabaseKey:', localSupabaseKey || 'NÃO CONFIGURADA');
-      return null;
+
+    // 6. Inicializar o cliente Supabase com configurações adicionais
+    const client = createClient(supabaseUrl, supabaseKey, {
+      auth: {
+        autoRefreshToken: true,
+        persistSession: true,
+        storage: typeof window !== 'undefined' ? localStorage : undefined
+      }
+    });
+
+    // 7. Verificar se o cliente foi inicializado corretamente
+    if (!client) {
+      throw new Error("Falha ao criar cliente Supabase");
     }
 
-    // 5. Usar credenciais do localStorage se disponíveis, caso contrário usar variáveis de ambiente
-    const supabaseUrl = localSupabaseUrl || envSupabaseUrl;
-    const supabaseAnonKey = localSupabaseKey || envSupabaseKey;
-
-    if (!supabaseUrl || !supabaseAnonKey) {
-      console.error('❌ Credenciais incompletas para inicializar o cliente Supabase.');
-      return null;
-    }
-
-    // 6. Inicializar o cliente Supabase
-    try {
-      const client = createClient(supabaseUrl, supabaseAnonKey);
-      console.log('✅ Cliente Supabase inicializado com sucesso. URL:', supabaseUrl);
-      return client;
-    } catch (error) {
-      console.error('❌ Erro ao inicializar cliente Supabase:', error);
-      return null;
-    }
+    console.log('✅ Cliente Supabase inicializado com sucesso.');
+    return client;
   } catch (error) {
-    console.error('❌ Falha crítica ao inicializar o cliente Supabase:', error);
+    console.error('❌ Erro crítico ao inicializar cliente Supabase:', error);
     return null;
   }
 };
 
-// Inicialização síncrona do cliente Supabase com fallback
-supabase = initializeSupabaseClient() as SupabaseClient;
+// Inicialização imediata do cliente Supabase
+supabase = createSupabaseClient();
 
-// Função para tentar importar o cliente Supabase integrado de forma assíncrona
-const importIntegratedClient = () => {
-  // Verificar se o cliente já foi inicializado
-  if (!supabase) {
-    console.warn("⚠️ Nenhum cliente Supabase inicializado, não será possível carregar o cliente integrado");
-    return;
-  }
-
-  // Importar o cliente integrado apenas no navegador
-  if (typeof window !== 'undefined') {
-    import('@/integrations/supabase/client')
-      .then(({ supabase: integrationClient }) => {
-        if (integrationClient) {
-          console.log('✅ Usando cliente Supabase integrado');
-          supabase = integrationClient;
-        }
-      })
-      .catch(error => {
-        console.error('❌ Cliente Supabase integrado não disponível, usando fallback', error);
-      });
+// Função para tentar importar o cliente Supabase integrado
+const loadIntegratedClient = async (): Promise<void> => {
+  try {
+    if (typeof window !== 'undefined') {
+      const { supabase: integrationClient } = await import('@/integrations/supabase/client');
+      if (integrationClient) {
+        console.log('✅ Usando cliente Supabase integrado');
+        supabase = integrationClient;
+      }
+    }
+  } catch (error) {
+    console.warn('⚠️ Cliente Supabase integrado não disponível, usando fallback', error);
   }
 };
 
-// Tentar carregar o cliente integrado
-importIntegratedClient();
+// Carregar o cliente integrado sem bloquear
+if (typeof window !== 'undefined') {
+  loadIntegratedClient().catch(err => {
+    console.error('❌ Erro ao carregar cliente integrado:', err);
+  });
+}
 
-// Exportar o cliente Supabase
+/**
+ * Verifica se o cliente Supabase está inicializado
+ * @returns true se o cliente estiver disponível
+ */
+export const isSupabaseInitialized = (): boolean => {
+  return !!supabase;
+};
+
+/**
+ * Reinicializa o cliente Supabase com novas credenciais
+ * @param url URL do Supabase
+ * @param key Chave anônima do Supabase
+ */
+export const reinitializeSupabaseClient = (url: string, key: string): SupabaseClient | null => {
+  try {
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('supabaseUrl', url);
+      localStorage.setItem('supabaseKey', key);
+    }
+    
+    const client = createClient(url, key, {
+      auth: {
+        autoRefreshToken: true,
+        persistSession: true,
+        storage: typeof window !== 'undefined' ? localStorage : undefined
+      }
+    });
+    
+    if (client) {
+      supabase = client;
+      console.log('✅ Cliente Supabase reinicializado com novas credenciais');
+      return client;
+    }
+    
+    return null;
+  } catch (error) {
+    console.error('❌ Erro ao reinicializar cliente Supabase:', error);
+    return null;
+  }
+};
+
+// Exportar o cliente Supabase e funções auxiliares
 export { supabase };
