@@ -55,6 +55,8 @@ export type ConfigCheckout = {
   rodape_ano: string;
   mostrar_seguro: boolean;
   mensagem_rodape: string;
+  url_termos_uso?: string; // Nova propriedade para URL dos termos de uso
+  url_politica_privacidade?: string; // Nova propriedade para URL da política de privacidade
 };
 
 export { supabase };
