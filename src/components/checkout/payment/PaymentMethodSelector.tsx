@@ -69,7 +69,7 @@ export function PaymentMethodSelector({
             <img 
               src="/lovable-uploads/1045f0c2-529d-43c2-b02a-1aa4579f091f.png" 
               alt="Pix" 
-              className="w-8 h-8 object-contain" 
+              className="w-12 h-12 object-contain mx-auto" 
               loading="eager"
             />
           </TabsTrigger>
