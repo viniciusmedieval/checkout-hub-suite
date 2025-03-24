@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from "react";
 import { Input } from "@/components/ui/input";
 import { CardInput } from "./CardInput";
@@ -5,7 +6,6 @@ import { CardExpiryInput } from "./CardExpiryInput";
 import { CardCVVInput } from "./CardCVVInput";
 import { InstallmentSelector } from "./InstallmentSelector";
 import { User, CheckCircle2 } from "lucide-react";
-import { validateCardNumber } from "@/utils/formatters";
 import { ConfigCheckout } from "@/lib/supabase";
 
 interface CardPaymentFormProps {
@@ -31,14 +31,9 @@ export function CardPaymentForm({ productValue, configCheckout }: CardPaymentFor
 
   const handleCardNumberChange = (value: string, isValid: boolean) => {
     setCardNumber(value);
-    
-    const cardIsValid = validateCard 
-      ? validateCardNumber(value) 
-      : isValid;
-    
     setIsValid(prev => ({
       ...prev,
-      cardNumber: cardIsValid
+      cardNumber: isValid
     }));
   };
 

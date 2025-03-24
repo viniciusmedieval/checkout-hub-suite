@@ -75,7 +75,7 @@ export function PaymentMethodSelector({
         <TabsContent value="pix" className="mt-0">
           <PixPayment 
             productValue={productValue}
-            pixConfig={pixConfig}
+            pixConfig={pixConfig || {}}
             produto={produto} 
           />
         </TabsContent>

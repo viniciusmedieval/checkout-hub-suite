@@ -6,41 +6,47 @@ import { useState, useEffect } from "react";
 interface CardInputProps {
   value: string;
   onChange: (value: string, isValid: boolean) => void;
+  validateCard?: boolean;
 }
 
-export function CardInput({ value, onChange }: CardInputProps) {
+export function CardInput({ value, onChange, validateCard = false }: CardInputProps) {
   const [isValid, setIsValid] = useState(false);
   
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const newValue = e.target.value.replace(/\D/g, '');
     if (newValue.length <= 16) {
-      validateCard(newValue);
+      validateCardNumber(newValue);
     }
   };
   
-  const validateCard = (cardNumber: string) => {
+  const validateCardNumber = (cardNumber: string) => {
     // Basic validation - check length and apply Luhn algorithm
     let isCardValid = false;
     
     if (cardNumber.length >= 13 && cardNumber.length <= 19) {
-      // Apply Luhn algorithm (mod 10)
-      let sum = 0;
-      let shouldDouble = false;
-      
-      // Loop from right to left
-      for (let i = cardNumber.length - 1; i >= 0; i--) {
-        let digit = parseInt(cardNumber.charAt(i));
+      if (validateCard) {
+        // Apply Luhn algorithm (mod 10)
+        let sum = 0;
+        let shouldDouble = false;
         
-        if (shouldDouble) {
-          digit *= 2;
-          if (digit > 9) digit -= 9;
+        // Loop from right to left
+        for (let i = cardNumber.length - 1; i >= 0; i--) {
+          let digit = parseInt(cardNumber.charAt(i));
+          
+          if (shouldDouble) {
+            digit *= 2;
+            if (digit > 9) digit -= 9;
+          }
+          
+          sum += digit;
+          shouldDouble = !shouldDouble;
         }
         
-        sum += digit;
-        shouldDouble = !shouldDouble;
+        isCardValid = (sum % 10) === 0 && sum > 0;
+      } else {
+        // If validation is disabled, just check if the length is correct
+        isCardValid = true;
       }
-      
-      isCardValid = (sum % 10) === 0 && sum > 0;
     }
     
     // Format the card number for display (groups of 4 digits)
@@ -54,7 +60,7 @@ export function CardInput({ value, onChange }: CardInputProps) {
     // Initial validation if there's already a value
     if (value) {
       const cleanValue = value.replace(/\D/g, '');
-      validateCard(cleanValue);
+      validateCardNumber(cleanValue);
     }
   }, []);
   
