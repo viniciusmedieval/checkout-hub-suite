@@ -1,4 +1,3 @@
-
 // Types for our database tables
 export type Cliente = {
   id: number;
@@ -48,68 +47,65 @@ export type Venda = {
 
 export type ConfigCheckout = {
   id: number;
-  mensagem_topo?: string;
-  cor_topo?: string;
-  cor_texto_topo?: string;
-  ativa_banner?: boolean;
-  banner_url?: string;
-  banner_mobile_url?: string;
-  cor_banner?: string;
-  cor_fundo?: string;
-  cor_titulo?: string;
-  texto_botao?: string;
-  cor_botao?: string;
-  cor_texto_botao?: string;
-  rodape_texto?: string;
-  rodape_empresa?: string;
-  rodape_ano?: string;
-  mostrar_seguro?: boolean;
-  mensagem_rodape?: string;
-  url_termos_uso?: string;
-  url_politica_privacidade?: string;
-  mensagem_termos?: string;
-  // Visitor counter fields
-  mostrar_contador?: boolean;
-  texto_contador?: string;
-  contador_min?: number;
-  contador_max?: number;
-  cor_texto_contador?: string;
-  // Form customization fields
-  mostrar_campo_documento?: boolean;
-  mostrar_campo_telefone?: boolean;
-  mostrar_bandeira_brasil?: boolean;
-  mostrar_prefixo_telefone?: boolean;
-  mostrar_campo_nascimento?: boolean;
-  titulo_identificacao?: string;
-  titulo_pagamento?: string;
-  // Icon properties
-  cor_icones?: string;
-  icone_nome?: string;
-  icone_email?: string;
-  icone_telefone?: string;
-  icone_documento?: string;
-  // Validation options
-  validar_cpf?: boolean;
-  validar_telefone?: boolean;
-  validar_cartao?: boolean;
-  validar_nascimento?: boolean;
-  // Card redirect status
-  redirect_card_status?: 'analyzing' | 'approved' | 'rejected';
-  // Random mode for testing redirects
-  modo_random?: boolean;
-  // Installment control
-  max_installments?: number;
-  created_at?: string;
-  criado_em?: string;
-  // PIX properties
-  pix_titulo?: string;
-  pix_subtitulo?: string;
-  pix_instrucoes?: string;
-  pix_mensagem_seguranca?: string;
-  cor_primaria_pix?: string;
-  cor_secundaria_pix?: string;
-  tipo_chave_pix_global?: string;
-  usar_api_pix_global?: boolean;
+  mensagem_topo?: string | null;
+  cor_topo?: string | null;
+  cor_texto_topo?: string | null;
+  ativa_banner?: boolean | null;
+  banner_url?: string | null;
+  banner_mobile_url?: string | null;
+  cor_banner?: string | null;
+  cor_fundo?: string | null;
+  cor_titulo?: string | null;
+  texto_botao?: string | null;
+  cor_botao?: string | null;
+  cor_texto_botao?: string | null;
+  rodape_texto?: string | null;
+  rodape_empresa?: string | null;
+  rodape_ano?: string | null;
+  mostrar_seguro?: boolean | null;
+  mensagem_rodape?: string | null;
+  url_termos_uso?: string | null;
+  url_politica_privacidade?: string | null;
+  mensagem_termos?: string | null;
+  mostrar_contador?: boolean | null;
+  texto_contador?: string | null;
+  contador_min?: number | null;
+  contador_max?: number | null;
+  cor_texto_contador?: string | null;
+  mostrar_campo_documento?: boolean | null;
+  mostrar_campo_telefone?: boolean | null;
+  mostrar_bandeira_brasil?: boolean | null;
+  mostrar_prefixo_telefone?: boolean | null;
+  mostrar_campo_nascimento?: boolean | null;
+  titulo_identificacao?: string | null;
+  titulo_pagamento?: string | null;
+  cor_icones?: string | null;
+  icone_nome?: string | null;
+  icone_email?: string | null;
+  icone_telefone?: string | null;
+  icone_documento?: string | null;
+  validar_cpf?: boolean | null;
+  validar_telefone?: boolean | null;
+  validar_cartao?: boolean | null;
+  validar_nascimento?: boolean | null;
+  criado_em?: string | null;
+  redirect_card_status?: "analyzing" | "approved" | "rejected";
+  modo_random?: boolean | null;
+  max_installments?: number | null;
+  pix_titulo?: string | null;
+  pix_subtitulo?: string | null;
+  pix_instrucoes?: string | null;
+  pix_mensagem_seguranca?: string | null;
+  cor_primaria_pix?: string | null;
+  cor_secundaria_pix?: string | null;
+  cor_botao_pix?: string | null;
+  cor_texto_botao_pix?: string | null;
+  tipo_chave_pix_global?: string | null;
+  chave_pix_global?: string | null;
+  nome_beneficiario_pix?: string | null;
+  qr_code_pix_url?: string | null;
+  usar_api_pix_global?: boolean | null;
+  url_api_pix_global?: string | null;
 };
 
 export type Depoimento = {

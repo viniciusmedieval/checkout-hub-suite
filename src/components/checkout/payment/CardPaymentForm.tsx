@@ -8,7 +8,6 @@ import { User, CheckCircle2 } from "lucide-react";
 import { FormValidationStatus } from "./FormValidationStatus";
 import { useCardPaymentForm } from "@/hooks/checkout/useCardPaymentForm";
 import { CardPaymentFormProps } from "./types";
-import { Button } from "@/components/ui/button";
 
 export { type PaymentStatus } from "./types"; 
 
@@ -92,15 +91,7 @@ export function CardPaymentForm({
       
       <FormValidationStatus formIsComplete={formIsComplete} />
       
-      <Button 
-        className="w-full h-12 mt-4 font-medium rounded-lg"
-        variant="default"
-        style={{ backgroundColor: "#3B82F6", color: "#FFFFFF" }}
-        disabled={!formIsComplete || isSubmitting}
-        onClick={handleSubmitPayment}
-      >
-        {isSubmitting ? "Processando..." : "Pagar com Cartão"}
-      </Button>
+      {/* Removed the duplicate payment button here - it's now handled by the ResumoCompra component */}
     </div>
   );
 }

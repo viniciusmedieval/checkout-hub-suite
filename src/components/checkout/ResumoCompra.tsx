@@ -25,16 +25,21 @@ export function ResumoCompra({
 }: ResumoCompraProps) {
   const navigate = useNavigate();
   
-  // Obter as cores personalizadas das configurações
+  // Get customized colors from configurations
   const buttonColor = configCheckout?.cor_botao || "#8B5CF6";
   const buttonTextColor = configCheckout?.cor_texto_botao || "#FFFFFF";
   
-  // Get button text from config or product or use default
-  const buttonText = configCheckout?.texto_botao || produto.checkout_button_text || "GARANTIR AGORA";
+  // Get button text based on payment method and configurations
+  let buttonText = "";
+  if (paymentMethod === 'card') {
+    buttonText = configCheckout?.texto_botao || produto.checkout_button_text || "PAGAR COM CARTÃO";
+  } else {
+    buttonText = "PAGAR COM PIX";
+  }
   
   const counterTextColor = configCheckout?.cor_texto_contador || "#4B5563";
   
-  // Para debugging
+  // For debugging
   console.log("ResumoCompra - Config:", { 
     produto_button_text: produto.checkout_button_text, 
     config_button_text: configCheckout?.texto_botao,
@@ -44,7 +49,7 @@ export function ResumoCompra({
     paymentMethod
   });
 
-  // Processor visitor counter text with the count placeholder
+  // Process visitor counter text with the count placeholder
   const getVisitorCountText = () => {
     if (!configCheckout?.mostrar_contador) return null;
     
@@ -122,7 +127,7 @@ export function ResumoCompra({
             Processando...
           </>
         ) : (
-          buttonText
+          paymentMethod === 'card' ? (buttonText || "PAGAR COM CARTÃO") : "PAGAR COM PIX"
         )}
       </Button>
       
