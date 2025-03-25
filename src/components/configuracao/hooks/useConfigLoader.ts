@@ -24,7 +24,7 @@ const defaultConfig: ConfigCheckout = {
   cor_botao: '#000000',
   cor_texto_botao: '#FFFFFF',
   redirect_card_status: 'analyzing',
-  mensagem_seguranca: '',
+  mensagem_rodape: '',
   mensagem_produto: '',
   max_installments: 1,
   modo_random: false,
