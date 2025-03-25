@@ -53,7 +53,7 @@ export const useConfigSettings = (initialConfig: ConfigCheckout | null) => {
   };
 
   // Save config function
-  const handleSaveConfig = async () => {
+  const handleSaveConfig = async (): Promise<ConfigCheckout | null> => {
     try {
       setIsSaving(true);
       

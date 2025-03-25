@@ -1,10 +1,10 @@
+
 import { useState, useEffect } from 'react';
 import { supabase } from '@/lib/supabase';
 import { ConfigCheckout, Depoimento } from "@/lib/types/database-types";
 
 const defaultConfig: ConfigCheckout = {
   id: 0,
-  nome: '',
   cor_primaria: '#000000',
   cor_secundaria: '#FFFFFF',
   cor_texto: '#000000',
@@ -35,13 +35,14 @@ const defaultConfig: ConfigCheckout = {
   slug: ''
 };
 
-interface ConfigLoaderResult {
+export interface ConfigLoaderResult {
   config: ConfigCheckout;
   depoimentos: Depoimento[];
   loading: boolean;
   error: string;
   loadError?: string;
   configData?: ConfigCheckout;
+  reloadConfig: () => Promise<ConfigCheckout | null>;
 }
 
 export const useConfigLoader = (slug?: string): ConfigLoaderResult => {
@@ -52,33 +53,30 @@ export const useConfigLoader = (slug?: string): ConfigLoaderResult => {
   const [loadError, setLoadError] = useState<string | undefined>(undefined);
   const [configData, setConfigData] = useState<ConfigCheckout | undefined>(undefined);
 
-  useEffect(() => {
-    if (!slug) {
-      setError('Slug não fornecido');
-      setLoading(false);
-      return;
-    }
+  const fetchConfig = async (): Promise<ConfigCheckout | null> => {
+    setLoading(true);
+    try {
+      if (!slug) {
+        setError('Slug não fornecido');
+        setLoading(false);
+        return null;
+      }
 
-    const fetchConfig = async () => {
-      setLoading(true);
-      try {
-        const { data: configData, error: configError } = await supabase
-          .from('config_checkout')
-          .select('*')
-          .eq('slug', slug)
-          .single();
+      const { data: configData, error: configError } = await supabase
+        .from('config_checkout')
+        .select('*')
+        .eq('slug', slug)
+        .single();
 
-        if (configError) {
-          setLoadError(`Erro ao carregar configuração: ${configError.message}`);
-          setError(configError.message);
-        } else if (configData) {
-          setConfigData(configData);
-          setConfig(configData);
-        } else {
-          setLoadError('Configuração não encontrada');
-          setError('Configuração não encontrada');
-        }
-
+      if (configError) {
+        setLoadError(`Erro ao carregar configuração: ${configError.message}`);
+        setError(configError.message);
+        setLoading(false);
+        return null;
+      } else if (configData) {
+        setConfigData(configData);
+        setConfig(configData);
+        
         const { data: depoimentosData, error: depoimentosError } = await supabase
           .from('depoimentos')
           .select('*')
@@ -90,17 +88,31 @@ export const useConfigLoader = (slug?: string): ConfigLoaderResult => {
         } else if (depoimentosData) {
           setDepoimentos(depoimentosData);
         }
-      } catch (err: any) {
-        console.error('Erro ao buscar a configuração:', err);
-        setLoadError(`Erro ao buscar a configuração: ${err.message}`);
-        setError(err.message);
-      } finally {
+        
         setLoading(false);
+        return configData;
+      } else {
+        setLoadError('Configuração não encontrada');
+        setError('Configuração não encontrada');
+        setLoading(false);
+        return null;
       }
-    };
+    } catch (err: any) {
+      console.error('Erro ao buscar a configuração:', err);
+      setLoadError(`Erro ao buscar a configuração: ${err.message}`);
+      setError(err.message);
+      setLoading(false);
+      return null;
+    }
+  };
 
+  useEffect(() => {
     fetchConfig();
   }, [slug]);
 
-  return { config, depoimentos, loading, error, loadError, configData };
+  const reloadConfig = async (): Promise<ConfigCheckout | null> => {
+    return await fetchConfig();
+  };
+
+  return { config, depoimentos, loading, error, loadError, configData, reloadConfig };
 };

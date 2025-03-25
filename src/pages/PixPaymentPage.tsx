@@ -1,3 +1,4 @@
+
 import React from "react";
 import { CheckoutHeader } from "@/components/checkout/CheckoutHeader";
 import { CheckoutLoading } from "@/components/checkout/CheckoutLoading";
@@ -8,8 +9,7 @@ import { PixInstructions } from "@/components/pix-payment/PixInstructions";
 import { OrderSummaryCard } from "@/components/pix-payment/OrderSummaryCard";
 import { PixPaymentFooter } from "@/components/pix-payment/PixPaymentFooter";
 import { usePixPayment } from "@/hooks/pix-payment/usePixPayment";
-import { Produto as DatabaseProduto, ConfigCheckout as DatabaseConfigCheckout } from "@/lib/types/database-types";
-import { Produto, ConfigCheckout } from "@/lib/supabase";
+import { Produto, ConfigCheckout } from "@/lib/types/database-types";
 
 const PixPaymentPage = () => {
   const {
@@ -33,12 +33,6 @@ const PixPaymentPage = () => {
     handleBackToCheckout
   } = usePixPayment();
 
-  const typedProduto = produto as unknown as DatabaseProduto;
-  const typedConfigCheckout = configCheckout ? {
-    ...configCheckout,
-    redirect_card_status: configCheckout.redirect_card_status as "analyzing" | "approved" | "rejected"
-  } as unknown as DatabaseConfigCheckout : null;
-
   if (loading) {
     return <CheckoutLoading />;
   }
@@ -47,13 +41,20 @@ const PixPaymentPage = () => {
     return <CheckoutError error={error} />;
   }
   
+  // Type casting to match expected types
+  const typedProduto = produto as unknown as Produto;
+  const typedConfigCheckout = configCheckout ? {
+    ...configCheckout,
+    redirect_card_status: (configCheckout.redirect_card_status || "analyzing") as "analyzing" | "approved" | "rejected"
+  } as unknown as ConfigCheckout : null;
+  
   return (
     <div 
       className="min-h-screen flex flex-col"
       style={{ backgroundColor }}
     >
       {/* Header */}
-      <CheckoutHeader produto={produto} configCheckout={configCheckout} />
+      <CheckoutHeader produto={typedProduto} configCheckout={typedConfigCheckout} />
 
       {/* Main content */}
       <div className="flex-grow flex justify-center py-6 px-4">
@@ -85,12 +86,12 @@ const PixPaymentPage = () => {
           </div>
           
           <OrderSummaryCard 
-            produto={produto}
+            produto={typedProduto}
             onBackToCheckout={handleBackToCheckout}
           />
           
           <PixPaymentFooter 
-            configCheckout={configCheckout}
+            configCheckout={typedConfigCheckout}
             securityMessage={configCheckout?.mensagem_rodape || "Pagamento 100% seguro e processado na hora"}
           />
         </div>
