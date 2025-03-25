@@ -22,9 +22,9 @@ export const productSchema = z.object({
   background_color: z.string().regex(/^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/, { 
     message: 'Cor deve estar no formato hexadecimal (ex: #FFFFFF)' 
   }).optional().or(z.literal('')),
-  tipo_chave_pix: z.string().optional(),
-  chave_pix: z.string().optional(),
-  nome_beneficiario: z.string().optional(),
+  tipo_chave_pix: z.string().optional().or(z.literal('')),
+  chave_pix: z.string().optional().or(z.literal('')),
+  nome_beneficiario: z.string().optional().or(z.literal('')),
   usar_api_pix: z.boolean().default(false),
   usar_config_pix_global: z.boolean().default(false),
   url_api_pix: z.string().optional().or(z.literal('')),

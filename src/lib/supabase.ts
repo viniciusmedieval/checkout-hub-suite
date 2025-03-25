@@ -201,6 +201,7 @@ export interface Produto {
   valor: number;
   tipo: string;
   checkout_title?: string;
+  checkout_button_text?: string;
   imagem_url?: string;
   banner_url?: string;
   banner_mobile_url?: string;
@@ -215,6 +216,7 @@ export interface Produto {
   nome_beneficiario?: string;
   usar_api_pix?: boolean;
   url_api_pix?: string;
+  url_pix_api?: string;
   usar_config_pix_global?: boolean;
   qr_code_pix_url?: string;
 }
