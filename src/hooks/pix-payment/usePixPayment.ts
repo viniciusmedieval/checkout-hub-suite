@@ -1,8 +1,9 @@
-
 import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { useCheckoutData } from "@/hooks/useCheckoutData";
 import { toast } from "sonner";
+import { PixSecao } from "@/lib/types/database-types";
+import { supabase } from "@/integrations/supabase/client";
 
 export function usePixPayment() {
   const { slug } = useParams<{ slug: string }>();
@@ -12,6 +13,8 @@ export function usePixPayment() {
   const [countdown, setCountdown] = useState(15 * 60); // 15 minutes in seconds
   const [copied, setCopied] = useState(false);
   const [confirmedPayment, setConfirmedPayment] = useState(false);
+  const [pixSecao, setPixSecao] = useState<PixSecao | null>(null);
+  const [loadingPixSecao, setLoadingPixSecao] = useState(true);
   
   // Get qrCodeUrl from product or config
   const qrCodeUrl = produto?.qr_code_pix_url || configCheckout?.qr_code_pix_url || 
@@ -22,12 +25,51 @@ export function usePixPayment() {
   const pixKeyType = produto?.tipo_chave_pix || configCheckout?.tipo_chave_pix_global || 'email';
   const beneficiaryName = produto?.nome_beneficiario || configCheckout?.nome_beneficiario_pix || 'Loja Digital';
   
-  // Get custom texts from config
-  const pixTitle = configCheckout?.pix_titulo || 'Pagamento via Pix';
-  const pixSubtitle = configCheckout?.pix_subtitulo || 'Copie o código ou use a câmera para ler o QR Code e realize o pagamento no app do seu banco.';
+  // Load PIX section data
+  useEffect(() => {
+    const fetchPixSecao = async () => {
+      if (!configCheckout) return;
+      
+      try {
+        setLoadingPixSecao(true);
+        let query = supabase.from("pix_secoes").select("*");
+        
+        // If config has a specific section ID, use it
+        if (configCheckout.pix_secao_id) {
+          query = query.eq("id", configCheckout.pix_secao_id);
+        } else {
+          // Otherwise get the first active section
+          query = query.eq("ativo", true).order("id").limit(1);
+        }
+        
+        const { data, error } = await query;
+        
+        if (error) {
+          console.error("Erro ao carregar seção PIX:", error);
+        } else if (data && data.length > 0) {
+          setPixSecao(data[0]);
+        }
+      } catch (error) {
+        console.error("Erro ao buscar seção PIX:", error);
+      } finally {
+        setLoadingPixSecao(false);
+      }
+    };
+    
+    if (configCheckout) {
+      fetchPixSecao();
+    }
+  }, [configCheckout]);
+  
+  // Get custom texts from config or section
+  const pixTitle = pixSecao?.titulo || configCheckout?.pix_titulo || 'Pagamento via Pix';
+  const pixSubtitle = pixSecao?.subtitulo || configCheckout?.pix_subtitulo || 'Copie o código ou use a câmera para ler o QR Code e realize o pagamento no app do seu banco.';
   const pixInstructions = configCheckout?.pix_instrucoes || 'Para realizar o pagamento:';
   const pixSecurityMessage = configCheckout?.pix_mensagem_seguranca || 
     'Os bancos reforçaram a segurança do Pix e podem exibir avisos preventivos. Não se preocupe, sua transação está protegida.';
+  
+  // Get button text from section
+  const pixButtonText = pixSecao?.botao_texto || 'Assine agora';
   
   // Custom colors
   const primaryColor = configCheckout?.cor_primaria_pix || "#1E40AF";
@@ -82,7 +124,7 @@ export function usePixPayment() {
   return {
     produto,
     configCheckout,
-    loading,
+    loading: loading || loadingPixSecao,
     error,
     countdown,
     copied,
@@ -94,6 +136,8 @@ export function usePixPayment() {
     pixSubtitle,
     pixInstructions,
     pixSecurityMessage,
+    pixButtonText,
+    pixSecao,
     primaryColor,
     secondaryColor,
     buttonColor,

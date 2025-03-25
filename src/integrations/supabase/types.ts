@@ -124,6 +124,7 @@ export type Database = {
           nome_beneficiario_pix: string | null
           pix_instrucoes: string | null
           pix_mensagem_seguranca: string | null
+          pix_secao_id: number | null
           pix_subtitulo: string | null
           pix_titulo: string | null
           qr_code_pix_url: string | null
@@ -189,6 +190,7 @@ export type Database = {
           nome_beneficiario_pix?: string | null
           pix_instrucoes?: string | null
           pix_mensagem_seguranca?: string | null
+          pix_secao_id?: number | null
           pix_subtitulo?: string | null
           pix_titulo?: string | null
           qr_code_pix_url?: string | null
@@ -254,6 +256,7 @@ export type Database = {
           nome_beneficiario_pix?: string | null
           pix_instrucoes?: string | null
           pix_mensagem_seguranca?: string | null
+          pix_secao_id?: number | null
           pix_subtitulo?: string | null
           pix_titulo?: string | null
           qr_code_pix_url?: string | null
@@ -276,7 +279,15 @@ export type Database = {
           validar_nascimento?: boolean | null
           validar_telefone?: boolean | null
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "config_checkout_pix_secao_id_fkey"
+            columns: ["pix_secao_id"]
+            isOneToOne: false
+            referencedRelation: "pix_secoes"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       depoimentos: {
         Row: {
@@ -315,6 +326,84 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      pix_mensagens: {
+        Row: {
+          ativo: boolean | null
+          chave: string
+          criado_em: string | null
+          id: number
+          ordem: number | null
+          texto: string
+          titulo: string
+        }
+        Insert: {
+          ativo?: boolean | null
+          chave: string
+          criado_em?: string | null
+          id?: number
+          ordem?: number | null
+          texto: string
+          titulo: string
+        }
+        Update: {
+          ativo?: boolean | null
+          chave?: string
+          criado_em?: string | null
+          id?: number
+          ordem?: number | null
+          texto?: string
+          titulo?: string
+        }
+        Relationships: []
+      }
+      pix_secoes: {
+        Row: {
+          ativo: boolean | null
+          botao_texto: string
+          criado_em: string | null
+          descricao: string | null
+          id: number
+          info_pagamento: string | null
+          mostrar_contador: boolean | null
+          paragrafo_principal: string | null
+          paragrafo_secundario: string | null
+          subtitulo: string | null
+          texto_contador: string | null
+          texto_valor_vista: string | null
+          titulo: string
+        }
+        Insert: {
+          ativo?: boolean | null
+          botao_texto?: string
+          criado_em?: string | null
+          descricao?: string | null
+          id?: number
+          info_pagamento?: string | null
+          mostrar_contador?: boolean | null
+          paragrafo_principal?: string | null
+          paragrafo_secundario?: string | null
+          subtitulo?: string | null
+          texto_contador?: string | null
+          texto_valor_vista?: string | null
+          titulo: string
+        }
+        Update: {
+          ativo?: boolean | null
+          botao_texto?: string
+          criado_em?: string | null
+          descricao?: string | null
+          id?: number
+          info_pagamento?: string | null
+          mostrar_contador?: boolean | null
+          paragrafo_principal?: string | null
+          paragrafo_secundario?: string | null
+          subtitulo?: string | null
+          texto_contador?: string | null
+          texto_valor_vista?: string | null
+          titulo?: string
+        }
+        Relationships: []
       }
       produtos: {
         Row: {

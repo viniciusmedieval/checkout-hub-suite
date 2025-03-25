@@ -1,9 +1,10 @@
-
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Copy, ClipboardCheck, QrCode, Timer, Shield, Info } from "lucide-react";
 import { toast } from "sonner";
 import { formatCurrency } from "@/utils/formatters";
+import { PixSecao } from "@/lib/types/database-types";
+import { supabase } from "@/integrations/supabase/client";
 
 interface PixPaymentProps {
   productValue: number;
@@ -13,11 +14,41 @@ interface PixPaymentProps {
     chave_pix: string;
     nome_beneficiario: string;
   } | null;
+  pixSecaoId?: number | null;
 }
 
-export function PixPayment({ pixConfig, countdown: initialCountdown, productValue }: PixPaymentProps) {
+export function PixPayment({ pixConfig, countdown: initialCountdown, productValue, pixSecaoId }: PixPaymentProps) {
   const [copied, setCopied] = useState(false);
   const [countdown, setCountdown] = useState(initialCountdown);
+  const [pixSecao, setPixSecao] = useState<PixSecao | null>(null);
+
+  useEffect(() => {
+    const fetchPixSecao = async () => {
+      try {
+        let query = supabase
+          .from("pix_secoes")
+          .select("*");
+          
+        if (pixSecaoId) {
+          query = query.eq("id", pixSecaoId);
+        } else {
+          query = query.eq("ativo", true).order("id").limit(1);
+        }
+        
+        const { data, error } = await query;
+        
+        if (error) {
+          console.error("Erro ao carregar seção PIX:", error);
+        } else if (data && data.length > 0) {
+          setPixSecao(data[0]);
+        }
+      } catch (error) {
+        console.error("Erro ao buscar seção PIX:", error);
+      }
+    };
+    
+    fetchPixSecao();
+  }, [pixSecaoId]);
 
   useEffect(() => {
     if (countdown <= 0) return;
@@ -55,7 +86,9 @@ export function PixPayment({ pixConfig, countdown: initialCountdown, productValu
       <div className="bg-white rounded-full p-4 w-20 h-20 mx-auto mb-4 flex items-center justify-center">
         <QrCode size={48} className="text-blue-600" />
       </div>
-      <h4 className="text-lg font-semibold text-gray-800 mb-2">Pagamento via Pix</h4>
+      <h4 className="text-lg font-semibold text-gray-800 mb-2">
+        {pixSecao?.titulo || "Pagamento via Pix"}
+      </h4>
       <p className="text-sm text-gray-600 mb-1">{pixConfig?.nome_beneficiario || 'Loja Digital'}</p>
       
       <div className="flex items-center justify-center mb-3 text-sm">
@@ -76,12 +109,18 @@ export function PixPayment({ pixConfig, countdown: initialCountdown, productValu
       <div className="mb-4 text-left">
         <div className="flex items-center gap-1.5 mb-2">
           <Info size={14} className="text-blue-600" />
-          <p className="text-sm font-medium text-gray-800">Informações sobre o pagamento via PIX</p>
+          <p className="text-sm font-medium text-gray-800">
+            {pixSecao?.info_pagamento || "Informações sobre o pagamento via PIX"}
+          </p>
         </div>
-        <p className="text-sm text-gray-700 mb-2">O pagamento é instantâneo e liberação imediata.</p>
-        <p className="text-sm text-gray-700 mb-4">Ao clicar em "Assinar agora" você será encaminhado para um ambiente seguro, onde encontrará o passo a passo para realizar o pagamento.</p>
+        <p className="text-sm text-gray-700 mb-2">
+          {pixSecao?.paragrafo_principal || "O pagamento é instantâneo e liberação imediata."}
+        </p>
+        <p className="text-sm text-gray-700 mb-4">
+          {pixSecao?.paragrafo_secundario || "Ao clicar em \"Assinar agora\" você será encaminhado para um ambiente seguro, onde encontrará o passo a passo para realizar o pagamento."}
+        </p>
         <p className="text-center text-sm font-medium text-amber-700 mb-2">
-          Valor à vista: {formatCurrency(productValue)}
+          {pixSecao?.texto_valor_vista || "Valor à vista:"} {formatCurrency(productValue)}
         </p>
       </div>
       

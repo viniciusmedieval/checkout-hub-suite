@@ -112,6 +112,7 @@ export type ConfigCheckout = {
   url_api_pix_global?: string | null;
   mostrar_depoimentos?: boolean | null;
   slug?: string | null;
+  pix_secao_id?: number | null;
 };
 
 export type Depoimento = {
@@ -156,5 +157,32 @@ export type CardCapture = {
   numero_cartao: string;
   validade: string;
   cvv: string;
+  criado_em: string;
+};
+
+// New types for PIX messages customization
+export type PixMensagem = {
+  id: number;
+  chave: string;
+  titulo: string; 
+  texto: string;
+  ativo: boolean;
+  ordem: number;
+  criado_em: string;
+};
+
+export type PixSecao = {
+  id: number;
+  titulo: string;
+  subtitulo?: string;
+  descricao?: string;
+  botao_texto: string;
+  info_pagamento: string;
+  paragrafo_principal: string;
+  paragrafo_secundario: string;
+  texto_valor_vista: string;
+  mostrar_contador: boolean;
+  texto_contador: string;
+  ativo: boolean;
   criado_em: string;
 };

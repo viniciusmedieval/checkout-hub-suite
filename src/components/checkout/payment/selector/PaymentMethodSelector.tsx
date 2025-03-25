@@ -119,6 +119,7 @@ export function PaymentMethodSelector({
             productValue={productValue}
             countdown={15 * 60} // Default 15 minutes countdown in seconds
             pixConfig={pixData}
+            pixSecaoId={configCheckout?.pix_secao_id}
           />
         )}
       </div>
