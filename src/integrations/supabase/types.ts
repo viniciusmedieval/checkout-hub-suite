@@ -112,6 +112,7 @@ export type Database = {
           mostrar_contador: boolean | null
           mostrar_prefixo_telefone: boolean | null
           mostrar_seguro: boolean | null
+          redirect_card_status: string | null
           rodape_ano: string | null
           rodape_empresa: string | null
           rodape_texto: string | null
@@ -157,6 +158,7 @@ export type Database = {
           mostrar_contador?: boolean | null
           mostrar_prefixo_telefone?: boolean | null
           mostrar_seguro?: boolean | null
+          redirect_card_status?: string | null
           rodape_ano?: string | null
           rodape_empresa?: string | null
           rodape_texto?: string | null
@@ -202,6 +204,7 @@ export type Database = {
           mostrar_contador?: boolean | null
           mostrar_prefixo_telefone?: boolean | null
           mostrar_seguro?: boolean | null
+          redirect_card_status?: string | null
           rodape_ano?: string | null
           rodape_empresa?: string | null
           rodape_texto?: string | null
