@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { formatCurrency } from "@/utils/formatters";
@@ -24,7 +25,7 @@ export function ResumoCompra({
   const buttonTextColor = configCheckout?.cor_texto_botao || "#FFFFFF";
   
   // Obter o texto do botão do produto, ou do configCheckout, ou usar um padrão
-  const buttonText = (produto as any).checkout_button_text || configCheckout?.texto_botao || "GARANTIR AGORA";
+  const buttonText = "AAAAAAAAAAAAAA"; // Texto fixo conforme solicitado
   
   const counterTextColor = configCheckout?.cor_texto_contador || "#4B5563";
   
@@ -93,8 +94,8 @@ export function ResumoCompra({
         className="w-full font-bold py-4 text-base h-auto"
         disabled={isProcessing}
         style={{ 
-          backgroundColor: buttonColor,
-          color: buttonTextColor
+          backgroundColor: "#FF0000", // Cor vermelha conforme a imagem
+          color: "#FFFFFF"
         }}
       >
         {isProcessing ? (
