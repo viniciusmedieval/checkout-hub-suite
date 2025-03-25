@@ -1,3 +1,4 @@
+
 // Types for our database tables
 export type Cliente = {
   id: number;

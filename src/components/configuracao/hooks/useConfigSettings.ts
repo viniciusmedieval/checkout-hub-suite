@@ -65,7 +65,7 @@ export const useConfigSettings = (initialConfig: ConfigCheckout | null) => {
       
       if (savedConfig) {
         // Update the original config to match the current config
-        setOriginalConfig(savedConfig);
+        setOriginalConfig(savedConfig as ConfigCheckout);
         return savedConfig;
       }
       
