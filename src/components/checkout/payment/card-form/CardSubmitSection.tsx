@@ -5,7 +5,7 @@ import { ConfigCheckout } from "@/lib/types/database-types";
 
 interface CardSubmitSectionProps {
   formIsComplete: boolean;
-  isProcessing: boolean;  // This property was previously causing the error
+  isProcessing: boolean;  // Renamed from isSubmitting to match usage
   handleSubmit: () => void;
   securityMessage?: string;
   configCheckout?: ConfigCheckout | null;
