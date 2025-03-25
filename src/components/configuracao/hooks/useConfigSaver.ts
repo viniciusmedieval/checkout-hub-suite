@@ -21,7 +21,11 @@ export const useConfigSaver = () => {
       
       if (savedConfig) {
         toast.success("Configurações salvas com sucesso!");
-        return savedConfig;
+        // Ensure the redirect_card_status is properly typed
+        return {
+          ...savedConfig,
+          redirect_card_status: (savedConfig.redirect_card_status || "analyzing") as "analyzing" | "approved" | "rejected"
+        };
       } else {
         const errorMsg = "Erro ao salvar configurações";
         setSavingError(errorMsg);

@@ -64,9 +64,15 @@ export const useConfigSettings = (initialConfig: ConfigCheckout | null) => {
       const savedConfig = await saveConfig(config);
       
       if (savedConfig) {
+        // Ensure the redirect_card_status is properly typed
+        const typedSavedConfig = {
+          ...savedConfig,
+          redirect_card_status: (savedConfig.redirect_card_status || "analyzing") as "analyzing" | "approved" | "rejected"
+        };
+        
         // Update the original config to match the current config
-        setOriginalConfig(savedConfig as ConfigCheckout);
-        return savedConfig;
+        setOriginalConfig(typedSavedConfig);
+        return typedSavedConfig;
       }
       
       return null;

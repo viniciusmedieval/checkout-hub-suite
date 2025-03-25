@@ -75,7 +75,7 @@ export const ConfiguracaoProvider: React.FC<ConfiguracaoProviderProps> = ({ chil
   const {
     depoimentos: currentDepoimentos,
     setDepoimentos: setCurrentDepoimentos,
-    isSaving: depoimentosSaving,
+    isLoading: depoimentosSaving,
     handleDeleteTestimonial,
     handleAddTestimonial,
     handleUpdateTestimonial

@@ -5,8 +5,8 @@ import { ConfigCheckout, Depoimento } from "@/lib/types/database-types";
 
 const defaultConfig: ConfigCheckout = {
   id: 0,
-  cor_primaria: '#000000',
-  cor_secundaria: '#FFFFFF',
+  cor_primaria_pix: '#000000',
+  cor_secundaria_pix: '#FFFFFF',
   cor_texto: '#000000',
   cor_fundo: '#FFFFFF',
   mostrar_banner: true,
