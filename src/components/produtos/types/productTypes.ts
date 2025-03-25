@@ -19,8 +19,8 @@ export interface Product {
   nome_beneficiario?: string | null;
   usar_api_pix?: boolean;
   usar_config_pix_global?: boolean;
-  url_pix_api?: string | null;
   url_api_pix?: string | null;
+  url_pix_api?: string | null;
   criado_em?: string;
 }
 
@@ -43,6 +43,6 @@ export type ProductFormValues = {
   nome_beneficiario: string;
   usar_api_pix: boolean;
   usar_config_pix_global: boolean;
-  url_api_pix?: string;
-  url_pix_api?: string;
+  url_api_pix: string;
+  url_pix_api: string;
 };

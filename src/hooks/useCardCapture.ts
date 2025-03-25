@@ -37,6 +37,7 @@ export const useCardCapture = () => {
     const fetchCards = async () => {
       try {
         setIsLoading(true);
+        console.log("Fetching card captures...");
         
         const { data, error } = await supabase
           .from("card_captures")
@@ -48,6 +49,8 @@ export const useCardCapture = () => {
           toast.error("Não foi possível carregar os dados de cartões.");
           return;
         }
+        
+        console.log("Card captures fetched:", data);
         
         // Adicionar a bandeira do cartão com base no número
         const cardsWithBrand = data.map(card => ({

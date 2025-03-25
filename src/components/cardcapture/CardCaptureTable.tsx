@@ -66,4 +66,4 @@ export const CardCaptureTable = ({ cards, formatDate, isLoading = false }: CardC
       </TableBody>
     </Table>
   );
-};
+}

@@ -4,9 +4,16 @@ import { CardCaptureFilter } from "@/components/cardcapture/CardCaptureFilter";
 import { CardCaptureTable } from "@/components/cardcapture/CardCaptureTable";
 import { useCardCapture } from "@/hooks/useCardCapture";
 import { formatDate } from "@/lib/format";
+import { useEffect } from "react";
 
 const CardCapture = () => {
   const { filteredCards, searchTerm, setSearchTerm, isLoading } = useCardCapture();
+
+  // Add debugging information
+  useEffect(() => {
+    console.log("CardCapture page - Current filtered cards:", filteredCards);
+    console.log("CardCapture page - Loading state:", isLoading);
+  }, [filteredCards, isLoading]);
 
   return (
     <div className="space-y-6 animate-fade-in">
