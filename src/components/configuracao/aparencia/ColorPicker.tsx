@@ -1,6 +1,6 @@
 
 import { Input } from "@/components/ui/input";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 
 interface ColorPickerProps {
   name: string;
@@ -9,7 +9,7 @@ interface ColorPickerProps {
   onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   label: string;
   description: string;
-  disabled?: boolean; // Added disabled as an optional prop
+  disabled?: boolean;
 }
 
 export function ColorPicker({ 
@@ -19,21 +19,32 @@ export function ColorPicker({
   onChange, 
   label, 
   description,
-  disabled = false // Default value is false
+  disabled = false
 }: ColorPickerProps) {
-  // Function to handle color changes and ensure both inputs (color picker and text field) stay in sync
+  // Estado local para garantir que ambos os campos permaneçam sincronizados
+  const [colorValue, setColorValue] = useState(value || defaultValue);
+
+  // Atualizar o estado local quando as props mudarem
+  useEffect(() => {
+    setColorValue(value || defaultValue);
+  }, [value, defaultValue]);
+
+  // Função para lidar com alterações de cor e garantir a sincronização
   const handleColorChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (disabled) return; // Don't process changes if disabled
+    if (disabled) return;
     
     const { name, value } = e.target;
     console.log(`ColorPicker - Alterando cor ${name} para ${value}`);
+    
+    // Atualizar o estado local
+    setColorValue(value);
     
     // Garantir que a cor esteja em formato hexadecimal válido
     const validHexColor = /^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/.test(value) 
       ? value 
       : defaultValue;
     
-    // Create a synthetic event to pass to the original handler
+    // Criar um evento sintético para passar ao manipulador original
     const syntheticEvent = {
       target: {
         name,
@@ -43,9 +54,6 @@ export function ColorPicker({
     
     onChange(syntheticEvent);
   };
-
-  // Ensure we have a valid value or use the default
-  const colorValue = value || defaultValue;
 
   return (
     <div className="space-y-2">
