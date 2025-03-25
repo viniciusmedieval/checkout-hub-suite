@@ -4,6 +4,7 @@ import { useParams, useNavigate } from "react-router-dom";
 import { useCheckoutData } from "@/hooks/useCheckoutData";
 import { usePaymentStatus } from "@/hooks/checkout";
 import { PaymentStatusContent } from "@/components/payment-status/PaymentStatusContent";
+import { toast } from "sonner";
 
 const PaymentStatus = () => {
   const { slug, status } = useParams<{ slug: string; status: string }>();
@@ -12,6 +13,13 @@ const PaymentStatus = () => {
   const { produto, configCheckout, loading, error } = useCheckoutData(slug);
   
   useEffect(() => {
+    // Verifica parâmetros
+    if (!slug || !status) {
+      console.error("Parâmetros inválidos para a página de status:", { slug, status });
+      navigate("/produtos");
+      return;
+    }
+    
     // Registra o status da página para debugging
     console.log("💳 Página de status de pagamento:", { 
       slug, 
@@ -19,19 +27,25 @@ const PaymentStatus = () => {
       paymentStatus,
       produto: produto?.nome
     });
-  }, [slug, status, paymentStatus, produto]);
+    
+    // Verifica status válido
+    if (status && !['analyzing', 'approved', 'rejected'].includes(status)) {
+      console.warn(`Status inválido: ${status}, redirecionando para 'analyzing'`);
+      redirectToStatus(slug, 'analyzing');
+    }
+  }, [slug, status, paymentStatus, produto, navigate, redirectToStatus]);
   
   // Handlers para as ações do usuário
   const handleTryAgain = () => {
     if (slug) {
       navigate(`/checkout/${slug}`);
     } else {
-      navigate('/');
+      navigate('/produtos');
     }
   };
   
   const handleReturn = () => {
-    navigate('/');
+    navigate('/produtos');
   };
   
   // Função para exibir um componente de loading enquanto os dados são carregados
@@ -49,6 +63,9 @@ const PaymentStatus = () => {
   
   // Se ocorrer algum erro, redirecionar para recusado
   if (error || !produto) {
+    // Notifica o usuário sobre o erro
+    toast.error("Produto não encontrado ou erro ao carregar os dados");
+    
     return (
       <div className="min-h-screen flex items-center justify-center bg-gray-50 p-4">
         <PaymentStatusContent

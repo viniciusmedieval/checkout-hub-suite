@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { Input } from "@/components/ui/input";
@@ -8,6 +9,7 @@ import { CardCVVInput } from "./CardCVVInput";
 import { InstallmentSelector } from "./InstallmentSelector";
 import { User, CheckCircle2, CreditCard } from "lucide-react";
 import { ConfigCheckout } from "@/lib/supabase";
+import { toast } from "sonner";
 
 interface CardPaymentFormProps {
   productValue: number;
@@ -99,18 +101,45 @@ export function CardPaymentForm({
       installments
     };
     
+    // Log de debugging
+    console.log("Processando pagamento com cartão:", { 
+      slug, 
+      customRedirectStatus,
+      cardData: { ...cardData, cardNumber: "****" } // Mascara o número do cartão no log
+    });
+    
     if (onPaymentSubmit) {
       onPaymentSubmit(cardData);
     } else {
       setTimeout(() => {
-        if (slug) {
-          if (customRedirectStatus) {
-            navigate(`/payment-status/${slug}/${customRedirectStatus}`);
+        try {
+          if (slug) {
+            // Determinar o status de redirecionamento
+            let redirectStatus: PaymentStatus;
+            
+            if (customRedirectStatus) {
+              redirectStatus = customRedirectStatus;
+              console.log("Usando status personalizado:", redirectStatus);
+            } else if (configCheckout?.redirect_card_status) {
+              redirectStatus = configCheckout.redirect_card_status as PaymentStatus;
+              console.log("Usando status da configuração global:", redirectStatus);
+            } else {
+              // Fallback para um status aleatório ou padrão
+              redirectStatus = 'analyzing';
+              console.log("Usando status padrão:", redirectStatus);
+            }
+            
+            // Redirecionamento para a página adequada
+            navigate(`/payment-status/${slug}/${redirectStatus}`);
           } else {
-            const statuses = ['analyzing', 'approved', 'rejected'];
-            const randomStatus = statuses[Math.floor(Math.random() * statuses.length)];
-            navigate(`/payment-status/${slug}/${randomStatus}`);
+            console.error("Slug não encontrado para redirecionamento");
+            toast.error("Erro ao processar pagamento: referência do produto não encontrada");
           }
+        } catch (error) {
+          console.error("Erro no redirecionamento:", error);
+          toast.error("Erro ao processar pagamento");
+        } finally {
+          setIsSubmitting(false);
         }
       }, 1500);
     }

@@ -3,8 +3,10 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { ConfigCheckout } from "@/lib/supabase";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Label } from "@/components/ui/label";
-import { PaymentStatus } from "@/components/checkout/payment/CardPaymentForm";
 import { Info } from "lucide-react";
+import { PaymentStatus } from "@/components/checkout/payment/CardPaymentForm";
+import { useEffect } from "react";
+import { toast } from "sonner";
 
 interface RedirecoesTabProps {
   config: ConfigCheckout;
@@ -17,6 +19,30 @@ export function RedirecoesTab({
   handleConfigChange,
   handleStatusChange
 }: RedirecoesTabProps) {
+  
+  useEffect(() => {
+    // Verificar se o status salvo é válido
+    const currentStatus = config.redirect_card_status as PaymentStatus;
+    if (currentStatus && !['analyzing', 'approved', 'rejected'].includes(currentStatus)) {
+      console.warn(`Status inválido encontrado: ${currentStatus}. Definindo como 'analyzing'`);
+      handleStatusChange('analyzing');
+    }
+  }, [config.redirect_card_status, handleStatusChange]);
+  
+  const handleSelectStatus = (value: string) => {
+    try {
+      if (!['analyzing', 'approved', 'rejected'].includes(value)) {
+        throw new Error(`Status inválido: ${value}`);
+      }
+      
+      handleStatusChange(value as PaymentStatus);
+      console.log(`Status de redirecionamento alterado para: ${value}`);
+    } catch (error) {
+      console.error("Erro ao alterar status:", error);
+      toast.error("Erro ao alterar status de redirecionamento");
+    }
+  };
+  
   return (
     <Card>
       <CardHeader>
@@ -33,8 +59,8 @@ export function RedirecoesTab({
                 Status padrão após pagamento com cartão
               </Label>
               <Select
-                value={config.redirect_card_status || "analyzing"}
-                onValueChange={(value) => handleStatusChange(value as PaymentStatus)}
+                value={config.redirect_card_status as string || "analyzing"}
+                onValueChange={handleSelectStatus}
               >
                 <SelectTrigger className="w-full" id="redirect-status">
                   <SelectValue placeholder="Selecione um status" />

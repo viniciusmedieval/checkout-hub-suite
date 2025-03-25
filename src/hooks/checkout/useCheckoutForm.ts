@@ -117,6 +117,8 @@ export const useCheckoutForm = (produto: Produto | null, configCheckout?: Config
     setIsSubmitting(true);
 
     try {
+      console.log("Iniciando processo de envio do pedido");
+      
       // Dados do cliente para inserir no Supabase
       const clienteData = {
         nome: formData.nome,
@@ -125,16 +127,29 @@ export const useCheckoutForm = (produto: Produto | null, configCheckout?: Config
         documento: formData.documento,
         data_nascimento: formData.data_nascimento,
         produto_id: produto.id,
+        produto_nome: produto.nome, // Adiciona o nome do produto também
         criado_em: new Date().toISOString()
       };
 
-      // Inserir na tabela clientes - CORRIGIDO: removido .select() após insert
+      // Verificar se o Supabase está disponível
+      if (!supabase) {
+        console.error("Cliente Supabase não inicializado");
+        throw new Error("Serviço de banco de dados não disponível");
+      }
+
+      console.log("Enviando dados para o Supabase:", clienteData);
+      
+      // Inserir na tabela clientes
       const { error } = await supabase
         .from('clientes')
         .insert([clienteData]);
 
-      if (error) throw error;
+      if (error) {
+        console.error("Erro do Supabase:", error);
+        throw error;
+      }
 
+      console.log("Pedido finalizado com sucesso!");
       toast.success("Pedido finalizado com sucesso!");
       
       // Reset form after successful submission
@@ -145,13 +160,9 @@ export const useCheckoutForm = (produto: Produto | null, configCheckout?: Config
         documento: "",
         data_nascimento: ""
       });
-      
-      // Redirect to thank you page or show success message
-      // window.location.href = `/obrigado/${slug}`;
-      
-    } catch (error) {
+    } catch (error: any) {
       console.error("Erro ao processar pedido:", error);
-      toast.error("Ocorreu um erro ao processar seu pedido. Tente novamente.");
+      toast.error(error?.message || "Ocorreu um erro ao processar seu pedido. Tente novamente.");
     } finally {
       setIsSubmitting(false);
     }
