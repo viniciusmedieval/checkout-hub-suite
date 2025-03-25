@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect, Dispatch, SetStateAction } from 'react';
 import { ConfigCheckout, Depoimento } from '@/lib/types/database-types';
 import { useConfigLoader } from './hooks/useConfigLoader';
@@ -79,14 +78,13 @@ export const ConfiguracaoProvider: React.FC<ConfiguracaoProviderProps> = ({ chil
     handleDeleteTestimonial,
     handleAddTestimonial,
     handleUpdateTestimonial
-  } = useTestimonials(config?.id);
+  } = useTestimonials([]);
 
   useEffect(() => {
     setCurrentConfig(config);
   }, [config]);
 
   useEffect(() => {
-    // Fix: Make sure the types match by setting an array of Depoimentos
     if (Array.isArray(depoimentos)) {
       setCurrentDepoimentos(depoimentos);
     }
