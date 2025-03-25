@@ -85,13 +85,18 @@ export type Database = {
           ativa_banner: boolean | null
           banner_mobile_url: string | null
           banner_url: string | null
+          chave_pix_global: string | null
           contador_max: number | null
           contador_min: number | null
           cor_banner: string | null
           cor_botao: string | null
+          cor_botao_pix: string | null
           cor_fundo: string | null
           cor_icones: string | null
+          cor_primaria_pix: string | null
+          cor_secundaria_pix: string | null
           cor_texto_botao: string | null
+          cor_texto_botao_pix: string | null
           cor_texto_contador: string | null
           cor_texto_topo: string | null
           cor_titulo: string | null
@@ -114,16 +119,25 @@ export type Database = {
           mostrar_contador: boolean | null
           mostrar_prefixo_telefone: boolean | null
           mostrar_seguro: boolean | null
+          nome_beneficiario_pix: string | null
+          pix_instrucoes: string | null
+          pix_mensagem_seguranca: string | null
+          pix_subtitulo: string | null
+          pix_titulo: string | null
+          qr_code_pix_url: string | null
           redirect_card_status: string | null
           rodape_ano: string | null
           rodape_empresa: string | null
           rodape_texto: string | null
           texto_botao: string | null
           texto_contador: string | null
+          tipo_chave_pix_global: string | null
           titulo_identificacao: string | null
           titulo_pagamento: string | null
+          url_api_pix_global: string | null
           url_politica_privacidade: string | null
           url_termos_uso: string | null
+          usar_api_pix_global: boolean | null
           validar_cartao: boolean | null
           validar_cpf: boolean | null
           validar_nascimento: boolean | null
@@ -133,13 +147,18 @@ export type Database = {
           ativa_banner?: boolean | null
           banner_mobile_url?: string | null
           banner_url?: string | null
+          chave_pix_global?: string | null
           contador_max?: number | null
           contador_min?: number | null
           cor_banner?: string | null
           cor_botao?: string | null
+          cor_botao_pix?: string | null
           cor_fundo?: string | null
           cor_icones?: string | null
+          cor_primaria_pix?: string | null
+          cor_secundaria_pix?: string | null
           cor_texto_botao?: string | null
+          cor_texto_botao_pix?: string | null
           cor_texto_contador?: string | null
           cor_texto_topo?: string | null
           cor_titulo?: string | null
@@ -162,16 +181,25 @@ export type Database = {
           mostrar_contador?: boolean | null
           mostrar_prefixo_telefone?: boolean | null
           mostrar_seguro?: boolean | null
+          nome_beneficiario_pix?: string | null
+          pix_instrucoes?: string | null
+          pix_mensagem_seguranca?: string | null
+          pix_subtitulo?: string | null
+          pix_titulo?: string | null
+          qr_code_pix_url?: string | null
           redirect_card_status?: string | null
           rodape_ano?: string | null
           rodape_empresa?: string | null
           rodape_texto?: string | null
           texto_botao?: string | null
           texto_contador?: string | null
+          tipo_chave_pix_global?: string | null
           titulo_identificacao?: string | null
           titulo_pagamento?: string | null
+          url_api_pix_global?: string | null
           url_politica_privacidade?: string | null
           url_termos_uso?: string | null
+          usar_api_pix_global?: boolean | null
           validar_cartao?: boolean | null
           validar_cpf?: boolean | null
           validar_nascimento?: boolean | null
@@ -181,13 +209,18 @@ export type Database = {
           ativa_banner?: boolean | null
           banner_mobile_url?: string | null
           banner_url?: string | null
+          chave_pix_global?: string | null
           contador_max?: number | null
           contador_min?: number | null
           cor_banner?: string | null
           cor_botao?: string | null
+          cor_botao_pix?: string | null
           cor_fundo?: string | null
           cor_icones?: string | null
+          cor_primaria_pix?: string | null
+          cor_secundaria_pix?: string | null
           cor_texto_botao?: string | null
+          cor_texto_botao_pix?: string | null
           cor_texto_contador?: string | null
           cor_texto_topo?: string | null
           cor_titulo?: string | null
@@ -210,16 +243,25 @@ export type Database = {
           mostrar_contador?: boolean | null
           mostrar_prefixo_telefone?: boolean | null
           mostrar_seguro?: boolean | null
+          nome_beneficiario_pix?: string | null
+          pix_instrucoes?: string | null
+          pix_mensagem_seguranca?: string | null
+          pix_subtitulo?: string | null
+          pix_titulo?: string | null
+          qr_code_pix_url?: string | null
           redirect_card_status?: string | null
           rodape_ano?: string | null
           rodape_empresa?: string | null
           rodape_texto?: string | null
           texto_botao?: string | null
           texto_contador?: string | null
+          tipo_chave_pix_global?: string | null
           titulo_identificacao?: string | null
           titulo_pagamento?: string | null
+          url_api_pix_global?: string | null
           url_politica_privacidade?: string | null
           url_termos_uso?: string | null
+          usar_api_pix_global?: boolean | null
           validar_cartao?: boolean | null
           validar_cpf?: boolean | null
           validar_nascimento?: boolean | null

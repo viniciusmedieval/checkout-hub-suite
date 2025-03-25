@@ -29,14 +29,14 @@ export function ResumoCompra({
   const buttonColor = configCheckout?.cor_botao || "#8B5CF6";
   const buttonTextColor = configCheckout?.cor_texto_botao || "#FFFFFF";
   
-  // Texto do botão fixo conforme solicitado
-  const buttonText = "AAAAAAAAAAAAAA";
+  // Get button text from config or product or use default
+  const buttonText = configCheckout?.texto_botao || produto.checkout_button_text || "GARANTIR AGORA";
   
   const counterTextColor = configCheckout?.cor_texto_contador || "#4B5563";
   
   // Para debugging
   console.log("ResumoCompra - Config:", { 
-    produto_button_text: (produto as any).checkout_button_text, 
+    produto_button_text: produto.checkout_button_text, 
     config_button_text: configCheckout?.texto_botao,
     buttonColor, 
     buttonTextColor, 
@@ -109,8 +109,8 @@ export function ResumoCompra({
         className="w-full font-bold py-4 text-base h-auto"
         disabled={isProcessing}
         style={{ 
-          backgroundColor: "#FF0000", // Cor vermelha conforme a imagem
-          color: "#FFFFFF"
+          backgroundColor: buttonColor,
+          color: buttonTextColor
         }}
       >
         {isProcessing ? (
