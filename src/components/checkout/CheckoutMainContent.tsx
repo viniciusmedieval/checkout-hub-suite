@@ -1,11 +1,10 @@
-
 import { Produto, ConfigCheckout } from "@/lib/supabase";
 import { FormIdentificacao } from "@/components/checkout/FormIdentificacao";
-import { PaymentMethodSelector } from "@/components/checkout/payment/PaymentMethodSelector";
+import { PaymentMethodSelector } from "@/components/checkout/payment/selector/PaymentMethodSelector";
 import { CheckoutTestimonials } from "@/components/checkout/CheckoutTestimonials";
 import { ResumoCompra } from "@/components/checkout/ResumoCompra";
 import { FormData } from "@/hooks/checkout";
-import { PaymentStatus } from "@/components/checkout/payment/CardPaymentForm";
+import { PaymentStatus } from "@/components/checkout/payment/types";
 
 interface CheckoutMainContentProps {
   produto: Produto;
@@ -34,18 +33,14 @@ export function CheckoutMainContent({
   setPaymentMethod,
   submitOrder
 }: CheckoutMainContentProps) {
-  // Determinar a cor do texto a ser usada (default: black)
   const textColor = configCheckout?.cor_titulo || "#000000";
   
-  // Determine which redirect status to use - first the custom one (product specific),
-  // then the global config one, then default to 'analyzing'
   const effectiveRedirectStatus = customRedirectStatus || 
     (configCheckout?.redirect_card_status as PaymentStatus) || 
     'analyzing';
 
   return (
     <div className="w-full max-w-md mx-auto py-6 px-4 space-y-5">
-      {/* Product Title with configurable color */}
       <h1 
         className="text-xl font-bold text-center"
         style={{ color: textColor }}
@@ -53,7 +48,6 @@ export function CheckoutMainContent({
         {produto.checkout_title || produto.nome}
       </h1>
       
-      {/* Cliente Identification Form */}
       <FormIdentificacao 
         formData={formData} 
         errors={formErrors} 
@@ -61,12 +55,10 @@ export function CheckoutMainContent({
         configCheckout={configCheckout}
       />
       
-      {/* Testimonials Section */}
       <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
         <CheckoutTestimonials produto_id={produto.id} />
       </div>
       
-      {/* Payment Section */}
       <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
         <PaymentMethodSelector 
           productValue={produto.valor}
@@ -78,7 +70,6 @@ export function CheckoutMainContent({
         />
       </div>
       
-      {/* Order Summary & CTA Button */}
       <ResumoCompra 
         produto={produto} 
         configCheckout={configCheckout}
