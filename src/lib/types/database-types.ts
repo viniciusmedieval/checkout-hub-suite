@@ -110,6 +110,8 @@ export type ConfigCheckout = {
   qr_code_pix_url?: string | null;
   usar_api_pix_global?: boolean | null;
   url_api_pix_global?: string | null;
+  mostrar_depoimentos?: boolean | null;
+  slug?: string | null;
 };
 
 export type Depoimento = {

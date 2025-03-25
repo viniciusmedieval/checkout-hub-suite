@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import { supabase } from '@/lib/supabase';
 import { ConfigCheckout, Depoimento } from "@/lib/types/database-types";
@@ -29,7 +28,6 @@ const defaultConfig: ConfigCheckout = {
   cor_texto_botao_card: '#FFFFFF',
   redirect_card_status: 'analyzing',
   mensagem_rodape: '',
-  mensagem_produto: '',
   max_installments: 1,
   modo_random: false,
   mostrar_depoimentos: false,

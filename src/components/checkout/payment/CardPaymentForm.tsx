@@ -60,10 +60,10 @@ export function CardPaymentForm({
       
       <CardSubmitSection 
         formIsComplete={formIsComplete}
-        isSubmitting={isSubmitting}
-        buttonColor={configCheckout?.cor_botao}
-        buttonTextColor={configCheckout?.cor_texto_botao}
-        handleSubmitPayment={handleSubmitPayment}
+        isProcessing={isSubmitting}
+        handleSubmit={handleSubmitPayment}
+        configCheckout={configCheckout}
+        securityMessage="Pagamento seguro e criptografado"
       />
     </div>
   );
