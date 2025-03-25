@@ -17,10 +17,11 @@ export type Produto = {
   tipo: string;
   valor: number;
   descricao: string;
-  ativo: boolean;
+  ativo?: boolean; // Changed from required to optional to match the Produto type in supabase.ts
   slug: string;
   imagem_url: string;
   checkout_title: string;
+  checkout_button_text?: string; // Added to match supabase.ts
   banner_url: string;
   banner_mobile_url: string;
   banner_color: string;

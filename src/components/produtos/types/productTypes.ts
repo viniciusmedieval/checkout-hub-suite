@@ -5,7 +5,7 @@ export interface Product {
   tipo: string;
   valor: number;
   descricao: string;
-  ativo: boolean;
+  ativo?: boolean; // Changed to optional to match the other definitions
   slug: string;
   checkout_title: string;
   checkout_button_text?: string | null;

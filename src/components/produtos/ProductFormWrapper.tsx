@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { Sheet, SheetContent } from "@/components/ui/sheet";
 import { ProductForm } from "@/components/produtos/ProductForm";
-import { Produto } from "@/lib/supabase";
+import { Produto } from "@/lib/types/database-types"; // Changed from '@/lib/supabase' to use consistent type
 import { toast } from "sonner";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Alert, AlertDescription } from "@/components/ui/alert";

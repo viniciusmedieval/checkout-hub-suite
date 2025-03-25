@@ -2,7 +2,7 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Form } from '@/components/ui/form';
-import { Produto } from '@/lib/supabase';
+import { Produto } from '@/lib/types/database-types';
 import { BasicInfoTab } from './tabs/BasicInfoTab';
 import { CheckoutTab } from './tabs/CheckoutTab';
 import { PixConfigTab } from './tabs/PixConfigTab';
