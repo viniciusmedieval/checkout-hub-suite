@@ -7,7 +7,8 @@ import { CheckoutLoading } from "@/components/checkout/CheckoutLoading";
 import { CheckoutError } from "@/components/checkout/CheckoutError";
 import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { PaymentStatus } from "@/components/checkout/payment/CardPaymentForm";
+import { PaymentStatus } from "@/components/checkout/payment/types";
+import { Produto, ConfigCheckout } from "@/lib/types/database-types";
 
 const Checkout = () => {
   const { slug } = useParams<{ slug: string }>();
@@ -72,8 +73,15 @@ const Checkout = () => {
     return <CheckoutError error={error} />;
   }
 
+  // Cast produto and configCheckout to the correct types
+  const typedProduto = produto as unknown as Produto;
+  const typedConfigCheckout = configCheckout ? {
+    ...configCheckout,
+    redirect_card_status: configCheckout.redirect_card_status as PaymentStatus
+  } as unknown as ConfigCheckout : null;
+
   // Determinar a cor de fundo a ser usada (default: white)
-  const backgroundColor = produto.background_color || configCheckout?.cor_fundo || "#FFFFFF";
+  const backgroundColor = typedProduto.background_color || typedConfigCheckout?.cor_fundo || "#FFFFFF";
   
   return (
     <div 
@@ -81,13 +89,13 @@ const Checkout = () => {
       style={{ backgroundColor }}
     >
       {/* Header: contém tanto a barra de mensagem quanto o banner */}
-      <CheckoutHeader produto={produto} configCheckout={configCheckout} />
+      <CheckoutHeader produto={typedProduto} configCheckout={typedConfigCheckout} />
 
       {/* Main checkout content */}
       <div className="flex-grow flex justify-center">
         <CheckoutMainContent 
-          produto={produto}
-          configCheckout={configCheckout}
+          produto={typedProduto}
+          configCheckout={typedConfigCheckout}
           formData={formData}
           formErrors={formErrors}
           paymentMethod={paymentMethod}
@@ -101,7 +109,7 @@ const Checkout = () => {
       </div>
       
       {/* Footer */}
-      <CheckoutFooter configCheckout={configCheckout} />
+      <CheckoutFooter configCheckout={typedConfigCheckout} />
     </div>
   );
 }

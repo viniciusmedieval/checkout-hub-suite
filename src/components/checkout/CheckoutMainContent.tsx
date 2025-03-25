@@ -45,7 +45,8 @@ export function CheckoutMainContent({
   // Create a typed version of configCheckout with correct redirect_card_status type
   const typedConfigCheckout = configCheckout ? {
     ...configCheckout,
-    redirect_card_status: configCheckout.redirect_card_status as PaymentStatus
+    redirect_card_status: configCheckout.redirect_card_status as PaymentStatus,
+    modo_random: !!configCheckout.modo_random
   } : null;
 
   return (

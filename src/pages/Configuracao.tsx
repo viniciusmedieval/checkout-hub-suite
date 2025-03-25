@@ -15,6 +15,7 @@ import { RedirecoesTab } from "@/components/configuracao/sections/RedirecoesTab"
 import { RandomModeTab } from "@/components/configuracao/sections/RandomModeTab";
 import { PixConfigTab } from "@/components/configuracao/sections/PixConfigTab";
 import { toast } from "sonner";
+import { ConfigCheckout } from "@/lib/types/database-types";
 
 const Configuracao = () => {
   const {
@@ -38,6 +39,9 @@ const Configuracao = () => {
   if (loading) {
     return <LoadingState />;
   }
+
+  // Cast config to the correct type
+  const typedConfig = config as unknown as ConfigCheckout;
 
   const onSaveClick = async () => {
     if (!hasUnsavedChanges()) {
@@ -75,7 +79,7 @@ const Configuracao = () => {
 
         <TabsContent value="visual" className="space-y-4 mt-4">
           <VisualTab 
-            config={config} 
+            config={typedConfig} 
             handleConfigChange={handleConfigChange}
             handleSwitchChange={handleSwitchChange}
           />
@@ -83,7 +87,7 @@ const Configuracao = () => {
 
         <TabsContent value="header" className="space-y-4 mt-4">
           <HeaderTab 
-            config={config} 
+            config={typedConfig} 
             handleConfigChange={handleConfigChange}
             handleSwitchChange={handleSwitchChange}
           />
@@ -91,7 +95,7 @@ const Configuracao = () => {
 
         <TabsContent value="formulario" className="space-y-4 mt-4">
           <FormularioTab 
-            config={config} 
+            config={typedConfig} 
             handleConfigChange={handleConfigChange}
             handleSwitchChange={handleSwitchChange}
           />
@@ -99,7 +103,7 @@ const Configuracao = () => {
         
         <TabsContent value="pix" className="space-y-4 mt-4">
           <PixConfigTab 
-            config={config} 
+            config={typedConfig} 
             handleConfigChange={handleConfigChange}
             handleSelectChange={handleSelectChange}
             handleSwitchChange={handleSwitchChange}
@@ -108,7 +112,7 @@ const Configuracao = () => {
 
         <TabsContent value="icones" className="space-y-4 mt-4">
           <IconesTab 
-            config={config} 
+            config={typedConfig} 
             handleConfigChange={handleConfigChange}
             handleIconChange={handleIconChange}
           />
@@ -126,7 +130,7 @@ const Configuracao = () => {
 
         <TabsContent value="botoes" className="space-y-4 mt-4">
           <BotoesTab 
-            config={config} 
+            config={typedConfig} 
             handleConfigChange={handleConfigChange}
             handleSwitchChange={handleSwitchChange}
           />
@@ -134,7 +138,7 @@ const Configuracao = () => {
 
         <TabsContent value="rodape" className="space-y-4 mt-4">
           <RodapeTab 
-            config={config} 
+            config={typedConfig} 
             handleConfigChange={handleConfigChange}
             handleSwitchChange={handleSwitchChange}
           />
@@ -142,7 +146,7 @@ const Configuracao = () => {
 
         <TabsContent value="redirects" className="space-y-4 mt-4">
           <RedirecoesTab 
-            config={config} 
+            config={typedConfig} 
             handleConfigChange={handleConfigChange}
             handleStatusChange={handleStatusChange}
           />
@@ -150,7 +154,7 @@ const Configuracao = () => {
 
         <TabsContent value="random" className="space-y-4 mt-4">
           <RandomModeTab 
-            config={config} 
+            config={typedConfig} 
             handleSwitchChange={handleSwitchChange}
           />
         </TabsContent>
