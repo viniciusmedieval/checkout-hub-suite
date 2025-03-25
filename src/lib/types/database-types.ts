@@ -48,23 +48,23 @@ export type Venda = {
 
 export type ConfigCheckout = {
   id: number;
-  mensagem_topo: string;
-  cor_topo: string;
-  cor_texto_topo: string;
-  ativa_banner: boolean;
-  banner_url: string;
-  banner_mobile_url: string;
-  cor_banner: string;
-  cor_fundo: string;
-  cor_titulo: string;
-  texto_botao: string;
-  cor_botao: string;
-  cor_texto_botao: string;
-  rodape_texto: string;
-  rodape_empresa: string;
-  rodape_ano: string;
-  mostrar_seguro: boolean;
-  mensagem_rodape: string;
+  mensagem_topo?: string; // Changed from required to optional
+  cor_topo?: string; // Changed from required to optional
+  cor_texto_topo?: string; // Changed from required to optional
+  ativa_banner?: boolean;
+  banner_url?: string;
+  banner_mobile_url?: string;
+  cor_banner?: string;
+  cor_fundo?: string;
+  cor_titulo?: string;
+  texto_botao?: string;
+  cor_botao?: string;
+  cor_texto_botao?: string;
+  rodape_texto?: string;
+  rodape_empresa?: string;
+  rodape_ano?: string;
+  mostrar_seguro?: boolean;
+  mensagem_rodape?: string;
   url_termos_uso?: string;
   url_politica_privacidade?: string;
   mensagem_termos?: string;
