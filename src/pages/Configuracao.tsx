@@ -1,3 +1,4 @@
+
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useConfiguracao } from "@/components/configuracao/useConfiguracao";
@@ -54,9 +55,15 @@ const Configuracao = () => {
       toast.info("Não há alterações para salvar");
       return;
     }
+    
+    console.log("Saving configuration...");
     const savedConfig = await handleSaveConfig();
+    
     if (savedConfig) {
+      console.log("Configuration saved successfully:", savedConfig);
       await reloadConfig();
+    } else {
+      console.error("Failed to save configuration");
     }
   };
 
@@ -67,6 +74,7 @@ const Configuracao = () => {
         <Button 
           onClick={onSaveClick} 
           disabled={isSaving || !hasUnsavedChanges()}
+          className="bg-blue-600 hover:bg-blue-700"
         >
           {isSaving ? "Salvando..." : "Salvar Alterações"}
         </Button>

@@ -41,7 +41,9 @@ export const useConfigSettings = (initialConfig: ConfigCheckout | null) => {
 
   // Handler for status field
   const handleStatusChange = (status: PaymentStatus) => {
-    setConfig(prev => ({ ...prev, redirect_card_status: status }));
+    // Ensure the status is properly typed
+    const typedStatus = status as "analyzing" | "approved" | "rejected";
+    setConfig(prev => ({ ...prev, redirect_card_status: typedStatus }));
   };
 
   // Check if there are unsaved changes
@@ -72,6 +74,8 @@ export const useConfigSettings = (initialConfig: ConfigCheckout | null) => {
         
         // Update the original config to match the current config
         setOriginalConfig(typedSavedConfig);
+        setConfig(typedSavedConfig);
+        toast.success("Configurações salvas com sucesso!");
         return typedSavedConfig;
       }
       
