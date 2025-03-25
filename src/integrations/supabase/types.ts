@@ -105,6 +105,7 @@ export type Database = {
           mensagem_rodape: string | null
           mensagem_termos: string | null
           mensagem_topo: string | null
+          modo_random: boolean | null
           mostrar_bandeira_brasil: boolean | null
           mostrar_campo_documento: boolean | null
           mostrar_campo_nascimento: boolean | null
@@ -151,6 +152,7 @@ export type Database = {
           mensagem_rodape?: string | null
           mensagem_termos?: string | null
           mensagem_topo?: string | null
+          modo_random?: boolean | null
           mostrar_bandeira_brasil?: boolean | null
           mostrar_campo_documento?: boolean | null
           mostrar_campo_nascimento?: boolean | null
@@ -197,6 +199,7 @@ export type Database = {
           mensagem_rodape?: string | null
           mensagem_termos?: string | null
           mensagem_topo?: string | null
+          modo_random?: boolean | null
           mostrar_bandeira_brasil?: boolean | null
           mostrar_campo_documento?: boolean | null
           mostrar_campo_nascimento?: boolean | null

@@ -51,6 +51,9 @@ export const useCheckoutConfig = () => {
             config.redirect_card_status = "analyzing";
           }
           
+          // Ensure modo_random is a boolean
+          config.modo_random = !!config.modo_random;
+          
           console.log("useCheckoutConfig - Valores validados:", {
             corTopo: config.cor_topo,
             corFundo: config.cor_fundo,
@@ -59,7 +62,8 @@ export const useCheckoutConfig = () => {
             corBotao: config.cor_botao,
             corTextoBotao: config.cor_texto_botao,
             corTextoContador: config.cor_texto_contador,
-            redirectCardStatus: config.redirect_card_status
+            redirectCardStatus: config.redirect_card_status,
+            modoRandom: config.modo_random
           });
           
           setConfigCheckout(config);
@@ -90,7 +94,8 @@ export const useCheckoutConfig = () => {
         banner_url: "",
         banner_mobile_url: "",
         mensagem_rodape: "Compra 100% segura e garantida.",
-        redirect_card_status: "analyzing"
+        redirect_card_status: "analyzing",
+        modo_random: false
       };
       
       setConfigCheckout(defaultConfig);
@@ -119,7 +124,8 @@ export const useCheckoutConfig = () => {
         banner_url: "",
         banner_mobile_url: "",
         mensagem_rodape: "Compra 100% segura e garantida.",
-        redirect_card_status: "analyzing"
+        redirect_card_status: "analyzing",
+        modo_random: false
       };
       
       setConfigCheckout(defaultConfig);

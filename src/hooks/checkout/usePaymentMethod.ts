@@ -7,12 +7,14 @@ interface UsePaymentMethodProps {
   selectedMethod?: PaymentMethod;
   onMethodChange?: (method: PaymentMethod) => void;
   customRedirectStatus?: PaymentStatus;
+  randomMode?: boolean;
 }
 
 export const usePaymentMethod = ({
   selectedMethod = 'card',
   onMethodChange,
   customRedirectStatus,
+  randomMode = false,
 }: UsePaymentMethodProps) => {
   const [activeMethod, setActiveMethod] = useState<PaymentMethod>(selectedMethod);
 
@@ -32,10 +34,24 @@ export const usePaymentMethod = ({
       onMethodChange(method);
     }
   };
+  
+  // Função para gerar um status aleatório quando modo_random estiver ativado
+  const getPaymentStatus = (): PaymentStatus => {
+    if (!randomMode) {
+      return customRedirectStatus || 'analyzing';
+    }
+    
+    // Com modo randômico ativado, escolhe aleatoriamente entre os status
+    const randomStatuses: PaymentStatus[] = ['analyzing', 'approved', 'rejected'];
+    const randomIndex = Math.floor(Math.random() * randomStatuses.length);
+    console.log(`🎲 Modo randômico ativado: gerando status aleatório - ${randomStatuses[randomIndex]}`);
+    return randomStatuses[randomIndex];
+  };
 
   return {
     activeMethod,
     handleMethodChange,
-    customRedirectStatus
+    paymentStatus: getPaymentStatus(),
+    randomMode
   };
 };

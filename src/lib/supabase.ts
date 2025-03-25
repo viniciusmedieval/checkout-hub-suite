@@ -1,3 +1,4 @@
+
 // src/lib/supabase.ts
 import { createClient, SupabaseClient } from '@supabase/supabase-js';
 import { checkSupabaseCredentials } from './env-check';
@@ -183,4 +184,7 @@ export interface ConfigCheckout {
   
   // Redirect settings
   redirect_card_status?: string;
+  
+  // Random mode
+  modo_random?: boolean;
 }

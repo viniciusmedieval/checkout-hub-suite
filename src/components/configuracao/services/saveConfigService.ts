@@ -58,6 +58,7 @@ const prepareConfigForSave = (config: ConfigCheckout) => {
     mostrar_campo_nascimento: Boolean(config.mostrar_campo_nascimento),
     validar_nascimento: Boolean(config.validar_nascimento),
     redirect_card_status: config.redirect_card_status || "analyzing",
+    modo_random: Boolean(config.modo_random),
   };
 
   console.log("✅ Configuração preparada para salvar:", preparedConfig);

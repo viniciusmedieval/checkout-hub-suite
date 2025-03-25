@@ -1,3 +1,4 @@
+
 import { Produto, ConfigCheckout } from "@/lib/supabase";
 import { FormIdentificacao } from "@/components/checkout/FormIdentificacao";
 import { PaymentMethodSelector } from "@/components/checkout/payment/selector/PaymentMethodSelector";
@@ -38,6 +39,8 @@ export function CheckoutMainContent({
   const effectiveRedirectStatus = customRedirectStatus || 
     (configCheckout?.redirect_card_status as PaymentStatus) || 
     'analyzing';
+    
+  const randomMode = configCheckout?.modo_random || false;
 
   return (
     <div className="w-full max-w-md mx-auto py-6 px-4 space-y-5">
@@ -67,6 +70,7 @@ export function CheckoutMainContent({
           produto={produto}
           configCheckout={configCheckout}
           customRedirectStatus={effectiveRedirectStatus}
+          randomMode={randomMode}
         />
       </div>
       
