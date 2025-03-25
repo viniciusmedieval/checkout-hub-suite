@@ -4,10 +4,16 @@ import { ConfigCheckout } from "@/lib/supabase";
 import { saveConfig } from "../services";
 import { defaultConfig } from "../utils/defaultConfig";
 import { toast } from "sonner";
-import { PaymentStatus } from "@/components/checkout/payment/CardPaymentForm";
+import { PaymentStatus } from "@/components/checkout/payment/types";
 
 export function useConfigSettings(initialConfig: ConfigCheckout | null = null) {
-  const [config, setConfig] = useState<ConfigCheckout>(initialConfig || defaultConfig);
+  // Ensure default config has redirect_card_status
+  const defaultConfigWithRedirect = {
+    ...defaultConfig,
+    redirect_card_status: "analyzing" as PaymentStatus
+  };
+  
+  const [config, setConfig] = useState<ConfigCheckout>(initialConfig || defaultConfigWithRedirect);
   const [isSaving, setIsSaving] = useState(false);
   const [lastSavedConfig, setLastSavedConfig] = useState<ConfigCheckout | null>(null);
 
@@ -15,8 +21,15 @@ export function useConfigSettings(initialConfig: ConfigCheckout | null = null) {
   useEffect(() => {
     if (initialConfig) {
       console.log('✅ useConfigSettings - Atualizando config inicial:', initialConfig);
-      setConfig(initialConfig);
-      setLastSavedConfig(initialConfig);
+      
+      // Ensure redirect_card_status exists in config
+      const configWithRedirect = {
+        ...initialConfig,
+        redirect_card_status: initialConfig.redirect_card_status || "analyzing"
+      };
+      
+      setConfig(configWithRedirect);
+      setLastSavedConfig(configWithRedirect);
     }
   }, [initialConfig]);
 
@@ -61,6 +74,11 @@ export function useConfigSettings(initialConfig: ConfigCheckout | null = null) {
       // Clone config to avoid reference issues
       const configToSave = JSON.parse(JSON.stringify(config));
       
+      // Ensure redirect_card_status exists
+      if (!configToSave.redirect_card_status) {
+        configToSave.redirect_card_status = "analyzing";
+      }
+      
       // Ensure boolean and number fields are correctly typed
       Object.keys(configToSave).forEach(key => {
         if (typeof configToSave[key] === 'string' && (configToSave[key] === 'true' || configToSave[key] === 'false')) {
@@ -77,10 +95,16 @@ export function useConfigSettings(initialConfig: ConfigCheckout | null = null) {
         console.log("✅ Configuração salva com sucesso:", updatedConfig);
         toast.success("Configurações salvas com sucesso!");
         
+        // Ensure redirect_card_status exists in the updated config
+        const configWithRedirect = {
+          ...updatedConfig,
+          redirect_card_status: updatedConfig.redirect_card_status || "analyzing"
+        };
+        
         // Atualizar o estado com os dados retornados do servidor
-        setConfig(updatedConfig);
-        setLastSavedConfig(updatedConfig);
-        return updatedConfig;
+        setConfig(configWithRedirect);
+        setLastSavedConfig(configWithRedirect);
+        return configWithRedirect;
       } else {
         console.error("❌ Erro ao salvar configurações: retorno nulo");
         toast.error("Erro ao salvar configurações. Verifique o console para mais detalhes.");

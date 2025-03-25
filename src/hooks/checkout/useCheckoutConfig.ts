@@ -1,6 +1,7 @@
 
 import { useState, useEffect } from "react";
 import { ConfigCheckout, supabase } from "@/lib/supabase";
+import { PaymentStatus } from "@/components/checkout/payment/types";
 
 export const useCheckoutConfig = () => {
   const [configCheckout, setConfigCheckout] = useState<ConfigCheckout | null>(null);
@@ -44,14 +45,21 @@ export const useCheckoutConfig = () => {
           if (!validateHex(config.cor_texto_botao)) config.cor_texto_botao = "#FFFFFF";
           if (!validateHex(config.cor_texto_contador)) config.cor_texto_contador = "#4B5563";
           
-          console.log("useCheckoutConfig - Cores validadas:", {
+          // Ensure redirect_card_status is a valid value
+          const validStatuses: PaymentStatus[] = ["analyzing", "approved", "rejected"];
+          if (!config.redirect_card_status || !validStatuses.includes(config.redirect_card_status as PaymentStatus)) {
+            config.redirect_card_status = "analyzing";
+          }
+          
+          console.log("useCheckoutConfig - Valores validados:", {
             corTopo: config.cor_topo,
             corFundo: config.cor_fundo,
             corBanner: config.cor_banner,
             corTitulo: config.cor_titulo,
             corBotao: config.cor_botao,
             corTextoBotao: config.cor_texto_botao,
-            corTextoContador: config.cor_texto_contador
+            corTextoContador: config.cor_texto_contador,
+            redirectCardStatus: config.redirect_card_status
           });
           
           setConfigCheckout(config);
@@ -81,7 +89,8 @@ export const useCheckoutConfig = () => {
         ativa_banner: true,
         banner_url: "",
         banner_mobile_url: "",
-        mensagem_rodape: "Compra 100% segura e garantida."
+        mensagem_rodape: "Compra 100% segura e garantida.",
+        redirect_card_status: "analyzing"
       };
       
       setConfigCheckout(defaultConfig);
@@ -109,7 +118,8 @@ export const useCheckoutConfig = () => {
         ativa_banner: true,
         banner_url: "",
         banner_mobile_url: "",
-        mensagem_rodape: "Compra 100% segura e garantida."
+        mensagem_rodape: "Compra 100% segura e garantida.",
+        redirect_card_status: "analyzing"
       };
       
       setConfigCheckout(defaultConfig);
