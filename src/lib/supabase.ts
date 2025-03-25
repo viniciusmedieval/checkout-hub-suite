@@ -1,4 +1,3 @@
-
 // src/lib/supabase.ts
 import { createClient, SupabaseClient } from '@supabase/supabase-js';
 import { checkSupabaseCredentials } from './env-check';
@@ -132,10 +131,32 @@ export { supabase };
 
 export interface ConfigCheckout {
   id: number;
+  ativa_banner?: boolean;
+  mostrar_seguro?: boolean;
+  validar_cpf?: boolean;
+  validar_telefone?: boolean;
+  validar_cartao?: boolean;
+  validar_nascimento?: boolean;
+  contador_min?: number;
+  contador_max?: number;
+  mostrar_contador?: boolean;
+  texto_contador?: string;
+  cor_texto_contador?: string;
+  mostrar_campo_documento?: boolean;
+  mostrar_campo_telefone?: boolean;
+  mostrar_campo_nascimento?: boolean;
+  mostrar_bandeira_brasil?: boolean;
+  mostrar_prefixo_telefone?: boolean;
+  titulo_identificacao?: string;
+  titulo_pagamento?: string;
+  cor_icones?: string;
+  icone_nome?: string;
+  icone_email?: string;
+  icone_telefone?: string;
+  icone_documento?: string;
   mensagem_topo?: string;
   cor_topo?: string;
   cor_texto_topo?: string;
-  ativa_banner?: boolean;
   banner_url?: string;
   banner_mobile_url?: string;
   cor_banner?: string;
@@ -147,44 +168,53 @@ export interface ConfigCheckout {
   rodape_texto?: string;
   rodape_empresa?: string;
   rodape_ano?: string;
-  mostrar_seguro?: boolean;
-  mensagem_rodape?: string;
-  mensagem_termos?: string;
   url_termos_uso?: string;
   url_politica_privacidade?: string;
-  
-  // Form fields
-  mostrar_campo_documento?: boolean;
-  mostrar_campo_telefone?: boolean;
-  mostrar_bandeira_brasil?: boolean;
-  mostrar_prefixo_telefone?: boolean;
-  mostrar_campo_nascimento?: boolean;
-  titulo_identificacao?: string;
-  titulo_pagamento?: string;
-  
-  // Visitor counter
-  mostrar_contador?: boolean;
-  texto_contador?: string;
-  contador_min?: number;
-  contador_max?: number;
-  cor_texto_contador?: string;
-  
-  // Icon properties
-  cor_icones?: string;
-  icone_nome?: string;
-  icone_email?: string;
-  icone_telefone?: string;
-  icone_documento?: string;
-  
-  // Validation
-  validar_cpf?: boolean;
-  validar_telefone?: boolean;
-  validar_cartao?: boolean;
-  validar_nascimento?: boolean;
-  
-  // Redirect settings
+  mensagem_rodape?: string;
+  mensagem_termos?: string;
+  criado_em?: string;
   redirect_card_status?: string;
-  
-  // Random mode
   modo_random?: boolean;
+  
+  // PIX Config fields
+  pix_titulo?: string;
+  pix_subtitulo?: string;
+  pix_instrucoes?: string;
+  pix_mensagem_seguranca?: string;
+  cor_primaria_pix?: string;
+  cor_secundaria_pix?: string;
+  cor_botao_pix?: string;
+  cor_texto_botao_pix?: string;
+  tipo_chave_pix_global?: string;
+  chave_pix_global?: string;
+  nome_beneficiario_pix?: string;
+  qr_code_pix_url?: string;
+  usar_api_pix_global?: boolean;
+  url_api_pix_global?: string;
+}
+
+export interface Produto {
+  id: number;
+  nome: string;
+  descricao: string;
+  slug: string;
+  valor: number;
+  tipo: string;
+  checkout_title?: string;
+  imagem_url?: string;
+  banner_url?: string;
+  banner_mobile_url?: string;
+  background_color?: string;
+  banner_color?: string;
+  ativo?: boolean;
+  criado_em?: string;
+  
+  // PIX-related fields
+  tipo_chave_pix?: string;
+  chave_pix?: string;
+  nome_beneficiario?: string;
+  usar_api_pix?: boolean;
+  url_api_pix?: string;
+  usar_config_pix_global?: boolean;
+  qr_code_pix_url?: string;
 }

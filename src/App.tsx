@@ -16,6 +16,7 @@ import Clientes from "./pages/Clientes";
 import Vendas from "./pages/Vendas";
 import Checkout from "./pages/Checkout";
 import PaymentStatus from "./pages/PaymentStatus";
+import PixPaymentPage from "./pages/PixPaymentPage";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -73,6 +74,7 @@ const App = () => (
             </Layout>
           } />
           <Route path="/checkout/:slug" element={<Checkout />} />
+          <Route path="/pix-payment/:slug" element={<PixPaymentPage />} />
           <Route path="/payment-status/:slug/:status" element={<PaymentStatus />} />
           <Route path="*" element={<NotFound />} />
         </Routes>

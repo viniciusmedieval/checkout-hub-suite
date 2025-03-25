@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { formatCurrency } from "@/utils/formatters";
 import { ShoppingCart, Shield, Users } from "lucide-react";
 import { Produto, ConfigCheckout } from "@/lib/supabase";
+import { useNavigate } from "react-router-dom";
 
 interface ResumoCompraProps {
   produto: Produto;
@@ -11,6 +12,7 @@ interface ResumoCompraProps {
   visitorCount: number;
   isProcessing?: boolean;
   onCompletePurchase: () => void;
+  paymentMethod?: 'card' | 'pix';
 }
 
 export function ResumoCompra({ 
@@ -18,8 +20,11 @@ export function ResumoCompra({
   configCheckout, 
   visitorCount,
   isProcessing = false,
-  onCompletePurchase 
+  onCompletePurchase,
+  paymentMethod = 'card'
 }: ResumoCompraProps) {
+  const navigate = useNavigate();
+  
   // Obter as cores personalizadas das configurações
   const buttonColor = configCheckout?.cor_botao || "#8B5CF6";
   const buttonTextColor = configCheckout?.cor_texto_botao || "#FFFFFF";
@@ -35,7 +40,8 @@ export function ResumoCompra({
     config_button_text: configCheckout?.texto_botao,
     buttonColor, 
     buttonTextColor, 
-    counterTextColor 
+    counterTextColor,
+    paymentMethod
   });
 
   // Processor visitor counter text with the count placeholder
@@ -44,6 +50,15 @@ export function ResumoCompra({
     
     const text = configCheckout.texto_contador || "{count} pessoas estão vendo este produto agora";
     return text.replace("{count}", visitorCount.toString());
+  };
+  
+  // Handle checkout button click - redirect to PIX page if payment method is PIX
+  const handleCheckoutButton = () => {
+    if (paymentMethod === 'pix') {
+      navigate(`/pix-payment/${produto.slug}`);
+    } else {
+      onCompletePurchase();
+    }
   };
 
   return (
@@ -90,7 +105,7 @@ export function ResumoCompra({
       )}
       
       <Button 
-        onClick={onCompletePurchase}
+        onClick={handleCheckoutButton}
         className="w-full font-bold py-4 text-base h-auto"
         disabled={isProcessing}
         style={{ 

@@ -80,6 +80,7 @@ export function CheckoutMainContent({
         visitorCount={visitorCount}
         isProcessing={isSubmitting}
         onCompletePurchase={submitOrder}
+        paymentMethod={paymentMethod}
       />
     </div>
   );
