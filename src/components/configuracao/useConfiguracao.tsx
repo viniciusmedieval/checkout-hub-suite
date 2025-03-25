@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect, Dispatch, SetStateAction } from 'react';
 import { ConfigCheckout, Depoimento } from '@/lib/types/database-types';
 import { useConfigLoader } from './hooks/useConfigLoader';
@@ -78,27 +79,36 @@ export const ConfiguracaoProvider: React.FC<ConfiguracaoProviderProps> = ({ chil
     handleDeleteTestimonial,
     handleAddTestimonial,
     handleUpdateTestimonial
-  } = useTestimonials([]);
+  } = useTestimonials(depoimentos);
+
+  // Log current state
+  useEffect(() => {
+    console.log("ConfiguracaoProvider - Current config:", currentConfig);
+    console.log("ConfiguracaoProvider - Current testimonials:", currentDepoimentos);
+  }, [currentConfig, currentDepoimentos]);
 
   useEffect(() => {
+    console.log("ConfiguracaoProvider - Received config from loader:", config);
     setCurrentConfig(config);
   }, [config]);
 
   useEffect(() => {
+    console.log("ConfiguracaoProvider - Received testimonials from loader:", depoimentos);
     if (Array.isArray(depoimentos)) {
       setCurrentDepoimentos(depoimentos);
     }
   }, [depoimentos]);
 
   const setConfig = (newConfig: ConfigCheckout) => {
+    console.log("ConfiguracaoProvider - Setting new config:", newConfig);
     setCurrentConfig(newConfig);
-    saveConfig(newConfig);
   };
 
   const handleSaveConfig = async (): Promise<ConfigCheckout | null> => {
+    console.log("ConfiguracaoProvider - Saving config:", currentConfig);
     const savedConfig = await saveConfigSettings();
     if (savedConfig) {
-      await reloadConfig();
+      console.log("ConfiguracaoProvider - Config saved successfully:", savedConfig);
       return savedConfig;
     }
     return null;

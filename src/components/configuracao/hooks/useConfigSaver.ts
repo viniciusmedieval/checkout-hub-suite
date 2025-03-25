@@ -16,10 +16,25 @@ export const useConfigSaver = () => {
       
       console.log("💾 Salvando configuração:", config);
       
+      // Log all color properties to validate they're being saved
+      console.log("Colors being saved:", {
+        corTopo: config.cor_topo,
+        corTextoTopo: config.cor_texto_topo,
+        corFundo: config.cor_fundo,
+        corBanner: config.cor_banner,
+        corTitulo: config.cor_titulo,
+        corBotao: config.cor_botao,
+        corTextoBotao: config.cor_texto_botao,
+        corBotaoCard: config.cor_botao_card,
+        corTextoBotaoCard: config.cor_texto_botao_card,
+        corIcones: config.cor_icones
+      });
+      
       // Call the saveConfig service
       const savedConfig = await saveConfigService(config);
       
       if (savedConfig) {
+        console.log("✅ Configuração salva com sucesso:", savedConfig);
         toast.success("Configurações salvas com sucesso!");
         // Ensure the redirect_card_status is properly typed
         return {
@@ -28,6 +43,7 @@ export const useConfigSaver = () => {
         };
       } else {
         const errorMsg = "Erro ao salvar configurações";
+        console.error("❌ " + errorMsg);
         setSavingError(errorMsg);
         toast.error(errorMsg);
         return null;

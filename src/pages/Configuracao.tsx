@@ -1,4 +1,3 @@
-
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useConfiguracao } from "@/components/configuracao/useConfiguracao";
@@ -17,6 +16,7 @@ import { PixConfigTab } from "@/components/configuracao/sections/PixConfigTab";
 import { InstallmentsTab } from "@/components/configuracao/sections/InstallmentsTab";
 import { toast } from "sonner";
 import { ConfigCheckout } from "@/lib/types/database-types";
+import { useEffect } from "react";
 
 const Configuracao = () => {
   const {
@@ -34,14 +34,19 @@ const Configuracao = () => {
     hasUnsavedChanges,
     handleDeleteTestimonial,
     handleAddTestimonial,
-    handleUpdateTestimonial
+    handleUpdateTestimonial,
+    reloadConfig
   } = useConfiguracao();
+
+  useEffect(() => {
+    console.log("Configuracao component - Current config:", config);
+    console.log("Configuracao component - Current testimonials:", depoimentos);
+  }, [config, depoimentos]);
 
   if (loading) {
     return <LoadingState />;
   }
 
-  // Cast config to the correct type
   const typedConfig = config as unknown as ConfigCheckout;
 
   const onSaveClick = async () => {
@@ -49,7 +54,10 @@ const Configuracao = () => {
       toast.info("Não há alterações para salvar");
       return;
     }
-    await handleSaveConfig();
+    const savedConfig = await handleSaveConfig();
+    if (savedConfig) {
+      await reloadConfig();
+    }
   };
 
   return (
