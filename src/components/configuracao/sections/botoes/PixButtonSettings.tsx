@@ -15,10 +15,10 @@ export function PixButtonSettings({ config, handleConfigChange }: PixButtonSetti
       <div className="space-y-2">
         <label className="text-sm font-medium">Texto do Botão PIX</label>
         <Input
-          name="texto_botao"
-          value={config.texto_botao}
+          name="texto_botao_pix"
+          value={config.texto_botao_pix || config.texto_botao || "PAGAR COM PIX"}
           onChange={handleConfigChange}
-          placeholder="Ex: GARANTIR AGORA"
+          placeholder="Ex: PAGAR COM PIX"
         />
         <p className="text-xs text-gray-500">
           Este texto será exibido no botão principal de finalização da compra via PIX.
@@ -27,8 +27,8 @@ export function PixButtonSettings({ config, handleConfigChange }: PixButtonSetti
       
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <ColorPicker
-          name="cor_botao"
-          value={config.cor_botao || "#8B5CF6"}
+          name="cor_botao_pix"
+          value={config.cor_botao_pix || config.cor_botao || "#8B5CF6"}
           defaultValue="#8B5CF6"
           onChange={handleConfigChange}
           label="Cor do Botão PIX"
@@ -36,8 +36,8 @@ export function PixButtonSettings({ config, handleConfigChange }: PixButtonSetti
         />
         
         <ColorPicker
-          name="cor_texto_botao"
-          value={config.cor_texto_botao || "#FFFFFF"}
+          name="cor_texto_botao_pix"
+          value={config.cor_texto_botao_pix || config.cor_texto_botao || "#FFFFFF"}
           defaultValue="#FFFFFF"
           onChange={handleConfigChange}
           label="Cor do Texto do Botão PIX"

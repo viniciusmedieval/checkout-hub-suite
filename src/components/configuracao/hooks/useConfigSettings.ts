@@ -21,21 +21,25 @@ export const useConfigSettings = (initialConfig: ConfigCheckout | null) => {
   // Handler for text input changes
   const handleConfigChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
+    console.log(`Input change: ${name} = ${value}`);
     setConfig(prev => ({ ...prev, [name]: value }));
   };
 
   // Handler for switch changes
   const handleSwitchChange = (name: string, checked: boolean) => {
+    console.log(`Switch change: ${name} = ${checked}`);
     setConfig(prev => ({ ...prev, [name]: checked }));
   };
 
   // Handler for icon selection
   const handleIconChange = (iconField: string, iconName: string) => {
+    console.log(`Icon change: ${iconField} = ${iconName}`);
     setConfig(prev => ({ ...prev, [iconField]: iconName }));
   };
   
   // Handler for select changes (dropdown)
   const handleSelectChange = (name: string, value: string) => {
+    console.log(`Select change: ${name} = ${value}`);
     setConfig(prev => ({ ...prev, [name]: value }));
   };
 
@@ -47,6 +51,7 @@ export const useConfigSettings = (initialConfig: ConfigCheckout | null) => {
       status = "analyzing";
     }
     
+    console.log(`Status change: redirect_card_status = ${status}`);
     setConfig(prev => ({ ...prev, redirect_card_status: status }));
   };
 
@@ -73,7 +78,7 @@ export const useConfigSettings = (initialConfig: ConfigCheckout | null) => {
         // Ensure the redirect_card_status is properly typed
         const typedSavedConfig = {
           ...savedConfig,
-          redirect_card_status: (savedConfig.redirect_card_status || "analyzing") as "analyzing" | "approved" | "rejected"
+          redirect_card_status: (savedConfig.redirect_card_status || "analyzing") as PaymentStatus
         };
         
         // Update the original config to match the current config

@@ -1,6 +1,7 @@
 
 import { ConfigCheckout } from "@/lib/types/database-types";
 import { toast } from "sonner";
+import { PaymentStatus } from "@/components/checkout/payment/types";
 
 /**
  * Validates and formats a hex color value
@@ -20,10 +21,10 @@ export const ensureBooleanFields = (data: any): ConfigCheckout => {
   
   // Check if redirect_card_status is a valid value
   const status = data.redirect_card_status || "analyzing";
-  let validStatus: "analyzing" | "approved" | "rejected" = "analyzing";
+  let validStatus: PaymentStatus = "analyzing";
   
   if (["analyzing", "approved", "rejected"].includes(status as string)) {
-    validStatus = status as "analyzing" | "approved" | "rejected";
+    validStatus = status as PaymentStatus;
   }
   
   return {

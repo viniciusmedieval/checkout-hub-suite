@@ -18,6 +18,7 @@ import { InstallmentsTab } from "@/components/configuracao/sections/Installments
 import { toast } from "sonner";
 import { ConfigCheckout } from "@/lib/types/database-types";
 import { useEffect, useState } from "react";
+import { Save } from "lucide-react";
 
 const Configuracao = () => {
   const {
@@ -91,7 +92,21 @@ const Configuracao = () => {
           disabled={isSaving || !hasUnsavedChanges() || isSaveAttempted}
           className="bg-blue-600 hover:bg-blue-700"
         >
-          {isSaving ? "Salvando..." : isSaveAttempted ? "Processando..." : "Salvar Alterações"}
+          {isSaving ? (
+            <>
+              <span className="animate-spin mr-2">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-loader-2"><path d="M21 12a9 9 0 1 1-6.219-8.56"/></svg>
+              </span>
+              Salvando...
+            </>
+          ) : isSaveAttempted ? (
+            <>Processando...</>
+          ) : (
+            <>
+              <Save className="w-4 h-4 mr-2" />
+              Salvar Alterações
+            </>
+          )}
         </Button>
       </div>
 

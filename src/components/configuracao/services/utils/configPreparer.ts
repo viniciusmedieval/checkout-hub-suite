@@ -1,6 +1,7 @@
 
 import { ConfigCheckout } from "@/lib/types/database-types";
 import { validateHex } from "./configValidation";
+import { PaymentStatus } from "@/components/checkout/payment/types";
 
 /**
  * Prepares config data for saving with all necessary validations
@@ -12,11 +13,11 @@ export const prepareConfigForSave = (config: ConfigCheckout) => {
   const { id, ...configWithoutId } = config;
 
   // Validate redirect_card_status
-  let validStatus: "analyzing" | "approved" | "rejected" = "analyzing";
+  let validStatus: PaymentStatus = "analyzing";
   const status = config.redirect_card_status || "analyzing";
   
   if (["analyzing", "approved", "rejected"].includes(status as string)) {
-    validStatus = status as "analyzing" | "approved" | "rejected";
+    validStatus = status as PaymentStatus;
   }
 
   // Create a clean object with all required fields and proper types
