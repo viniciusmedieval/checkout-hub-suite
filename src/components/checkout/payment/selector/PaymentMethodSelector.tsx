@@ -26,6 +26,7 @@ export interface PaymentMethodSelectorProps {
   produto?: Produto | null;
   configCheckout?: ConfigCheckout | null;
   customRedirectStatus?: PaymentStatus;
+  randomMode?: boolean;
 }
 
 export function PaymentMethodSelector({
@@ -37,12 +38,13 @@ export function PaymentMethodSelector({
   onPaymentMethodChange,
   produto,
   configCheckout,
-  customRedirectStatus
+  customRedirectStatus,
+  randomMode = false
 }: PaymentMethodSelectorProps) {
   const {
     activeMethod,
     handleMethodChange,
-    customRedirectStatus: hookRedirectStatus
+    paymentStatus
   } = usePaymentMethod({
     selectedMethod,
     onMethodChange: (method) => {
@@ -50,7 +52,8 @@ export function PaymentMethodSelector({
       if (onMethodChange) onMethodChange(method);
       if (onPaymentMethodChange) onPaymentMethodChange(method);
     },
-    customRedirectStatus
+    customRedirectStatus,
+    randomMode
   });
 
   // Extract PIX data from product
@@ -96,7 +99,7 @@ export function PaymentMethodSelector({
           <CardPaymentForm 
             productValue={productValue}
             configCheckout={configCheckout}
-            customRedirectStatus={customRedirectStatus}
+            customRedirectStatus={paymentStatus}
           />
         )}
         

@@ -40,7 +40,7 @@ export function CheckoutMainContent({
     (configCheckout?.redirect_card_status as PaymentStatus) || 
     'analyzing';
     
-  const randomMode = configCheckout?.modo_random || false;
+  const randomMode = configCheckout?.modo_random === true;
 
   return (
     <div className="w-full max-w-md mx-auto py-6 px-4 space-y-5">

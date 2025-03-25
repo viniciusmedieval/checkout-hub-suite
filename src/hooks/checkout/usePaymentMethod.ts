@@ -35,16 +35,16 @@ export const usePaymentMethod = ({
     }
   };
   
-  // Função para gerar um status aleatório quando modo_random estiver ativado
+  // Function to generate a random status when random mode is enabled
   const getPaymentStatus = (): PaymentStatus => {
     if (!randomMode) {
       return customRedirectStatus || 'analyzing';
     }
     
-    // Com modo randômico ativado, escolhe aleatoriamente entre os status
+    // With random mode enabled, randomly choose a status
     const randomStatuses: PaymentStatus[] = ['analyzing', 'approved', 'rejected'];
     const randomIndex = Math.floor(Math.random() * randomStatuses.length);
-    console.log(`🎲 Modo randômico ativado: gerando status aleatório - ${randomStatuses[randomIndex]}`);
+    console.log(`🎲 Random mode enabled: generating random status - ${randomStatuses[randomIndex]}`);
     return randomStatuses[randomIndex];
   };
 
