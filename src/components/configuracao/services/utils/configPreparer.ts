@@ -11,11 +11,13 @@ export const prepareConfigForSave = (config: ConfigCheckout) => {
   // Always ensure ID is not included when saving to avoid conflicts
   const { id, ...configWithoutId } = config;
 
-  // Ensure redirect_card_status is a valid value
+  // Validate redirect_card_status
+  let validStatus: "analyzing" | "approved" | "rejected" = "analyzing";
   const status = config.redirect_card_status || "analyzing";
-  const validStatus = ["analyzing", "approved", "rejected"].includes(status as string) 
-    ? status 
-    : "analyzing";
+  
+  if (["analyzing", "approved", "rejected"].includes(status as string)) {
+    validStatus = status as "analyzing" | "approved" | "rejected";
+  }
 
   // Create a clean object with all required fields and proper types
   const preparedConfig = {

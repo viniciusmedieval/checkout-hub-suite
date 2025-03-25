@@ -41,9 +41,13 @@ export const useConfigSettings = (initialConfig: ConfigCheckout | null) => {
 
   // Handler for status field
   const handleStatusChange = (status: PaymentStatus) => {
-    // Ensure the status is properly typed
-    const typedStatus = status as "analyzing" | "approved" | "rejected";
-    setConfig(prev => ({ ...prev, redirect_card_status: typedStatus }));
+    // Ensure the status is a valid value for the type
+    if (!["analyzing", "approved", "rejected"].includes(status)) {
+      console.warn(`Invalid status: ${status}. Defaulting to "analyzing"`);
+      status = "analyzing";
+    }
+    
+    setConfig(prev => ({ ...prev, redirect_card_status: status }));
   };
 
   // Check if there are unsaved changes

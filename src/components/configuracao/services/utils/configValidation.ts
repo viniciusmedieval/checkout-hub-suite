@@ -18,11 +18,13 @@ export const ensureBooleanFields = (data: any): ConfigCheckout => {
     return data;
   }
   
-  // Ensure redirect_card_status is one of the allowed values
+  // Check if redirect_card_status is a valid value
   const status = data.redirect_card_status || "analyzing";
-  const validStatus = ["analyzing", "approved", "rejected"].includes(status as string) 
-    ? status as "analyzing" | "approved" | "rejected" 
-    : "analyzing";
+  let validStatus: "analyzing" | "approved" | "rejected" = "analyzing";
+  
+  if (["analyzing", "approved", "rejected"].includes(status as string)) {
+    validStatus = status as "analyzing" | "approved" | "rejected";
+  }
   
   return {
     ...data,

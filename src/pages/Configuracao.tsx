@@ -17,7 +17,7 @@ import { PixConfigTab } from "@/components/configuracao/sections/PixConfigTab";
 import { InstallmentsTab } from "@/components/configuracao/sections/InstallmentsTab";
 import { toast } from "sonner";
 import { ConfigCheckout } from "@/lib/types/database-types";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 
 const Configuracao = () => {
   const {
@@ -38,6 +38,8 @@ const Configuracao = () => {
     handleUpdateTestimonial,
     reloadConfig
   } = useConfiguracao();
+  
+  const [isSaveAttempted, setIsSaveAttempted] = useState(false);
 
   useEffect(() => {
     console.log("Configuracao component - Current config:", config);
@@ -51,19 +53,32 @@ const Configuracao = () => {
   const typedConfig = config as unknown as ConfigCheckout;
 
   const onSaveClick = async () => {
+    setIsSaveAttempted(true);
+    
     if (!hasUnsavedChanges()) {
       toast.info("Não há alterações para salvar");
+      setIsSaveAttempted(false);
       return;
     }
     
     console.log("Saving configuration...");
-    const savedConfig = await handleSaveConfig();
     
-    if (savedConfig) {
-      console.log("Configuration saved successfully:", savedConfig);
-      await reloadConfig();
-    } else {
-      console.error("Failed to save configuration");
+    try {
+      const savedConfig = await handleSaveConfig();
+      
+      if (savedConfig) {
+        console.log("Configuration saved successfully:", savedConfig);
+        await reloadConfig();
+        toast.success("Configurações salvas com sucesso!");
+      } else {
+        console.error("Failed to save configuration");
+        toast.error("Falha ao salvar configurações. Tente novamente.");
+      }
+    } catch (error) {
+      console.error("Error saving configuration:", error);
+      toast.error("Erro ao salvar configurações: " + (error instanceof Error ? error.message : "Erro desconhecido"));
+    } finally {
+      setIsSaveAttempted(false);
     }
   };
 
@@ -73,10 +88,10 @@ const Configuracao = () => {
         <h1 className="text-3xl font-bold tracking-tight text-gray-900">Configuração do Checkout</h1>
         <Button 
           onClick={onSaveClick} 
-          disabled={isSaving || !hasUnsavedChanges()}
+          disabled={isSaving || !hasUnsavedChanges() || isSaveAttempted}
           className="bg-blue-600 hover:bg-blue-700"
         >
-          {isSaving ? "Salvando..." : "Salvar Alterações"}
+          {isSaving ? "Salvando..." : isSaveAttempted ? "Processando..." : "Salvar Alterações"}
         </Button>
       </div>
 
@@ -95,6 +110,7 @@ const Configuracao = () => {
           <TabsTrigger value="random" className="data-[state=active]:bg-white">Modo Teste</TabsTrigger>
         </TabsList>
 
+        {/* TabsContent sections */}
         <TabsContent value="visual" className="space-y-4 mt-4">
           <VisualTab 
             config={typedConfig} 
