@@ -1,38 +1,8 @@
+
 import { useState, useEffect } from 'react';
 import { supabase } from '@/lib/supabase';
 import { ConfigCheckout, Depoimento } from "@/lib/types/database-types";
-
-const defaultConfig: ConfigCheckout = {
-  id: 0,
-  cor_primaria_pix: '#000000',
-  cor_secundaria_pix: '#FFFFFF',
-  cor_titulo: '#000000',
-  cor_fundo: '#FFFFFF',
-  ativa_banner: true,
-  banner_url: '',
-  mostrar_campo_documento: true,
-  mostrar_campo_telefone: true,
-  mostrar_campo_nascimento: false,
-  mostrar_bandeira_brasil: true,
-  mostrar_prefixo_telefone: true,
-  mostrar_contador: false,
-  texto_contador: '',
-  validar_cpf: false,
-  validar_telefone: false,
-  validar_nascimento: false,
-  validar_cartao: false,
-  cor_botao: '#000000',
-  cor_texto_botao: '#FFFFFF',
-  texto_botao_card: 'Pagar com Cartão',
-  cor_botao_card: '#000000', 
-  cor_texto_botao_card: '#FFFFFF',
-  redirect_card_status: 'analyzing',
-  mensagem_rodape: '',
-  max_installments: 1,
-  modo_random: false,
-  mostrar_depoimentos: false,
-  slug: ''
-};
+import { defaultConfig } from '../utils/defaultConfig';
 
 export interface ConfigLoaderResult {
   config: ConfigCheckout;
