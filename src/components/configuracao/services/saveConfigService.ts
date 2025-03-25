@@ -1,6 +1,7 @@
 
 // src/components/configuracao/services/saveConfigService.ts
-import { ConfigCheckout, isSupabaseInitialized } from "@/lib/supabase";
+import { isSupabaseInitialized } from "@/lib/supabase";
+import { ConfigCheckout } from "@/lib/types/database-types"; // Import from database-types
 import { toast } from "sonner";
 import { prepareConfigForSave } from "./utils/configPreparer";
 import { createNewConfig } from "./operations/createConfig";

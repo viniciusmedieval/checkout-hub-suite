@@ -1,5 +1,6 @@
 
-import { supabase, ConfigCheckout } from "@/lib/supabase";
+import { supabase } from "@/lib/supabase";
+import { ConfigCheckout } from "@/lib/types/database-types";
 import { toast } from "sonner";
 import { ensureBooleanFields } from "../utils/configValidation";
 

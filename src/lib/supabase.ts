@@ -1,3 +1,4 @@
+
 // src/lib/supabase.ts
 import { createClient, SupabaseClient } from '@supabase/supabase-js';
 import { checkSupabaseCredentials } from './env-check';
@@ -129,6 +130,8 @@ export const reinitializeSupabaseClient = (url: string, key: string): SupabaseCl
 // Exportar o cliente Supabase e funções auxiliares
 export { supabase };
 
+// NOTE: This interface is being deprecated in favor of using the one from database-types.ts
+// It's kept here temporarily for backward compatibility
 export interface ConfigCheckout {
   id: number;
   ativa_banner?: boolean;
@@ -173,7 +176,7 @@ export interface ConfigCheckout {
   mensagem_rodape?: string;
   mensagem_termos?: string;
   criado_em?: string;
-  redirect_card_status?: string;
+  redirect_card_status?: "analyzing" | "approved" | "rejected";
   modo_random?: boolean;
   
   // PIX Config fields
