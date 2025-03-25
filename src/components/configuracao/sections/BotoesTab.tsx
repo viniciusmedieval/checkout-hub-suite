@@ -63,6 +63,7 @@ export function BotoesTab({ config, handleConfigChange, handleSwitchChange }: Bo
         <SecurityMessageSettings 
           config={config}
           handleConfigChange={handleConfigChange}
+          handleSwitchChange={handleSwitchChange}
         />
       </CardContent>
     </Card>

@@ -28,6 +28,9 @@ const prepareConfigForSave = (config: ConfigCheckout) => {
     texto_botao: config.texto_botao || "COMPRAR AGORA",
     cor_botao: validateHex(config.cor_botao) ? config.cor_botao : "#8B5CF6",
     cor_texto_botao: validateHex(config.cor_texto_botao) ? config.cor_texto_botao : "#FFFFFF",
+    texto_botao_card: config.texto_botao_card || "FINALIZAR COMPRA",
+    cor_botao_card: validateHex(config.cor_botao_card) ? config.cor_botao_card : "#8B5CF6",
+    cor_texto_botao_card: validateHex(config.cor_texto_botao_card) ? config.cor_texto_botao_card : "#FFFFFF",
     rodape_texto: config.rodape_texto || "",
     rodape_empresa: config.rodape_empresa || "",
     rodape_ano: config.rodape_ano || new Date().getFullYear().toString(),
@@ -66,114 +69,7 @@ const prepareConfigForSave = (config: ConfigCheckout) => {
 };
 
 /**
- * Saves checkout configuration to the database
- */
-export const saveConfig = async (config: ConfigCheckout): Promise<ConfigCheckout | null> => {
-  try {
-    console.log("🔄 Iniciando saveConfig com dados:", config);
-
-    // Verificar se o cliente Supabase está inicializado corretamente
-    if (!isSupabaseInitialized() || !supabase) {
-      console.error("❌ Cliente Supabase não inicializado. Salvando na localStorage como fallback.");
-      
-      // Fallback: salvar no localStorage se o Supabase não estiver disponível
-      try {
-        localStorage.setItem('fallbackConfig', JSON.stringify(config));
-        toast.warning("Configurações salvas localmente. Conecte-se ao Supabase para persistência completa.");
-        return config; // Retornar a config original como feedback para o usuário
-      } catch (localError) {
-        console.error("❌ Falha ao salvar no localStorage:", localError);
-        toast.error("Erro: Falha ao salvar configurações localmente.");
-        return null;
-      }
-    }
-
-    const configToSave = prepareConfigForSave(config);
-
-    // Validar dados antes de salvar
-    if (!configToSave.texto_botao || !configToSave.cor_botao) {
-      console.error("❌ Dados inválidos para salvar:", configToSave);
-      toast.error("Erro: Dados inválidos para salvar. Verifique os campos obrigatórios.");
-      return null;
-    }
-
-    try {
-      if (config.id) {
-        console.log(`🔄 Atualizando configuração existente com ID ${config.id}`);
-
-        // Verificar se o registro existe antes de atualizar
-        const { data: existingConfig, error: fetchError } = await supabase
-          .from("config_checkout")
-          .select("id")
-          .eq("id", config.id)
-          .single();
-
-        if (fetchError) {
-          console.error("❌ Configuração com ID não encontrada ou erro ao buscar:", fetchError);
-          
-          if (fetchError.code === 'PGRST116') {
-            // Erro de registro não encontrado, tentar criar nova configuração
-            console.log("🔄 Configuração não encontrada, criando nova...");
-            return await createNewConfig(configToSave);
-          }
-          
-          toast.error("Erro: Configuração não encontrada para atualização.");
-          return null;
-        }
-
-        // Atualizar a configuração
-        const { error } = await supabase
-          .from("config_checkout")
-          .update(configToSave)
-          .eq("id", config.id);
-
-        if (error) {
-          console.error("❌ Erro ao atualizar configurações:", error);
-          toast.error("Erro ao atualizar configurações: " + error.message);
-          return null;
-        }
-
-        // Buscar os dados atualizados
-        console.log("🔄 Buscando configuração atualizada em consulta separada");
-        const { data, error: selectError } = await supabase
-          .from("config_checkout")
-          .select("*")
-          .eq("id", config.id)
-          .maybeSingle();
-
-        if (selectError) {
-          console.error("❌ Erro ao buscar configuração atualizada:", selectError);
-          toast.error("Configuração atualizada, mas houve erro ao buscar os dados atualizados.");
-          return config; // Retornar a config original como feedback
-        }
-
-        if (!data) {
-          console.error("❌ Erro: Retorno nulo do Supabase após atualização");
-          toast.error("Erro ao recuperar dados atualizados. Tente novamente.");
-          return config; // Retornar a config original como feedback
-        }
-
-        const processedData = ensureBooleanFields(data);
-        console.log("✅ Configuração atualizada com sucesso:", processedData);
-        toast.success("Configurações salvas com sucesso!");
-        return processedData;
-      } else {
-        return await createNewConfig(configToSave);
-      }
-    } catch (dbError) {
-      console.error("❌ Erro de banco de dados:", dbError);
-      toast.error("Erro de banco de dados: " + (dbError.message || "Erro desconhecido"));
-      return null;
-    }
-  } catch (error) {
-    console.error("❌ Erro no saveConfig:", error);
-    toast.error("Erro ao salvar configurações: " + (error.message || "Erro desconhecido"));
-    return null;
-  }
-};
-
-/**
- * Helper function to create a new configuration
+ * Creates a new configuration in the database
  */
 async function createNewConfig(configToSave: any): Promise<ConfigCheckout | null> {
   console.log("🔄 Criando nova configuração");
@@ -207,3 +103,118 @@ async function createNewConfig(configToSave: any): Promise<ConfigCheckout | null
     return null;
   }
 }
+
+/**
+ * Updates an existing configuration in the database
+ */
+async function updateExistingConfig(config: ConfigCheckout, configToSave: any): Promise<ConfigCheckout | null> {
+  console.log(`🔄 Atualizando configuração existente com ID ${config.id}`);
+
+  try {
+    // Verificar se o registro existe antes de atualizar
+    const { data: existingConfig, error: fetchError } = await supabase
+      .from("config_checkout")
+      .select("id")
+      .eq("id", config.id)
+      .single();
+
+    if (fetchError) {
+      console.error("❌ Configuração com ID não encontrada ou erro ao buscar:", fetchError);
+      
+      if (fetchError.code === 'PGRST116') {
+        // Erro de registro não encontrado, tentar criar nova configuração
+        console.log("🔄 Configuração não encontrada, criando nova...");
+        return await createNewConfig(configToSave);
+      }
+      
+      toast.error("Erro: Configuração não encontrada para atualização.");
+      return null;
+    }
+
+    // Atualizar a configuração
+    const { error } = await supabase
+      .from("config_checkout")
+      .update(configToSave)
+      .eq("id", config.id);
+
+    if (error) {
+      console.error("❌ Erro ao atualizar configurações:", error);
+      toast.error("Erro ao atualizar configurações: " + error.message);
+      return null;
+    }
+
+    // Buscar os dados atualizados
+    console.log("🔄 Buscando configuração atualizada em consulta separada");
+    const { data, error: selectError } = await supabase
+      .from("config_checkout")
+      .select("*")
+      .eq("id", config.id)
+      .maybeSingle();
+
+    if (selectError) {
+      console.error("❌ Erro ao buscar configuração atualizada:", selectError);
+      toast.error("Configuração atualizada, mas houve erro ao buscar os dados atualizados.");
+      return config; // Retornar a config original como feedback
+    }
+
+    if (!data) {
+      console.error("❌ Erro: Retorno nulo do Supabase após atualização");
+      toast.error("Erro ao recuperar dados atualizados. Tente novamente.");
+      return config; // Retornar a config original como feedback
+    }
+
+    const processedData = ensureBooleanFields(data);
+    console.log("✅ Configuração atualizada com sucesso:", processedData);
+    toast.success("Configurações salvas com sucesso!");
+    return processedData;
+  } catch (error) {
+    console.error("❌ Erro ao atualizar configuração:", error);
+    toast.error("Erro ao atualizar configuração: " + (error.message || "Erro desconhecido"));
+    return null;
+  }
+}
+
+/**
+ * Saves checkout configuration to the database
+ */
+export const saveConfig = async (config: ConfigCheckout): Promise<ConfigCheckout | null> => {
+  try {
+    console.log("🔄 Iniciando saveConfig com dados:", config);
+
+    // Verificar se o cliente Supabase está inicializado corretamente
+    if (!isSupabaseInitialized() || !supabase) {
+      console.error("❌ Cliente Supabase não inicializado. Salvando na localStorage como fallback.");
+      
+      // Fallback: salvar no localStorage se o Supabase não estiver disponível
+      try {
+        localStorage.setItem('fallbackConfig', JSON.stringify(config));
+        toast.warning("Configurações salvas localmente. Conecte-se ao Supabase para persistência completa.");
+        return config; // Retornar a config original como feedback para o usuário
+      } catch (localError) {
+        console.error("❌ Falha ao salvar no localStorage:", localError);
+        toast.error("Erro: Falha ao salvar configurações localmente.");
+        return null;
+      }
+    }
+
+    const configToSave = prepareConfigForSave(config);
+
+    // Validar dados antes de salvar
+    if (!configToSave.texto_botao || !configToSave.cor_botao) {
+      console.error("❌ Dados inválidos para salvar:", configToSave);
+      toast.error("Erro: Dados inválidos para salvar. Verifique os campos obrigatórios.");
+      return null;
+    }
+
+    // Determinar se vamos criar ou atualizar baseado na existência de um ID
+    if (config.id) {
+      return await updateExistingConfig(config, configToSave);
+    } else {
+      return await createNewConfig(configToSave);
+    }
+  } catch (error) {
+    console.error("❌ Erro no saveConfig:", error);
+    toast.error("Erro ao salvar configurações: " + (error.message || "Erro desconhecido"));
+    return null;
+  }
+};

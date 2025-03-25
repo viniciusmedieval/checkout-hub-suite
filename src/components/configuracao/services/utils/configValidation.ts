@@ -31,7 +31,9 @@ export const ensureBooleanFields = (data: any): ConfigCheckout => {
     validar_telefone: Boolean(data.validar_telefone),
     validar_cartao: Boolean(data.validar_cartao),
     mostrar_campo_nascimento: Boolean(data.mostrar_campo_nascimento),
-    validar_nascimento: Boolean(data.validar_nascimento)
+    validar_nascimento: Boolean(data.validar_nascimento),
+    modo_random: Boolean(data.modo_random),
+    usar_api_pix_global: Boolean(data.usar_api_pix_global)
   };
 };
 
