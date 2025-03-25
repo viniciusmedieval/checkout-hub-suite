@@ -1,102 +1,79 @@
 
 import { useState, useEffect } from "react";
-import { ConfigCheckout, Depoimento } from "@/lib/types/database-types";
+import { Depoimento, ConfigCheckout as ConfigCheckoutType } from "@/lib/supabase";
+import { toast } from "sonner";
 import { fetchCheckoutConfig } from "../services/fetchConfigService";
 import { fetchTestimonials } from "../services/testimonialService";
-import { toast } from "sonner";
-import { defaultConfig } from "../utils/defaultConfig";
 
-export const useConfigLoader = () => {
-  const [loading, setLoading] = useState(true);
-  const [loadError, setLoadError] = useState<string | null>(null);
-  const [configData, setConfigData] = useState<ConfigCheckout | null>(null);
+// Define a proper type that includes max_installments
+interface ConfigCheckout extends ConfigCheckoutType {
+  max_installments?: number;
+}
+
+export function useConfigLoader() {
+  const [config, setConfig] = useState<ConfigCheckout | null>(null);
   const [depoimentos, setDepoimentos] = useState<Depoimento[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   const loadConfig = async () => {
     setLoading(true);
-    setLoadError(null);
-
+    setError(null);
+    
     try {
-      console.log("📥 Carregando configuração do checkout...");
+      // Fetch checkout configuration
+      const configData = await fetchCheckoutConfig();
       
-      // Carregar configuração global do checkout
-      const config = await fetchCheckoutConfig();
-      
-      if (config) {
-        // Garantir valores padrão para campos críticos
-        const safeConfig: ConfigCheckout = {
-          ...config,
-          max_installments: config.max_installments || 12,
-          redirect_card_status: (config.redirect_card_status as "analyzing" | "approved" | "rejected") || "analyzing"
+      if (configData) {
+        // Ensure max_installments has a default value if not set
+        const processedConfig: ConfigCheckout = {
+          ...configData,
+          max_installments: configData.max_installments || 12
         };
-
-        console.log("✅ Configuração carregada com sucesso:", safeConfig);
-        setConfigData(safeConfig);
+        
+        setConfig(processedConfig);
       } else {
-        console.log("⚠️ Nenhuma configuração encontrada, usando padrão");
-        setConfigData(defaultConfig);
+        setConfig(null);
+        setError("Não foi possível carregar a configuração");
+        toast.error("Erro ao carregar configuração");
       }
+
+      // Fetch testimonials
+      const testimonials = await fetchTestimonials();
+      setDepoimentos(testimonials || []);
       
-      // Carregar depoimentos
-      const testemunhosList = await fetchTestimonials();
-      console.log("✅ Depoimentos carregados:", testemunhosList);
-      setDepoimentos(testemunhosList || []);
-      
-    } catch (error: any) {
-      console.error("❌ Erro ao carregar dados:", error);
-      setLoadError(error?.message || "Erro ao carregar dados");
+    } catch (err) {
+      console.error("Erro ao carregar configurações:", err);
+      setError("Ocorreu um erro ao carregar as configurações");
       toast.error("Erro ao carregar configurações");
-      setConfigData(defaultConfig);
     } finally {
       setLoading(false);
     }
   };
 
-  // Carregar dados na primeira renderização
+  // Reload configuration
+  const reloadConfig = async () => {
+    await loadConfig();
+  };
+
+  // Load configuration on component mount
   useEffect(() => {
     loadConfig();
   }, []);
 
-  // Função para recarregar as configurações
-  const reloadConfig = async () => {
-    try {
-      setLoading(true);
-      console.log("🔄 Recarregando configuração do checkout...");
-      
-      // Carregar configuração global do checkout
-      const config = await fetchCheckoutConfig();
-      
-      if (config) {
-        // Garantir valores padrão para campos críticos
-        const safeConfig: ConfigCheckout = {
-          ...config,
-          max_installments: config.max_installments || 12,
-          redirect_card_status: (config.redirect_card_status as "analyzing" | "approved" | "rejected") || "analyzing"
-        };
-
-        console.log("✅ Configuração recarregada com sucesso:", safeConfig);
-        setConfigData(safeConfig);
-        return safeConfig;
-      } else {
-        console.log("⚠️ Nenhuma configuração encontrada ao recarregar, usando padrão");
-        setConfigData(defaultConfig);
-        return defaultConfig;
-      }
-    } catch (error: any) {
-      console.error("❌ Erro ao recarregar dados:", error);
-      toast.error("Erro ao recarregar configurações");
-      return null;
-    } finally {
-      setLoading(false);
-    }
-  };
-
   return {
-    loading,
-    loadError,
-    configData,
+    config: config as ConfigCheckout,
     depoimentos,
-    setDepoimentos,
-    reloadConfig
+    loading,
+    error,
+    reloadConfig,
+    setConfig: (newConfig: ConfigCheckout) => {
+      // Ensure max_installments is set when updating config
+      setConfig({
+        ...newConfig,
+        max_installments: newConfig.max_installments || 12
+      });
+    },
+    setDepoimentos
   };
-};
+}

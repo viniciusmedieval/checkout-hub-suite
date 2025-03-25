@@ -77,6 +77,7 @@ export function CheckoutMainContent({
           configCheckout={typedConfigCheckout}
           customRedirectStatus={effectiveRedirectStatus}
           randomMode={typedConfigCheckout?.modo_random || false}
+          onPaymentSubmit={submitOrder}
         />
       </div>
       

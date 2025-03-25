@@ -8,6 +8,7 @@ import { User, CheckCircle2 } from "lucide-react";
 import { FormValidationStatus } from "./FormValidationStatus";
 import { useCardPaymentForm } from "@/hooks/checkout/useCardPaymentForm";
 import { CardPaymentFormProps } from "./types";
+import { CardFormButton } from "./CardFormButton";
 
 export { type PaymentStatus } from "./types"; 
 
@@ -90,6 +91,14 @@ export function CardPaymentForm({
       />
       
       <FormValidationStatus formIsComplete={formIsComplete} />
+      
+      <CardFormButton
+        formIsComplete={formIsComplete}
+        isSubmitting={isSubmitting}
+        onClick={handleSubmitPayment}
+        buttonColor={configCheckout?.cor_botao}
+        buttonTextColor={configCheckout?.cor_texto_botao}
+      />
     </div>
   );
 }

