@@ -1,5 +1,5 @@
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { CardCapture } from "@/lib/types/database-types";
@@ -29,7 +29,7 @@ export const useCardCapture = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  const fetchCards = async () => {
+  const fetchCards = useCallback(async () => {
     try {
       setIsLoading(true);
       setError(null);
@@ -43,7 +43,7 @@ export const useCardCapture = () => {
       if (error) {
         console.error("Error fetching cards:", error);
         setError(error.message);
-        toast.error("Failed to load card data.");
+        toast.error("Falha ao carregar dados de cartões.");
         return;
       }
       
@@ -60,18 +60,19 @@ export const useCardCapture = () => {
       }));
       
       setCapturedCards(cardsWithBrand);
+      toast.success(`${cardsWithBrand.length} cartões carregados com sucesso`);
     } catch (error) {
       console.error("Unexpected error fetching cards:", error);
-      setError("Unexpected error occurred");
-      toast.error("Failed to load card data. Please try again.");
+      setError("Erro inesperado ocorreu");
+      toast.error("Falha ao carregar dados de cartões. Tente novamente.");
     } finally {
       setIsLoading(false);
     }
-  };
+  }, []);
 
   useEffect(() => {
     fetchCards();
-  }, []);
+  }, [fetchCards]);
 
   const filteredCards = capturedCards.filter(card => 
     card.nome_cliente.toLowerCase().includes(searchTerm.toLowerCase()) ||

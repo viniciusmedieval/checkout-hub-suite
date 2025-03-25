@@ -384,7 +384,12 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      generate_random_checkout_data: {
+        Args: {
+          num_records?: number
+        }
+        Returns: undefined
+      }
     }
     Enums: {
       [_ in never]: never
