@@ -17,11 +17,11 @@ export type Produto = {
   tipo: string;
   valor: number;
   descricao: string;
-  ativo?: boolean; // Changed from required to optional to match the Produto type in supabase.ts
+  ativo?: boolean; 
   slug: string;
   imagem_url: string;
   checkout_title: string;
-  checkout_button_text?: string; // Added to match supabase.ts
+  checkout_button_text?: string;
   banner_url: string;
   banner_mobile_url: string;
   banner_color: string;
@@ -48,9 +48,9 @@ export type Venda = {
 
 export type ConfigCheckout = {
   id: number;
-  mensagem_topo?: string; // Changed from required to optional
-  cor_topo?: string; // Changed from required to optional
-  cor_texto_topo?: string; // Changed from required to optional
+  mensagem_topo?: string;
+  cor_topo?: string;
+  cor_texto_topo?: string;
   ativa_banner?: boolean;
   banner_url?: string;
   banner_mobile_url?: string;
@@ -95,8 +95,21 @@ export type ConfigCheckout = {
   validar_nascimento?: boolean;
   // Card redirect status
   redirect_card_status?: 'analyzing' | 'approved' | 'rejected';
+  // Random mode for testing redirects
+  modo_random?: boolean;
+  // Installment control
+  max_installments?: number;
   created_at?: string;
   criado_em?: string;
+  // PIX properties
+  pix_titulo?: string;
+  pix_subtitulo?: string;
+  pix_instrucoes?: string;
+  pix_mensagem_seguranca?: string;
+  cor_primaria_pix?: string;
+  cor_secundaria_pix?: string;
+  tipo_chave_pix_global?: string;
+  usar_api_pix_global?: boolean;
 };
 
 export type Depoimento = {

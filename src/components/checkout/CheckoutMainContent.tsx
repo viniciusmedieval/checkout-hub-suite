@@ -39,9 +39,7 @@ export function CheckoutMainContent({
   const effectiveRedirectStatus = customRedirectStatus || 
     (configCheckout?.redirect_card_status as PaymentStatus) || 
     'analyzing';
-    
-  const randomMode = configCheckout?.modo_random === true;
-
+  
   // Create a typed version of configCheckout with correct redirect_card_status type
   const typedConfigCheckout = configCheckout ? {
     ...configCheckout,
@@ -77,7 +75,7 @@ export function CheckoutMainContent({
           produto={produto}
           configCheckout={typedConfigCheckout}
           customRedirectStatus={effectiveRedirectStatus}
-          randomMode={randomMode}
+          randomMode={typedConfigCheckout?.modo_random || false}
         />
       </div>
       

@@ -14,6 +14,7 @@ import { VisualTab } from "@/components/configuracao/sections/VisualTab";
 import { RedirecoesTab } from "@/components/configuracao/sections/RedirecoesTab";
 import { RandomModeTab } from "@/components/configuracao/sections/RandomModeTab";
 import { PixConfigTab } from "@/components/configuracao/sections/PixConfigTab";
+import { InstallmentsTab } from "@/components/configuracao/sections/InstallmentsTab";
 import { toast } from "sonner";
 import { ConfigCheckout } from "@/lib/types/database-types";
 
@@ -64,11 +65,12 @@ const Configuracao = () => {
       </div>
 
       <Tabs defaultValue="visual" className="w-full">
-        <TabsList className="grid w-full grid-cols-10 bg-gray-100 p-1 rounded-lg">
+        <TabsList className="grid w-full grid-cols-11 bg-gray-100 p-1 rounded-lg">
           <TabsTrigger value="visual" className="data-[state=active]:bg-white">Visual</TabsTrigger>
           <TabsTrigger value="header" className="data-[state=active]:bg-white">Topo</TabsTrigger>
           <TabsTrigger value="formulario" className="data-[state=active]:bg-white">Formulário</TabsTrigger>
           <TabsTrigger value="pix" className="data-[state=active]:bg-white">PIX</TabsTrigger>
+          <TabsTrigger value="parcelas" className="data-[state=active]:bg-white">Parcelas</TabsTrigger>
           <TabsTrigger value="depoimentos" className="data-[state=active]:bg-white">Depoimentos</TabsTrigger>
           <TabsTrigger value="botoes" className="data-[state=active]:bg-white">Botões</TabsTrigger>
           <TabsTrigger value="icones" className="data-[state=active]:bg-white">Ícones</TabsTrigger>
@@ -107,6 +109,13 @@ const Configuracao = () => {
             handleConfigChange={handleConfigChange}
             handleSelectChange={handleSelectChange}
             handleSwitchChange={handleSwitchChange}
+          />
+        </TabsContent>
+        
+        <TabsContent value="parcelas" className="space-y-4 mt-4">
+          <InstallmentsTab 
+            config={typedConfig} 
+            handleConfigChange={handleConfigChange}
           />
         </TabsContent>
 

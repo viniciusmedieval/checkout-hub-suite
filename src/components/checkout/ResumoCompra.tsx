@@ -3,7 +3,7 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { formatCurrency } from "@/utils/formatters";
 import { ShoppingCart, Shield, Users } from "lucide-react";
-import { Produto, ConfigCheckout } from "@/lib/supabase";
+import { Produto, ConfigCheckout } from "@/lib/types/database-types";
 import { useNavigate } from "react-router-dom";
 
 interface ResumoCompraProps {
@@ -29,8 +29,8 @@ export function ResumoCompra({
   const buttonColor = configCheckout?.cor_botao || "#8B5CF6";
   const buttonTextColor = configCheckout?.cor_texto_botao || "#FFFFFF";
   
-  // Obter o texto do botão do produto, ou do configCheckout, ou usar um padrão
-  const buttonText = "AAAAAAAAAAAAAA"; // Texto fixo conforme solicitado
+  // Texto do botão fixo conforme solicitado
+  const buttonText = "AAAAAAAAAAAAAA";
   
   const counterTextColor = configCheckout?.cor_texto_contador || "#4B5563";
   

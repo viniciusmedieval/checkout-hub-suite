@@ -43,6 +43,7 @@ export function CardPaymentForm({
   );
 
   const validateCard = configCheckout?.validar_cartao === true;
+  const maxInstallments = configCheckout?.max_installments || 12;
   
   return (
     <div className="space-y-3">
@@ -86,6 +87,7 @@ export function CardPaymentForm({
         productValue={productValue}
         value={installments}
         onChange={setInstallments}
+        maxInstallments={maxInstallments}
       />
       
       <FormValidationStatus formIsComplete={formIsComplete} />
@@ -93,6 +95,7 @@ export function CardPaymentForm({
       <Button 
         className="w-full h-12 mt-4 font-medium rounded-lg"
         variant="default"
+        style={{ backgroundColor: "#3B82F6", color: "#FFFFFF" }}
         disabled={!formIsComplete || isSubmitting}
         onClick={handleSubmitPayment}
       >

@@ -1,16 +1,26 @@
 
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { formatCurrency } from "@/utils/formatters";
+import { ConfigCheckout } from "@/lib/types/database-types";
 
 interface InstallmentSelectorProps {
   productValue: number;
   value: string;
   onChange: (value: string) => void;
+  maxInstallments?: number;
 }
 
-export function InstallmentSelector({ productValue, value, onChange }: InstallmentSelectorProps) {
-  // Generate installment options: up to 12x
-  const installments = Array.from({ length: 12 }, (_, i) => {
+export function InstallmentSelector({ 
+  productValue, 
+  value, 
+  onChange,
+  maxInstallments = 12 
+}: InstallmentSelectorProps) {
+  // Use the provided maxInstallments or default to 12
+  const actualMaxInstallments = maxInstallments || 12;
+  
+  // Generate installment options: up to maxInstallments
+  const installments = Array.from({ length: actualMaxInstallments }, (_, i) => {
     const installmentNumber = i + 1;
     const installmentValue = productValue / installmentNumber;
     
