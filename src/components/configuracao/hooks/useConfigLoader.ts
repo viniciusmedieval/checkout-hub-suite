@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from 'react';
 import { supabase } from '@/lib/supabase';
 import { ConfigCheckout, Depoimento } from "@/lib/types/database-types";
@@ -23,6 +24,9 @@ const defaultConfig: ConfigCheckout = {
   validar_cartao: false,
   cor_botao: '#000000',
   cor_texto_botao: '#FFFFFF',
+  texto_botao_card: 'Pagar com Cartão',
+  cor_botao_card: '#000000', 
+  cor_texto_botao_card: '#FFFFFF',
   redirect_card_status: 'analyzing',
   mensagem_rodape: '',
   mensagem_produto: '',

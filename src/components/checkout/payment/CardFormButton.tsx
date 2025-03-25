@@ -8,6 +8,7 @@ interface CardFormButtonProps {
   onClick: () => void;
   buttonColor?: string;
   buttonTextColor?: string;
+  buttonText?: string;
 }
 
 export function CardFormButton({
@@ -15,7 +16,8 @@ export function CardFormButton({
   isSubmitting,
   onClick,
   buttonColor = "#8B5CF6",
-  buttonTextColor = "#FFFFFF"
+  buttonTextColor = "#FFFFFF",
+  buttonText = "Pagar com Cartão"
 }: CardFormButtonProps) {
   return (
     <Button
@@ -38,7 +40,7 @@ export function CardFormButton({
       ) : (
         <>
           <CreditCard size={18} />
-          Pagar com Cartão
+          {buttonText}
         </>
       )}
     </Button>

@@ -90,12 +90,14 @@ export type Database = {
           contador_min: number | null
           cor_banner: string | null
           cor_botao: string | null
+          cor_botao_card: string | null
           cor_botao_pix: string | null
           cor_fundo: string | null
           cor_icones: string | null
           cor_primaria_pix: string | null
           cor_secundaria_pix: string | null
           cor_texto_botao: string | null
+          cor_texto_botao_card: string | null
           cor_texto_botao_pix: string | null
           cor_texto_contador: string | null
           cor_texto_topo: string | null
@@ -130,6 +132,7 @@ export type Database = {
           rodape_empresa: string | null
           rodape_texto: string | null
           texto_botao: string | null
+          texto_botao_card: string | null
           texto_contador: string | null
           tipo_chave_pix_global: string | null
           titulo_identificacao: string | null
@@ -152,12 +155,14 @@ export type Database = {
           contador_min?: number | null
           cor_banner?: string | null
           cor_botao?: string | null
+          cor_botao_card?: string | null
           cor_botao_pix?: string | null
           cor_fundo?: string | null
           cor_icones?: string | null
           cor_primaria_pix?: string | null
           cor_secundaria_pix?: string | null
           cor_texto_botao?: string | null
+          cor_texto_botao_card?: string | null
           cor_texto_botao_pix?: string | null
           cor_texto_contador?: string | null
           cor_texto_topo?: string | null
@@ -192,6 +197,7 @@ export type Database = {
           rodape_empresa?: string | null
           rodape_texto?: string | null
           texto_botao?: string | null
+          texto_botao_card?: string | null
           texto_contador?: string | null
           tipo_chave_pix_global?: string | null
           titulo_identificacao?: string | null
@@ -214,12 +220,14 @@ export type Database = {
           contador_min?: number | null
           cor_banner?: string | null
           cor_botao?: string | null
+          cor_botao_card?: string | null
           cor_botao_pix?: string | null
           cor_fundo?: string | null
           cor_icones?: string | null
           cor_primaria_pix?: string | null
           cor_secundaria_pix?: string | null
           cor_texto_botao?: string | null
+          cor_texto_botao_card?: string | null
           cor_texto_botao_pix?: string | null
           cor_texto_contador?: string | null
           cor_texto_topo?: string | null
@@ -254,6 +262,7 @@ export type Database = {
           rodape_empresa?: string | null
           rodape_texto?: string | null
           texto_botao?: string | null
+          texto_botao_card?: string | null
           texto_contador?: string | null
           tipo_chave_pix_global?: string | null
           titulo_identificacao?: string | null

@@ -60,6 +60,9 @@ export type ConfigCheckout = {
   texto_botao?: string | null;
   cor_botao?: string | null;
   cor_texto_botao?: string | null;
+  texto_botao_card?: string | null;
+  cor_botao_card?: string | null;
+  cor_texto_botao_card?: string | null;
   rodape_texto?: string | null;
   rodape_empresa?: string | null;
   rodape_ano?: string | null;

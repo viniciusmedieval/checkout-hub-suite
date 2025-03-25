@@ -45,7 +45,10 @@ export function CheckoutMainContent({
     ...configCheckout,
     redirect_card_status: configCheckout.redirect_card_status as PaymentStatus,
     modo_random: !!configCheckout.modo_random,
-    max_installments: configCheckout.max_installments || 12
+    max_installments: configCheckout.max_installments || 12,
+    texto_botao_card: configCheckout.texto_botao_card || "Pagar com Cartão",
+    cor_botao_card: configCheckout.cor_botao_card || configCheckout.cor_botao || "#8B5CF6",
+    cor_texto_botao_card: configCheckout.cor_texto_botao_card || configCheckout.cor_texto_botao || "#FFFFFF"
   } : null;
 
   return (
