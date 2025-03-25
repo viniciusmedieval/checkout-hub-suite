@@ -11,4 +11,4 @@ export * from './useCardPaymentForm';
 
 // Explicitly export PaymentMethod from usePaymentMethod to resolve ambiguity
 export { usePaymentMethod } from './usePaymentMethod';
-export { type PaymentStatus } from '@/components/checkout/payment/types';
+export type { PaymentStatus } from '@/components/checkout/payment/types';
