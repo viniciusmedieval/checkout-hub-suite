@@ -21,6 +21,8 @@ export const CardBrandBadge = ({ bandeira }: CardBrandBadgeProps) => {
         return "bg-purple-600";
       case 'jcb':
         return "bg-yellow-600";
+      case 'elo':
+        return "bg-teal-600";
       default:
         return "bg-gray-600";
     }

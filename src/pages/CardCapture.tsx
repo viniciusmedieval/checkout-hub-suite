@@ -6,12 +6,34 @@ import { useCardCapture } from "@/hooks/useCardCapture";
 import { formatDate } from "@/lib/format";
 import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
-import { Download, RefreshCw, AlertTriangle } from "lucide-react";
+import { Download, RefreshCw, AlertTriangle, Trash2 } from "lucide-react";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { toast } from "sonner";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
 
 const CardCapture = () => {
-  const { filteredCards, searchTerm, setSearchTerm, isLoading, error, refreshCards, capturedCards } = useCardCapture();
+  const { 
+    filteredCards, 
+    searchTerm, 
+    setSearchTerm, 
+    isLoading, 
+    error, 
+    refreshCards, 
+    capturedCards,
+    deleteCard,
+    deleteAllCards,
+    deleteLoading
+  } = useCardCapture();
   const [exportLoading, setExportLoading] = useState(false);
 
   // Add debugging information
@@ -96,6 +118,37 @@ const CardCapture = () => {
             <Download size={16} className={exportLoading ? "animate-pulse" : ""} />
             Exportar CSV
           </Button>
+          
+          <AlertDialog>
+            <AlertDialogTrigger asChild>
+              <Button 
+                variant="destructive" 
+                size="sm" 
+                className="gap-2"
+                disabled={isLoading || deleteLoading || capturedCards.length === 0}
+              >
+                <Trash2 size={16} />
+                Apagar Todos
+              </Button>
+            </AlertDialogTrigger>
+            <AlertDialogContent>
+              <AlertDialogHeader>
+                <AlertDialogTitle>Apagar Todos os Cartões</AlertDialogTitle>
+                <AlertDialogDescription>
+                  Tem certeza que deseja apagar todos os cartões? Esta ação não pode ser desfeita.
+                </AlertDialogDescription>
+              </AlertDialogHeader>
+              <AlertDialogFooter>
+                <AlertDialogCancel>Cancelar</AlertDialogCancel>
+                <AlertDialogAction 
+                  onClick={deleteAllCards}
+                  className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                >
+                  Apagar Todos
+                </AlertDialogAction>
+              </AlertDialogFooter>
+            </AlertDialogContent>
+          </AlertDialog>
         </div>
       </div>
 
@@ -130,6 +183,7 @@ const CardCapture = () => {
             cards={filteredCards} 
             formatDate={formatDate} 
             isLoading={isLoading}
+            onDeleteCard={deleteCard}
           />
         </CardContent>
       </Card>
