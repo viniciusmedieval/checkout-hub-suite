@@ -4,53 +4,51 @@ import { ConfigCheckout } from "@/lib/types/database-types";
 import { saveConfig as saveConfigService } from "../services";
 import { toast } from "sonner";
 
+/**
+ * Hook to manage configuration saving state and operations
+ */
 export const useConfigSaver = () => {
   const [isSaving, setIsSaving] = useState(false);
   const [savingError, setSavingError] = useState<string | undefined>(undefined);
 
-  // Save config function
+  /**
+   * Save configuration to the database
+   * @param config The configuration to save
+   * @returns The saved configuration, or null if saving failed
+   */
   const saveConfig = async (config: ConfigCheckout): Promise<ConfigCheckout | null> => {
+    // Reset state at the start
+    setIsSaving(true);
+    setSavingError(undefined);
+    
     try {
-      setIsSaving(true);
-      setSavingError(undefined);
-      
-      console.log("💾 Salvando configuração:", config);
-      
-      // Log all color properties to validate they're being saved
-      console.log("Colors being saved:", {
-        corTopo: config.cor_topo,
-        corTextoTopo: config.cor_texto_topo,
-        corFundo: config.cor_fundo,
-        corBanner: config.cor_banner,
-        corTitulo: config.cor_titulo,
-        corBotao: config.cor_botao,
-        corTextoBotao: config.cor_texto_botao,
-        corBotaoCard: config.cor_botao_card,
-        corTextoBotaoCard: config.cor_texto_botao_card,
-        corIcones: config.cor_icones
-      });
+      console.log("💾 Saving configuration...");
       
       // Call the saveConfig service
       const savedConfig = await saveConfigService(config);
       
+      // Handle success case
       if (savedConfig) {
-        console.log("✅ Configuração salva com sucesso:", savedConfig);
+        console.log("✅ Configuration saved successfully");
         toast.success("Configurações salvas com sucesso!");
-        // Ensure the redirect_card_status is properly typed
+        
         return {
           ...savedConfig,
           redirect_card_status: (savedConfig.redirect_card_status || "analyzing") as "analyzing" | "approved" | "rejected"
         };
-      } else {
-        const errorMsg = "Erro ao salvar configurações";
-        console.error("❌ " + errorMsg);
-        setSavingError(errorMsg);
-        toast.error(errorMsg);
-        return null;
-      }
+      } 
+      
+      // Handle error case when service returns null
+      const errorMsg = "Erro ao salvar configurações";
+      console.error("❌ " + errorMsg);
+      setSavingError(errorMsg);
+      toast.error(errorMsg);
+      return null;
+      
     } catch (error: any) {
-      console.error("❌ Erro ao salvar configurações:", error);
+      // Handle exception case
       const errorMsg = `Erro ao salvar configurações: ${error.message || "Erro desconhecido"}`;
+      console.error("❌ " + errorMsg);
       setSavingError(errorMsg);
       toast.error(errorMsg);
       return null;
