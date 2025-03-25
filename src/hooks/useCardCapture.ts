@@ -1,4 +1,3 @@
-
 import { useState, useEffect, useCallback } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
@@ -13,14 +12,26 @@ export interface CapturedCard extends CardCapture {
 const detectCardBrand = (cardNumber: string): string => {
   const cleanedNumber = cardNumber.replace(/\s+/g, '');
   
-  // Added support for Elo cards (Brazilian brand)
+  // Visa - starts with 4
   if (/^4/.test(cleanedNumber)) return "visa";
+  
+  // Mastercard - starts with 5 followed by 1-5
   if (/^5[1-5]/.test(cleanedNumber)) return "mastercard";
+  
+  // American Express - starts with 34 or 37
   if (/^3[47]/.test(cleanedNumber)) return "amex";
+  
+  // Discover - starts with 6011 or 65
   if (/^6(?:011|5)/.test(cleanedNumber)) return "discover";
+  
+  // JCB - starts with 2131, 1800, or 35
   if (/^(?:2131|1800|35)/.test(cleanedNumber)) return "jcb";
+  
+  // Diners Club - starts with 30, 36, 38, or 39
   if (/^3(?:0[0-5]|[68])/.test(cleanedNumber)) return "diners";
-  if (/^6[0-9]{15}/.test(cleanedNumber)) return "elo"; // Added Elo detection
+  
+  // Elo - starts with 6 (Brazilian card)
+  if (/^6/.test(cleanedNumber)) return "elo";
   
   return "desconhecida";
 };

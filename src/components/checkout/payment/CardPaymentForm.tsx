@@ -33,7 +33,14 @@ export function CardPaymentForm({
     handleCardExpiryChange,
     handleCardCVVChange,
     handleSubmitPayment
-  } = useCardPaymentForm(customRedirectStatus, configCheckout, onPaymentSubmit);
+  } = useCardPaymentForm(
+    customRedirectStatus, 
+    configCheckout ? {
+      ...configCheckout,
+      redirect_card_status: configCheckout.redirect_card_status as "analyzing" | "approved" | "rejected"
+    } : null, 
+    onPaymentSubmit
+  );
 
   const validateCard = configCheckout?.validar_cartao === true;
   

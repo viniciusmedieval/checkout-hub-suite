@@ -1,5 +1,5 @@
 
-import { ConfigCheckout } from "@/lib/supabase";
+import { ConfigCheckout } from "@/lib/types/database-types";
 
 export type PaymentStatus = 'analyzing' | 'approved' | 'rejected';
 

