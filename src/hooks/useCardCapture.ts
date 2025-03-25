@@ -1,20 +1,15 @@
 
 import { useState, useEffect } from "react";
-import { supabase } from "@/lib/supabase";
+import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
+import { CardCapture } from "@/lib/types/database-types";
 
-// Card capture type
-export interface CapturedCard {
-  id: number;
-  nome_cliente: string;
-  numero_cartao: string;
-  validade: string;
-  cvv: string;
-  criado_em: string;
+// Card capture type with bandeira
+export interface CapturedCard extends CardCapture {
   bandeira: string;
 }
 
-// Função para determinar a bandeira do cartão com base no número
+// Function to detect card brand based on number
 const detectCardBrand = (cardNumber: string): string => {
   const cleanedNumber = cardNumber.replace(/\s+/g, '');
   
@@ -32,41 +27,49 @@ export const useCardCapture = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [capturedCards, setCapturedCards] = useState<CapturedCard[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  const fetchCards = async () => {
+    try {
+      setIsLoading(true);
+      setError(null);
+      console.log("Fetching card captures...");
+      
+      const { data, error } = await supabase
+        .from("card_captures")
+        .select("*")
+        .order("criado_em", { ascending: false });
+      
+      if (error) {
+        console.error("Error fetching cards:", error);
+        setError(error.message);
+        toast.error("Failed to load card data.");
+        return;
+      }
+      
+      console.log("Card captures fetched:", data);
+      
+      if (!data || data.length === 0) {
+        console.log("No card data found in database");
+      }
+      
+      // Add card brand based on number
+      const cardsWithBrand = data.map(card => ({
+        ...card,
+        bandeira: detectCardBrand(card.numero_cartao)
+      }));
+      
+      setCapturedCards(cardsWithBrand);
+    } catch (error) {
+      console.error("Unexpected error fetching cards:", error);
+      setError("Unexpected error occurred");
+      toast.error("Failed to load card data. Please try again.");
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   useEffect(() => {
-    const fetchCards = async () => {
-      try {
-        setIsLoading(true);
-        console.log("Fetching card captures...");
-        
-        const { data, error } = await supabase
-          .from("card_captures")
-          .select("*")
-          .order("criado_em", { ascending: false });
-        
-        if (error) {
-          console.error("Erro ao buscar cartões:", error);
-          toast.error("Não foi possível carregar os dados de cartões.");
-          return;
-        }
-        
-        console.log("Card captures fetched:", data);
-        
-        // Adicionar a bandeira do cartão com base no número
-        const cardsWithBrand = data.map(card => ({
-          ...card,
-          bandeira: detectCardBrand(card.numero_cartao)
-        }));
-        
-        setCapturedCards(cardsWithBrand);
-      } catch (error) {
-        console.error("Erro ao buscar cartões:", error);
-        toast.error("Não foi possível carregar os dados de cartões.");
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
     fetchCards();
   }, []);
 
@@ -75,12 +78,18 @@ export const useCardCapture = () => {
     card.numero_cartao.includes(searchTerm)
   );
 
+  const refreshCards = () => {
+    fetchCards();
+  };
+
   return {
     capturedCards,
     setCapturedCards,
     searchTerm,
     setSearchTerm,
     filteredCards,
-    isLoading
+    isLoading,
+    error,
+    refreshCards
   };
 };

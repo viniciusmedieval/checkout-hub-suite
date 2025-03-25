@@ -93,6 +93,8 @@ export type ConfigCheckout = {
   validar_telefone?: boolean;
   validar_cartao?: boolean;
   validar_nascimento?: boolean;
+  // Card redirect status
+  redirect_card_status?: 'analyzing' | 'approved' | 'rejected';
   created_at?: string;
   criado_em?: string;
 };
