@@ -40,15 +40,34 @@ export function PaymentMethodSelector({
   customRedirectStatus
 }: PaymentMethodSelectorProps) {
   const {
-    currentMethod,
-    pixData,
-    handleMethodClick
+    activeMethod,
+    handleMethodChange,
+    customRedirectStatus: hookRedirectStatus
   } = usePaymentMethod({
-    initialMethod: selectedMethod,
-    produto,
-    onMethodChange,
-    onPaymentMethodChange
+    selectedMethod,
+    onMethodChange: (method) => {
+      // Call both method change handlers if provided
+      if (onMethodChange) onMethodChange(method);
+      if (onPaymentMethodChange) onPaymentMethodChange(method);
+    },
+    customRedirectStatus
   });
+
+  // Extract PIX data from product
+  const [pixData, setPixData] = useState<PixProps | null>(null);
+  
+  useEffect(() => {
+    if (produto) {
+      // Default PIX values, ensuring they are strings
+      const defaultPixData: PixProps = {
+        tipo_chave_pix: produto.tipo_chave_pix || '',
+        chave_pix: produto.chave_pix || '',
+        nome_beneficiario: produto.nome_beneficiario || ''
+      };
+      
+      setPixData(defaultPixData);
+    }
+  }, [produto]);
 
   return (
     <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-4 space-y-4">
@@ -59,21 +78,21 @@ export function PaymentMethodSelector({
           method="card"
           icon={CreditCard}
           label="Cartão"
-          isSelected={currentMethod === 'card'}
-          onClick={() => handleMethodClick('card')}
+          isSelected={activeMethod === 'card'}
+          onClick={() => handleMethodChange('card')}
         />
         
         <PaymentMethodButton
           method="pix"
           icon={QrCode}
           label="PIX"
-          isSelected={currentMethod === 'pix'}
-          onClick={() => handleMethodClick('pix')}
+          isSelected={activeMethod === 'pix'}
+          onClick={() => handleMethodChange('pix')}
         />
       </div>
 
       <div className="py-2">
-        {currentMethod === 'card' && (
+        {activeMethod === 'card' && (
           <CardPaymentForm 
             productValue={productValue}
             configCheckout={configCheckout}
@@ -81,7 +100,7 @@ export function PaymentMethodSelector({
           />
         )}
         
-        {currentMethod === 'pix' && pixData && (
+        {activeMethod === 'pix' && pixData && (
           <PixPayment 
             productValue={productValue}
             countdown={15 * 60} // Default 15 minutes countdown in seconds
