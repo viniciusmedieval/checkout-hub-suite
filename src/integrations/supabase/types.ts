@@ -102,6 +102,7 @@ export type Database = {
           icone_nome: string | null
           icone_telefone: string | null
           id: number
+          max_installments: number | null
           mensagem_rodape: string | null
           mensagem_termos: string | null
           mensagem_topo: string | null
@@ -149,6 +150,7 @@ export type Database = {
           icone_nome?: string | null
           icone_telefone?: string | null
           id?: number
+          max_installments?: number | null
           mensagem_rodape?: string | null
           mensagem_termos?: string | null
           mensagem_topo?: string | null
@@ -196,6 +198,7 @@ export type Database = {
           icone_nome?: string | null
           icone_telefone?: string | null
           id?: number
+          max_installments?: number | null
           mensagem_rodape?: string | null
           mensagem_termos?: string | null
           mensagem_topo?: string | null
