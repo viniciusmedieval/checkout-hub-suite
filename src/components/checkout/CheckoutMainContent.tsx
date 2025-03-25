@@ -44,7 +44,8 @@ export function CheckoutMainContent({
   const typedConfigCheckout = configCheckout ? {
     ...configCheckout,
     redirect_card_status: configCheckout.redirect_card_status as PaymentStatus,
-    modo_random: !!configCheckout.modo_random
+    modo_random: !!configCheckout.modo_random,
+    max_installments: configCheckout.max_installments || 12
   } : null;
 
   return (

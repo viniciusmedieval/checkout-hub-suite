@@ -72,10 +72,11 @@ export function PaymentMethodSelector({
     }
   }, [produto]);
 
-  // Create a typed version of configCheckout with correct redirect_card_status type
+  // Create a typed version of configCheckout with correct properties
   const typedConfigCheckout = configCheckout ? {
     ...configCheckout,
-    redirect_card_status: configCheckout.redirect_card_status as PaymentStatus
+    redirect_card_status: configCheckout.redirect_card_status as PaymentStatus,
+    max_installments: configCheckout.max_installments || 12
   } : null;
 
   return (
