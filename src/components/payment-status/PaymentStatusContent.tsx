@@ -4,7 +4,7 @@ import { AnalyzingPayment } from "./AnalyzingPayment";
 import { ApprovedPayment } from "./ApprovedPayment";
 import { RejectedPayment } from "./RejectedPayment";
 import { ConfigCheckout } from "@/lib/supabase";
-import { PaymentStatus } from "@/hooks/checkout";
+import { PaymentStatus } from "@/components/checkout/payment/types";
 
 interface PaymentStatusContentProps {
   status: PaymentStatus;

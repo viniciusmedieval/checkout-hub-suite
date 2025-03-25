@@ -1,9 +1,11 @@
 
-export { useCheckout } from './useCheckout';
-export type { FormData, PaymentMethod } from './useCheckout';
-export { validateCPF, validateMobilePhone, validateEmail } from './useValidation';
-export { useCheckoutConfig } from './useCheckoutConfig';
-export { useMockProducts } from './useMockProducts';
-export { useProductData } from './useProductData';
-export { usePaymentStatus } from './usePaymentStatus';
-export type { PaymentStatus } from './usePaymentStatus';
+export * from './useCheckout';
+export * from './useCheckoutConfig';
+export * from './useCheckoutForm';
+export * from './useMockProducts';
+export * from './useProductData';
+export * from './useValidation';
+export * from './useVisitorCounter';
+export * from './usePaymentStatus';
+export * from './useCardPaymentForm';
+export { type PaymentStatus } from '@/components/checkout/payment/types';

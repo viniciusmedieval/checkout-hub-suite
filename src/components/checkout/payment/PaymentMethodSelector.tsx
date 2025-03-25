@@ -1,9 +1,9 @@
-
 import React, { useState, useEffect } from 'react';
 import { CreditCard, QrCode } from 'lucide-react';
-import { CardPaymentForm, PaymentStatus } from './CardPaymentForm';
+import { CardPaymentForm } from './CardPaymentForm';
 import { PixPayment } from './PixPayment';
 import { ConfigCheckout, Produto } from '@/lib/supabase';
+import { PaymentStatus } from './types';
 
 type PaymentMethod = 'card' | 'pix';
 type PixProps = {
