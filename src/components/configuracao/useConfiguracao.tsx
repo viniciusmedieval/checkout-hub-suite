@@ -6,6 +6,7 @@ import { useConfigSettings } from "./hooks/useConfigSettings";
 import { useTestimonials } from "./hooks/useTestimonials";
 import { defaultConfig } from "./utils/defaultConfig";
 import { toast } from "sonner";
+import { PaymentStatus } from "@/components/checkout/payment/CardPaymentForm";
 
 export function useConfiguracao() {
   const [loading, setLoading] = useState(true);
@@ -19,6 +20,7 @@ export function useConfiguracao() {
     handleConfigChange,
     handleSwitchChange,
     handleIconChange,
+    handleStatusChange,
     handleSaveConfig,
     hasUnsavedChanges
   } = useConfigSettings(configData);
@@ -130,6 +132,7 @@ export function useConfiguracao() {
     handleConfigChange,
     handleSwitchChange,
     handleIconChange,
+    handleStatusChange,
     handleSaveConfig: saveAndReloadConfig,
     hasUnsavedChanges,
     reloadConfig,

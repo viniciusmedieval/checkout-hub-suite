@@ -1,8 +1,10 @@
+
 import { useState, useEffect } from "react";
 import { ConfigCheckout } from "@/lib/supabase";
 import { saveConfig } from "../services";
 import { defaultConfig } from "../utils/defaultConfig";
 import { toast } from "sonner";
+import { PaymentStatus } from "@/components/checkout/payment/CardPaymentForm";
 
 export function useConfigSettings(initialConfig: ConfigCheckout | null = null) {
   const [config, setConfig] = useState<ConfigCheckout>(initialConfig || defaultConfig);
@@ -44,6 +46,11 @@ export function useConfigSettings(initialConfig: ConfigCheckout | null = null) {
   const handleIconChange = (name: string, value: string) => {
     console.log(`🔄 useConfigSettings - Alterando ícone ${name} para ${value}`);
     setConfig(prev => ({ ...prev, [name]: value }));
+  };
+
+  const handleStatusChange = (status: PaymentStatus) => {
+    console.log(`🔄 useConfigSettings - Alterando status de redirecionamento para ${status}`);
+    setConfig(prev => ({ ...prev, redirect_card_status: status }));
   };
 
   const handleSaveConfig = async () => {
@@ -102,6 +109,7 @@ export function useConfigSettings(initialConfig: ConfigCheckout | null = null) {
     handleConfigChange,
     handleSwitchChange,
     handleIconChange,
+    handleStatusChange,
     handleSaveConfig,
     hasUnsavedChanges
   };

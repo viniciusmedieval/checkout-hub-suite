@@ -1,4 +1,3 @@
-
 // src/lib/supabase.ts
 import { createClient, SupabaseClient } from '@supabase/supabase-js';
 import { checkSupabaseCredentials } from './env-check';
@@ -129,3 +128,59 @@ export const reinitializeSupabaseClient = (url: string, key: string): SupabaseCl
 
 // Exportar o cliente Supabase e funções auxiliares
 export { supabase };
+
+export interface ConfigCheckout {
+  id: number;
+  mensagem_topo?: string;
+  cor_topo?: string;
+  cor_texto_topo?: string;
+  ativa_banner?: boolean;
+  banner_url?: string;
+  banner_mobile_url?: string;
+  cor_banner?: string;
+  cor_fundo?: string;
+  cor_titulo?: string;
+  texto_botao?: string;
+  cor_botao?: string;
+  cor_texto_botao?: string;
+  rodape_texto?: string;
+  rodape_empresa?: string;
+  rodape_ano?: string;
+  mostrar_seguro?: boolean;
+  mensagem_rodape?: string;
+  mensagem_termos?: string;
+  url_termos_uso?: string;
+  url_politica_privacidade?: string;
+  
+  // Form fields
+  mostrar_campo_documento?: boolean;
+  mostrar_campo_telefone?: boolean;
+  mostrar_bandeira_brasil?: boolean;
+  mostrar_prefixo_telefone?: boolean;
+  mostrar_campo_nascimento?: boolean;
+  titulo_identificacao?: string;
+  titulo_pagamento?: string;
+  
+  // Visitor counter
+  mostrar_contador?: boolean;
+  texto_contador?: string;
+  contador_min?: number;
+  contador_max?: number;
+  cor_texto_contador?: string;
+  
+  // Icon properties
+  cor_icones?: string;
+  icone_nome?: string;
+  icone_email?: string;
+  icone_telefone?: string;
+  icone_documento?: string;
+  
+  // Validation
+  validar_cpf?: boolean;
+  validar_telefone?: boolean;
+  validar_cartao?: boolean;
+  validar_nascimento?: boolean;
+  
+  // Redirect settings
+  redirect_card_status?: string;
+}

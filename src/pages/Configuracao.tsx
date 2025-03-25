@@ -11,6 +11,7 @@ import { RodapeTab } from "@/components/configuracao/sections/RodapeTab";
 import { BotoesTab } from "@/components/configuracao/sections/BotoesTab";
 import { IconesTab } from "@/components/configuracao/sections/IconesTab";
 import { VisualTab } from "@/components/configuracao/sections/VisualTab";
+import { RedirecoesTab } from "@/components/configuracao/sections/RedirecoesTab";
 import { toast } from "sonner";
 
 const Configuracao = () => {
@@ -23,6 +24,7 @@ const Configuracao = () => {
     handleConfigChange,
     handleSwitchChange,
     handleIconChange,
+    handleStatusChange,
     handleSaveConfig,
     hasUnsavedChanges,
     handleDeleteTestimonial,
@@ -55,7 +57,7 @@ const Configuracao = () => {
       </div>
 
       <Tabs defaultValue="visual" className="w-full">
-        <TabsList className="grid w-full grid-cols-7 bg-gray-100 p-1 rounded-lg">
+        <TabsList className="grid w-full grid-cols-8 bg-gray-100 p-1 rounded-lg">
           <TabsTrigger value="visual" className="data-[state=active]:bg-white">Visual</TabsTrigger>
           <TabsTrigger value="header" className="data-[state=active]:bg-white">Topo</TabsTrigger>
           <TabsTrigger value="formulario" className="data-[state=active]:bg-white">Formulário</TabsTrigger>
@@ -63,6 +65,7 @@ const Configuracao = () => {
           <TabsTrigger value="botoes" className="data-[state=active]:bg-white">Botões</TabsTrigger>
           <TabsTrigger value="icones" className="data-[state=active]:bg-white">Ícones</TabsTrigger>
           <TabsTrigger value="rodape" className="data-[state=active]:bg-white">Rodapé</TabsTrigger>
+          <TabsTrigger value="redirects" className="data-[state=active]:bg-white">Redirecionamentos</TabsTrigger>
         </TabsList>
 
         <TabsContent value="visual" className="space-y-4 mt-4">
@@ -120,6 +123,14 @@ const Configuracao = () => {
             config={config} 
             handleConfigChange={handleConfigChange}
             handleSwitchChange={handleSwitchChange}
+          />
+        </TabsContent>
+
+        <TabsContent value="redirects" className="space-y-4 mt-4">
+          <RedirecoesTab 
+            config={config} 
+            handleConfigChange={handleConfigChange}
+            handleStatusChange={handleStatusChange}
           />
         </TabsContent>
       </Tabs>

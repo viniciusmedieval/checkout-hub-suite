@@ -45,5 +45,7 @@ export const defaultConfig: ConfigCheckout = {
   validar_cpf: false,
   validar_telefone: false,
   validar_cartao: false,
-  validar_nascimento: false
+  validar_nascimento: false,
+  // Redirect settings
+  redirect_card_status: "analyzing"
 };

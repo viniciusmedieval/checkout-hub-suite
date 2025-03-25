@@ -36,6 +36,12 @@ export function CheckoutMainContent({
 }: CheckoutMainContentProps) {
   // Determinar a cor do texto a ser usada (default: black)
   const textColor = configCheckout?.cor_titulo || "#000000";
+  
+  // Determine which redirect status to use - first the custom one (product specific),
+  // then the global config one, then default to 'analyzing'
+  const effectiveRedirectStatus = customRedirectStatus || 
+    (configCheckout?.redirect_card_status as PaymentStatus) || 
+    'analyzing';
 
   return (
     <div className="w-full max-w-md mx-auto py-6 px-4 space-y-5">
@@ -68,7 +74,7 @@ export function CheckoutMainContent({
           onMethodChange={setPaymentMethod}
           produto={produto}
           configCheckout={configCheckout}
-          customRedirectStatus={customRedirectStatus}
+          customRedirectStatus={effectiveRedirectStatus}
         />
       </div>
       
