@@ -16,6 +16,7 @@ const PaymentStatus = () => {
     // Verifica parâmetros
     if (!slug || !status) {
       console.error("Parâmetros inválidos para a página de status:", { slug, status });
+      toast.error("Informações de pagamento inválidas");
       navigate("/produtos");
       return;
     }
@@ -25,12 +26,14 @@ const PaymentStatus = () => {
       slug, 
       status, 
       paymentStatus,
-      produto: produto?.nome
+      produto: produto?.nome,
+      configCheckout: configCheckout?.redirect_card_status
     });
     
     // Verifica status válido
     if (status && !['analyzing', 'approved', 'rejected'].includes(status)) {
       console.warn(`Status inválido: ${status}, redirecionando para 'analyzing'`);
+      toast.warning("Status de pagamento inválido, redirecionando...");
       redirectToStatus(slug, 'analyzing');
     }
   }, [slug, status, paymentStatus, produto, navigate, redirectToStatus]);

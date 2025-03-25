@@ -26,9 +26,16 @@ export const usePaymentStatus = () => {
     }
   };
 
+  // Add the simulatePayment function that was missing
+  const simulatePayment = (status: PaymentStatus, slug: string) => {
+    console.log(`Simulando pagamento com status: ${status} para slug: ${slug}`);
+    redirectToStatus(slug, status);
+  };
+
   return {
     paymentStatus,
-    redirectToStatus
+    redirectToStatus,
+    simulatePayment
   };
 };
 

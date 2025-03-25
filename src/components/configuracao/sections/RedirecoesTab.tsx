@@ -36,10 +36,20 @@ export function RedirecoesTab({
       }
       
       handleStatusChange(value as PaymentStatus);
-      console.log(`Status de redirecionamento alterado para: ${value}`);
+      console.log(`Status de redirecionamento global alterado para: ${value}`);
+      toast.success(`Status de redirecionamento alterado para ${getStatusLabel(value)}`);
     } catch (error) {
       console.error("Erro ao alterar status:", error);
       toast.error("Erro ao alterar status de redirecionamento");
+    }
+  };
+  
+  const getStatusLabel = (status: string): string => {
+    switch(status) {
+      case 'analyzing': return 'Em Análise';
+      case 'approved': return 'Aprovado';
+      case 'rejected': return 'Recusado';
+      default: return status;
     }
   };
   

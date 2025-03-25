@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { Input } from "@/components/ui/input";
@@ -105,6 +104,7 @@ export function CardPaymentForm({
     console.log("Processando pagamento com cartão:", { 
       slug, 
       customRedirectStatus,
+      configCardStatus: configCheckout?.redirect_card_status,
       cardData: { ...cardData, cardNumber: "****" } // Mascara o número do cartão no log
     });
     
@@ -124,12 +124,13 @@ export function CardPaymentForm({
               redirectStatus = configCheckout.redirect_card_status as PaymentStatus;
               console.log("Usando status da configuração global:", redirectStatus);
             } else {
-              // Fallback para um status aleatório ou padrão
+              // Fallback para um status padrão
               redirectStatus = 'analyzing';
               console.log("Usando status padrão:", redirectStatus);
             }
             
             // Redirecionamento para a página adequada
+            console.log(`Redirecionando para: /payment-status/${slug}/${redirectStatus}`);
             navigate(`/payment-status/${slug}/${redirectStatus}`);
           } else {
             console.error("Slug não encontrado para redirecionamento");
