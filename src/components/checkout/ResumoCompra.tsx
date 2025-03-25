@@ -79,6 +79,7 @@ export function ResumoCompra({
           <span className="text-xl font-bold text-green-600">{formatCurrency(produto.valor)}</span>
         </div>
         
+        {/* Mostrar o botão apenas para pagamentos PIX */}
         {paymentMethod === 'pix' && (
           <Button
             onClick={handleCheckoutButton}
