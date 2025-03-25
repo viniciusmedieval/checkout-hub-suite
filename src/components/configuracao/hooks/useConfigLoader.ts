@@ -1,8 +1,8 @@
 
 import { useState, useEffect } from "react";
 import { ConfigCheckout, Depoimento } from "@/lib/types/database-types";
-import { getCheckoutConfig } from "../services/fetchConfigService";
-import { getTestimonials } from "../services/testimonialService";
+import { fetchCheckoutConfig } from "../services/fetchConfigService";
+import { fetchTestimonials } from "../services/testimonialService";
 import { toast } from "sonner";
 import { defaultConfig } from "../utils/defaultConfig";
 
@@ -20,7 +20,7 @@ export const useConfigLoader = () => {
       console.log("📥 Carregando configuração do checkout...");
       
       // Carregar configuração global do checkout
-      const config = await getCheckoutConfig();
+      const config = await fetchCheckoutConfig();
       
       if (config) {
         // Garantir valores padrão para campos críticos
@@ -38,7 +38,7 @@ export const useConfigLoader = () => {
       }
       
       // Carregar depoimentos
-      const testemunhosList = await getTestimonials();
+      const testemunhosList = await fetchTestimonials();
       console.log("✅ Depoimentos carregados:", testemunhosList);
       setDepoimentos(testemunhosList || []);
       
@@ -64,7 +64,7 @@ export const useConfigLoader = () => {
       console.log("🔄 Recarregando configuração do checkout...");
       
       // Carregar configuração global do checkout
-      const config = await getCheckoutConfig();
+      const config = await fetchCheckoutConfig();
       
       if (config) {
         // Garantir valores padrão para campos críticos

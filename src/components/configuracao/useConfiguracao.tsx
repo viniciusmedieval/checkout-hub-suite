@@ -37,7 +37,7 @@ export function useConfiguracao() {
     handleDeleteTestimonial,
     handleAddTestimonial,
     handleUpdateTestimonial
-  } = useTestimonials(depoimentos, setDepoimentos);
+  } = useTestimonials(depoimentos);
   
   // Initialize configuration saving
   const { saveAndReloadConfig } = useConfigSaver(config, reloadConfig);
