@@ -1,30 +1,41 @@
 
-import { useState } from "react";
-import { PaymentStatus } from "@/components/checkout/payment/types";
+import { useState, useEffect } from 'react';
+import { PaymentMethod } from '@/components/checkout/payment/selector/PaymentMethodSelector';
+import { PaymentStatus } from '@/components/checkout/payment/types';
 
-export interface PaymentMethodProps {
-  onMethodChange?: (method: 'card' | 'pix') => void;
-  selectedMethod?: 'card' | 'pix';
+interface UsePaymentMethodProps {
+  selectedMethod?: PaymentMethod;
+  onMethodChange?: (method: PaymentMethod) => void;
   customRedirectStatus?: PaymentStatus;
 }
 
-export function usePaymentMethod({
-  onMethodChange,
+export const usePaymentMethod = ({
   selectedMethod = 'card',
-  customRedirectStatus
-}: PaymentMethodProps = {}) {
-  const [activeMethod, setActiveMethod] = useState<'card' | 'pix'>(selectedMethod);
-  
-  const handleMethodChange = (method: 'card' | 'pix') => {
+  onMethodChange,
+  customRedirectStatus,
+}: UsePaymentMethodProps) => {
+  const [activeMethod, setActiveMethod] = useState<PaymentMethod>(selectedMethod);
+
+  // Update active method if props change
+  useEffect(() => {
+    if (selectedMethod && selectedMethod !== activeMethod) {
+      setActiveMethod(selectedMethod);
+    }
+  }, [selectedMethod]);
+
+  // Handle payment method change
+  const handleMethodChange = (method: PaymentMethod) => {
     setActiveMethod(method);
+    
+    // Call the onMethodChange callback if provided
     if (onMethodChange) {
       onMethodChange(method);
     }
   };
-  
+
   return {
     activeMethod,
     handleMethodChange,
     customRedirectStatus
   };
-}
+};

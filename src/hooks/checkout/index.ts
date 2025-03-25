@@ -8,7 +8,7 @@ export * from './useValidation';
 export * from './useVisitorCounter';
 export * from './usePaymentStatus';
 export * from './useCardPaymentForm';
+export * from './usePaymentMethod';
 
-// Explicitly export PaymentMethod from usePaymentMethod to resolve ambiguity
-export { usePaymentMethod } from './usePaymentMethod';
+// Explicitly export PaymentStatus from types to resolve ambiguity
 export type { PaymentStatus } from '@/components/checkout/payment/types';
