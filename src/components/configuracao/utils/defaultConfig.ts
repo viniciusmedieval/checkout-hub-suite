@@ -1,5 +1,5 @@
 
-import { ConfigCheckout } from "@/lib/supabase";
+import { ConfigCheckout } from "@/lib/types/database-types";
 
 export const defaultConfig: ConfigCheckout = {
   id: 0,
@@ -49,5 +49,16 @@ export const defaultConfig: ConfigCheckout = {
   // Redirect settings
   redirect_card_status: "analyzing",
   // Random mode
-  modo_random: false
+  modo_random: false,
+  // Installments default
+  max_installments: 12,
+  // PIX defaults
+  pix_titulo: "Pagamento via Pix",
+  pix_subtitulo: "Copie o código ou use a câmera para ler o QR Code e realize o pagamento no app do seu banco.",
+  pix_instrucoes: "Para realizar o pagamento:",
+  pix_mensagem_seguranca: "Os bancos reforçaram a segurança do Pix e podem exibir avisos preventivos. Não se preocupe, sua transação está protegida.",
+  cor_primaria_pix: "#1E40AF",
+  cor_secundaria_pix: "#DBEAFE",
+  tipo_chave_pix_global: "email",
+  usar_api_pix_global: false
 };

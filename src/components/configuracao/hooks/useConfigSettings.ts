@@ -1,6 +1,6 @@
 
 import { useState, useEffect } from "react";
-import { ConfigCheckout } from "@/lib/supabase";
+import { ConfigCheckout } from "@/lib/types/database-types";
 import { saveConfig } from "../services";
 import { toast } from "sonner";
 import { defaultConfig } from "../utils/defaultConfig";
