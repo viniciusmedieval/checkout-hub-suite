@@ -40,7 +40,7 @@ export function useConfiguracao() {
   } = useTestimonials(depoimentos, setDepoimentos);
   
   // Initialize configuration saving
-  const { saveAndReloadConfig } = useConfigSaver(config, setConfig, reloadConfig);
+  const { saveAndReloadConfig } = useConfigSaver(config, reloadConfig);
   
   // Wrapper function for saving with loading state
   const handleSaveConfig = async () => {

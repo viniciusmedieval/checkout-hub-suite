@@ -57,11 +57,13 @@ export function ResumoCompra({
     return text.replace("{count}", visitorCount.toString());
   };
   
-  // Handle checkout button click - redirect to PIX page if payment method is PIX
+  // Handle checkout button click - redirect to appropriate page based on payment method
   const handleCheckoutButton = () => {
     if (paymentMethod === 'pix') {
+      console.log("Redirecting to PIX payment page:", `/pix-payment/${produto.slug}`);
       navigate(`/pix-payment/${produto.slug}`);
     } else {
+      console.log("Calling onCompletePurchase function for card payment");
       onCompletePurchase();
     }
   };
@@ -127,7 +129,7 @@ export function ResumoCompra({
             Processando...
           </>
         ) : (
-          paymentMethod === 'card' ? (buttonText || "PAGAR COM CARTÃO") : "PAGAR COM PIX"
+          buttonText
         )}
       </Button>
       
