@@ -1,5 +1,5 @@
 
-import { Produto, ConfigCheckout } from "@/lib/supabase";
+import { Produto, ConfigCheckout } from "@/lib/types/database-types";
 import { FormIdentificacao } from "@/components/checkout/FormIdentificacao";
 import { PaymentMethodSelector } from "@/components/checkout/payment/selector/PaymentMethodSelector";
 import { CheckoutTestimonials } from "@/components/checkout/CheckoutTestimonials";
@@ -42,6 +42,12 @@ export function CheckoutMainContent({
     
   const randomMode = configCheckout?.modo_random === true;
 
+  // Create a typed version of configCheckout with correct redirect_card_status type
+  const typedConfigCheckout = configCheckout ? {
+    ...configCheckout,
+    redirect_card_status: configCheckout.redirect_card_status as PaymentStatus
+  } : null;
+
   return (
     <div className="w-full max-w-md mx-auto py-6 px-4 space-y-5">
       <h1 
@@ -55,7 +61,7 @@ export function CheckoutMainContent({
         formData={formData} 
         errors={formErrors} 
         onChange={handleInputChange}
-        configCheckout={configCheckout}
+        configCheckout={typedConfigCheckout}
       />
       
       <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
@@ -68,7 +74,7 @@ export function CheckoutMainContent({
           selectedMethod={paymentMethod}
           onMethodChange={setPaymentMethod}
           produto={produto}
-          configCheckout={configCheckout}
+          configCheckout={typedConfigCheckout}
           customRedirectStatus={effectiveRedirectStatus}
           randomMode={randomMode}
         />
@@ -76,7 +82,7 @@ export function CheckoutMainContent({
       
       <ResumoCompra 
         produto={produto} 
-        configCheckout={configCheckout}
+        configCheckout={typedConfigCheckout}
         visitorCount={visitorCount}
         isProcessing={isSubmitting}
         onCompletePurchase={submitOrder}

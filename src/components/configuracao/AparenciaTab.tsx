@@ -1,6 +1,6 @@
 
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { ConfigCheckout } from "@/lib/supabase";
+import { ConfigCheckout } from "@/lib/types/database-types";
 import { useEffect } from "react";
 import { TopBarSection } from "./aparencia/TopBarSection";
 import { ProductColorSection } from "./aparencia/ProductColorSection";

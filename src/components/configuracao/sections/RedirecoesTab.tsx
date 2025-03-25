@@ -1,10 +1,10 @@
 
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { ConfigCheckout } from "@/lib/supabase";
+import { ConfigCheckout } from "@/lib/types/database-types";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Label } from "@/components/ui/label";
 import { Info } from "lucide-react";
-import { PaymentStatus } from "@/components/checkout/payment/CardPaymentForm";
+import { PaymentStatus } from "@/components/checkout/payment/types";
 import { useEffect } from "react";
 import { toast } from "sonner";
 

@@ -3,7 +3,7 @@ import React, { useState, useEffect } from 'react';
 import { CreditCard, QrCode } from 'lucide-react';
 import { CardPaymentForm } from '../CardPaymentForm';
 import { PixPayment } from '../PixPayment';
-import { ConfigCheckout, Produto } from '@/lib/supabase';
+import { ConfigCheckout, Produto } from '@/lib/types/database-types';
 import { PaymentStatus } from '../types';
 import { PaymentMethodButton } from './PaymentMethodButton';
 import { PaymentMethodHeader } from './PaymentMethodHeader';
@@ -72,9 +72,15 @@ export function PaymentMethodSelector({
     }
   }, [produto]);
 
+  // Create a typed version of configCheckout with correct redirect_card_status type
+  const typedConfigCheckout = configCheckout ? {
+    ...configCheckout,
+    redirect_card_status: configCheckout.redirect_card_status as PaymentStatus
+  } : null;
+
   return (
     <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-4 space-y-4">
-      <PaymentMethodHeader configCheckout={configCheckout} />
+      <PaymentMethodHeader configCheckout={typedConfigCheckout} />
 
       <div className="flex gap-2">
         <PaymentMethodButton
@@ -98,7 +104,7 @@ export function PaymentMethodSelector({
         {activeMethod === 'card' && (
           <CardPaymentForm 
             productValue={productValue}
-            configCheckout={configCheckout}
+            configCheckout={typedConfigCheckout}
             customRedirectStatus={paymentStatus}
           />
         )}
