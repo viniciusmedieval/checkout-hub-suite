@@ -16,7 +16,7 @@ const defaultConfig: ConfigCheckout = {
   mostrar_bandeira_brasil: true,
   mostrar_prefixo_telefone: true,
   mostrar_contador: false,
-  texto_aviso_contador: '',
+  texto_contador: '',
   validar_cpf: false,
   validar_telefone: false,
   validar_nascimento: false,

@@ -48,14 +48,15 @@ export function ResumoCompra({
     return counterText.replace("{count}", visitorCount.toString());
   };
   
-  // Handle checkout button click - redirect to PIX payment page if payment method is PIX
+  // Handle checkout button click
   const handleCheckoutButton = () => {
     if (paymentMethod === 'pix') {
       console.log("🔍 Redirecting to PIX payment page:", `/pix-payment/${produto.slug}`);
       navigate(`/pix-payment/${produto.slug}`);
-    } else {
-      // For card payments, we handle the form submission in the CardPaymentForm component
-      console.log("⚠️ The card payment should be handled by the CardPaymentForm component");
+    } else if (paymentMethod === 'card') {
+      // Para pagamentos com cartão, chamar a função onCompletePurchase que está vinculada ao submitOrder
+      console.log("💳 Processando pagamento com cartão");
+      onCompletePurchase();
     }
   };
   
@@ -79,33 +80,31 @@ export function ResumoCompra({
           <span className="text-xl font-bold text-green-600">{formatCurrency(produto.valor)}</span>
         </div>
         
-        {/* Mostrar o botão apenas para pagamentos PIX */}
-        {paymentMethod === 'pix' && (
-          <Button
-            onClick={handleCheckoutButton}
-            disabled={isProcessing}
-            className="w-full mt-4 gap-2"
-            style={{
-              backgroundColor: buttonColor,
-              color: buttonTextColor
-            }}
-          >
-            {isProcessing ? (
-              <>
-                <svg className="animate-spin -ml-1 mr-2 h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                </svg>
-                Processando...
-              </>
-            ) : (
-              <>
-                <ShoppingBag size={18} />
-                {buttonText}
-              </>
-            )}
-          </Button>
-        )}
+        {/* Botão exibido para ambos os métodos de pagamento */}
+        <Button
+          onClick={handleCheckoutButton}
+          disabled={isProcessing}
+          className="w-full mt-4 gap-2"
+          style={{
+            backgroundColor: buttonColor,
+            color: buttonTextColor
+          }}
+        >
+          {isProcessing ? (
+            <>
+              <svg className="animate-spin -ml-1 mr-2 h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+              </svg>
+              Processando...
+            </>
+          ) : (
+            <>
+              <ShoppingBag size={18} />
+              {paymentMethod === 'pix' ? buttonText : "Pagar com Cartão"}
+            </>
+          )}
+        </Button>
       </div>
       
       {/* Only show these indicators if we should show the counter */}
