@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import { supabase } from '@/lib/supabase';
 import { ConfigCheckout, Depoimento } from "@/lib/types/database-types";
@@ -7,7 +6,7 @@ const defaultConfig: ConfigCheckout = {
   id: 0,
   cor_primaria_pix: '#000000',
   cor_secundaria_pix: '#FFFFFF',
-  cor_texto: '#000000',
+  cor_titulo: '#000000',
   cor_fundo: '#FFFFFF',
   mostrar_banner: true,
   url_banner: '',

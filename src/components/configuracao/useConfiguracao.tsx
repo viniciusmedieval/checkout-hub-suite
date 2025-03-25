@@ -86,7 +86,10 @@ export const ConfiguracaoProvider: React.FC<ConfiguracaoProviderProps> = ({ chil
   }, [config]);
 
   useEffect(() => {
-    setCurrentDepoimentos(depoimentos);
+    // Fix: Make sure the types match by setting an array of Depoimentos
+    if (Array.isArray(depoimentos)) {
+      setCurrentDepoimentos(depoimentos);
+    }
   }, [depoimentos]);
 
   const setConfig = (newConfig: ConfigCheckout) => {
