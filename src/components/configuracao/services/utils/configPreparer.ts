@@ -11,6 +11,12 @@ export const prepareConfigForSave = (config: ConfigCheckout) => {
   // Always ensure ID is not included when saving to avoid conflicts
   const { id, ...configWithoutId } = config;
 
+  // Ensure redirect_card_status is a valid value
+  const status = config.redirect_card_status || "analyzing";
+  const validStatus = ["analyzing", "approved", "rejected"].includes(status) 
+    ? status 
+    : "analyzing";
+
   // Create a clean object with all required fields and proper types
   const preparedConfig = {
     ...configWithoutId,
@@ -58,7 +64,7 @@ export const prepareConfigForSave = (config: ConfigCheckout) => {
     validar_cartao: Boolean(config.validar_cartao),
     mostrar_campo_nascimento: Boolean(config.mostrar_campo_nascimento),
     validar_nascimento: Boolean(config.validar_nascimento),
-    redirect_card_status: config.redirect_card_status || "analyzing",
+    redirect_card_status: validStatus,
     modo_random: Boolean(config.modo_random),
   };
 

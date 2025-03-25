@@ -32,7 +32,7 @@ export async function createNewConfig(configToSave: any): Promise<ConfigCheckout
     console.log("✅ Configuração criada com sucesso:", processedData);
     toast.success("Configurações salvas com sucesso!");
     return processedData;
-  } catch (error) {
+  } catch (error: any) {
     console.error("❌ Erro ao criar nova configuração:", error);
     toast.error("Erro ao criar configuração: " + (error.message || "Erro desconhecido"));
     return null;

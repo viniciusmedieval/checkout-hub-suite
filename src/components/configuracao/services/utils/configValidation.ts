@@ -1,5 +1,5 @@
 
-import { ConfigCheckout } from "@/lib/supabase";
+import { ConfigCheckout } from "@/lib/types/database-types";
 import { toast } from "sonner";
 
 /**
@@ -18,6 +18,12 @@ export const ensureBooleanFields = (data: any): ConfigCheckout => {
     return data;
   }
   
+  // Ensure redirect_card_status is one of the allowed values
+  const status = data.redirect_card_status || "analyzing";
+  const validStatus = ["analyzing", "approved", "rejected"].includes(status) 
+    ? status as "analyzing" | "approved" | "rejected" 
+    : "analyzing";
+  
   return {
     ...data,
     mostrar_seguro: Boolean(data.mostrar_seguro),
@@ -33,7 +39,8 @@ export const ensureBooleanFields = (data: any): ConfigCheckout => {
     mostrar_campo_nascimento: Boolean(data.mostrar_campo_nascimento),
     validar_nascimento: Boolean(data.validar_nascimento),
     modo_random: Boolean(data.modo_random),
-    usar_api_pix_global: Boolean(data.usar_api_pix_global)
+    usar_api_pix_global: Boolean(data.usar_api_pix_global),
+    redirect_card_status: validStatus
   };
 };
 

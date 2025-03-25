@@ -1,10 +1,11 @@
 
 // src/components/configuracao/services/saveConfigService.ts
-import { supabase, ConfigCheckout, isSupabaseInitialized } from "@/lib/supabase";
+import { ConfigCheckout, isSupabaseInitialized } from "@/lib/supabase";
 import { toast } from "sonner";
 import { prepareConfigForSave } from "./utils/configPreparer";
 import { createNewConfig } from "./operations/createConfig";
 import { updateExistingConfig } from "./operations/updateConfig";
+import { supabase } from "@/lib/supabase";
 
 /**
  * Saves checkout configuration to the database
@@ -44,7 +45,7 @@ export const saveConfig = async (config: ConfigCheckout): Promise<ConfigCheckout
     } else {
       return await createNewConfig(configToSave);
     }
-  } catch (error) {
+  } catch (error: any) {
     console.error("❌ Erro no saveConfig:", error);
     toast.error("Erro ao salvar configurações: " + (error.message || "Erro desconhecido"));
     return null;

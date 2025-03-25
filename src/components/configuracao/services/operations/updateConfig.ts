@@ -67,7 +67,7 @@ export async function updateExistingConfig(config: ConfigCheckout, configToSave:
     console.log("✅ Configuração atualizada com sucesso:", processedData);
     toast.success("Configurações salvas com sucesso!");
     return processedData;
-  } catch (error) {
+  } catch (error: any) {
     console.error("❌ Erro ao atualizar configuração:", error);
     toast.error("Erro ao atualizar configuração: " + (error.message || "Erro desconhecido"));
     return null;
