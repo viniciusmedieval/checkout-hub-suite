@@ -1,4 +1,3 @@
-
 import React from "react";
 import { CheckoutHeader } from "@/components/checkout/CheckoutHeader";
 import { CheckoutLoading } from "@/components/checkout/CheckoutLoading";
@@ -9,6 +8,8 @@ import { PixInstructions } from "@/components/pix-payment/PixInstructions";
 import { OrderSummaryCard } from "@/components/pix-payment/OrderSummaryCard";
 import { PixPaymentFooter } from "@/components/pix-payment/PixPaymentFooter";
 import { usePixPayment } from "@/hooks/pix-payment/usePixPayment";
+import { Produto as DatabaseProduto, ConfigCheckout as DatabaseConfigCheckout } from "@/lib/types/database-types";
+import { Produto, ConfigCheckout } from "@/lib/supabase";
 
 const PixPaymentPage = () => {
   const {
@@ -31,6 +32,12 @@ const PixPaymentPage = () => {
     handleConfirmPayment,
     handleBackToCheckout
   } = usePixPayment();
+
+  const typedProduto = produto as unknown as DatabaseProduto;
+  const typedConfigCheckout = configCheckout ? {
+    ...configCheckout,
+    redirect_card_status: configCheckout.redirect_card_status as "analyzing" | "approved" | "rejected"
+  } as unknown as DatabaseConfigCheckout : null;
 
   if (loading) {
     return <CheckoutLoading />;

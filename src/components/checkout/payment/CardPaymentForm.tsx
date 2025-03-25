@@ -1,14 +1,8 @@
 
-import { CardInput } from "./CardInput";
-import { CardExpiryInput } from "./CardExpiryInput";
-import { CardCVVInput } from "./CardCVVInput";
-import { InstallmentSelector } from "./InstallmentSelector";
-import { Input } from "@/components/ui/input";
-import { User, CheckCircle2 } from "lucide-react";
-import { FormValidationStatus } from "./FormValidationStatus";
 import { useCardPaymentForm } from "@/hooks/checkout/useCardPaymentForm";
 import { CardPaymentFormProps } from "./types";
-import { CardFormButton } from "./CardFormButton";
+import { CardFormSection } from "./card-form/CardFormSection";
+import { CardSubmitSection } from "./card-form/CardSubmitSection";
 
 export { type PaymentStatus } from "./types"; 
 
@@ -47,57 +41,29 @@ export function CardPaymentForm({
   
   return (
     <div className="space-y-3">
-      <div className="relative">
-        <div className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500">
-          <User size={18} />
-        </div>
-        {isValid.cardName && (
-          <div className="absolute right-3 top-1/2 -translate-y-1/2 text-green-500">
-            <CheckCircle2 size={16} />
-          </div>
-        )}
-        <Input 
-          id="cardName" 
-          placeholder="Nome impresso no cartão" 
-          className="pl-9 h-11 text-sm bg-white text-black rounded-lg" 
-          value={cardName}
-          onChange={handleCardNameChange}
-        />
-      </div>
-      
-      <CardInput 
-        value={cardNumber}
-        onChange={handleCardNumberChange}
-        validateCard={validateCard}
-      />
-      
-      <div className="grid grid-cols-2 gap-3">
-        <CardExpiryInput
-          value={cardExpiry}
-          onChange={handleCardExpiryChange}
-        />
-        
-        <CardCVVInput
-          value={cardCVV}
-          onChange={handleCardCVVChange}
-        />
-      </div>
-      
-      <InstallmentSelector
+      <CardFormSection 
+        cardNumber={cardNumber}
+        cardName={cardName}
+        cardExpiry={cardExpiry}
+        cardCVV={cardCVV}
+        installments={installments}
+        isValid={isValid}
         productValue={productValue}
-        value={installments}
-        onChange={setInstallments}
         maxInstallments={maxInstallments}
+        validateCard={validateCard}
+        handleCardNumberChange={handleCardNumberChange}
+        handleCardNameChange={handleCardNameChange}
+        handleCardExpiryChange={handleCardExpiryChange}
+        handleCardCVVChange={handleCardCVVChange}
+        setInstallments={setInstallments}
       />
       
-      <FormValidationStatus formIsComplete={formIsComplete} />
-      
-      <CardFormButton
+      <CardSubmitSection 
         formIsComplete={formIsComplete}
         isSubmitting={isSubmitting}
-        onClick={handleSubmitPayment}
         buttonColor={configCheckout?.cor_botao}
         buttonTextColor={configCheckout?.cor_texto_botao}
+        handleSubmitPayment={handleSubmitPayment}
       />
     </div>
   );
