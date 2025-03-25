@@ -43,4 +43,6 @@ export type ProductFormValues = {
   nome_beneficiario: string;
   usar_api_pix: boolean;
   usar_config_pix_global: boolean;
+  url_api_pix?: string;
+  url_pix_api?: string;
 };

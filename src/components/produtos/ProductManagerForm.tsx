@@ -45,6 +45,8 @@ export function ProductForm({
       nome_beneficiario: selectedProduct?.nome_beneficiario || "",
       usar_api_pix: selectedProduct?.usar_api_pix || false,
       usar_config_pix_global: selectedProduct?.usar_config_pix_global || false,
+      url_api_pix: selectedProduct?.url_api_pix || "",
+      url_pix_api: selectedProduct?.url_pix_api || "",
     },
     mode: "onChange",
   });

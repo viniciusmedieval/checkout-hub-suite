@@ -1,3 +1,4 @@
+
 import { Produto } from "@/lib/supabase";
 
 export const useMockProducts = () => {
@@ -35,6 +36,7 @@ export const useMockProducts = () => {
           nome_beneficiario: null,
           usar_api_pix: false,
           url_api_pix: null,
+          url_pix_api: null,
           usar_config_pix_global: false,
           criado_em: new Date().toISOString()
         }

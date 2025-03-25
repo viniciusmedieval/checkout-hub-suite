@@ -27,6 +27,8 @@ export const productSchema = z.object({
   nome_beneficiario: z.string().optional(),
   usar_api_pix: z.boolean().default(false),
   usar_config_pix_global: z.boolean().default(false),
+  url_api_pix: z.string().optional(),
+  url_pix_api: z.string().optional(),
 });
 
 export type ProductFormValues = z.infer<typeof productSchema>;

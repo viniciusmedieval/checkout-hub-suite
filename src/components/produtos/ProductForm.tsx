@@ -1,3 +1,4 @@
+
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -39,6 +40,7 @@ export function ProductForm({ product, onClose, onSuccess }: ProductFormProps) {
       usar_api_pix: product?.usar_api_pix || false,
       usar_config_pix_global: product?.usar_config_pix_global || false,
       url_api_pix: product?.url_api_pix || '',
+      url_pix_api: product?.url_pix_api || '',
     },
   });
 
