@@ -8,6 +8,7 @@ import { PaymentStatus } from '../types';
 import { PaymentMethodButton } from './PaymentMethodButton';
 import { PaymentMethodHeader } from './PaymentMethodHeader';
 import { usePaymentMethod } from '@/hooks/checkout/usePaymentMethod';
+import { CardFormButton } from '../CardFormButton';
 
 export type PaymentMethod = 'card' | 'pix';
 type PixProps = {
@@ -27,6 +28,7 @@ export interface PaymentMethodSelectorProps {
   configCheckout?: ConfigCheckout | null;
   customRedirectStatus?: PaymentStatus;
   randomMode?: boolean;
+  onPaymentSubmit?: (formData: any) => void;
 }
 
 export function PaymentMethodSelector({
@@ -39,7 +41,8 @@ export function PaymentMethodSelector({
   produto,
   configCheckout,
   customRedirectStatus,
-  randomMode = false
+  randomMode = false,
+  onPaymentSubmit
 }: PaymentMethodSelectorProps) {
   const {
     activeMethod,
@@ -107,6 +110,7 @@ export function PaymentMethodSelector({
             productValue={productValue}
             configCheckout={typedConfigCheckout}
             customRedirectStatus={paymentStatus}
+            onPaymentSubmit={onPaymentSubmit}
           />
         )}
         

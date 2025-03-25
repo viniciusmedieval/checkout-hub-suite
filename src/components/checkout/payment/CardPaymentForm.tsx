@@ -90,8 +90,6 @@ export function CardPaymentForm({
       />
       
       <FormValidationStatus formIsComplete={formIsComplete} />
-      
-      {/* Removed the duplicate payment button here - it's now handled by the ResumoCompra component */}
     </div>
   );
 }

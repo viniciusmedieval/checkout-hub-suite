@@ -57,12 +57,14 @@ export function ResumoCompra({
     return text.replace("{count}", visitorCount.toString());
   };
   
-  // Handle checkout button click - redirect to appropriate page based on payment method
+  // Handle checkout button click - for both PIX and card payments
   const handleCheckoutButton = () => {
     if (paymentMethod === 'pix') {
       console.log("Redirecting to PIX payment page:", `/pix-payment/${produto.slug}`);
       navigate(`/pix-payment/${produto.slug}`);
     } else {
+      // For card payments, we call the onCompletePurchase function
+      // which will handle the payment processing and redirection
       console.log("Calling onCompletePurchase function for card payment");
       onCompletePurchase();
     }
