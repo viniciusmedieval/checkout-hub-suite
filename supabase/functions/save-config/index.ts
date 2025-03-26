@@ -24,20 +24,32 @@ type ConfigCheckout = {
 }
 
 Deno.serve(async (req) => {
+  console.log("Edge Function: save-config called with method:", req.method);
+  
   // Handle CORS preflight requests
   if (req.method === 'OPTIONS') {
+    console.log("CORS preflight request received");
     return new Response('ok', { headers: corsHeaders })
   }
 
   try {
     // Get the request body
-    const config: ConfigCheckout = await req.json()
+    const requestBody = await req.text();
+    console.log("Request body received:", requestBody.substring(0, 200) + "...");
     
-    console.log('Received config data:', config)
+    const config: ConfigCheckout = JSON.parse(requestBody);
+    
+    console.log('Received config data:', JSON.stringify(config, null, 2));
     
     // Special log for test values
-    if (config.cor_fundo === '#FF0000' && config.cor_texto === '#FFFFFF' && config.texto_botao === 'Finalizar Compra') {
-      console.log('🧪 TESTE DETECTADO! Valores de teste recebidos:')
+    const isTestConfig = (
+      config.cor_fundo === '#FF0000' && 
+      config.cor_texto === '#FFFFFF' && 
+      config.texto_botao === 'Finalizar Compra'
+    );
+    
+    if (isTestConfig) {
+      console.log('🧪 TESTE AUTOMÁTICO DETECTADO! Valores de teste recebidos:')
       console.log(`🧪 cor_fundo: ${config.cor_fundo} (esperado: #FF0000) ✅`)
       console.log(`🧪 cor_texto: ${config.cor_texto} (esperado: #FFFFFF) ✅`)
       console.log(`🧪 texto_botao: ${config.texto_botao} (esperado: Finalizar Compra) ✅`)
@@ -60,6 +72,7 @@ Deno.serve(async (req) => {
     }
     
     if (validationErrors.length > 0) {
+      console.error("Validation errors:", validationErrors);
       return new Response(
         JSON.stringify({
           success: false,
@@ -77,6 +90,16 @@ Deno.serve(async (req) => {
     let result
     
     try {
+      console.log("Testing database connection before operation");
+      const { count, error: countError } = await supabase
+        .from('config_checkout')
+        .select('*', { count: 'exact', head: true });
+      
+      if (countError) {
+        throw new Error(`Database connection test failed: ${countError.message}`);
+      }
+      console.log(`Database connection test successful. Table has ${count} records.`);
+      
       if (config.id) {
         console.log(`Updating config with ID: ${config.id}`)
         
@@ -111,9 +134,10 @@ Deno.serve(async (req) => {
       }
       
       // Special log for test success
-      if (config.cor_fundo === '#FF0000' && config.cor_texto === '#FFFFFF' && config.texto_botao === 'Finalizar Compra') {
-        console.log('🧪 TESTE BEM-SUCEDIDO! Valores de teste foram salvos no banco de dados! ✅')
-        console.log('Saved config result:', result)
+      if (isTestConfig) {
+        console.log('🧪 TESTE AUTOMÁTICO BEM-SUCEDIDO! ✅')
+        console.log('🧪 Valores de teste foram salvos no banco de dados!')
+        console.log('Saved config result:', JSON.stringify(result, null, 2))
       }
       
       return new Response(
@@ -128,6 +152,10 @@ Deno.serve(async (req) => {
       )
     } catch (dbError) {
       console.error('Database error:', dbError)
+      
+      if (isTestConfig) {
+        console.error('🧪 TESTE AUTOMÁTICO FALHOU: Erro de banco de dados ❌')
+      }
       
       return new Response(
         JSON.stringify({
