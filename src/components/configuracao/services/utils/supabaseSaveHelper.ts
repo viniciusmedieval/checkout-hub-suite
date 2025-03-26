@@ -87,15 +87,11 @@ export const upsertDadosSupabase = async <T>(
     
     console.log(`🔄 Realizando upsert em ${tabela}`);
     
-    let query = client.from(tabela).upsert(dados);
-    
-    // Configurar opção de onConflict se fornecida
-    if (onConflict) {
-      query = query.onConflict(onConflict);
-    }
-    
-    // IMPORTANTE: Garantir que o select seja chamado após o upsert
-    const { data, error } = await query.select('*');
+    // Corrigido: o onConflict precisa ser passado como opção dentro do método upsert, não como método separado
+    const { data, error } = await client
+      .from(tabela)
+      .upsert(dados, { onConflict: onConflict })
+      .select('*');
     
     if (error) {
       console.error(`❌ Erro ao fazer upsert em ${tabela}:`, error);
