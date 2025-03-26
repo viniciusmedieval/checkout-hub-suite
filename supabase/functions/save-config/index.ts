@@ -1,237 +1,121 @@
 
-import { serve } from "https://deno.land/std@0.177.0/http/server.ts";
-import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.7.1';
+// This is a sample to ensure proper config handling in the Edge Function
+// You should implement your own validation and saving logic here
+
+import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.8.0'
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
-};
+}
 
-serve(async (req) => {
+// Create a Supabase client with the Auth context of the function
+const supabaseUrl = Deno.env.get('SUPABASE_URL') || ''
+const supabaseKey = Deno.env.get('SUPABASE_ANON_KEY') || ''
+const supabase = createClient(supabaseUrl, supabaseKey)
+
+type ConfigCheckout = {
+  id?: number;
+  texto_botao?: string;
+  cor_fundo?: string;
+  cor_texto?: string; // Make sure this field is included
+  cor_botao?: string;
+  [key: string]: any;  // Allow other properties
+}
+
+Deno.serve(async (req) => {
   // Handle CORS preflight requests
   if (req.method === 'OPTIONS') {
-    return new Response(null, { headers: corsHeaders });
+    return new Response('ok', { headers: corsHeaders })
   }
 
   try {
-    const { method } = req;
-    console.log(`Processing ${method} request to save-config`);
-
-    if (method !== 'POST') {
-      return new Response(JSON.stringify({ error: 'Method not allowed' }), {
-        status: 405,
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' }
-      });
-    }
-
-    // Get request data
-    const requestData = await req.json();
-    console.log('Received request data:', JSON.stringify(requestData));
-
-    // Enhanced validation for required fields
-    const requiredFields = ['cor_fundo', 'cor_texto', 'texto_botao'];
-    const missingFields = requiredFields.filter(field => !requestData[field]);
+    // Get the request body
+    const config: ConfigCheckout = await req.json()
     
-    if (missingFields.length > 0) {
-      console.error(`Missing required fields: ${missingFields.join(', ')}`);
-      return new Response(JSON.stringify({ 
-        error: `Campos obrigatórios faltando: ${missingFields.join(', ')}` 
-      }), {
-        status: 400,
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' }
-      });
-    }
-
-    // Validate color format (hex)
-    const colorFields = ['cor_fundo', 'cor_texto', 'cor_botao', 'cor_texto_botao', 'cor_topo', 
-                        'cor_texto_topo', 'cor_titulo', 'cor_banner', 'cor_texto_contador',
-                        'cor_primaria_pix', 'cor_secundaria_pix', 'cor_botao_pix', 'cor_texto_botao_pix',
-                        'cor_botao_card', 'cor_texto_botao_card', 'cor_icones'];
+    console.log('Received config data:', config)
     
-    const hexColorRegex = /^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/;
+    // Validate required fields for testing
+    const validationErrors = []
     
-    const invalidColorFields = colorFields
-      .filter(field => requestData[field] && !hexColorRegex.test(requestData[field]));
-    
-    if (invalidColorFields.length > 0) {
-      console.error(`Invalid color format in fields: ${invalidColorFields.join(', ')}`);
-      return new Response(JSON.stringify({ 
-        error: `Formato de cor inválido nos campos: ${invalidColorFields.join(', ')}. Use formato hexadecimal (#RRGGBB).` 
-      }), {
-        status: 400,
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' }
-      });
-    }
-
-    // Create Supabase client
-    const supabaseUrl = Deno.env.get('SUPABASE_URL') || '';
-    const supabaseKey = Deno.env.get('SUPABASE_ANON_KEY') || '';
-    
-    if (!supabaseUrl || !supabaseKey) {
-      console.error('Missing Supabase credentials');
-      return new Response(JSON.stringify({ error: 'Configuração do servidor incompleta' }), {
-        status: 500,
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' }
-      });
+    if (config.texto_botao === '') {
+      validationErrors.push('Texto do botão não pode estar vazio')
     }
     
-    const supabase = createClient(supabaseUrl, supabaseKey);
-
-    // Prepare data - include all possible fields from requestData
-    const configData = {
-      // Basic colors
-      cor_fundo: requestData.cor_fundo,
-      cor_texto: requestData.cor_texto,
-      cor_texto_topo: requestData.cor_texto_topo,
-      cor_topo: requestData.cor_topo,
-      cor_titulo: requestData.cor_titulo,
-      cor_botao: requestData.cor_botao,
-      cor_texto_botao: requestData.cor_texto_botao,
+    // Validate color format for testing fields
+    if (config.cor_fundo && !config.cor_fundo.match(/^#[0-9A-F]{6}$/i)) {
+      validationErrors.push('Cor de fundo deve estar no formato hexadecimal (#RRGGBB)')
+    }
+    
+    if (config.cor_texto && !config.cor_texto.match(/^#[0-9A-F]{6}$/i)) {
+      validationErrors.push('Cor do texto deve estar no formato hexadecimal (#RRGGBB)')
+    }
+    
+    if (validationErrors.length > 0) {
+      return new Response(
+        JSON.stringify({
+          success: false,
+          error: true,
+          message: `Erro de validação: ${validationErrors.join(', ')}`,
+        }),
+        {
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+          status: 400,
+        }
+      )
+    }
+    
+    // Check if update or insert
+    let result
+    
+    if (config.id) {
+      console.log(`Updating config with ID: ${config.id}`)
       
-      // Button texts
-      texto_botao: requestData.texto_botao,
-      texto_botao_card: requestData.texto_botao_card,
-      texto_botao_pix: requestData.texto_botao_pix,
-      
-      // Card button colors
-      cor_botao_card: requestData.cor_botao_card,
-      cor_texto_botao_card: requestData.cor_texto_botao_card,
-      
-      // PIX button colors
-      cor_botao_pix: requestData.cor_botao_pix,
-      cor_texto_botao_pix: requestData.cor_texto_botao_pix,
-      
-      // Banner settings
-      ativa_banner: requestData.ativa_banner,
-      banner_url: requestData.banner_url,
-      banner_mobile_url: requestData.banner_mobile_url,
-      cor_banner: requestData.cor_banner,
-      
-      // Top message
-      mensagem_topo: requestData.mensagem_topo,
-      
-      // Footer settings
-      rodape_texto: requestData.rodape_texto,
-      rodape_empresa: requestData.rodape_empresa,
-      rodape_ano: requestData.rodape_ano,
-      mensagem_rodape: requestData.mensagem_rodape,
-      
-      // Links
-      url_termos_uso: requestData.url_termos_uso,
-      url_politica_privacidade: requestData.url_politica_privacidade,
-      mensagem_termos: requestData.mensagem_termos,
-      
-      // Form fields settings
-      mostrar_seguro: requestData.mostrar_seguro,
-      mostrar_campo_documento: requestData.mostrar_campo_documento,
-      mostrar_campo_telefone: requestData.mostrar_campo_telefone,
-      mostrar_campo_nascimento: requestData.mostrar_campo_nascimento,
-      mostrar_bandeira_brasil: requestData.mostrar_bandeira_brasil,
-      mostrar_prefixo_telefone: requestData.mostrar_prefixo_telefone,
-      titulo_identificacao: requestData.titulo_identificacao,
-      titulo_pagamento: requestData.titulo_pagamento,
-      
-      // Form validation
-      validar_cpf: requestData.validar_cpf,
-      validar_telefone: requestData.validar_telefone,
-      validar_cartao: requestData.validar_cartao,
-      validar_nascimento: requestData.validar_nascimento,
-      
-      // Counter settings
-      mostrar_contador: requestData.mostrar_contador,
-      texto_contador: requestData.texto_contador,
-      contador_min: requestData.contador_min,
-      contador_max: requestData.contador_max,
-      cor_texto_contador: requestData.cor_texto_contador,
-      
-      // Icon settings
-      cor_icones: requestData.cor_icones,
-      icone_nome: requestData.icone_nome,
-      icone_email: requestData.icone_email,
-      icone_telefone: requestData.icone_telefone,
-      icone_documento: requestData.icone_documento,
-      
-      // Redirect settings
-      redirect_card_status: requestData.redirect_card_status,
-      
-      // PIX settings
-      pix_titulo: requestData.pix_titulo,
-      pix_subtitulo: requestData.pix_subtitulo,
-      pix_instrucoes: requestData.pix_instrucoes,
-      pix_mensagem_seguranca: requestData.pix_mensagem_seguranca,
-      cor_primaria_pix: requestData.cor_primaria_pix,
-      cor_secundaria_pix: requestData.cor_secundaria_pix,
-      tipo_chave_pix_global: requestData.tipo_chave_pix_global,
-      chave_pix_global: requestData.chave_pix_global,
-      nome_beneficiario_pix: requestData.nome_beneficiario_pix,
-      qr_code_pix_url: requestData.qr_code_pix_url,
-      usar_api_pix_global: requestData.usar_api_pix_global,
-      url_api_pix_global: requestData.url_api_pix_global,
-      
-      // Random mode
-      modo_random: requestData.modo_random,
-      
-      // Installments
-      max_installments: requestData.max_installments,
-      
-      // PIX section ID
-      pix_secao_id: requestData.pix_secao_id,
-      
-      // Testimonials
-      mostrar_depoimentos: requestData.mostrar_depoimentos,
-      
-      // Slug
-      slug: requestData.slug
-    };
-
-    console.log('Processing configuration data:', JSON.stringify(configData));
-
-    // Check if we need to update or insert
-    let result;
-    if (requestData.id) {
-      console.log(`Updating existing config with ID ${requestData.id}`);
+      // Update existing config
       const { data, error } = await supabase
         .from('config_checkout')
-        .update(configData)
-        .eq('id', requestData.id)
-        .select();
+        .update(config)
+        .eq('id', config.id)
+        .select()
       
-      if (error) {
-        console.error('Error updating config:', error);
-        throw error;
-      }
-      result = data;
+      if (error) throw error
+      result = data
     } else {
-      console.log('Creating new config record');
+      console.log('Inserting new config')
+      
+      // Insert new config
       const { data, error } = await supabase
         .from('config_checkout')
-        .insert(configData)
-        .select();
+        .insert(config)
+        .select()
       
-      if (error) {
-        console.error('Error inserting config:', error);
-        throw error;
-      }
-      result = data;
+      if (error) throw error
+      result = data
     }
-
-    console.log('Operation successful:', JSON.stringify(result));
-    return new Response(JSON.stringify({ 
-      success: true, 
-      message: requestData.id ? 'Configuração atualizada com sucesso' : 'Configuração criada com sucesso',
-      data: result 
-    }), {
-      status: 200,
-      headers: { ...corsHeaders, 'Content-Type': 'application/json' }
-    });
+    
+    return new Response(
+      JSON.stringify({
+        success: true,
+        message: 'Configuração salva com sucesso',
+        data: result
+      }),
+      {
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      }
+    )
   } catch (error) {
-    console.error('Error in save-config function:', error);
-    return new Response(JSON.stringify({ 
-      error: true, 
-      message: `Erro ao salvar configurações: ${error.message || 'Erro desconhecido'}` 
-    }), {
-      status: 500,
-      headers: { ...corsHeaders, 'Content-Type': 'application/json' }
-    });
+    console.error('Error in save-config function:', error)
+    
+    return new Response(
+      JSON.stringify({
+        success: false,
+        error: true,
+        message: `Erro ao salvar configuração: ${error.message}`,
+      }),
+      {
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        status: 500,
+      }
+    )
   }
-});
+})

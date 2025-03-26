@@ -56,6 +56,7 @@ export type ConfigCheckout = {
   banner_mobile_url?: string | null;
   cor_banner?: string | null;
   cor_fundo?: string | null;
+  cor_texto?: string | null; // Added this missing field
   cor_titulo?: string | null;
   texto_botao?: string | null;
   cor_botao?: string | null;
