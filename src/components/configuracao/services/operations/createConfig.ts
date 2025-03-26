@@ -11,6 +11,11 @@ export async function createNewConfig(configToSave: any): Promise<ConfigCheckout
   console.log("🔄 Criando nova configuração");
 
   try {
+    // Guarantee we have a valid Supabase client
+    if (!supabase) {
+      throw new Error("Cliente Supabase não disponível");
+    }
+
     // Inserir nova configuração
     const { data: insertedData, error: insertError } = await supabase
       .from("config_checkout")

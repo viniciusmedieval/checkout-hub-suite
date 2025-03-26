@@ -6,14 +6,38 @@ import { getSupabaseCredentials } from './credentials';
 // Export types
 export * from './types';
 
-// Global Supabase client
-let supabase: SupabaseClient | null = null;
+// Create a singleton pattern for the Supabase client
+let _supabaseInstance: SupabaseClient | null = null;
+let _isInitializing = false;
+let _initPromise: Promise<SupabaseClient | null> | null = null;
+
+/**
+ * Gets the singleton Supabase client, initializing it if needed
+ */
+export const getSupabaseClient = async (): Promise<SupabaseClient | null> => {
+  // Return existing instance if available
+  if (_supabaseInstance) {
+    return _supabaseInstance;
+  }
+
+  // If already initializing, return the promise to prevent multiple initializations
+  if (_isInitializing && _initPromise) {
+    return _initPromise;
+  }
+
+  // Start initialization
+  _isInitializing = true;
+  _initPromise = initializeSupabaseClient();
+  return _initPromise;
+};
 
 /**
  * Initializes the Supabase client with available credentials
  */
-const initializeSupabaseClient = (): SupabaseClient | null => {
+const initializeSupabaseClient = async (): Promise<SupabaseClient | null> => {
   try {
+    console.log("🔄 Initializing Supabase client...");
+    
     // Get credentials from available sources
     const { url, key } = getSupabaseCredentials();
     
@@ -22,47 +46,41 @@ const initializeSupabaseClient = (): SupabaseClient | null => {
     
     if (client) {
       console.log('✅ Cliente Supabase inicializado com sucesso.');
+      _supabaseInstance = client;
+      
+      // Try to load the integrated client without blocking
+      if (typeof window !== 'undefined') {
+        try {
+          const { supabase: integrationClient } = await import('@/integrations/supabase/client');
+          if (integrationClient) {
+            console.log('✅ Usando cliente Supabase integrado');
+            _supabaseInstance = integrationClient;
+          }
+        } catch (error) {
+          console.warn('⚠️ Cliente Supabase integrado não disponível, usando fallback', error);
+        }
+      }
     }
     
-    return client;
+    return _supabaseInstance;
   } catch (error) {
     console.error('❌ Erro crítico ao inicializar cliente Supabase:', error);
     return null;
+  } finally {
+    _isInitializing = false;
   }
 };
 
-// Initialize the client immediately
-supabase = initializeSupabaseClient();
-
-/**
- * Loads the integrated Supabase client if available
- */
-const loadIntegratedClient = async (): Promise<void> => {
-  try {
-    if (typeof window !== 'undefined') {
-      const { supabase: integrationClient } = await import('@/integrations/supabase/client');
-      if (integrationClient) {
-        console.log('✅ Usando cliente Supabase integrado');
-        supabase = integrationClient;
-      }
-    }
-  } catch (error) {
-    console.warn('⚠️ Cliente Supabase integrado não disponível, usando fallback', error);
-  }
-};
-
-// Try to load the integrated client without blocking
-if (typeof window !== 'undefined') {
-  loadIntegratedClient().catch(err => {
-    console.error('❌ Erro ao carregar cliente integrado:', err);
-  });
-}
+// Initialize immediately
+initializeSupabaseClient().catch(err => {
+  console.error('❌ Erro ao inicializar cliente Supabase:', err);
+});
 
 /**
  * Checks if Supabase client is initialized
  */
 export const isSupabaseInitialized = (): boolean => {
-  return !!supabase;
+  return !!_supabaseInstance;
 };
 
 /**
@@ -78,7 +96,7 @@ export const reinitializeSupabaseClient = (url: string, key: string): SupabaseCl
     const client = createSupabaseClient({ url, key });
     
     if (client) {
-      supabase = client;
+      _supabaseInstance = client;
       console.log('✅ Cliente Supabase reinicializado com novas credenciais');
     }
     
@@ -89,5 +107,16 @@ export const reinitializeSupabaseClient = (url: string, key: string): SupabaseCl
   }
 };
 
-// Export the Supabase client
-export { supabase };
+// For backward compatibility, export the client directly
+// This allows existing code to continue working with minimal changes
+export const supabase = new Proxy({} as SupabaseClient, {
+  get: (target, prop) => {
+    if (!_supabaseInstance) {
+      console.warn('⚠️ Supabase client accessed before initialization. Initializing now...');
+      // Initialize synchronously for direct access compatibility
+      const { url, key } = getSupabaseCredentials();
+      _supabaseInstance = createSupabaseClient({ url, key });
+    }
+    return _supabaseInstance?.[prop as keyof SupabaseClient];
+  }
+});

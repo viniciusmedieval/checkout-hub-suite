@@ -1,4 +1,5 @@
-import { isSupabaseInitialized, supabase } from "@/lib/supabase";
+
+import { supabase, isSupabaseInitialized } from "@/lib/supabase";
 import { ConfigCheckout } from "@/lib/types/database-types"; 
 import { toast } from "sonner";
 import { prepareConfigForSave } from "./utils/configPreparer";
@@ -65,65 +66,7 @@ export const saveConfig = async (config: ConfigCheckout): Promise<ConfigCheckout
 
     const configToSave = prepareConfigForSave(config);
 
-    // Try to use the edge function for saving the config
-    try {
-      console.log("🔄 Tentando usar Edge Function para salvar configuração");
-      const response = await supabase.functions.invoke('save-config', {
-        body: configToSave
-      });
-
-      console.log("Edge function response:", response);
-      
-      if (response.error) {
-        console.error("❌ Erro na Edge Function:", response.error);
-        
-        if (isTestConfig) {
-          console.error("🧪 TESTE AUTOMÁTICO FALHOU: Erro na Edge Function");
-        }
-        
-        toast.error(`${isTestConfig ? "Teste: " : ""}Erro ao salvar: ${response.error.message || "Falha na comunicação com o servidor"}`);
-        throw new Error(response.error.message || "Erro ao salvar via Edge Function");
-      }
-
-      if (response.data && response.data.success) {
-        console.log("✅ Configuração salva com sucesso via Edge Function:", response.data.data);
-        
-        if (isTestConfig) {
-          console.log("🧪 TESTE AUTOMÁTICO CONCLUÍDO COM SUCESSO (via Edge Function)! ✅");
-        }
-        
-        toast.success(response.data.message || "Configurações salvas com sucesso!");
-        
-        // Return the first item if we got an array
-        const savedConfig = Array.isArray(response.data.data) ? response.data.data[0] : response.data.data;
-        return savedConfig;
-      } else if (response.data && response.data.error) {
-        // Handle error in response data
-        console.error("❌ Erro retornado pela Edge Function:", response.data.message);
-        
-        if (isTestConfig) {
-          console.error("🧪 TESTE AUTOMÁTICO FALHOU: " + response.data.message);
-        }
-        
-        toast.error(`${isTestConfig ? "Teste: " : ""}Erro ao salvar: ${response.data.message || "Erro desconhecido"}`);
-        throw new Error(response.data.message || "Erro desconhecido na Edge Function");
-      } else {
-        console.error("❌ Resposta da Edge Function sem dados de sucesso:", response);
-        
-        if (isTestConfig) {
-          console.error("🧪 TESTE AUTOMÁTICO FALHOU: Resposta inválida");
-        }
-        
-        toast.error(`${isTestConfig ? "Teste: " : ""}Resposta inválida do servidor. Tente novamente mais tarde.`);
-        throw new Error("Resposta inválida da Edge Function");
-      }
-    } catch (edgeFuncError) {
-      // Log error but continue with fallback method
-      console.error("❌ Falha ao salvar via Edge Function, usando método direto:", edgeFuncError);
-      toast.warning(`${isTestConfig ? "Teste: " : ""}Tentando método alternativo de salvamento...`);
-    }
-
-    // Validar dados antes de salvar no método de fallback
+    // Validar dados antes de salvar
     if (!configToSave.texto_botao || !configToSave.cor_botao) {
       const errorMsg = "Dados inválidos para salvar. Verifique os campos obrigatórios.";
       console.error("❌ " + errorMsg + " Dados:", configToSave);
@@ -136,9 +79,6 @@ export const saveConfig = async (config: ConfigCheckout): Promise<ConfigCheckout
       throw new Error(errorMsg);
     }
 
-    // Fallback: use direct database access if edge function fails
-    console.log("🔄 Usando método direto para salvar configuração");
-    
     // Determinar se vamos criar ou atualizar baseado na existência de um ID
     if (config.id) {
       return await updateExistingConfig(config, configToSave);

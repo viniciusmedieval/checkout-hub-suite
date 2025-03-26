@@ -12,6 +12,11 @@ export async function updateExistingConfig(config: ConfigCheckout, configToSave:
   console.log(`🔄 Atualizando configuração existente com ID ${config.id}`);
 
   try {
+    // Guarantee we have a valid Supabase client
+    if (!supabase) {
+      throw new Error("Cliente Supabase não disponível");
+    }
+
     // Verificar se o registro existe antes de atualizar
     const { data: existingConfig, error: fetchError } = await supabase
       .from("config_checkout")
