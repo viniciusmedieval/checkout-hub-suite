@@ -5,64 +5,64 @@ import { toast } from "sonner";
 import { prepareConfigForSave } from "./utils/configPreparer";
 import { createNewConfig } from "./operations/createConfig";
 import { updateExistingConfig } from "./operations/updateConfig";
+import { checkConnection } from "./utils/supabaseConnection";
+
+/**
+ * Checks if the config is a test configuration
+ */
+const isTestConfiguration = (config: ConfigCheckout): boolean => (
+  config.cor_fundo === "#FF0000" && 
+  config.cor_texto === "#FFFFFF" && 
+  config.texto_botao === "Finalizar Compra"
+);
+
+/**
+ * Validates the basic config requirements before saving
+ */
+const validateConfigForSave = (configToSave: any): boolean => {
+  if (!configToSave.texto_botao || !configToSave.cor_botao) {
+    return false;
+  }
+  return true;
+};
 
 /**
  * Saves checkout configuration to the database
  */
 export const saveConfig = async (config: ConfigCheckout): Promise<ConfigCheckout | null> => {
   try {
-    // For testing purposes - special handling for test values
-    const isTestConfig = (
-      config.cor_fundo === "#FF0000" && 
-      config.cor_texto === "#FFFFFF" && 
-      config.texto_botao === "Finalizar Compra"
-    );
-
-    // Verificar se o cliente Supabase está inicializado corretamente
+    const isTestConfig = isTestConfiguration(config);
+    
+    // Verify Supabase client is initialized
     if (!isSupabaseInitialized()) {
       const client = await getSupabaseClient();
       if (!client) {
-        const errorMsg = "Cliente Supabase não pôde ser inicializado. Verifique a conexão com o banco de dados.";
-        console.error(errorMsg);
+        const errorMsg = "Cliente Supabase não pôde ser inicializado";
         toast.error(isTestConfig ? "Teste: " + errorMsg : errorMsg);
         throw new Error(errorMsg);
       }
     }
 
-    // Simplificar teste de conexão com o Supabase
+    // Test database connection
     try {
-      const client = await getSupabaseClient();
-      if (!client) {
-        throw new Error("Cliente Supabase não está disponível");
-      }
-      
-      // Usar uma consulta mais simples
-      const { error: testError } = await client
-        .from('config_checkout')
-        .select('id')
-        .limit(1);
-        
-      if (testError) {
-        throw new Error(`Falha ao testar conexão: ${testError.message}`);
-      }
+      await checkConnection();
     } catch (connError: any) {
-      console.error("Falha ao testar conexão com Supabase:", connError);
       const errorMsg = `Erro de conexão com banco de dados: ${connError.message}`;
       toast.error(isTestConfig ? "Teste: " + errorMsg : errorMsg);
       throw connError;
     }
 
+    // Prepare the config data
     const configToSave = prepareConfigForSave(config);
 
-    // Validar dados antes de salvar
-    if (!configToSave.texto_botao || !configToSave.cor_botao) {
+    // Validate data before saving
+    if (!validateConfigForSave(configToSave)) {
       const errorMsg = "Dados inválidos para salvar. Verifique os campos obrigatórios.";
-      console.error(errorMsg + " Dados:", configToSave);
-      toast.error(`${isTestConfig ? "Teste: " : ""}Erro: ${errorMsg}`);
+      toast.error(isTestConfig ? "Teste: " + errorMsg : errorMsg);
       throw new Error(errorMsg);
     }
 
-    // Determinar se vamos criar ou atualizar baseado na existência de um ID
+    // Determine if we should create or update based on ID existence
     let result: ConfigCheckout | null = null;
     
     if (config.id) {
@@ -75,19 +75,12 @@ export const saveConfig = async (config: ConfigCheckout): Promise<ConfigCheckout
     if (result) {
       return result;
     } else {
-      console.error("saveConfig: Operações de banco de dados não retornaram dados válidos");
-      toast.error(`${isTestConfig ? "Teste: " : ""}Erro: Falha ao salvar configurações`);
+      const errorMsg = "Falha ao salvar configurações";
+      toast.error(isTestConfig ? "Teste: " + errorMsg : errorMsg);
       return null;
     }
   } catch (error: any) {
-    console.error("Erro no saveConfig:", error);
-    
-    const isTestConfig = (
-      config.cor_fundo === "#FF0000" && 
-      config.cor_texto === "#FFFFFF" && 
-      config.texto_botao === "Finalizar Compra"
-    );
-    
+    const isTestConfig = isTestConfiguration(config);
     toast.error(`${isTestConfig ? "Teste: " : ""}Erro ao salvar configurações: ${error.message || "Erro desconhecido"}`);
     return null;
   }
