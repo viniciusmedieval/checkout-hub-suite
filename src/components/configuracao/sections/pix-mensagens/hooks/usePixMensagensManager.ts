@@ -2,25 +2,35 @@
 import { useState, useEffect } from "react";
 import { PixMensagem } from "@/lib/types/database-types";
 import { toast } from "sonner";
-import { pixMensagensService } from "../services/pixMensagensService";
+import { usePixMessageOperations } from "./usePixMessageOperations";
+import { usePixMessageState } from "./usePixMessageState";
 
 export const usePixMensagensManager = () => {
-  const [messages, setMessages] = useState<PixMensagem[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [editingMessage, setEditingMessage] = useState<PixMensagem | null>(null);
-  const [newMessage, setNewMessage] = useState<Partial<PixMensagem>>({
-    chave: "",
-    titulo: "",
-    texto: "",
-    ativo: true,
-    ordem: 0
-  });
-  const [isSaving, setIsSaving] = useState(false);
+  const {
+    messages,
+    setMessages,
+    loading,
+    setLoading,
+    editingMessage,
+    setEditingMessage,
+    newMessage,
+    setNewMessage,
+    isSaving,
+    setIsSaving
+  } = usePixMessageState();
+
+  const {
+    createMessage,
+    updateMessage,
+    deleteMessage,
+    updateMessageOrder,
+    fetchMessages
+  } = usePixMessageOperations(setIsSaving);
 
   const loadMessages = async () => {
     setLoading(true);
     try {
-      const data = await pixMensagensService.fetchMessages();
+      const data = await fetchMessages();
       setMessages(data);
     } catch (error) {
       console.error("Error loading messages:", error);
@@ -49,7 +59,7 @@ export const usePixMensagensManager = () => {
           : 1;
       }
 
-      const createdMessage = await pixMensagensService.createMessage({
+      const createdMessage = await createMessage({
         chave: newMessage.chave!,
         titulo: newMessage.titulo!,
         texto: newMessage.texto!,
@@ -90,7 +100,7 @@ export const usePixMensagensManager = () => {
 
       setIsSaving(true);
       
-      const updatedMessage = await pixMensagensService.updateMessage(editingMessage.id, {
+      const updatedMessage = await updateMessage(editingMessage.id, {
         chave: editingMessage.chave,
         titulo: editingMessage.titulo,
         texto: editingMessage.texto,
@@ -121,7 +131,7 @@ export const usePixMensagensManager = () => {
 
       setIsSaving(true);
       
-      const success = await pixMensagensService.deleteMessage(id);
+      const success = await deleteMessage(id);
 
       if (success) {
         setMessages(messages.filter(msg => msg.id !== id));
@@ -151,7 +161,7 @@ export const usePixMensagensManager = () => {
       
       let success = true;
       for (const update of updates) {
-        const updated = await pixMensagensService.updateMessageOrder(update.id, update.ordem);
+        const updated = await updateMessageOrder(update.id, update.ordem);
         if (!updated) {
           success = false;
           break;
@@ -192,7 +202,7 @@ export const usePixMensagensManager = () => {
       
       let success = true;
       for (const update of updates) {
-        const updated = await pixMensagensService.updateMessageOrder(update.id, update.ordem);
+        const updated = await updateMessageOrder(update.id, update.ordem);
         if (!updated) {
           success = false;
           break;
@@ -221,7 +231,7 @@ export const usePixMensagensManager = () => {
     try {
       setIsSaving(true);
       
-      const updatedMessage = await pixMensagensService.updateMessage(message.id, { 
+      const updatedMessage = await updateMessage(message.id, { 
         ativo: !message.ativo 
       });
         
