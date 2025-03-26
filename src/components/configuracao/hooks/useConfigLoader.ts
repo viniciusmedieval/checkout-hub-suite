@@ -44,6 +44,8 @@ export const useConfigLoader = (slug?: string): ConfigLoaderResult => {
       }
       
       // Fallback para busca direta se o serviço não retornar dados
+      console.log("ℹ️ Usando método de fallback para buscar configuração...");
+      
       if (!slug) {
         // If no slug is provided, fetch the first/default config
         const { data: configData, error: configError } = await supabase
@@ -54,7 +56,7 @@ export const useConfigLoader = (slug?: string): ConfigLoaderResult => {
           .single();
 
         if (configError) {
-          console.error('Erro ao carregar configuração (fallback):', configError);
+          console.error('❌ Erro ao carregar configuração (fallback):', configError);
           setLoadError(`Erro ao carregar configuração: ${configError.message}`);
           setError(configError.message);
           setLoading(false);
@@ -105,7 +107,7 @@ export const useConfigLoader = (slug?: string): ConfigLoaderResult => {
         }
       }
     } catch (err: any) {
-      console.error('Erro ao buscar a configuração:', err);
+      console.error('❌ Erro ao buscar a configuração:', err);
       setLoadError(`Erro ao buscar a configuração: ${err.message}`);
       setError(err.message);
       setLoading(false);
@@ -115,6 +117,8 @@ export const useConfigLoader = (slug?: string): ConfigLoaderResult => {
 
   const fetchTestimonials = async (configId?: number) => {
     try {
+      console.log("🔍 Buscando depoimentos...", configId ? `para o produto ID: ${configId}` : "gerais");
+      
       let query = supabase
         .from('depoimentos')
         .select('*')
@@ -128,20 +132,25 @@ export const useConfigLoader = (slug?: string): ConfigLoaderResult => {
       const { data, error } = await query.limit(10);
       
       if (error) {
-        console.error('Erro ao carregar depoimentos:', error);
+        console.error('❌ Erro ao carregar depoimentos:', error);
       } else if (data) {
+        console.log(`✅ ${data.length} depoimentos carregados com sucesso.`);
         setDepoimentos(data);
+      } else {
+        console.log("ℹ️ Nenhum depoimento encontrado.");
       }
     } catch (error) {
-      console.error('Erro ao buscar depoimentos:', error);
+      console.error('❌ Erro ao buscar depoimentos:', error);
     }
   };
 
   useEffect(() => {
+    console.log("🔄 useConfigLoader - useEffect executado", slug ? `com slug: ${slug}` : "sem slug");
     fetchConfig();
   }, [slug]);
 
   const reloadConfig = async (): Promise<ConfigCheckout | null> => {
+    console.log("🔄 Recarregando configurações...");
     return await fetchConfig();
   };
 

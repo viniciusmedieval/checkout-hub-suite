@@ -9,10 +9,14 @@ export const useCheckoutConfig = () => {
 
   const fetchCheckoutConfigData = async () => {
     try {
+      console.log("🔄 useCheckoutConfig - Iniciando carregamento da configuração");
+      
       // Tentar buscar usando o serviço centralizado primeiro
       const config = await fetchCheckoutConfig();
       
       if (config) {
+        console.log("✅ useCheckoutConfig - Configuração carregada do serviço centralizado");
+        
         // Garantir que cores estão em formato hex válido
         const validateHex = (color: string | null | undefined) => {
           return color && /^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/.test(color);
@@ -40,6 +44,8 @@ export const useCheckoutConfig = () => {
         return config;
       }
       
+      console.log("⚠️ useCheckoutConfig - Serviço centralizado não retornou dados, usando fallback");
+      
       // Fallback para o método antigo
       const { data: checkoutConfig, error: configError } = await supabase
         .from("config_checkout")
@@ -48,9 +54,11 @@ export const useCheckoutConfig = () => {
         .limit(1);
         
       if (configError) {
-        console.error("Erro ao carregar configurações do checkout:", configError);
+        console.error("❌ useCheckoutConfig - Erro ao carregar configurações do checkout:", configError);
         // Continuamos sem definir erro, apenas logar para não interromper o fluxo
       } else if (checkoutConfig && checkoutConfig.length > 0) {
+        console.log("✅ useCheckoutConfig - Configurações carregadas com sucesso do fallback");
+        
         // Validar cores antes de aplicar
         if (checkoutConfig[0]) {
           const config = {...checkoutConfig[0]};
@@ -83,6 +91,8 @@ export const useCheckoutConfig = () => {
         }
       }
       
+      console.log("⚠️ useCheckoutConfig - Nenhuma configuração encontrada, usando padrão");
+      
       // Definir configuração padrão como fallback
       const defaultConfig: ConfigCheckout = {
         id: 0,
@@ -112,7 +122,7 @@ export const useCheckoutConfig = () => {
       console.log("⚠️ Usando configuração padrão pois não foi possível carregar do banco", defaultConfig);
       return defaultConfig;
     } catch (error) {
-      console.error("Erro ao buscar configuração do checkout:", error);
+      console.error("❌ Erro ao buscar configuração do checkout:", error);
       
       // Definir configuração padrão em caso de erro
       const defaultConfig: ConfigCheckout = {

@@ -31,6 +31,8 @@ const validateConfigForSave = (configToSave: any): boolean => {
  */
 export const saveConfig = async (config: ConfigCheckout): Promise<ConfigCheckout | null> => {
   try {
+    console.log("🔄 Salvando configuração do checkout:", config);
+    
     const isTestConfig = isTestConfiguration(config);
     
     // Verify Supabase client is initialized
@@ -54,6 +56,7 @@ export const saveConfig = async (config: ConfigCheckout): Promise<ConfigCheckout
 
     // Prepare the config data
     const configToSave = prepareConfigForSave(config);
+    console.log("🔄 Dados preparados para salvar:", configToSave);
 
     // Validate data before saving
     if (!validateConfigForSave(configToSave)) {
@@ -66,13 +69,16 @@ export const saveConfig = async (config: ConfigCheckout): Promise<ConfigCheckout
     let result: ConfigCheckout | null = null;
     
     if (config.id) {
+      console.log("🔄 Atualizando configuração existente com ID:", config.id);
       result = await updateExistingConfig(config, configToSave);
     } else {
+      console.log("🔄 Criando nova configuração");
       result = await createNewConfig(configToSave);
     }
     
     // Final check to ensure we're returning data
     if (result) {
+      console.log("✅ Configuração salva com sucesso:", result);
       return result;
     } else {
       const errorMsg = "Falha ao salvar configurações";
@@ -80,6 +86,7 @@ export const saveConfig = async (config: ConfigCheckout): Promise<ConfigCheckout
       return null;
     }
   } catch (error: any) {
+    console.error("❌ Erro ao salvar configuração:", error);
     const isTestConfig = isTestConfiguration(config);
     toast.error(`${isTestConfig ? "Teste: " : ""}Erro ao salvar configurações: ${error.message || "Erro desconhecido"}`);
     return null;

@@ -33,7 +33,7 @@ export const fetchCheckoutConfig = async (): Promise<ConfigCheckout | null> => {
       }
     });
     
-    console.log("✅ Configuração carregada:", data);
+    console.log("✅ Configuração carregada com sucesso:", data);
     return data as ConfigCheckout;
   } catch (error) {
     console.error("❌ Erro ao buscar configurações:", error);
