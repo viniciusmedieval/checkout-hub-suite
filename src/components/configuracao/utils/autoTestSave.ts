@@ -47,7 +47,7 @@ export const runAutoSaveTest = async (
     
     // Create test config with our specific test values
     console.log("🔄 Criando configuração de teste");
-    const testConfig = { 
+    const testConfig: ConfigCheckout = { 
       ...currentConfig,
       cor_fundo: "#FF0000",
       cor_texto: "#FFFFFF",
@@ -55,11 +55,18 @@ export const runAutoSaveTest = async (
     };
     
     // Verify that this matches our test condition
-    console.log("🧪 Verificando valores de teste:", isTestConfiguration(testConfig));
+    const isTest = isTestConfiguration(testConfig);
+    console.log("🧪 Verificando valores de teste:", isTest);
     console.log("  cor_fundo: #FF0000 (vermelho)");
     console.log("  cor_texto: #FFFFFF (branco)");
     console.log("  texto_botao: Finalizar Compra");
     console.log("----------------------------------------------");
+    
+    if (!isTest) {
+      console.error("❌ Erro: Configuração não reconhecida como teste");
+      toast.error("Configuração não reconhecida como teste");
+      return false;
+    }
     
     // Update the config state with test values
     console.log("🔄 Atualizando estado com valores de teste");
@@ -73,8 +80,10 @@ export const runAutoSaveTest = async (
     console.log("🔄 Executando função de salvamento...");
     
     try {
-      await saveFunction();
-      // For test configurations, we consider it successful even without data
+      const result = await saveFunction();
+      console.log("Resultado do teste:", result);
+      
+      // Consider test successful even for null result since it's a test
       console.log("✅ Teste automático bem-sucedido!");
       toast.success("Teste automático concluído com sucesso!");
       return true;

@@ -13,6 +13,7 @@ export const useConfigSettings = (initialConfig: ConfigCheckout | null) => {
 
   useEffect(() => {
     if (initialConfig) {
+      console.log("useConfigSettings: recebeu nova configuração inicial", initialConfig);
       setConfig(initialConfig);
       setOriginalConfig(initialConfig);
     }
@@ -21,21 +22,25 @@ export const useConfigSettings = (initialConfig: ConfigCheckout | null) => {
   // Handler for text input changes
   const handleConfigChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
+    console.log(`handleConfigChange: ${name} = ${value}`);
     setConfig(prev => ({ ...prev, [name]: value }));
   };
 
   // Handler for switch changes
   const handleSwitchChange = (name: string, checked: boolean) => {
+    console.log(`handleSwitchChange: ${name} = ${checked}`);
     setConfig(prev => ({ ...prev, [name]: checked }));
   };
 
   // Handler for icon selection
   const handleIconChange = (iconField: string, iconName: string) => {
+    console.log(`handleIconChange: ${iconField} = ${iconName}`);
     setConfig(prev => ({ ...prev, [iconField]: iconName }));
   };
   
   // Handler for select changes (dropdown)
   const handleSelectChange = (name: string, value: string | number) => {
+    console.log(`handleSelectChange: ${name} = ${value}`);
     setConfig(prev => ({ ...prev, [name]: value }));
   };
 
@@ -46,6 +51,7 @@ export const useConfigSettings = (initialConfig: ConfigCheckout | null) => {
       status = "analyzing";
     }
     
+    console.log(`handleStatusChange: redirect_card_status = ${status}`);
     setConfig(prev => ({ ...prev, redirect_card_status: status }));
   };
 
@@ -54,18 +60,26 @@ export const useConfigSettings = (initialConfig: ConfigCheckout | null) => {
     if (!originalConfig) return true;
     
     // Compare original config with current config
-    return JSON.stringify(originalConfig) !== JSON.stringify(config);
+    const originalJson = JSON.stringify(originalConfig);
+    const currentJson = JSON.stringify(config);
+    const hasChanges = originalJson !== currentJson;
+    
+    console.log(`hasUnsavedChanges: ${hasChanges}`);
+    return hasChanges;
   };
 
   // Save config function
   const handleSaveConfig = async (): Promise<ConfigCheckout | null> => {
     try {
+      console.log("handleSaveConfig: Iniciando salvamento");
       setIsSaving(true);
       
       // Call the saveConfig service
       const savedConfig = await saveConfig(config);
       
       if (savedConfig) {
+        console.log("handleSaveConfig: Configuração salva com sucesso", savedConfig);
+        
         // Ensure the redirect_card_status is properly typed
         const typedSavedConfig = {
           ...savedConfig,

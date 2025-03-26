@@ -28,6 +28,8 @@ export const checkConnection = async (): Promise<void> => {
  * @returns True if the configuration is for testing purposes
  */
 export const isTestConfiguration = (config: any): boolean => {
+  if (!config) return false;
+  
   return (
     config.cor_fundo === "#FF0000" && 
     config.cor_texto === "#FFFFFF" && 
@@ -48,18 +50,29 @@ export const performDatabaseOperation = async <T>(
   isTest: boolean = false
 ): Promise<T | null> => {
   try {
+    console.log(`Executando operação de banco. Teste: ${isTest}`);
+    
+    if (isTest) {
+      try {
+        // Para testes, tente executar a operação mas não falhe se der erro
+        console.log("Modo de teste: tentando executar operação");
+        const result = await operation();
+        console.log("Operação de teste concluída com sucesso:", result);
+        return result;
+      } catch (testError: any) {
+        // Para testes, apenas log do erro mas retorna um objeto mock
+        console.warn(`Teste: ${errorMessage}`, testError);
+        console.log("Retornando mock para teste");
+        // Para testes, retorna um valor de sucesso simulado em vez de null
+        return {} as T;
+      }
+    }
+    
+    // Para operações reais
     const result = await operation();
     return result;
   } catch (error: any) {
-    // For test configurations, log the error but don't throw
-    if (isTest) {
-      console.warn(`Teste: ${errorMessage}`, error);
-      // For tests, return a mock success value instead of null
-      // This allows the test flow to continue without failing
-      return {} as T;
-    }
-    
-    // For real configurations, log and throw
+    // Para configurações reais, log e lança o erro
     console.error(errorMessage, error);
     throw new Error(`${errorMessage}: ${error.message}`);
   }

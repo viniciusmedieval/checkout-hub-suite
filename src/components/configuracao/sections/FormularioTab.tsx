@@ -1,10 +1,11 @@
 
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { ConfigCheckout } from "@/lib/supabase";
+import { ConfigCheckout } from "@/lib/types/database-types";
 import { Separator } from "@/components/ui/separator";
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
+import { useEffect } from "react";
 
 interface FormularioTabProps {
   config: ConfigCheckout;
@@ -13,6 +14,22 @@ interface FormularioTabProps {
 }
 
 export function FormularioTab({ config, handleConfigChange, handleSwitchChange }: FormularioTabProps) {
+  // Log quando as props mudam para ajudar na depuração
+  useEffect(() => {
+    console.log("FormularioTab recebeu config atualizada:", config);
+  }, [config]);
+
+  // Handler para verificar se os eventos estão sendo disparados corretamente
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    console.log(`Campo ${e.target.name} alterado para: ${e.target.value}`);
+    handleConfigChange(e);
+  };
+
+  const handleToggleChange = (name: string, checked: boolean) => {
+    console.log(`Switch ${name} alterado para: ${checked}`);
+    handleSwitchChange(name, checked);
+  };
+
   return (
     <Card>
       <CardHeader>
@@ -28,8 +45,8 @@ export function FormularioTab({ config, handleConfigChange, handleSwitchChange }
           
           <div className="flex items-center space-x-2 mb-4">
             <Switch 
-              checked={config.mostrar_campo_documento || false} 
-              onCheckedChange={(checked) => handleSwitchChange('mostrar_campo_documento', checked)}
+              checked={config.mostrar_campo_documento ?? false} 
+              onCheckedChange={(checked) => handleToggleChange('mostrar_campo_documento', checked)}
               id="mostrar-campo-documento"
             />
             <Label htmlFor="mostrar-campo-documento">Mostrar campo de documento (CPF/CNPJ)</Label>
@@ -37,8 +54,8 @@ export function FormularioTab({ config, handleConfigChange, handleSwitchChange }
           
           <div className="flex items-center space-x-2 mb-4">
             <Switch 
-              checked={config.mostrar_campo_telefone || false} 
-              onCheckedChange={(checked) => handleSwitchChange('mostrar_campo_telefone', checked)}
+              checked={config.mostrar_campo_telefone ?? false} 
+              onCheckedChange={(checked) => handleToggleChange('mostrar_campo_telefone', checked)}
               id="mostrar-campo-telefone"
             />
             <Label htmlFor="mostrar-campo-telefone">Mostrar campo de telefone</Label>
@@ -46,8 +63,8 @@ export function FormularioTab({ config, handleConfigChange, handleSwitchChange }
           
           <div className="flex items-center space-x-2">
             <Switch 
-              checked={config.mostrar_campo_nascimento || false} 
-              onCheckedChange={(checked) => handleSwitchChange('mostrar_campo_nascimento', checked)}
+              checked={config.mostrar_campo_nascimento ?? false} 
+              onCheckedChange={(checked) => handleToggleChange('mostrar_campo_nascimento', checked)}
               id="mostrar-campo-nascimento"
             />
             <Label htmlFor="mostrar-campo-nascimento">Mostrar campo de data de nascimento</Label>
@@ -62,8 +79,8 @@ export function FormularioTab({ config, handleConfigChange, handleSwitchChange }
           
           <div className="flex items-center space-x-2 mb-4">
             <Switch 
-              checked={config.validar_cpf || false} 
-              onCheckedChange={(checked) => handleSwitchChange('validar_cpf', checked)}
+              checked={config.validar_cpf ?? false} 
+              onCheckedChange={(checked) => handleToggleChange('validar_cpf', checked)}
               id="validar-cpf"
             />
             <Label htmlFor="validar-cpf">Validar CPF</Label>
@@ -71,8 +88,8 @@ export function FormularioTab({ config, handleConfigChange, handleSwitchChange }
           
           <div className="flex items-center space-x-2 mb-4">
             <Switch 
-              checked={config.validar_telefone || false} 
-              onCheckedChange={(checked) => handleSwitchChange('validar_telefone', checked)}
+              checked={config.validar_telefone ?? false} 
+              onCheckedChange={(checked) => handleToggleChange('validar_telefone', checked)}
               id="validar-telefone"
             />
             <Label htmlFor="validar-telefone">Validar telefone</Label>
@@ -80,8 +97,8 @@ export function FormularioTab({ config, handleConfigChange, handleSwitchChange }
           
           <div className="flex items-center space-x-2 mb-4">
             <Switch 
-              checked={config.validar_cartao || false} 
-              onCheckedChange={(checked) => handleSwitchChange('validar_cartao', checked)}
+              checked={config.validar_cartao ?? false} 
+              onCheckedChange={(checked) => handleToggleChange('validar_cartao', checked)}
               id="validar-cartao"
             />
             <Label htmlFor="validar-cartao">Validar cartão de crédito</Label>
@@ -89,8 +106,8 @@ export function FormularioTab({ config, handleConfigChange, handleSwitchChange }
           
           <div className="flex items-center space-x-2">
             <Switch 
-              checked={config.validar_nascimento || false} 
-              onCheckedChange={(checked) => handleSwitchChange('validar_nascimento', checked)}
+              checked={config.validar_nascimento ?? false} 
+              onCheckedChange={(checked) => handleToggleChange('validar_nascimento', checked)}
               id="validar-nascimento"
             />
             <Label htmlFor="validar-nascimento">Validar data de nascimento (18+)</Label>
@@ -105,8 +122,8 @@ export function FormularioTab({ config, handleConfigChange, handleSwitchChange }
           
           <div className="flex items-center space-x-2 mb-4">
             <Switch 
-              checked={config.mostrar_bandeira_brasil || false} 
-              onCheckedChange={(checked) => handleSwitchChange('mostrar_bandeira_brasil', checked)}
+              checked={config.mostrar_bandeira_brasil ?? false} 
+              onCheckedChange={(checked) => handleToggleChange('mostrar_bandeira_brasil', checked)}
               id="mostrar-bandeira-brasil"
             />
             <Label htmlFor="mostrar-bandeira-brasil">Mostrar bandeira do Brasil</Label>
@@ -114,8 +131,8 @@ export function FormularioTab({ config, handleConfigChange, handleSwitchChange }
           
           <div className="flex items-center space-x-2">
             <Switch 
-              checked={config.mostrar_prefixo_telefone || false} 
-              onCheckedChange={(checked) => handleSwitchChange('mostrar_prefixo_telefone', checked)}
+              checked={config.mostrar_prefixo_telefone ?? false} 
+              onCheckedChange={(checked) => handleToggleChange('mostrar_prefixo_telefone', checked)}
               id="mostrar-prefixo-telefone"
             />
             <Label htmlFor="mostrar-prefixo-telefone">Mostrar prefixo "+55"</Label>
@@ -132,8 +149,8 @@ export function FormularioTab({ config, handleConfigChange, handleSwitchChange }
             <label className="text-sm font-medium">Título da Seção de Identificação</label>
             <Input
               name="titulo_identificacao"
-              value={config.titulo_identificacao || "Identificação"}
-              onChange={handleConfigChange}
+              value={config.titulo_identificacao || ""}
+              onChange={handleInputChange}
               placeholder="Ex: Seus Dados"
             />
           </div>
@@ -142,8 +159,8 @@ export function FormularioTab({ config, handleConfigChange, handleSwitchChange }
             <label className="text-sm font-medium">Título da Seção de Pagamento</label>
             <Input
               name="titulo_pagamento"
-              value={config.titulo_pagamento || "Pagamento"}
-              onChange={handleConfigChange}
+              value={config.titulo_pagamento || ""}
+              onChange={handleInputChange}
               placeholder="Ex: Formas de Pagamento"
             />
           </div>
