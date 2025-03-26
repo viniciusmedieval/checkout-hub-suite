@@ -27,21 +27,24 @@ export const useConfigSaver = () => {
       
       // Verify Supabase connection first
       try {
+        console.log("🔄 Verificando conexão Supabase antes de salvar...");
         const client = await getSupabaseClient();
         if (!client) {
+          console.error("❌ Cliente Supabase não inicializado");
           throw new Error("Supabase client is not initialized");
         }
         
         // Usar uma consulta mais simples para verificar conexão
-        const { error: connectionError } = await client
+        const { data: connectionTestData, error: connectionError } = await client
           .from('config_checkout')
           .select('id')
           .limit(1);
           
         if (connectionError) {
+          console.error("❌ Falha no teste de conexão:", connectionError);
           throw new Error(`Supabase connection test failed: ${connectionError.message}`);
         }
-        console.log("✅ Supabase connection verified");
+        console.log("✅ Supabase connection verified", connectionTestData);
       } catch (connectionError: any) {
         console.error("❌ Supabase connection error:", connectionError);
         toast.error(`Problema de conexão com o banco de dados: ${connectionError.message}`);
@@ -64,7 +67,11 @@ export const useConfigSaver = () => {
       }
       
       // Call the saveConfig service
+      console.log("🔄 Chamando serviço de salvamento...");
       const savedConfig = await saveConfigService(config);
+      
+      // Log resultado para debug
+      console.log("🔄 Resultado do saveConfigService:", savedConfig);
       
       // Handle success case
       if (savedConfig) {
@@ -99,7 +106,7 @@ export const useConfigSaver = () => {
         ? "Teste automático: Erro ao salvar configurações"
         : "Erro ao salvar configurações";
       
-      console.error("❌ " + errorMsg);
+      console.error("❌ " + errorMsg + " - saveConfigService retornou null");
       setSavingError(errorMsg);
       toast.error(errorMsg);
       return null;

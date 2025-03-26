@@ -36,17 +36,17 @@ export const AutoTestRunner = ({ onComplete }: AutoTestRunnerProps) => {
           }
           
           // Consulta simples para verificar a conexão
-          const { data, error } = await client
+          const { data: connectionCheckData, error: connectionCheckError } = await client
             .from('config_checkout')
             .select('id')
             .limit(1);
             
-          if (error) {
-            console.error("❌ AutoTestRunner - Erro ao verificar conexão:", error);
-            throw new Error(`Erro de conexão: ${error.message}`);
+          if (connectionCheckError) {
+            console.error("❌ AutoTestRunner - Erro ao verificar conexão:", connectionCheckError);
+            throw new Error(`Erro de conexão: ${connectionCheckError.message}`);
           }
           
-          console.log("✅ AutoTestRunner - Conexão com Supabase verificada com sucesso:", data);
+          console.log("✅ AutoTestRunner - Conexão com Supabase verificada com sucesso:", connectionCheckData);
           
           // Redirecionar para página de configuração com parâmetro de teste
           console.log("🔄 AutoTestRunner - Redirecionando para página de configuração com autotest=true");

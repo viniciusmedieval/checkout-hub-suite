@@ -82,6 +82,9 @@ export const runAutoSaveTest = async (
         timeoutPromise
       ]);
       
+      // Adicionando o console.log para debug do valor de k
+      console.log("DEBUG valor de k:", savedConfig);
+      
       if (savedConfig) {
         console.log("✅ Teste automático bem-sucedido!");
         console.log("✅ Configuração salva:", savedConfig);

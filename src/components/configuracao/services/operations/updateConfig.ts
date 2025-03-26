@@ -17,6 +17,7 @@ export async function updateExistingConfig(config: ConfigCheckout, configToSave:
     
     // Guarantee we have a valid Supabase client
     if (!client) {
+      console.error("❌ Cliente Supabase não disponível ao tentar atualizar configuração");
       throw new Error("Cliente Supabase não disponível");
     }
 
@@ -44,6 +45,7 @@ export async function updateExistingConfig(config: ConfigCheckout, configToSave:
         .limit(1);
       
       if (queryError) {
+        console.error("❌ Falha na verificação da conexão:", queryError);
         throw new Error(`Falha na verificação da conexão: ${queryError.message}`);
       }
       console.log(`✅ Conexão com Supabase verificada. Verificação de consulta simples concluída.`);
@@ -74,6 +76,7 @@ export async function updateExistingConfig(config: ConfigCheckout, configToSave:
     }
 
     // Atualizar a configuração
+    console.log("🔄 Executando update no Supabase...");
     const { error } = await client
       .from("config_checkout")
       .update(configToSave)
