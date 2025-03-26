@@ -15,6 +15,7 @@ export const runAutoSaveTest = async (
 ): Promise<boolean> => {
   try {
     console.log("🔄 Iniciando teste automático de salvamento");
+    console.log("----------------------------------------------");
     
     // Create test config with our specific test values
     const testConfig = { ...currentConfig };
@@ -22,11 +23,11 @@ export const runAutoSaveTest = async (
     testConfig.cor_texto = "#FFFFFF";
     testConfig.texto_botao = "Finalizar Compra";
     
-    console.log("🧪 Valores de teste configurados:", {
-      cor_fundo: testConfig.cor_fundo,
-      cor_texto: testConfig.cor_texto,
-      texto_botao: testConfig.texto_botao
-    });
+    console.log("🧪 Valores de teste configurados:");
+    console.log("  cor_fundo: #FF0000 (vermelho)");
+    console.log("  cor_texto: #FFFFFF (branco)");
+    console.log("  texto_botao: Finalizar Compra");
+    console.log("----------------------------------------------");
     
     // Update the config state with test values
     setConfig(testConfig);
@@ -36,7 +37,9 @@ export const runAutoSaveTest = async (
     const savedConfig = await saveFunction();
     
     if (savedConfig) {
-      console.log("✅ Teste automático bem-sucedido! Configuração salva:", savedConfig);
+      console.log("✅ Teste automático bem-sucedido!");
+      console.log("✅ Configuração salva:", savedConfig);
+      console.log("----------------------------------------------");
       
       // Verify the test values were saved correctly
       const testPassed = 
@@ -46,32 +49,48 @@ export const runAutoSaveTest = async (
         
       if (testPassed) {
         console.log("✅ VALIDAÇÃO DE TESTE: Todos os valores foram salvos corretamente!");
-        toast.success("Teste automático concluído com sucesso!");
+        console.log("✅ cor_fundo: " + savedConfig.cor_fundo + " (esperado: #FF0000) ✓");
+        console.log("✅ cor_texto: " + savedConfig.cor_texto + " (esperado: #FFFFFF) ✓");
+        console.log("✅ texto_botao: " + savedConfig.texto_botao + " (esperado: Finalizar Compra) ✓");
+        console.log("----------------------------------------------");
+        
+        toast.success("Teste automático concluído com sucesso!", {
+          description: "Todos os valores foram salvos corretamente"
+        });
         return true;
       } else {
-        console.error("❌ VALIDAÇÃO DE TESTE: Valores salvos não correspondem aos valores esperados:", {
-          expected: {
-            cor_fundo: "#FF0000",
-            cor_texto: "#FFFFFF",
-            texto_botao: "Finalizar Compra"
-          },
-          actual: {
-            cor_fundo: savedConfig.cor_fundo,
-            cor_texto: savedConfig.cor_texto,
-            texto_botao: savedConfig.texto_botao
-          }
+        console.error("❌ VALIDAÇÃO DE TESTE: Valores salvos não correspondem aos valores esperados:");
+        console.error("  Esperado:");
+        console.error("    cor_fundo: #FF0000");
+        console.error("    cor_texto: #FFFFFF");
+        console.error("    texto_botao: Finalizar Compra");
+        console.error("  Recebido:");
+        console.error("    cor_fundo: " + savedConfig.cor_fundo);
+        console.error("    cor_texto: " + savedConfig.cor_texto);
+        console.error("    texto_botao: " + savedConfig.texto_botao);
+        console.error("----------------------------------------------");
+        
+        toast.error("Teste automático falhou: valores não correspondem!", {
+          description: "Verifique o console para detalhes"
         });
-        toast.error("Teste automático falhou: valores não correspondem!");
         return false;
       }
     } else {
       console.error("❌ Teste automático falhou: não foi possível salvar a configuração");
-      toast.error("Teste automático falhou: erro ao salvar!");
+      console.error("----------------------------------------------");
+      
+      toast.error("Teste automático falhou: erro ao salvar!", {
+        description: "Verifique o console para detalhes"
+      });
       return false;
     }
   } catch (error) {
     console.error("❌ Erro durante teste automático:", error);
-    toast.error("Erro durante o teste automático: " + (error instanceof Error ? error.message : "Erro desconhecido"));
+    console.error("----------------------------------------------");
+    
+    toast.error("Erro durante o teste automático: " + (error instanceof Error ? error.message : "Erro desconhecido"), {
+      description: "Verifique o console para detalhes"
+    });
     return false;
   }
 };
