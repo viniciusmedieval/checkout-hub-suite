@@ -34,8 +34,8 @@ export function usePixPayment() {
         setLoadingPixSecao(true);
         let query = supabase.from("pix_secoes").select("*");
         
-        // If config has a specific section ID, use it
-        if (configCheckout.pix_secao_id) {
+        // If config has a specific section ID, use it (check if property exists first)
+        if (configCheckout.pix_secao_id !== undefined && configCheckout.pix_secao_id !== null) {
           query = query.eq("id", configCheckout.pix_secao_id);
         } else {
           // Otherwise get the first active section

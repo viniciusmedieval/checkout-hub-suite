@@ -18,6 +18,9 @@ export const defaultConfig: ConfigCheckout = {
   texto_botao_card: "Pagar com Cartão",
   cor_botao_card: "#8B5CF6",
   cor_texto_botao_card: "#FFFFFF",
+  texto_botao_pix: "PAGAR COM PIX", // Added this property
+  cor_botao_pix: "#8B5CF6", // Ensure it's included in default config
+  cor_texto_botao_pix: "#FFFFFF", // Ensure it's included in default config
   rodape_texto: "Todos os direitos reservados.",
   rodape_empresa: "Minha Empresa LTDA",
   rodape_ano: "2023",
@@ -63,5 +66,6 @@ export const defaultConfig: ConfigCheckout = {
   cor_primaria_pix: "#1E40AF",
   cor_secundaria_pix: "#DBEAFE",
   tipo_chave_pix_global: "email",
-  usar_api_pix_global: false
+  usar_api_pix_global: false,
+  pix_secao_id: null // Added this property
 };

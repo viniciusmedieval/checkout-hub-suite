@@ -24,7 +24,6 @@ export function PixMensagensManager() {
   });
   const [isSaving, setIsSaving] = useState(false);
 
-  // Fetch all PIX messages from the database
   const fetchMessages = async () => {
     try {
       setLoading(true);
@@ -52,7 +51,6 @@ export function PixMensagensManager() {
     fetchMessages();
   }, []);
 
-  // Create a new PIX message
   const handleCreateMessage = async () => {
     try {
       if (!newMessage.chave || !newMessage.titulo || !newMessage.texto) {
@@ -62,7 +60,6 @@ export function PixMensagensManager() {
 
       setIsSaving(true);
       
-      // Set default order to end of list if not specified
       if (!newMessage.ordem) {
         newMessage.ordem = messages.length > 0 
           ? Math.max(...messages.map(msg => msg.ordem)) + 1 
@@ -71,7 +68,13 @@ export function PixMensagensManager() {
 
       const { data, error } = await supabase
         .from("pix_mensagens")
-        .insert([newMessage])
+        .insert({
+          chave: newMessage.chave,
+          titulo: newMessage.titulo,
+          texto: newMessage.texto,
+          ativo: newMessage.ativo,
+          ordem: newMessage.ordem
+        })
         .select();
 
       if (error) {
@@ -97,7 +100,6 @@ export function PixMensagensManager() {
     }
   };
 
-  // Update an existing PIX message
   const handleUpdateMessage = async () => {
     try {
       if (!editingMessage || !editingMessage.id) {
@@ -142,7 +144,6 @@ export function PixMensagensManager() {
     }
   };
 
-  // Delete a PIX message
   const handleDeleteMessage = async (id: number) => {
     try {
       if (!window.confirm("Tem certeza que deseja excluir esta mensagem?")) {
@@ -170,7 +171,6 @@ export function PixMensagensManager() {
     }
   };
 
-  // Move a message up in the order
   const handleMoveUp = async (message: PixMensagem) => {
     try {
       const index = messages.findIndex(msg => msg.id === message.id);
@@ -180,7 +180,6 @@ export function PixMensagensManager() {
       
       const previousMessage = messages[index - 1];
       
-      // Swap orders in database
       const updates = [
         { id: message.id, ordem: previousMessage.ordem },
         { id: previousMessage.id, ordem: message.ordem }
@@ -195,12 +194,10 @@ export function PixMensagensManager() {
         if (error) throw error;
       }
       
-      // Update local state
       const newMessages = [...messages];
       newMessages[index] = { ...newMessages[index], ordem: previousMessage.ordem };
       newMessages[index - 1] = { ...newMessages[index - 1], ordem: message.ordem };
       
-      // Sort by order
       newMessages.sort((a, b) => a.ordem - b.ordem);
       setMessages(newMessages);
       
@@ -213,7 +210,6 @@ export function PixMensagensManager() {
     }
   };
   
-  // Move a message down in the order
   const handleMoveDown = async (message: PixMensagem) => {
     try {
       const index = messages.findIndex(msg => msg.id === message.id);
@@ -223,7 +219,6 @@ export function PixMensagensManager() {
       
       const nextMessage = messages[index + 1];
       
-      // Swap orders in database
       const updates = [
         { id: message.id, ordem: nextMessage.ordem },
         { id: nextMessage.id, ordem: message.ordem }
@@ -238,12 +233,10 @@ export function PixMensagensManager() {
         if (error) throw error;
       }
       
-      // Update local state
       const newMessages = [...messages];
       newMessages[index] = { ...newMessages[index], ordem: nextMessage.ordem };
       newMessages[index + 1] = { ...newMessages[index + 1], ordem: message.ordem };
       
-      // Sort by order
       newMessages.sort((a, b) => a.ordem - b.ordem);
       setMessages(newMessages);
       
@@ -256,7 +249,6 @@ export function PixMensagensManager() {
     }
   };
 
-  // Toggle message active status
   const handleToggleActive = async (message: PixMensagem) => {
     try {
       setIsSaving(true);
@@ -298,7 +290,6 @@ export function PixMensagensManager() {
           </div>
         ) : (
           <>
-            {/* Existing Messages List */}
             <div className="space-y-4">
               <h3 className="text-lg font-medium">Mensagens Existentes</h3>
               
@@ -439,7 +430,6 @@ export function PixMensagensManager() {
             
             <Separator />
             
-            {/* Add New Message Form */}
             <div className="space-y-4">
               <h3 className="text-lg font-medium">Adicionar Nova Mensagem</h3>
               
