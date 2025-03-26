@@ -35,29 +35,28 @@ export async function createNewConfig(configToSave: any): Promise<ConfigCheckout
       });
     }
 
-    // Validate connection to Supabase
+    // Verify connection with a very simple query
     try {
-      // Use a simpler query instead of count(*) to avoid parsing issues
-      const { data, error: queryError } = await client
+      const { error: pingError } = await client
         .from('config_checkout')
         .select('id')
         .limit(1);
-      
-      if (queryError) {
-        throw new Error(`Falha na verificação da conexão: ${queryError.message}`);
+        
+      if (pingError) {
+        throw new Error(`Erro de conexão: ${pingError.message}`);
       }
-      console.log(`✅ Conexão com Supabase verificada. Verificação de consulta simples concluída.`);
+      console.log("✅ Conexão com Supabase verificada com sucesso");
     } catch (connError: any) {
       console.error("❌ Erro na verificação da conexão com Supabase:", connError);
       toast.error(`Erro de conexão: ${connError.message}`);
       throw connError;
     }
 
-    // Inserir nova configuração
+    // Insert new configuration
     const { data: insertedData, error: insertError } = await client
       .from("config_checkout")
       .insert([configToSave])
-      .select(); // Aqui podemos usar .select() porque o Supabase retorna os dados inseridos
+      .select();
 
     if (insertError) {
       console.error("❌ Erro ao criar configurações:", insertError);

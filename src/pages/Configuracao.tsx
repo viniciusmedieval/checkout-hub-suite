@@ -6,6 +6,7 @@ import { useEffect } from "react";
 import { ConfigHeader } from "@/components/configuracao/ConfigHeader";
 import { ConfigTabs } from "@/components/configuracao/ConfigTabs";
 import { useConfigActions } from "@/components/configuracao/hooks/useConfigActions";
+import { toast } from "sonner";
 
 const Configuracao = () => {
   const {
@@ -49,12 +50,19 @@ const Configuracao = () => {
   }, [config]);
 
   useEffect(() => {
+    // Get URL parameters
     const params = new URLSearchParams(window.location.search);
     const shouldAutoTest = params.get("autotest") === "true";
     
     if (shouldAutoTest && !loading && !isAutoTestRunning) {
       console.log("🔄 Parâmetro de URL 'autotest=true' detectado, iniciando teste automático...");
-      runAutomaticTest();
+      toast.info("Iniciando teste automático via parâmetro de URL", {
+        description: "Detectado parâmetro autotest=true na URL"
+      });
+      // Small delay to ensure everything is loaded
+      setTimeout(() => {
+        runAutomaticTest();
+      }, 500);
     }
   }, [loading, isAutoTestRunning, runAutomaticTest]);
 

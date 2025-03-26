@@ -28,28 +28,35 @@ export const AutoTestRunner = ({ onComplete }: AutoTestRunnerProps) => {
         
         // Check Supabase connection before redirecting
         try {
+          // Get client from the singleton to ensure we're using the latest instance
           const client = await getSupabaseClient();
           if (!client) {
             throw new Error("Não foi possível inicializar o cliente Supabase");
           }
           
-          // Test with a simpler query that won't cause parsing issues
-          const { error } = await client.from('config_checkout').select('id').limit(1);
-          
+          // Test with a simple existence check that won't cause parsing issues
+          const { data, error } = await client
+            .from('config_checkout')
+            .select('id')  // Only select ID to avoid parsing issues
+            .limit(1);
+            
           if (error) {
             console.error("❌ AutoTestRunner - Erro ao verificar conexão com Supabase:", error);
-            throw new Error("Erro de conexão com o banco de dados: " + error.message);
+            throw new Error(`Erro de conexão com o banco de dados: ${error.message}`);
           }
+          
           console.log("✅ AutoTestRunner - Conexão com Supabase verificada com sucesso");
-        } catch (connError) {
+          console.log("✅ AutoTestRunner - Dados retornados:", data);
+        } catch (connError: any) {
           console.error("❌ AutoTestRunner - Falha na verificação da conexão:", connError);
-          toast.error("Falha na conexão com o banco de dados. Verifique as credenciais Supabase.");
+          toast.error(`Falha na conexão com o banco de dados: ${connError.message}`);
           setTestStatus("failed");
           if (onComplete) onComplete();
           return;
         }
         
         // Redirect to configuration page with autotest parameter
+        console.log("🔄 AutoTestRunner - Redirecionando para página de configuração com autotest=true");
         navigate("/configuracao?autotest=true");
         
         // Set a timeout to display success message in case we don't return to this component
@@ -61,10 +68,10 @@ export const AutoTestRunner = ({ onComplete }: AutoTestRunnerProps) => {
             onComplete();
           }
         }, 1000);
-      } catch (error) {
+      } catch (error: any) {
         setTestStatus("failed");
         console.error("❌ Erro ao executar teste automático:", error);
-        toast.error("Erro ao executar teste automático: " + (error instanceof Error ? error.message : "Erro desconhecido"));
+        toast.error(`Erro ao executar teste automático: ${error instanceof Error ? error.message : "Erro desconhecido"}`);
         
         if (onComplete) {
           onComplete();

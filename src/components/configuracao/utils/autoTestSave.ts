@@ -26,23 +26,20 @@ export const runAutoSaveTest = async (
         throw new Error("Cliente Supabase não disponível");
       }
       console.log("✅ Cliente Supabase disponível");
-    } catch (clientError) {
-      console.error("❌ Erro com cliente Supabase:", clientError);
-      toast.error("Falha no cliente Supabase. Verifique a conexão.");
-      return false;
-    }
-    
-    // Then verify Supabase connection
-    try {
-      console.log("🔄 Verificando conexão com Supabase...");
-      const { data, error } = await supabase.from('config_checkout').select('count(*)', { count: 'exact' }).limit(1);
+      
+      // Test connection with a simple query
+      const { data, error } = await client
+        .from('config_checkout')
+        .select('id')
+        .limit(1);
+        
       if (error) {
-        throw new Error("Erro de conexão com Supabase: " + error.message);
+        throw new Error(`Erro ao testar conexão: ${error.message}`);
       }
-      console.log("✅ Conexão com Supabase verificada com sucesso");
-    } catch (connError) {
-      console.error("❌ Falha na verificação da conexão com Supabase:", connError);
-      toast.error("Falha na conexão com o banco de dados. Verifique as credenciais Supabase.");
+      console.log("✅ Conexão testada com sucesso:", data);
+    } catch (clientError: any) {
+      console.error("❌ Erro com cliente Supabase:", clientError);
+      toast.error(`Falha no cliente Supabase: ${clientError.message}`);
       return false;
     }
     
@@ -127,7 +124,7 @@ export const runAutoSaveTest = async (
       });
       return false;
     }
-  } catch (error) {
+  } catch (error: any) {
     console.error("❌ Erro durante teste automático:", error);
     console.error("----------------------------------------------");
     
