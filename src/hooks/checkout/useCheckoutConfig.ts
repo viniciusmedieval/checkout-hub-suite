@@ -2,18 +2,45 @@
 import { useState, useEffect } from "react";
 import { ConfigCheckout, supabase } from "@/lib/supabase";
 import { PaymentStatus } from "@/components/checkout/payment/types";
+import { fetchCheckoutConfig } from "@/components/configuracao/services";
 
 export const useCheckoutConfig = () => {
   const [configCheckout, setConfigCheckout] = useState<ConfigCheckout | null>(null);
 
-  const fetchCheckoutConfig = async () => {
+  const fetchCheckoutConfigData = async () => {
     try {
-      // Verificar se o cliente Supabase está inicializado
-      if (!supabase) {
-        console.error("Cliente Supabase não inicializado");
-        throw new Error("Cliente Supabase não inicializado");
+      // Tentar buscar usando o serviço centralizado primeiro
+      const config = await fetchCheckoutConfig();
+      
+      if (config) {
+        // Garantir que cores estão em formato hex válido
+        const validateHex = (color: string | null | undefined) => {
+          return color && /^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/.test(color);
+        };
+        
+        if (!validateHex(config.cor_topo)) config.cor_topo = "#3b82f6";
+        if (!validateHex(config.cor_fundo)) config.cor_fundo = "#FFFFFF";
+        if (!validateHex(config.cor_banner)) config.cor_banner = "#3b82f6";
+        if (!validateHex(config.cor_titulo)) config.cor_titulo = "#000000";
+        if (!validateHex(config.cor_botao)) config.cor_botao = "#8B5CF6"; 
+        if (!validateHex(config.cor_texto_botao)) config.cor_texto_botao = "#FFFFFF";
+        if (!validateHex(config.cor_texto_contador)) config.cor_texto_contador = "#4B5563";
+        
+        // Ensure redirect_card_status is a valid value
+        const validStatuses: PaymentStatus[] = ["analyzing", "approved", "rejected"];
+        if (!config.redirect_card_status || !validStatuses.includes(config.redirect_card_status as PaymentStatus)) {
+          config.redirect_card_status = "analyzing";
+        }
+        
+        // Ensure modo_random is a boolean
+        config.modo_random = !!config.modo_random;
+        
+        setConfigCheckout(config);
+        console.log("🔄 Configurações carregadas com sucesso do serviço centralizado", config);
+        return config;
       }
       
+      // Fallback para o método antigo
       const { data: checkoutConfig, error: configError } = await supabase
         .from("config_checkout")
         .select("*")
@@ -51,6 +78,7 @@ export const useCheckoutConfig = () => {
           config.modo_random = !!config.modo_random;
           
           setConfigCheckout(config);
+          console.log("🔄 Configurações carregadas com sucesso do fallback", config);
           return config;
         }
       }
@@ -81,6 +109,7 @@ export const useCheckoutConfig = () => {
       };
       
       setConfigCheckout(defaultConfig);
+      console.log("⚠️ Usando configuração padrão pois não foi possível carregar do banco", defaultConfig);
       return defaultConfig;
     } catch (error) {
       console.error("Erro ao buscar configuração do checkout:", error);
@@ -111,12 +140,13 @@ export const useCheckoutConfig = () => {
       };
       
       setConfigCheckout(defaultConfig);
+      console.error("❌ Erro ao buscar configuração, usando padrão", error);
       return defaultConfig;
     }
   };
 
   return {
     configCheckout,
-    fetchCheckoutConfig
+    fetchCheckoutConfig: fetchCheckoutConfigData
   };
 };

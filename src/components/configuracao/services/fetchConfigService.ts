@@ -1,5 +1,6 @@
 
-import { supabase, ConfigCheckout } from "@/lib/supabase";
+import { supabase } from "@/lib/supabase";
+import { ConfigCheckout } from "@/lib/types/database-types";
 
 /**
  * Fetches the latest checkout configuration from Supabase

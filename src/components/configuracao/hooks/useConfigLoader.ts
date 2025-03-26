@@ -3,6 +3,7 @@ import { useState, useEffect } from 'react';
 import { supabase } from '@/lib/supabase';
 import { ConfigCheckout, Depoimento } from "@/lib/types/database-types";
 import { defaultConfig } from '../utils/defaultConfig';
+import { fetchCheckoutConfig } from '../services';
 
 export interface ConfigLoaderResult {
   config: ConfigCheckout;
@@ -25,6 +26,24 @@ export const useConfigLoader = (slug?: string): ConfigLoaderResult => {
   const fetchConfig = async (): Promise<ConfigCheckout | null> => {
     setLoading(true);
     try {
+      console.log("🔍 Iniciando busca de configuração...");
+      
+      // Tenta buscar usando o serviço centralizado
+      const configFromService = await fetchCheckoutConfig();
+      
+      if (configFromService) {
+        console.log("✅ Configuração carregada do serviço:", configFromService);
+        setConfigData(configFromService);
+        setConfig(configFromService);
+        
+        // Fetch testimonials for this config (product)
+        await fetchTestimonials(configFromService.id);
+        
+        setLoading(false);
+        return configFromService;
+      }
+      
+      // Fallback para busca direta se o serviço não retornar dados
       if (!slug) {
         // If no slug is provided, fetch the first/default config
         const { data: configData, error: configError } = await supabase
@@ -35,12 +54,13 @@ export const useConfigLoader = (slug?: string): ConfigLoaderResult => {
           .single();
 
         if (configError) {
-          console.error('Erro ao carregar configuração:', configError);
+          console.error('Erro ao carregar configuração (fallback):', configError);
           setLoadError(`Erro ao carregar configuração: ${configError.message}`);
           setError(configError.message);
           setLoading(false);
           return null;
         } else if (configData) {
+          console.log("✅ Configuração carregada (fallback direto):", configData);
           setConfigData(configData);
           setConfig(configData);
           

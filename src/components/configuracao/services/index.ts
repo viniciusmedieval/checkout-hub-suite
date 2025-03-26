@@ -3,3 +3,4 @@
 export { fetchCheckoutConfig } from './fetchConfigService';
 export { saveConfig } from './saveConfigService';
 export * from './testimonialService';
+export * from './checkoutConfigService';

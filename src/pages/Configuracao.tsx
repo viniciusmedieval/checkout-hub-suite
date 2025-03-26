@@ -62,7 +62,7 @@ const Configuracao = () => {
   }, [loading, isAutoTestRunning, runAutomaticTest]);
 
   if (loading) {
-    return <LoadingState />;
+    return <LoadingState message="Carregando configurações do checkout..." />;
   }
 
   const typedConfig = config as unknown as ConfigCheckout;
