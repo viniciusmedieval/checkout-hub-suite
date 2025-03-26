@@ -1,3 +1,4 @@
+
 // Types for our database tables
 export type Cliente = {
   id: number;
@@ -63,6 +64,8 @@ export type ConfigCheckout = {
   cor_botao_card?: string | null;
   cor_texto_botao_card?: string | null;
   texto_botao_pix?: string | null;
+  cor_botao_pix?: string | null;
+  cor_texto_botao_pix?: string | null;
   rodape_texto?: string | null;
   rodape_empresa?: string | null;
   rodape_ano?: string | null;
@@ -102,8 +105,6 @@ export type ConfigCheckout = {
   pix_mensagem_seguranca?: string | null;
   cor_primaria_pix?: string | null;
   cor_secundaria_pix?: string | null;
-  cor_botao_pix?: string | null;
-  cor_texto_botao_pix?: string | null;
   tipo_chave_pix_global?: string | null;
   chave_pix_global?: string | null;
   nome_beneficiario_pix?: string | null;
