@@ -1,28 +1,13 @@
-import { Button } from "@/components/ui/button";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+
 import { useConfiguracao } from "@/components/configuracao/useConfiguracao";
 import { LoadingState } from "@/components/configuracao/LoadingState";
-import { HeaderTab } from "@/components/configuracao/sections/HeaderTab";
-import { ConteudoTab } from "@/components/configuracao/sections/ConteudoTab";
-import { FormularioTab } from "@/components/configuracao/sections/FormularioTab";
-import { DepoimentosTab } from "@/components/configuracao/DepoimentosTab";
-import { RodapeTab } from "@/components/configuracao/sections/RodapeTab";
-import { BotoesTab } from "@/components/configuracao/sections/BotoesTab";
-import { IconesTab } from "@/components/configuracao/sections/IconesTab";
-import { VisualTab } from "@/components/configuracao/sections/VisualTab";
-import { RedirecoesTab } from "@/components/configuracao/sections/RedirecoesTab";
-import { RandomModeTab } from "@/components/configuracao/sections/RandomModeTab";
-import { PixConfigTab } from "@/components/configuracao/sections/PixConfigTab";
-import { InstallmentsTab } from "@/components/configuracao/sections/InstallmentsTab";
-import { toast } from "sonner";
 import { ConfigCheckout } from "@/lib/types/database-types";
-import { useEffect, useState } from "react";
-import { CheckCircle, Save, BeakerIcon, Zap } from "lucide-react";
-import { runAutoSaveTest } from "@/components/configuracao/utils/autoTestSave";
-import { useNavigate } from "react-router-dom";
+import { useEffect } from "react";
+import { ConfigHeader } from "@/components/configuracao/ConfigHeader";
+import { ConfigTabs } from "@/components/configuracao/ConfigTabs";
+import { useConfigActions } from "@/components/configuracao/hooks/useConfigActions";
 
 const Configuracao = () => {
-  const navigate = useNavigate();
   const {
     config,
     loading,
@@ -43,10 +28,21 @@ const Configuracao = () => {
     setConfig
   } = useConfiguracao();
   
-  const [isSaveAttempted, setIsSaveAttempted] = useState(false);
-  const [saveSuccess, setSaveSuccess] = useState(false);
-  const [isTestSaving, setIsTestSaving] = useState(false);
-  const [isAutoTestRunning, setIsAutoTestRunning] = useState(false);
+  const {
+    isSaveAttempted,
+    saveSuccess,
+    isTestSaving,
+    isAutoTestRunning,
+    onSaveClick,
+    runTestSave,
+    runAutomaticTest
+  } = useConfigActions(
+    config, 
+    setConfig, 
+    handleSaveConfig, 
+    hasUnsavedChanges, 
+    reloadConfig
+  );
 
   useEffect(() => {
     console.log("Configuracao component - Current config:", config);
@@ -60,7 +56,7 @@ const Configuracao = () => {
       console.log("🔄 Parâmetro de URL 'autotest=true' detectado, iniciando teste automático...");
       runAutomaticTest();
     }
-  }, [loading]);
+  }, [loading, isAutoTestRunning, runAutomaticTest]);
 
   if (loading) {
     return <LoadingState />;
@@ -68,316 +64,33 @@ const Configuracao = () => {
 
   const typedConfig = config as unknown as ConfigCheckout;
 
-  const onSaveClick = async () => {
-    setIsSaveAttempted(true);
-    setSaveSuccess(false);
-    
-    if (!hasUnsavedChanges()) {
-      toast.info("Não há alterações para salvar");
-      setIsSaveAttempted(false);
-      return;
-    }
-    
-    console.log("Saving configuration...", config);
-    
-    try {
-      const savedConfig = await handleSaveConfig();
-      
-      if (savedConfig) {
-        console.log("Configuration saved successfully:", savedConfig);
-        await reloadConfig();
-        setSaveSuccess(true);
-        toast.success("Configurações salvas com sucesso!");
-        
-        setTimeout(() => {
-          setSaveSuccess(false);
-        }, 3000);
-      } else {
-        console.error("Failed to save configuration");
-        toast.error("Falha ao salvar configurações. Tente novamente.");
-      }
-    } catch (error) {
-      console.error("Error saving configuration:", error);
-      toast.error("Erro ao salvar configurações: " + (error instanceof Error ? error.message : "Erro desconhecido"));
-    } finally {
-      setIsSaveAttempted(false);
-    }
-  };
-
-  const runTestSave = async () => {
-    setIsTestSaving(true);
-    const testConfig = { ...typedConfig };
-    
-    testConfig.cor_fundo = "#FF0000";
-    testConfig.cor_texto = "#FFFFFF";
-    testConfig.texto_botao = "Finalizar Compra";
-    
-    console.log("🧪 Executando teste de salvamento com valores específicos:", testConfig);
-    
-    setConfig(testConfig);
-    
-    try {
-      const savedConfig = await handleSaveConfig();
-      
-      if (savedConfig) {
-        console.log("🧪 Teste de configuração salvo com sucesso:", savedConfig);
-        await reloadConfig();
-        setSaveSuccess(true);
-        toast.success("Teste: Configurações salvas com sucesso!");
-        
-        setTimeout(() => {
-          setSaveSuccess(false);
-        }, 3000);
-      } else {
-        console.error("🧪 Falha no teste de salvamento de configuração");
-        toast.error("Teste: Falha ao salvar configurações. Tente novamente.");
-      }
-    } catch (error) {
-      console.error("🧪 Erro no teste de salvamento:", error);
-      toast.error("Teste: Erro ao salvar configurações: " + (error instanceof Error ? error.message : "Erro desconhecido"));
-    } finally {
-      setIsTestSaving(false);
-    }
-  };
-
-  const runAutomaticTest = async () => {
-    setIsAutoTestRunning(true);
-    console.log("🔄 Iniciando teste automático de salvamento de configuração");
-    
-    try {
-      const testConfig = { ...typedConfig };
-      testConfig.cor_fundo = "#FF0000";
-      testConfig.cor_texto = "#FFFFFF";
-      testConfig.texto_botao = "Finalizar Compra";
-      
-      console.log("🧪 Valores de teste configurados:");
-      console.log("  cor_fundo: #FF0000 (vermelho)");
-      console.log("  cor_texto: #FFFFFF (branco)");
-      console.log("  texto_botao: Finalizar Compra");
-      
-      setConfig(testConfig);
-      
-      try {
-        const savedConfig = await handleSaveConfig();
-        if (savedConfig) {
-          console.log("✅ Configuração de teste salva com sucesso!", savedConfig);
-          setSaveSuccess(true);
-          toast.success("Teste automático concluído com sucesso!");
-          await reloadConfig();
-          
-          setTimeout(() => {
-            setSaveSuccess(false);
-          }, 3000);
-          return;
-        } else {
-          console.error("❌ Não foi possível salvar a configuração de teste diretamente");
-        }
-      } catch (directError) {
-        console.error("❌ Erro ao salvar configuração de teste diretamente:", directError);
-      }
-      
-      const testResult = await runAutoSaveTest(
-        handleSaveConfig,
-        setConfig,
-        typedConfig
-      );
-      
-      if (testResult) {
-        console.log("✅ Teste automático finalizado com sucesso!");
-        setSaveSuccess(true);
-        
-        setTimeout(() => {
-          setSaveSuccess(false);
-        }, 3000);
-      } else {
-        console.error("❌ Teste automático falhou");
-      }
-    } catch (error) {
-      console.error("❌ Erro durante execução do teste automático:", error);
-      toast.error("Erro durante teste automático: " + (error instanceof Error ? error.message : "Erro desconhecido"));
-    } finally {
-      setIsAutoTestRunning(false);
-    }
-  };
-
   return (
     <div className="space-y-6 animate-fade-in bg-white p-6 rounded-lg">
-      <div className="flex justify-between items-center">
-        <h1 className="text-3xl font-bold tracking-tight text-gray-900">Configuração do Checkout</h1>
-        <div className="flex gap-2">
-          <Button 
-            onClick={runAutomaticTest}
-            disabled={isAutoTestRunning}
-            className="bg-green-600 hover:bg-green-700 transition-colors duration-300"
-          >
-            {isAutoTestRunning ? (
-              <>
-                <span className="animate-spin mr-2">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-loader-2"><path d="M21 12a9 9 0 1 1-6.219-8.56"/></svg>
-                </span>
-                Executando Teste...
-              </>
-            ) : (
-              <>
-                <Zap className="w-4 h-4 mr-2" />
-                Teste Automático
-              </>
-            )}
-          </Button>
-          
-          <Button 
-            onClick={runTestSave}
-            disabled={isTestSaving || isAutoTestRunning}
-            className="bg-purple-600 hover:bg-purple-700 transition-colors duration-300"
-          >
-            {isTestSaving ? (
-              <>
-                <span className="animate-spin mr-2">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-loader-2"><path d="M21 12a9 9 0 1 1-6.219-8.56"/></svg>
-                </span>
-                Testando...
-              </>
-            ) : (
-              <>
-                <BeakerIcon className="w-4 h-4 mr-2" />
-                Testar Salvamento
-              </>
-            )}
-          </Button>
-          
-          <Button 
-            onClick={onSaveClick} 
-            disabled={isSaving || !hasUnsavedChanges() || isSaveAttempted || isAutoTestRunning}
-            className={`${saveSuccess ? 'bg-green-600 hover:bg-green-700' : 'bg-blue-600 hover:bg-blue-700'} transition-colors duration-300`}
-          >
-            {isSaving || isAutoTestRunning ? (
-              <>
-                <span className="animate-spin mr-2">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-loader-2"><path d="M21 12a9 9 0 1 1-6.219-8.56"/></svg>
-                </span>
-                Salvando...
-              </>
-            ) : isSaveAttempted ? (
-              <>Processando...</>
-            ) : saveSuccess ? (
-              <>
-                <CheckCircle className="w-4 h-4 mr-2" />
-                Salvo com Sucesso
-              </>
-            ) : (
-              <>
-                <Save className="w-4 h-4 mr-2" />
-                Salvar Alterações
-              </>
-            )}
-          </Button>
-        </div>
-      </div>
+      <ConfigHeader
+        isAutoTestRunning={isAutoTestRunning}
+        isSaving={isSaving}
+        isSaveAttempted={isSaveAttempted}
+        isTestSaving={isTestSaving}
+        saveSuccess={saveSuccess}
+        hasUnsavedChanges={hasUnsavedChanges}
+        onSaveClick={onSaveClick}
+        runTestSave={runTestSave}
+        runAutomaticTest={runAutomaticTest}
+      />
 
-      <Tabs defaultValue="visual" className="w-full">
-        <TabsList className="grid w-full grid-cols-11 bg-gray-100 p-1 rounded-lg">
-          <TabsTrigger value="visual" className="data-[state=active]:bg-white">Visual</TabsTrigger>
-          <TabsTrigger value="header" className="data-[state=active]:bg-white">Topo</TabsTrigger>
-          <TabsTrigger value="formulario" className="data-[state=active]:bg-white">Formulário</TabsTrigger>
-          <TabsTrigger value="pix" className="data-[state=active]:bg-white">PIX</TabsTrigger>
-          <TabsTrigger value="parcelas" className="data-[state=active]:bg-white">Parcelas</TabsTrigger>
-          <TabsTrigger value="depoimentos" className="data-[state=active]:bg-white">Depoimentos</TabsTrigger>
-          <TabsTrigger value="botoes" className="data-[state=active]:bg-white">Botões</TabsTrigger>
-          <TabsTrigger value="icones" className="data-[state=active]:bg-white">Ícones</TabsTrigger>
-          <TabsTrigger value="rodape" className="data-[state=active]:bg-white">Rodapé</TabsTrigger>
-          <TabsTrigger value="redirects" className="data-[state=active]:bg-white">Redirecionamentos</TabsTrigger>
-          <TabsTrigger value="random" className="data-[state=active]:bg-white">Modo Teste</TabsTrigger>
-        </TabsList>
-
-        <TabsContent value="visual" className="space-y-4 mt-4">
-          <VisualTab 
-            config={typedConfig} 
-            handleConfigChange={handleConfigChange}
-            handleSwitchChange={handleSwitchChange}
-          />
-        </TabsContent>
-
-        <TabsContent value="header" className="space-y-4 mt-4">
-          <HeaderTab 
-            config={typedConfig} 
-            handleConfigChange={handleConfigChange}
-            handleSwitchChange={handleSwitchChange}
-          />
-        </TabsContent>
-
-        <TabsContent value="formulario" className="space-y-4 mt-4">
-          <FormularioTab 
-            config={typedConfig} 
-            handleConfigChange={handleConfigChange}
-            handleSwitchChange={handleSwitchChange}
-          />
-        </TabsContent>
-        
-        <TabsContent value="pix" className="space-y-4 mt-4">
-          <PixConfigTab 
-            config={typedConfig} 
-            handleConfigChange={handleConfigChange}
-            handleSelectChange={handleSelectChange}
-            handleSwitchChange={handleSwitchChange}
-          />
-        </TabsContent>
-        
-        <TabsContent value="parcelas" className="space-y-4 mt-4">
-          <InstallmentsTab 
-            config={typedConfig} 
-            handleConfigChange={handleConfigChange}
-          />
-        </TabsContent>
-
-        <TabsContent value="icones" className="space-y-4 mt-4">
-          <IconesTab 
-            config={typedConfig} 
-            handleConfigChange={handleConfigChange}
-            handleIconChange={handleIconChange}
-          />
-        </TabsContent>
-
-        <TabsContent value="depoimentos" className="space-y-4 mt-4">
-          <DepoimentosTab 
-            depoimentos={depoimentos}
-            depoimentosSaving={depoimentosSaving}
-            handleDeleteTestimonial={handleDeleteTestimonial}
-            handleAddTestimonial={handleAddTestimonial}
-            handleUpdateTestimonial={handleUpdateTestimonial}
-          />
-        </TabsContent>
-
-        <TabsContent value="botoes" className="space-y-4 mt-4">
-          <BotoesTab 
-            config={typedConfig} 
-            handleConfigChange={handleConfigChange}
-            handleSwitchChange={handleSwitchChange}
-          />
-        </TabsContent>
-
-        <TabsContent value="rodape" className="space-y-4 mt-4">
-          <RodapeTab 
-            config={typedConfig} 
-            handleConfigChange={handleConfigChange}
-            handleSwitchChange={handleSwitchChange}
-          />
-        </TabsContent>
-
-        <TabsContent value="redirects" className="space-y-4 mt-4">
-          <RedirecoesTab 
-            config={typedConfig} 
-            handleConfigChange={handleConfigChange}
-            handleStatusChange={handleStatusChange}
-          />
-        </TabsContent>
-
-        <TabsContent value="random" className="space-y-4 mt-4">
-          <RandomModeTab 
-            config={typedConfig} 
-            handleSwitchChange={handleSwitchChange}
-          />
-        </TabsContent>
-      </Tabs>
+      <ConfigTabs
+        typedConfig={typedConfig}
+        depoimentos={depoimentos}
+        depoimentosSaving={depoimentosSaving}
+        handleConfigChange={handleConfigChange}
+        handleSwitchChange={handleSwitchChange}
+        handleIconChange={handleIconChange}
+        handleStatusChange={handleStatusChange}
+        handleSelectChange={handleSelectChange}
+        handleDeleteTestimonial={handleDeleteTestimonial}
+        handleAddTestimonial={handleAddTestimonial}
+        handleUpdateTestimonial={handleUpdateTestimonial}
+      />
     </div>
   );
 };
