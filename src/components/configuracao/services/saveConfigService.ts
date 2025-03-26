@@ -1,11 +1,9 @@
-
-import { isSupabaseInitialized } from "@/lib/supabase";
+import { isSupabaseInitialized, supabase } from "@/lib/supabase";
 import { ConfigCheckout } from "@/lib/types/database-types"; 
 import { toast } from "sonner";
 import { prepareConfigForSave } from "./utils/configPreparer";
 import { createNewConfig } from "./operations/createConfig";
 import { updateExistingConfig } from "./operations/updateConfig";
-import { supabase } from "@/lib/supabase";
 
 /**
  * Saves checkout configuration to the database
