@@ -23,11 +23,8 @@ export const useConfigSaver = () => {
     setSavingError(undefined);
     
     try {
-      console.log("💾 Saving configuration...", config);
-      
       // Verify Supabase connection first
       try {
-        console.log("🔄 Verificando conexão Supabase antes de salvar...");
         const client = await getSupabaseClient();
         if (!client) {
           console.error("❌ Cliente Supabase não inicializado");
@@ -35,7 +32,7 @@ export const useConfigSaver = () => {
         }
         
         // Usar uma consulta mais simples para verificar conexão
-        const { data: connectionTestData, error: connectionError } = await client
+        const { error: connectionError } = await client
           .from('config_checkout')
           .select('id')
           .limit(1);
@@ -44,7 +41,6 @@ export const useConfigSaver = () => {
           console.error("❌ Falha no teste de conexão:", connectionError);
           throw new Error(`Supabase connection test failed: ${connectionError.message}`);
         }
-        console.log("✅ Supabase connection verified", connectionTestData);
       } catch (connectionError: any) {
         console.error("❌ Supabase connection error:", connectionError);
         toast.error(`Problema de conexão com o banco de dados: ${connectionError.message}`);
@@ -59,30 +55,15 @@ export const useConfigSaver = () => {
       );
       
       if (isTestConfig) {
-        console.log("🧪 TESTE AUTOMÁTICO DETECTADO - verificando valores antes de salvar:");
-        console.log("  cor_fundo: " + config.cor_fundo + " (esperado: #FF0000) ✓");
-        console.log("  cor_texto: " + config.cor_texto + " (esperado: #FFFFFF) ✓");
-        console.log("  texto_botao: " + config.texto_botao + " (esperado: Finalizar Compra) ✓");
         toast.info("Iniciando salvamento do teste automático...");
       }
       
       // Call the saveConfig service
-      console.log("🔄 Chamando serviço de salvamento...");
       const savedConfig = await saveConfigService(config);
-      
-      // Log resultado para debug
-      console.log("🔄 Resultado do saveConfigService:", savedConfig);
       
       // Handle success case
       if (savedConfig) {
-        console.log("✅ Configuration saved successfully", savedConfig);
-        
-        // Special success message for test
         if (isTestConfig) {
-          console.log("🧪 TESTE AUTOMÁTICO CONCLUÍDO COM SUCESSO! ✅");
-          console.log("  cor_fundo salvo: " + savedConfig.cor_fundo + " (esperado: #FF0000) ✓");
-          console.log("  cor_texto salvo: " + savedConfig.cor_texto + " (esperado: #FFFFFF) ✓"); 
-          console.log("  texto_botao salvo: " + savedConfig.texto_botao + " (esperado: Finalizar Compra) ✓");
           toast.success("Teste automático: Configurações salvas com sucesso!");
         } else {
           toast.success("Configurações salvas com sucesso!");
@@ -113,8 +94,6 @@ export const useConfigSaver = () => {
       const errorMsg = `${errorPrefix}Erro ao salvar configurações: ${error.message || "Erro desconhecido"}`;
       
       console.error("❌ " + errorMsg, error);
-      console.error("Detalhes do erro:", error);
-      console.error("Config sendo salva:", config);
       
       setSavingError(errorMsg);
       toast.error(errorMsg);
