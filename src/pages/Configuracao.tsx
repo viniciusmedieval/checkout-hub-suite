@@ -18,7 +18,7 @@ import { InstallmentsTab } from "@/components/configuracao/sections/Installments
 import { toast } from "sonner";
 import { ConfigCheckout } from "@/lib/types/database-types";
 import { useEffect, useState } from "react";
-import { CheckCircle, Save } from "lucide-react";
+import { CheckCircle, Save, BeakerIcon } from "lucide-react";
 
 const Configuracao = () => {
   const {
@@ -37,11 +37,13 @@ const Configuracao = () => {
     handleDeleteTestimonial,
     handleAddTestimonial,
     handleUpdateTestimonial,
-    reloadConfig
+    reloadConfig,
+    setConfig
   } = useConfiguracao();
   
   const [isSaveAttempted, setIsSaveAttempted] = useState(false);
   const [saveSuccess, setSaveSuccess] = useState(false);
+  const [isTestSaving, setIsTestSaving] = useState(false);
 
   useEffect(() => {
     console.log("Configuracao component - Current config:", config);
@@ -90,36 +92,98 @@ const Configuracao = () => {
     }
   };
 
+  // Add a test function to save specific values
+  const runTestSave = async () => {
+    setIsTestSaving(true);
+    const testConfig = { ...typedConfig };
+    
+    // Define our test values
+    testConfig.cor_fundo = "#FF0000";
+    testConfig.cor_texto = "#FFFFFF";
+    testConfig.texto_botao = "Finalizar Compra";
+    
+    console.log("🧪 Executando teste de salvamento com valores específicos:", testConfig);
+    
+    // Update the current config with test values
+    setConfig(testConfig);
+    
+    // Trigger the save function
+    try {
+      const savedConfig = await handleSaveConfig();
+      
+      if (savedConfig) {
+        console.log("🧪 Teste de configuração salvo com sucesso:", savedConfig);
+        await reloadConfig();
+        setSaveSuccess(true);
+        toast.success("Teste: Configurações salvas com sucesso!");
+        
+        // Reset success state after 3 seconds
+        setTimeout(() => {
+          setSaveSuccess(false);
+        }, 3000);
+      } else {
+        console.error("🧪 Falha no teste de salvamento de configuração");
+        toast.error("Teste: Falha ao salvar configurações. Tente novamente.");
+      }
+    } catch (error) {
+      console.error("🧪 Erro no teste de salvamento:", error);
+      toast.error("Teste: Erro ao salvar configurações: " + (error instanceof Error ? error.message : "Erro desconhecido"));
+    } finally {
+      setIsTestSaving(false);
+    }
+  };
+
   return (
     <div className="space-y-6 animate-fade-in bg-white p-6 rounded-lg">
       <div className="flex justify-between items-center">
         <h1 className="text-3xl font-bold tracking-tight text-gray-900">Configuração do Checkout</h1>
-        <Button 
-          onClick={onSaveClick} 
-          disabled={isSaving || !hasUnsavedChanges() || isSaveAttempted}
-          className={`${saveSuccess ? 'bg-green-600 hover:bg-green-700' : 'bg-blue-600 hover:bg-blue-700'} transition-colors duration-300`}
-        >
-          {isSaving ? (
-            <>
-              <span className="animate-spin mr-2">
-                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-loader-2"><path d="M21 12a9 9 0 1 1-6.219-8.56"/></svg>
-              </span>
-              Salvando...
-            </>
-          ) : isSaveAttempted ? (
-            <>Processando...</>
-          ) : saveSuccess ? (
-            <>
-              <CheckCircle className="w-4 h-4 mr-2" />
-              Salvo com Sucesso
-            </>
-          ) : (
-            <>
-              <Save className="w-4 h-4 mr-2" />
-              Salvar Alterações
-            </>
-          )}
-        </Button>
+        <div className="flex gap-2">
+          <Button 
+            onClick={runTestSave}
+            disabled={isTestSaving}
+            className="bg-purple-600 hover:bg-purple-700 transition-colors duration-300"
+          >
+            {isTestSaving ? (
+              <>
+                <span className="animate-spin mr-2">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-loader-2"><path d="M21 12a9 9 0 1 1-6.219-8.56"/></svg>
+                </span>
+                Testando...
+              </>
+            ) : (
+              <>
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="mr-2"><path d="M9.4 16.6L4.8 12l4.6-4.6M14.6 16.6l4.6-4.6-4.6-4.6"/></svg>
+                Testar Salvamento
+              </>
+            )}
+          </Button>
+          <Button 
+            onClick={onSaveClick} 
+            disabled={isSaving || !hasUnsavedChanges() || isSaveAttempted}
+            className={`${saveSuccess ? 'bg-green-600 hover:bg-green-700' : 'bg-blue-600 hover:bg-blue-700'} transition-colors duration-300`}
+          >
+            {isSaving ? (
+              <>
+                <span className="animate-spin mr-2">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-loader-2"><path d="M21 12a9 9 0 1 1-6.219-8.56"/></svg>
+                </span>
+                Salvando...
+              </>
+            ) : isSaveAttempted ? (
+              <>Processando...</>
+            ) : saveSuccess ? (
+              <>
+                <CheckCircle className="w-4 h-4 mr-2" />
+                Salvo com Sucesso
+              </>
+            ) : (
+              <>
+                <Save className="w-4 h-4 mr-2" />
+                Salvar Alterações
+              </>
+            )}
+          </Button>
+        </div>
       </div>
 
       <Tabs defaultValue="visual" className="w-full">

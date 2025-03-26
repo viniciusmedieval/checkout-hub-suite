@@ -1,5 +1,4 @@
 
-// src/components/configuracao/services/saveConfigService.ts
 import { isSupabaseInitialized } from "@/lib/supabase";
 import { ConfigCheckout } from "@/lib/types/database-types"; 
 import { toast } from "sonner";
@@ -14,6 +13,12 @@ import { supabase } from "@/lib/supabase";
 export const saveConfig = async (config: ConfigCheckout): Promise<ConfigCheckout | null> => {
   try {
     console.log("🔄 Iniciando saveConfig com dados:", config);
+    
+    // For testing purposes - log our specific test values
+    console.log("🧪 Valores de teste:");
+    console.log(`cor_fundo: ${config.cor_fundo} (esperado: #FF0000)`);
+    console.log(`cor_texto: ${config.cor_texto} (esperado: #FFFFFF)`);
+    console.log(`texto_botao: ${config.texto_botao} (esperado: Finalizar Compra)`);
 
     // Verificar se o cliente Supabase está inicializado corretamente
     if (!isSupabaseInitialized() || !supabase) {
