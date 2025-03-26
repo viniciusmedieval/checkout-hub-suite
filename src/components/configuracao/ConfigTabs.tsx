@@ -6,7 +6,7 @@ import { DepoimentosTab } from "@/components/configuracao/DepoimentosTab";
 import { RodapeTab } from "@/components/configuracao/sections/RodapeTab";
 import { BotoesTab } from "@/components/configuracao/sections/BotoesTab";
 import { IconesTab } from "@/components/configuracao/sections/IconesTab";
-import { VisualTab } from "@/components/configuracao/sections/VisualTab";
+import { VisualConfiguracao } from "@/components/configuracao/sections/VisualConfiguracao";
 import { RedirecoesTab } from "@/components/configuracao/sections/RedirecoesTab";
 import { RandomModeTab } from "@/components/configuracao/sections/RandomModeTab";
 import { PixConfigTab } from "./sections/pix-config/PixConfigTab";
@@ -58,11 +58,7 @@ export function ConfigTabs({
       </TabsList>
 
       <TabsContent value="visual" className="space-y-4 mt-4">
-        <VisualTab 
-          config={typedConfig} 
-          handleConfigChange={handleConfigChange}
-          handleSwitchChange={handleSwitchChange}
-        />
+        <VisualConfiguracao />
       </TabsContent>
 
       <TabsContent value="header" className="space-y-4 mt-4">
