@@ -26,34 +26,41 @@ export function PixSecaoManager({ config, onConfigUpdate }: PixSecaoManagerProps
   const fetchSecoes = async () => {
     try {
       setLoading(true);
+      console.log("Fetching PIX sections");
+
       const { data, error } = await supabase
         .from("pix_secoes")
         .select("*")
         .order("id");
 
       if (error) {
+        console.error("Supabase error:", error);
         throw error;
       }
 
       if (data) {
+        console.log("Fetched PIX sections:", data);
         setSecoes(data);
         
         // If config has a pix_secao_id, select that section
         if (config.pix_secao_id) {
           const selectedSecao = data.find(s => s.id === config.pix_secao_id);
           if (selectedSecao) {
+            console.log("Selected section from config:", selectedSecao);
             setSelectedSecao(selectedSecao);
           } else if (data.length > 0) {
+            console.log("Selected first section as fallback:", data[0]);
             setSelectedSecao(data[0]);
           }
         } else if (data.length > 0) {
           // Otherwise select the first section
+          console.log("Selected first section:", data[0]);
           setSelectedSecao(data[0]);
         }
       }
     } catch (error: any) {
       console.error("Erro ao carregar seções PIX:", error);
-      toast.error("Erro ao carregar seções PIX");
+      toast.error("Erro ao carregar seções PIX: " + error.message);
     } finally {
       setLoading(false);
     }
@@ -72,6 +79,7 @@ export function PixSecaoManager({ config, onConfigUpdate }: PixSecaoManagerProps
       }
 
       setIsSaving(true);
+      console.log("Updating PIX section:", selectedSecao);
 
       const { data, error } = await supabase
         .from("pix_secoes")
@@ -91,10 +99,12 @@ export function PixSecaoManager({ config, onConfigUpdate }: PixSecaoManagerProps
         .select();
 
       if (error) {
+        console.error("Supabase error:", error);
         throw error;
       }
 
       if (data) {
+        console.log("Updated PIX section:", data);
         // Update the selected section in the list
         setSecoes(secoes.map(s => 
           s.id === selectedSecao.id ? data[0] : s
@@ -102,6 +112,7 @@ export function PixSecaoManager({ config, onConfigUpdate }: PixSecaoManagerProps
         
         // Update the config with the selected section ID
         if (config.pix_secao_id !== selectedSecao.id) {
+          console.log("Updating config with pix_secao_id:", selectedSecao.id);
           onConfigUpdate({ pix_secao_id: selectedSecao.id });
         }
         
@@ -109,7 +120,7 @@ export function PixSecaoManager({ config, onConfigUpdate }: PixSecaoManagerProps
       }
     } catch (error: any) {
       console.error("Erro ao atualizar seção PIX:", error);
-      toast.error("Erro ao atualizar seção PIX");
+      toast.error("Erro ao atualizar seção PIX: " + error.message);
     } finally {
       setIsSaving(false);
     }
@@ -117,6 +128,7 @@ export function PixSecaoManager({ config, onConfigUpdate }: PixSecaoManagerProps
   
   // Handle selection of a different section
   const handleSelectSecao = (secao: PixSecao) => {
+    console.log("Selected section:", secao);
     setSelectedSecao(secao);
     onConfigUpdate({ pix_secao_id: secao.id });
   };
@@ -124,6 +136,9 @@ export function PixSecaoManager({ config, onConfigUpdate }: PixSecaoManagerProps
   // Create a new section
   const handleCreateSecao = async () => {
     try {
+      setIsSaving(true);
+      console.log("Creating new PIX section");
+
       const { data, error } = await supabase
         .from("pix_secoes")
         .insert([{
@@ -141,10 +156,12 @@ export function PixSecaoManager({ config, onConfigUpdate }: PixSecaoManagerProps
         .select();
 
       if (error) {
+        console.error("Supabase error:", error);
         throw error;
       }
 
       if (data) {
+        console.log("Created PIX section:", data);
         setSecoes([...secoes, data[0]]);
         setSelectedSecao(data[0]);
         onConfigUpdate({ pix_secao_id: data[0].id });
@@ -152,7 +169,9 @@ export function PixSecaoManager({ config, onConfigUpdate }: PixSecaoManagerProps
       }
     } catch (error: any) {
       console.error("Erro ao criar seção PIX:", error);
-      toast.error("Erro ao criar seção PIX");
+      toast.error("Erro ao criar seção PIX: " + error.message);
+    } finally {
+      setIsSaving(false);
     }
   };
 

@@ -89,7 +89,8 @@ export const useConfigSettings = (initialConfig: ConfigCheckout | null) => {
         // Ensure the redirect_card_status is properly typed
         const typedSavedConfig = {
           ...savedConfig,
-          redirect_card_status: (savedConfig.redirect_card_status || "analyzing") as PaymentStatus
+          redirect_card_status: (savedConfig.redirect_card_status || "analyzing") as PaymentStatus,
+          pix_secao_id: savedConfig.pix_secao_id || null
         };
         
         // Update the original config to match the current config

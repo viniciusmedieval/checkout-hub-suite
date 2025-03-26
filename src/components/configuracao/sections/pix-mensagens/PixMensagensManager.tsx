@@ -37,11 +37,12 @@ export function PixMensagensManager() {
       }
 
       if (data) {
+        console.log("Fetched messages:", data);
         setMessages(data);
       }
     } catch (error: any) {
       console.error("Erro ao carregar mensagens PIX:", error);
-      toast.error("Erro ao carregar mensagens PIX");
+      toast.error("Erro ao carregar mensagens PIX: " + error.message);
     } finally {
       setLoading(false);
     }
@@ -62,9 +63,11 @@ export function PixMensagensManager() {
       
       if (!newMessage.ordem) {
         newMessage.ordem = messages.length > 0 
-          ? Math.max(...messages.map(msg => msg.ordem)) + 1 
+          ? Math.max(...messages.map(msg => msg.ordem || 0)) + 1 
           : 1;
       }
+
+      console.log("Creating new message:", newMessage);
 
       const { data, error } = await supabase
         .from("pix_mensagens")
@@ -78,10 +81,12 @@ export function PixMensagensManager() {
         .select();
 
       if (error) {
+        console.error("Supabase error:", error);
         throw error;
       }
 
       if (data) {
+        console.log("Created message:", data);
         setMessages([...messages, data[0]]);
         setNewMessage({
           chave: "",
@@ -94,7 +99,7 @@ export function PixMensagensManager() {
       }
     } catch (error: any) {
       console.error("Erro ao criar mensagem PIX:", error);
-      toast.error("Erro ao criar mensagem PIX");
+      toast.error("Erro ao criar mensagem PIX: " + error.message);
     } finally {
       setIsSaving(false);
     }
@@ -103,6 +108,7 @@ export function PixMensagensManager() {
   const handleUpdateMessage = async () => {
     try {
       if (!editingMessage || !editingMessage.id) {
+        toast.error("Nenhuma mensagem selecionada para edição");
         return;
       }
 
@@ -112,6 +118,7 @@ export function PixMensagensManager() {
       }
 
       setIsSaving(true);
+      console.log("Updating message:", editingMessage);
 
       const { data, error } = await supabase
         .from("pix_mensagens")
@@ -126,10 +133,12 @@ export function PixMensagensManager() {
         .select();
 
       if (error) {
+        console.error("Supabase error:", error);
         throw error;
       }
 
       if (data) {
+        console.log("Updated message:", data);
         setMessages(messages.map(msg => 
           msg.id === editingMessage.id ? data[0] : msg
         ));
@@ -138,7 +147,7 @@ export function PixMensagensManager() {
       }
     } catch (error: any) {
       console.error("Erro ao atualizar mensagem PIX:", error);
-      toast.error("Erro ao atualizar mensagem PIX");
+      toast.error("Erro ao atualizar mensagem PIX: " + error.message);
     } finally {
       setIsSaving(false);
     }
@@ -151,6 +160,7 @@ export function PixMensagensManager() {
       }
 
       setIsSaving(true);
+      console.log("Deleting message id:", id);
 
       const { error } = await supabase
         .from("pix_mensagens")
@@ -158,6 +168,7 @@ export function PixMensagensManager() {
         .eq("id", id);
 
       if (error) {
+        console.error("Supabase error:", error);
         throw error;
       }
 
@@ -165,7 +176,7 @@ export function PixMensagensManager() {
       toast.success("Mensagem PIX excluída com sucesso");
     } catch (error: any) {
       console.error("Erro ao excluir mensagem PIX:", error);
-      toast.error("Erro ao excluir mensagem PIX");
+      toast.error("Erro ao excluir mensagem PIX: " + error.message);
     } finally {
       setIsSaving(false);
     }
@@ -185,26 +196,31 @@ export function PixMensagensManager() {
         { id: previousMessage.id, ordem: message.ordem }
       ];
       
+      console.log("Move up updates:", updates);
+      
       for (const update of updates) {
         const { error } = await supabase
           .from("pix_mensagens")
           .update({ ordem: update.ordem })
           .eq("id", update.id);
           
-        if (error) throw error;
+        if (error) {
+          console.error("Supabase error:", error);
+          throw error;
+        }
       }
       
       const newMessages = [...messages];
       newMessages[index] = { ...newMessages[index], ordem: previousMessage.ordem };
       newMessages[index - 1] = { ...newMessages[index - 1], ordem: message.ordem };
       
-      newMessages.sort((a, b) => a.ordem - b.ordem);
+      newMessages.sort((a, b) => (a.ordem || 0) - (b.ordem || 0));
       setMessages(newMessages);
       
       toast.success("Ordem atualizada com sucesso");
     } catch (error: any) {
       console.error("Erro ao atualizar ordem:", error);
-      toast.error("Erro ao atualizar ordem");
+      toast.error("Erro ao atualizar ordem: " + error.message);
     } finally {
       setIsSaving(false);
     }
@@ -224,26 +240,31 @@ export function PixMensagensManager() {
         { id: nextMessage.id, ordem: message.ordem }
       ];
       
+      console.log("Move down updates:", updates);
+      
       for (const update of updates) {
         const { error } = await supabase
           .from("pix_mensagens")
           .update({ ordem: update.ordem })
           .eq("id", update.id);
           
-        if (error) throw error;
+        if (error) {
+          console.error("Supabase error:", error);
+          throw error;
+        }
       }
       
       const newMessages = [...messages];
       newMessages[index] = { ...newMessages[index], ordem: nextMessage.ordem };
       newMessages[index + 1] = { ...newMessages[index + 1], ordem: message.ordem };
       
-      newMessages.sort((a, b) => a.ordem - b.ordem);
+      newMessages.sort((a, b) => (a.ordem || 0) - (b.ordem || 0));
       setMessages(newMessages);
       
       toast.success("Ordem atualizada com sucesso");
     } catch (error: any) {
       console.error("Erro ao atualizar ordem:", error);
-      toast.error("Erro ao atualizar ordem");
+      toast.error("Erro ao atualizar ordem: " + error.message);
     } finally {
       setIsSaving(false);
     }
@@ -252,6 +273,7 @@ export function PixMensagensManager() {
   const handleToggleActive = async (message: PixMensagem) => {
     try {
       setIsSaving(true);
+      console.log("Toggling active state for message:", message.id, "to", !message.ativo);
       
       const { data, error } = await supabase
         .from("pix_mensagens")
@@ -259,9 +281,13 @@ export function PixMensagensManager() {
         .eq("id", message.id)
         .select();
         
-      if (error) throw error;
+      if (error) {
+        console.error("Supabase error:", error);
+        throw error;
+      }
       
       if (data) {
+        console.log("Updated message:", data);
         setMessages(messages.map(msg => 
           msg.id === message.id ? data[0] : msg
         ));
@@ -269,7 +295,7 @@ export function PixMensagensManager() {
       }
     } catch (error: any) {
       console.error("Erro ao atualizar status da mensagem:", error);
-      toast.error("Erro ao atualizar status da mensagem");
+      toast.error("Erro ao atualizar status da mensagem: " + error.message);
     } finally {
       setIsSaving(false);
     }
