@@ -1,4 +1,3 @@
-
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { HeaderTab } from "@/components/configuracao/sections/HeaderTab";
 import { ConteudoTab } from "@/components/configuracao/sections/ConteudoTab";
@@ -10,7 +9,7 @@ import { IconesTab } from "@/components/configuracao/sections/IconesTab";
 import { VisualTab } from "@/components/configuracao/sections/VisualTab";
 import { RedirecoesTab } from "@/components/configuracao/sections/RedirecoesTab";
 import { RandomModeTab } from "@/components/configuracao/sections/RandomModeTab";
-import { PixConfigTab } from "@/components/configuracao/sections/PixConfigTab";
+import { PixConfigTab } from "./sections/pix-config/PixConfigTab";
 import { InstallmentsTab } from "@/components/configuracao/sections/InstallmentsTab";
 import { ConfigCheckout } from "@/lib/types/database-types";
 import { Depoimento } from "@/lib/supabase";
