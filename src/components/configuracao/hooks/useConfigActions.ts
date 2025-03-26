@@ -28,15 +28,19 @@ export const useConfigActions = (
   } = useTestConfig(config, setConfig, handleSaveConfig);
   
   const runAutomaticTest = useCallback(async () => {
-    if (isAutoTestRunning) return;
+    if (isAutoTestRunning) {
+      console.log("Auto test already running, ignoring request");
+      return;
+    }
     
+    console.log("Starting automatic test");
     setIsAutoTestRunning(true);
     setTestAutoRunning(true);
     toast.info("Iniciando teste automático...");
     
     try {
-      // Save original config
-      const originalConfig = { ...config };
+      // Make a deep copy to avoid reference issues
+      const originalConfig = JSON.parse(JSON.stringify(config));
       
       console.log("Starting automatic test with config:", JSON.stringify(config));
       const testResult = await runAutoSaveTest(handleSaveConfig, setConfig, config);
@@ -49,13 +53,14 @@ export const useConfigActions = (
           const reloadedConfig = await reloadConfig();
           if (!reloadedConfig) {
             // If reload fails, restore original config
+            console.log("Reload failed, restoring original config");
             setConfig(originalConfig);
           }
           setIsAutoTestRunning(false);
           setTestAutoRunning(false);
-        }, 1000);
+        }, 1500);
       } else {
-        console.error("Test failed with no error message");
+        console.error("Test failed");
         toast.error("❌ Teste automático falhou");
         // Restore original config
         setConfig(originalConfig);

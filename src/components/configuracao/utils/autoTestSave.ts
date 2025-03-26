@@ -8,8 +8,8 @@ export const runAutoSaveTest = async (
   originalConfig: ConfigCheckout
 ): Promise<boolean> => {
   try {
-    // Save the original config for restoration later
-    const backupConfig = { ...originalConfig };
+    // Make a deep copy of the original config to avoid reference issues
+    const backupConfig = JSON.parse(JSON.stringify(originalConfig));
     console.log("Auto-save test: Original config backed up", backupConfig);
     
     // Set test values
@@ -24,31 +24,39 @@ export const runAutoSaveTest = async (
     setConfig(testConfig);
     
     // Wait a moment for state to update
-    await new Promise(resolve => setTimeout(resolve, 500));
+    await new Promise(resolve => setTimeout(resolve, 1000));
     
     // Try to save the test config
     console.log("Auto-save test: Attempting to save test config");
     const savedConfig = await handleSaveConfig();
     
+    let success = false;
+    
     if (!savedConfig) {
       console.error("Auto-save test: Save failed - null result");
       toast.error("Teste automático: Falha ao salvar configuração");
-      
-      // Restore original config
-      console.log("Auto-save test: Restoring original config after failure");
-      setConfig(backupConfig);
-      return false;
+    } else {
+      console.log("Auto-save test: Test completed successfully", savedConfig);
+      success = true;
+      toast.success("Teste automático: Configuração salva com sucesso");
     }
     
-    console.log("Auto-save test: Test completed successfully", savedConfig);
-    return true;
-  } catch (error) {
+    // Always restore original config after test
+    console.log("Auto-save test: Restoring original config after test", backupConfig);
+    setTimeout(() => {
+      setConfig(backupConfig);
+    }, 2000);
+    
+    return success;
+  } catch (error: any) {
     console.error("Auto-save test: Error during test", error);
     
     // If we have the original config, restore it
     if (originalConfig) {
       console.log("Auto-save test: Restoring original config after error");
-      setConfig(originalConfig);
+      setTimeout(() => {
+        setConfig(originalConfig);
+      }, 1000);
     }
     
     toast.error(`Teste automático: Erro - ${error instanceof Error ? error.message : "Erro desconhecido"}`);

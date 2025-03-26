@@ -14,19 +14,20 @@ interface FormularioTabProps {
 }
 
 export function FormularioTab({ config, handleConfigChange, handleSwitchChange }: FormularioTabProps) {
-  // Log quando as props mudam para ajudar na depuração
+  // Enhanced logging
   useEffect(() => {
-    console.log("FormularioTab recebeu config atualizada:", config);
+    console.log("FormularioTab mount/update with config:", JSON.stringify(config));
   }, [config]);
 
-  // Handler para verificar se os eventos estão sendo disparados corretamente
+  // Create local handlers with detailed logging
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-    console.log(`Campo ${e.target.name} alterado para: ${e.target.value}`);
+    const { name, value } = e.target;
+    console.log(`Form field ${name} changed to: "${value}"`);
     handleConfigChange(e);
   };
 
   const handleToggleChange = (name: string, checked: boolean) => {
-    console.log(`Switch ${name} alterado para: ${checked}`);
+    console.log(`Switch ${name} toggled to: ${checked}`);
     handleSwitchChange(name, checked);
   };
 

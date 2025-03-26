@@ -19,28 +19,40 @@ export const useConfigSettings = (initialConfig: ConfigCheckout | null) => {
     }
   }, [initialConfig]);
 
-  // Handler for text input changes
+  // Handler for text input changes with improved debugging
   const handleConfigChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
-    console.log(`handleConfigChange: ${name} = ${value}`);
-    setConfig(prev => ({ ...prev, [name]: value }));
+    console.log(`handleConfigChange fired: ${name} = "${value}"`);
+    
+    setConfig(prev => {
+      const updated = { ...prev, [name]: value };
+      console.log(`Config updated for ${name}:`, updated);
+      return updated;
+    });
   };
 
-  // Handler for switch changes
+  // Handler for switch changes with improved debugging
   const handleSwitchChange = (name: string, checked: boolean) => {
-    console.log(`handleSwitchChange: ${name} = ${checked}`);
-    setConfig(prev => ({ ...prev, [name]: checked }));
+    console.log(`handleSwitchChange fired: ${name} = ${checked}`);
+    
+    setConfig(prev => {
+      const updated = { ...prev, [name]: checked };
+      console.log(`Config updated for ${name}:`, updated);
+      return updated;
+    });
   };
 
   // Handler for icon selection
   const handleIconChange = (iconField: string, iconName: string) => {
-    console.log(`handleIconChange: ${iconField} = ${iconName}`);
+    console.log(`handleIconChange fired: ${iconField} = ${iconName}`);
+    
     setConfig(prev => ({ ...prev, [iconField]: iconName }));
   };
   
   // Handler for select changes (dropdown)
   const handleSelectChange = (name: string, value: string | number) => {
-    console.log(`handleSelectChange: ${name} = ${value}`);
+    console.log(`handleSelectChange fired: ${name} = ${value}`);
+    
     setConfig(prev => ({ ...prev, [name]: value }));
   };
 
@@ -51,7 +63,7 @@ export const useConfigSettings = (initialConfig: ConfigCheckout | null) => {
       status = "analyzing";
     }
     
-    console.log(`handleStatusChange: redirect_card_status = ${status}`);
+    console.log(`handleStatusChange fired: redirect_card_status = ${status}`);
     setConfig(prev => ({ ...prev, redirect_card_status: status }));
   };
 
@@ -64,7 +76,7 @@ export const useConfigSettings = (initialConfig: ConfigCheckout | null) => {
     const currentJson = JSON.stringify(config);
     const hasChanges = originalJson !== currentJson;
     
-    console.log(`hasUnsavedChanges: ${hasChanges}`);
+    console.log(`hasUnsavedChanges check: ${hasChanges}`);
     return hasChanges;
   };
 

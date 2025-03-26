@@ -10,8 +10,14 @@ interface MainButtonSettingsProps {
 }
 
 export function MainButtonSettings({ config, handleConfigChange }: MainButtonSettingsProps) {
-  // Add console log to debug config values
-  console.log("MainButtonSettings config:", config);
+  // Add debug logging
+  console.log("MainButtonSettings rendering with config:", config);
+
+  // Create local input change handler for debugging
+  const handleInputChangeWithLog = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    console.log(`Button text changed to: ${e.target.value}`);
+    handleConfigChange(e);
+  };
   
   return (
     <>
@@ -20,7 +26,7 @@ export function MainButtonSettings({ config, handleConfigChange }: MainButtonSet
         <Input
           name="texto_botao"
           value={config.texto_botao || ""}
-          onChange={handleConfigChange}
+          onChange={handleInputChangeWithLog}
           placeholder="Ex: COMPRAR AGORA"
         />
         <p className="text-xs text-gray-500">
