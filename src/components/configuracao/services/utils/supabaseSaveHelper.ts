@@ -39,6 +39,7 @@ export const salvarDadosSupabase = async <T>(
       
       result = data;
       console.log(`✅ Registro atualizado com sucesso em ${tabela}:`, result);
+      console.log("Resultado do Supabase:", data);
     } else {
       console.log(`🔄 Inserindo novo registro em ${tabela}`);
       
@@ -54,6 +55,7 @@ export const salvarDadosSupabase = async <T>(
       
       result = data;
       console.log(`✅ Registro inserido com sucesso em ${tabela}:`, result);
+      console.log("Resultado do Supabase:", data);
     }
     
     if (!result || result.length === 0) {
@@ -75,7 +77,7 @@ export const salvarDadosSupabase = async <T>(
 export const upsertDadosSupabase = async <T>(
   tabela: string,
   dados: any,
-  onConflict?: string | string[]
+  onConflict: string = 'id'  // Corrigido: agora aceita apenas string
 ): Promise<T | null> => {
   try {
     const client = await getSupabaseClient();
@@ -86,8 +88,9 @@ export const upsertDadosSupabase = async <T>(
     }
     
     console.log(`🔄 Realizando upsert em ${tabela}`);
+    console.log(`🔄 Usando onConflict='${onConflict}'`);
     
-    // Corrigido: o onConflict precisa ser passado como opção dentro do método upsert, não como método separado
+    // Corrigido: onConflict agora é apenas string, passada como opção no método upsert
     const { data, error } = await client
       .from(tabela)
       .upsert(dados, { onConflict: onConflict })
@@ -104,6 +107,7 @@ export const upsertDadosSupabase = async <T>(
     }
     
     console.log(`✅ Upsert realizado com sucesso em ${tabela}:`, data);
+    console.log("Resultado do Supabase:", data);
     return data[0] as T;
   } catch (error: any) {
     console.error(`❌ Erro ao fazer upsert em ${tabela}:`, error);
