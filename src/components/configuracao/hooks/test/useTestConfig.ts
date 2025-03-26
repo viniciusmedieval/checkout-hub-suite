@@ -53,9 +53,9 @@ export const useTestConfig = (
           if (savedConfig) {
             console.log("✅ Teste automático - Configuração salva com sucesso:", savedConfig);
             console.log("Verificando valores salvos:");
-            console.log(`- cor_fundo: ${savedConfig.cor_fundo} (esperado: #FF0000)`);
-            console.log(`- cor_texto: ${savedConfig.cor_texto} (esperado: #FFFFFF)`);
-            console.log(`- texto_botao: ${savedConfig.texto_botao} (esperado: Finalizar Compra)`);
+            console.log(`- cor_fundo: ${savedConfig.cor_fundo} (esperado: #FF0000) ${savedConfig.cor_fundo === "#FF0000" ? "✓" : "✗"}`);
+            console.log(`- cor_texto: ${savedConfig.cor_texto} (esperado: #FFFFFF) ${savedConfig.cor_texto === "#FFFFFF" ? "✓" : "✗"}`);
+            console.log(`- texto_botao: ${savedConfig.texto_botao} (esperado: Finalizar Compra) ${savedConfig.texto_botao === "Finalizar Compra" ? "✓" : "✗"}`);
             toast.success("Teste: Configuração salva com sucesso!");
           } else {
             console.error("❌ Teste falhou ao salvar configuração: resultado nulo");

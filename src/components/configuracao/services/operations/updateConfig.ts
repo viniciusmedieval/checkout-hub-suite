@@ -81,7 +81,7 @@ export async function updateExistingConfig(config: ConfigCheckout, configToSave:
       .from("config_checkout")
       .update(configToSave)
       .eq("id", config.id)
-      .select("*"); // CORREÇÃO: Garantir que o select seja chamado após o update
+      .select("*"); // Garantir que o select seja chamado após o update
 
     if (error) {
       console.error("❌ Erro ao atualizar configurações:", error);

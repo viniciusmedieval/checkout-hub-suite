@@ -108,13 +108,19 @@ Deno.serve(async (req) => {
           .from('config_checkout')
           .update(config)
           .eq('id', config.id)
-          .select() // CORREÇÃO: Garantir que o select seja chamado após o update
+          .select('*') // Garantir que o select seja chamado após o update
         
         if (error) {
           console.error('Error updating config:', error)
           throw error
         }
         
+        if (!data || data.length === 0) {
+          console.error('No data returned after update')
+          throw new Error('No data returned after update')
+        }
+        
+        console.log('Config updated successfully:', data)
         result = data
       } else {
         console.log('Inserting new config')
@@ -123,13 +129,19 @@ Deno.serve(async (req) => {
         const { data, error } = await supabase
           .from('config_checkout')
           .insert(config)
-          .select() // CORREÇÃO: Garantir que o select seja chamado após o insert
+          .select('*') // Garantir que o select seja chamado após o insert
         
         if (error) {
           console.error('Error inserting config:', error)
           throw error
         }
         
+        if (!data || data.length === 0) {
+          console.error('No data returned after insert')
+          throw new Error('No data returned after insert')
+        }
+        
+        console.log('Config inserted successfully:', data)
         result = data
       }
       
@@ -138,6 +150,15 @@ Deno.serve(async (req) => {
         console.log('🧪 TESTE AUTOMÁTICO BEM-SUCEDIDO! ✅')
         console.log('🧪 Valores de teste foram salvos no banco de dados!')
         console.log('Saved config result:', JSON.stringify(result, null, 2))
+        
+        // Verificação adicional dos valores salvos
+        if (result && result.length > 0) {
+          const saved = result[0]
+          console.log('🧪 VERIFICAÇÃO DOS VALORES SALVOS:')
+          console.log(`  cor_fundo: ${saved.cor_fundo} (esperado: #FF0000) ${saved.cor_fundo === '#FF0000' ? '✅' : '❌'}`)
+          console.log(`  cor_texto: ${saved.cor_texto} (esperado: #FFFFFF) ${saved.cor_texto === '#FFFFFF' ? '✅' : '❌'}`)
+          console.log(`  texto_botao: ${saved.texto_botao} (esperado: Finalizar Compra) ${saved.texto_botao === 'Finalizar Compra' ? '✅' : '❌'}`)
+        }
       }
       
       return new Response(
