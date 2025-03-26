@@ -19,43 +19,55 @@ export const useTestConfig = (
     setIsTestSaving(true);
     toast.loading("Executando teste de salvamento...");
     
+    // Save original config before modifying
     const originalConfig = { ...config };
     
     try {
+      console.log("Running test save with original config:", JSON.stringify(originalConfig));
+      
       // Atualizar a configuração com valores de teste
-      setConfig(prev => {
-        const testConfig = {
-          ...prev,
-          cor_fundo: "#FF0000",
-          cor_texto: "#FFFFFF",
-          texto_botao: "Finalizar Compra"
-        };
-        return testConfig;
-      });
+      const testConfig = {
+        ...originalConfig,
+        cor_fundo: "#FF0000",
+        cor_texto: "#FFFFFF",
+        texto_botao: "Finalizar Compra"
+      };
+      
+      console.log("Setting test config:", JSON.stringify(testConfig));
+      setConfig(testConfig);
 
       // Adicionando um pequeno atraso para garantir que o estado seja atualizado
       setTimeout(async () => {
         try {
+          console.log("Attempting to save test config");
           const savedConfig = await handleSaveConfig();
           
           if (savedConfig) {
+            console.log("Test save successful:", JSON.stringify(savedConfig));
             toast.success("Teste: Configuração salva com sucesso!");
           } else {
-            console.error("Teste falhou ao salvar configuração: resultado nulo");
+            console.error("Test failed: null result from handleSaveConfig");
             toast.error("Teste: Erro ao salvar configuração - resultado nulo");
+            // Restore original config
+            console.log("Restoring original config after test failure");
             setConfig(originalConfig);
           }
         } catch (error) {
-          console.error("Teste falhou com erro", error);
+          console.error("Test save failed with error:", error);
           toast.error("Teste falhou: " + (error instanceof Error ? error.message : "Erro desconhecido"));
+          // Restore original config
+          console.log("Restoring original config after test error");
           setConfig(originalConfig);
         } finally {
           setIsTestSaving(false);
         }
       }, 500);
     } catch (error) {
-      console.error("Erro ao executar teste", error);
+      console.error("Error setting up test:", error);
       toast.error("Erro ao executar teste: " + (error instanceof Error ? error.message : "Erro desconhecido"));
+      // Restore original config
+      console.log("Restoring original config after setup error");
+      setConfig(originalConfig);
       setIsTestSaving(false);
     }
   }, [config, setConfig, handleSaveConfig, isTestSaving]);

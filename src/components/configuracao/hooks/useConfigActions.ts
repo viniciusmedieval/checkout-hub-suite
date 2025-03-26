@@ -23,16 +23,22 @@ export const useConfigActions = (
   
   const {
     isTestSaving,
-    runTestSave
+    runTestSave,
+    setIsAutoTestRunning: setTestAutoRunning
   } = useTestConfig(config, setConfig, handleSaveConfig);
   
   const runAutomaticTest = useCallback(async () => {
     if (isAutoTestRunning) return;
     
     setIsAutoTestRunning(true);
+    setTestAutoRunning(true);
     toast.info("Iniciando teste automático...");
     
     try {
+      // Save original config
+      const originalConfig = { ...config };
+      
+      console.log("Starting automatic test with config:", JSON.stringify(config));
       const testResult = await runAutoSaveTest(handleSaveConfig, setConfig, config);
       
       if (testResult) {
@@ -40,19 +46,29 @@ export const useConfigActions = (
         
         // Reload config after successful test
         setTimeout(async () => {
-          await reloadConfig();
+          const reloadedConfig = await reloadConfig();
+          if (!reloadedConfig) {
+            // If reload fails, restore original config
+            setConfig(originalConfig);
+          }
           setIsAutoTestRunning(false);
+          setTestAutoRunning(false);
         }, 1000);
       } else {
+        console.error("Test failed with no error message");
         toast.error("❌ Teste automático falhou");
+        // Restore original config
+        setConfig(originalConfig);
         setIsAutoTestRunning(false);
+        setTestAutoRunning(false);
       }
     } catch (error) {
       console.error("Error during automatic test:", error);
       toast.error("Erro durante teste automático: " + (error instanceof Error ? error.message : "Erro desconhecido"));
       setIsAutoTestRunning(false);
+      setTestAutoRunning(false);
     }
-  }, [config, handleSaveConfig, setConfig, reloadConfig, isAutoTestRunning]);
+  }, [config, handleSaveConfig, setConfig, reloadConfig, isAutoTestRunning, setTestAutoRunning]);
   
   return {
     isSaveAttempted,

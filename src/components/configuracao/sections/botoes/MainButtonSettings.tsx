@@ -10,13 +10,16 @@ interface MainButtonSettingsProps {
 }
 
 export function MainButtonSettings({ config, handleConfigChange }: MainButtonSettingsProps) {
+  // Add console log to debug config values
+  console.log("MainButtonSettings config:", config);
+  
   return (
     <>
       <div className="space-y-2">
         <label className="text-sm font-medium">Texto do Botão</label>
         <Input
           name="texto_botao"
-          value={config.texto_botao || "COMPRAR AGORA"}
+          value={config.texto_botao || ""}
           onChange={handleConfigChange}
           placeholder="Ex: COMPRAR AGORA"
         />

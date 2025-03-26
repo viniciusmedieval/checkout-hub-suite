@@ -66,7 +66,7 @@ export function ConfigHeader({
       <div className="flex gap-2">
         <Button 
           onClick={handleAutoTestClick}
-          disabled={isAutoTestRunning}
+          disabled={isAutoTestRunning || isTestSaving || isSaving}
           className="bg-green-600 hover:bg-green-700 transition-colors duration-300"
         >
           {isAutoTestRunning ? (
@@ -86,7 +86,7 @@ export function ConfigHeader({
         
         <Button 
           onClick={handleTestSaveClick}
-          disabled={isTestSaving || isAutoTestRunning}
+          disabled={isTestSaving || isAutoTestRunning || isSaving}
           className="bg-purple-600 hover:bg-purple-700 transition-colors duration-300"
         >
           {isTestSaving ? (
@@ -106,7 +106,7 @@ export function ConfigHeader({
         
         <Button 
           onClick={handleSaveClick} 
-          disabled={isSaving || !hasUnsavedChanges() || isAutoTestRunning}
+          disabled={isSaving || !hasUnsavedChanges() || isAutoTestRunning || isTestSaving}
           className={`${saveSuccess ? 'bg-green-600 hover:bg-green-700' : 'bg-blue-600 hover:bg-blue-700'} transition-colors duration-300`}
         >
           {isSaving ? (
