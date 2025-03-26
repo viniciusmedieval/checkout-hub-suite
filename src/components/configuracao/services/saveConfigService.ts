@@ -44,7 +44,7 @@ export const saveConfig = async (config: ConfigCheckout): Promise<ConfigCheckout
       }
     }
 
-    // Test Supabase connection explicitly
+    // Simplificar teste de conexão com o Supabase
     try {
       console.log("🔄 Testando conexão com o Supabase antes de salvar...");
       const client = await getSupabaseClient();
@@ -52,7 +52,7 @@ export const saveConfig = async (config: ConfigCheckout): Promise<ConfigCheckout
         throw new Error("Cliente Supabase não está disponível");
       }
       
-      // Use a simpler query instead of count(*) to avoid parsing issues
+      // Usar uma consulta mais simples
       const { data: testData, error: testError } = await client
         .from('config_checkout')
         .select('id')

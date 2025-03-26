@@ -1,10 +1,7 @@
 
 import { Button } from "@/components/ui/button";
 import { CheckCircle, Save, BeakerIcon, Zap } from "lucide-react";
-import { useState } from "react";
 import { toast } from "sonner";
-import { ConfigCheckout } from "@/lib/types/database-types";
-import { runAutoSaveTest } from "@/components/configuracao/utils/autoTestSave";
 
 interface ConfigHeaderProps {
   isAutoTestRunning: boolean;

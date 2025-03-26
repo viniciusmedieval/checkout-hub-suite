@@ -1,5 +1,5 @@
 
-import { supabase, getSupabaseClient } from "@/lib/supabase";
+import { getSupabaseClient } from "@/lib/supabase";
 import { ConfigCheckout } from "@/lib/types/database-types";
 import { toast } from "sonner";
 import { ensureBooleanFields } from "../utils/configValidation";
@@ -36,9 +36,8 @@ export async function updateExistingConfig(config: ConfigCheckout, configToSave:
       });
     }
 
-    // Validate connection to Supabase
+    // Simplificar validação de conexão
     try {
-      // Use a simpler query instead of count(*) to avoid parsing issues
       const { data, error: queryError } = await client
         .from('config_checkout')
         .select('id')

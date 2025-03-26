@@ -1,5 +1,5 @@
 
-import { supabase, getSupabaseClient } from "@/lib/supabase";
+import { getSupabaseClient } from "@/lib/supabase";
 import { ConfigCheckout } from "@/lib/types/database-types";
 import { toast } from "sonner";
 import { ensureBooleanFields } from "../utils/configValidation";
@@ -35,7 +35,7 @@ export async function createNewConfig(configToSave: any): Promise<ConfigCheckout
       });
     }
 
-    // Verify connection with a very simple query
+    // Verificação de conexão simplificada
     try {
       const { error: pingError } = await client
         .from('config_checkout')

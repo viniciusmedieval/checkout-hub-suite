@@ -3,7 +3,7 @@ import { useState } from 'react';
 import { ConfigCheckout } from "@/lib/types/database-types";
 import { saveConfig as saveConfigService } from "../services";
 import { toast } from "sonner";
-import { supabase } from "@/lib/supabase"; 
+import { getSupabaseClient } from "@/lib/supabase"; 
 
 /**
  * Hook to manage configuration saving state and operations
@@ -27,11 +27,17 @@ export const useConfigSaver = () => {
       
       // Verify Supabase connection first
       try {
-        if (!supabase) {
+        const client = await getSupabaseClient();
+        if (!client) {
           throw new Error("Supabase client is not initialized");
         }
         
-        const { error: connectionError } = await supabase.from('config_checkout').select('count(*)', { count: 'exact' }).limit(1);
+        // Usar uma consulta mais simples para verificar conexão
+        const { error: connectionError } = await client
+          .from('config_checkout')
+          .select('id')
+          .limit(1);
+          
         if (connectionError) {
           throw new Error(`Supabase connection test failed: ${connectionError.message}`);
         }

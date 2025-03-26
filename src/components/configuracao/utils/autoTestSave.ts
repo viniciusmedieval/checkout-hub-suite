@@ -1,7 +1,7 @@
 
 import { ConfigCheckout } from "@/lib/types/database-types";
 import { toast } from "sonner";
-import { supabase, getSupabaseClient } from "@/lib/supabase";
+import { getSupabaseClient } from "@/lib/supabase";
 
 /**
  * Automatically runs a save test with predefined values
@@ -17,6 +17,7 @@ export const runAutoSaveTest = async (
   try {
     console.log("🔄 Iniciando teste automático de salvamento");
     console.log("----------------------------------------------");
+    toast.loading("Executando teste automático...");
     
     // First verify Supabase client is available
     try {
@@ -27,7 +28,7 @@ export const runAutoSaveTest = async (
       }
       console.log("✅ Cliente Supabase disponível");
       
-      // Test connection with a simple query
+      // Teste simplificado para verificar conexão
       const { data, error } = await client
         .from('config_checkout')
         .select('id')

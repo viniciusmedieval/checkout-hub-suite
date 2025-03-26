@@ -32,6 +32,7 @@ export const useConfigActions = (
 
     try {
       setIsSaveAttempted(true);
+      toast.loading("Salvando configurações...");
       console.log("🔄 Tentando salvar configuração...");
       
       const result = await handleSaveConfig();
@@ -61,7 +62,14 @@ export const useConfigActions = (
 
   const runTestSave = useCallback(async () => {
     console.log("🔄 runTestSave iniciado");
+    
+    if (isTestSaving) {
+      console.log("ℹ️ Teste de salvamento já em andamento");
+      return;
+    }
+    
     setIsTestSaving(true);
+    toast.loading("Executando teste de salvamento...");
     
     try {
       console.log("🔄 Iniciando teste automático de salvamento de configuração");
@@ -128,11 +136,18 @@ export const useConfigActions = (
       toast.error("Erro ao executar teste: " + (error instanceof Error ? error.message : "Erro desconhecido"));
       setIsTestSaving(false);
     }
-  }, [config, setConfig, handleSaveConfig]);
+  }, [config, setConfig, handleSaveConfig, isTestSaving]);
 
   const runAutomaticTest = useCallback(async () => {
     console.log("🔄 runAutomaticTest iniciado");
+    
+    if (isAutoTestRunning) {
+      console.log("ℹ️ Teste automático já em andamento");
+      return;
+    }
+    
     setIsAutoTestRunning(true);
+    toast.loading("Executando teste automático...");
     
     try {
       console.log("🔄 Iniciando teste de configuração automático");
@@ -195,7 +210,7 @@ export const useConfigActions = (
       toast.error("Erro no teste automático: " + (error instanceof Error ? error.message : "Erro desconhecido"));
       setIsAutoTestRunning(false);
     }
-  }, [config, setConfig, handleSaveConfig]);
+  }, [config, setConfig, handleSaveConfig, isAutoTestRunning]);
 
   return {
     isSaveAttempted,
