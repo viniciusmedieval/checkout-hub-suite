@@ -22,6 +22,18 @@ export async function createNewConfig(configToSave: any): Promise<ConfigCheckout
 
     // Insert new configuration
     const insertOperation = async () => {
+      if (isTest) {
+        console.log("Executando operação de teste (create) com valores:", configToSave);
+        
+        // For test configurations, we simulate a successful response
+        // instead of actually inserting into the database
+        return {
+          ...configToSave,
+          id: 999, // Mock ID for test
+          criado_em: new Date().toISOString()
+        };
+      }
+      
       const { data: insertedData, error: insertError } = await client
         .from("config_checkout")
         .insert([configToSave])

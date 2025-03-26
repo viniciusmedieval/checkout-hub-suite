@@ -23,6 +23,12 @@ export async function updateExistingConfig(config: ConfigCheckout, configToSave:
 
     // Verify the record exists
     const checkRecordExists = async () => {
+      if (isTest) {
+        console.log("Executando verificação de teste com ID:", config.id);
+        // For test configurations, pretend the record exists
+        return { id: config.id };
+      }
+      
       const { data, error } = await client
         .from("config_checkout")
         .select("id")
@@ -46,6 +52,7 @@ export async function updateExistingConfig(config: ConfigCheckout, configToSave:
     if (!existingRecord) {
       if (isTest) {
         // For test config, just return success without creating
+        console.log("Teste: Configuração não existe, simulando criação");
         toast.success("Teste: Configurações atualizadas com sucesso!");
         return configToSave as ConfigCheckout;
       }
@@ -54,6 +61,16 @@ export async function updateExistingConfig(config: ConfigCheckout, configToSave:
 
     // Update the existing configuration
     const updateOperation = async () => {
+      if (isTest) {
+        console.log("Executando operação de teste (update) com valores:", configToSave);
+        // For test configurations, we simulate a successful response
+        return {
+          ...configToSave,
+          id: config.id,
+          criado_em: config.criado_em || new Date().toISOString()
+        };
+      }
+      
       const { data, error } = await client
         .from("config_checkout")
         .update(configToSave)
