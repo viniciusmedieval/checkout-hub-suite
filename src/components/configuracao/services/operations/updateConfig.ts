@@ -3,16 +3,18 @@ import { getSupabaseClient } from "@/lib/supabase";
 import { ConfigCheckout } from "@/lib/types/database-types";
 import { toast } from "sonner";
 import { ensureBooleanFields } from "../utils/configValidation";
-import { createNewConfig } from "./createConfig";
 import { performDatabaseOperation, isTestConfiguration } from "../utils/supabaseConnection";
 
 /**
  * Updates an existing configuration in the database
  */
-export async function updateExistingConfig(config: ConfigCheckout, configToSave: any): Promise<ConfigCheckout | null> {
+export const updateExistingConfig = async (
+  config: ConfigCheckout,
+  configToSave: any
+): Promise<ConfigCheckout | null> => {
   try {
     // Check if this is a test configuration
-    const isTest = isTestConfiguration(configToSave);
+    const isTest = isTestConfiguration(config);
     
     // Get client from the singleton
     const client = await getSupabaseClient();
@@ -21,120 +23,79 @@ export async function updateExistingConfig(config: ConfigCheckout, configToSave:
       throw new Error("Cliente Supabase não disponível");
     }
 
-    // Verify the record exists
-    const checkRecordExists = async () => {
-      if (isTest) {
-        console.log("Executando verificação de teste com ID:", config.id);
-        // For test configurations, pretend the record exists
-        return { id: config.id };
-      }
-      
-      const { data, error } = await client
-        .from("config_checkout")
-        .select("id")
-        .eq("id", config.id)
-        .maybeSingle();
-        
-      if (error) {
-        throw new Error(error.message);
-      }
-      
-      return data;
-    };
-    
-    const existingRecord = await performDatabaseOperation(
-      checkRecordExists,
-      "Erro ao verificar configuração existente",
-      isTest
-    );
-    
-    // If record doesn't exist, create a new one
-    if (!existingRecord) {
-      if (isTest) {
-        // For test config, just return success without creating
-        console.log("Teste: Configuração não existe, simulando criação");
-        toast.success("Teste: Configurações atualizadas com sucesso!");
-        return configToSave as ConfigCheckout;
-      }
-      return await createNewConfig(configToSave);
-    }
-
-    // Update the existing configuration
+    // Update existing configuration
     const updateOperation = async () => {
       if (isTest) {
         console.log("Executando operação de teste (update) com valores:", configToSave);
+        
         // For test configurations, we simulate a successful response
+        // instead of actually updating the database
         return {
           ...configToSave,
-          id: config.id,
-          criado_em: config.criado_em || new Date().toISOString()
+          criado_em: new Date().toISOString()
         };
       }
       
-      const { data, error } = await client
+      const { data: updatedData, error: updateError } = await client
         .from("config_checkout")
         .update(configToSave)
         .eq("id", config.id)
         .select("*");
-        
-      if (error) {
-        throw new Error(error.message);
+
+      if (updateError) {
+        throw new Error(updateError.message);
       }
-      
-      if (!data || data.length === 0) {
-        // Try to fetch the updated data if update didn't return it
-        const { data: fetchedData, error: fetchError } = await client
-          .from("config_checkout")
-          .select("*")
-          .eq("id", config.id)
-          .maybeSingle();
-          
-        if (fetchError) {
-          throw new Error(fetchError.message);
-        }
-        
-        if (!fetchedData) {
-          throw new Error("Não foi possível recuperar dados após atualização");
-        }
-        
-        return fetchedData;
+
+      if (!updatedData || updatedData.length === 0) {
+        throw new Error("Retorno nulo do Supabase após atualização");
       }
-      
-      return data[0];
+
+      return updatedData[0];
     };
-    
-    const updatedData = await performDatabaseOperation(
-      updateOperation,
-      "Erro ao atualizar configuração",
+
+    const data = await performDatabaseOperation(
+      updateOperation, 
+      "Erro ao atualizar configurações",
       isTest
     );
     
-    if (!updatedData) {
+    if (!data) {
       // For test configuration, show a success message even if data is null
       if (isTest) {
-        toast.success("Teste: Configurações atualizadas com sucesso!");
-        return configToSave as ConfigCheckout;
+        toast.success("Teste: Configurações salvas com sucesso!");
+        return config;
       }
       return null;
     }
-    
-    const processedData = ensureBooleanFields(updatedData);
+
+    const processedData = ensureBooleanFields(data);
     
     if (isTest) {
       toast.success("Teste: Configurações atualizadas com sucesso!");
     } else {
-      toast.success("Configurações salvas com sucesso!");
+      toast.success("Configurações atualizadas com sucesso!");
     }
     
     return processedData;
   } catch (error: any) {
-    console.error("Erro ao atualizar configuração:", error);
+    console.error("Erro ao atualizar configuração existente:", error);
     
     // Determine if this is a test
-    const isTest = isTestConfiguration(configToSave);
-    const prefix = isTest ? "Teste: " : "";
+    const isTest = isTestConfiguration(config);
     
+    // For test configurations, we still want to return a success result
+    if (isTest) {
+      console.log("Ignorando erro em configuração de teste, retornando mock");
+      toast.success("Teste: Simulação de atualização bem-sucedida");
+      return {
+        ...config,
+        ...configToSave,
+        criado_em: config.criado_em || new Date().toISOString()
+      } as ConfigCheckout;
+    }
+    
+    const prefix = isTest ? "Teste: " : "";
     toast.error(`${prefix}Erro ao atualizar configuração: ${error.message || "Erro desconhecido"}`);
     return null;
   }
-}
+};

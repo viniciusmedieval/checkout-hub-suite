@@ -1,10 +1,12 @@
 
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Separator } from "@/components/ui/separator";
 import { ConfigCheckout } from "@/lib/types/database-types";
-import { VisitorCounterSettings } from "./botoes/VisitorCounterSettings";
-import { SecurityMessageSettings } from "./botoes/SecurityMessageSettings";
-import { PixButtonSettings } from "./botoes/PixButtonSettings";
+import { ButtonSectionCard } from "./botoes/ButtonSectionCard";
+import { MainButtonSettings } from "./botoes/MainButtonSettings";
 import { CardButtonSettings } from "./botoes/CardButtonSettings";
+import { PixButtonSettings } from "./botoes/PixButtonSettings";
+import { SecurityMessageSettings } from "./botoes/SecurityMessageSettings";
+import { VisitorCounterSettings } from "./botoes/VisitorCounterSettings";
 
 interface BotoesTabProps {
   config: ConfigCheckout;
@@ -14,61 +16,47 @@ interface BotoesTabProps {
 
 export function BotoesTab({ config, handleConfigChange, handleSwitchChange }: BotoesTabProps) {
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle>Configurações de Botões</CardTitle>
-        <CardDescription>
-          Configure os botões de ação e elementos interativos do checkout
-        </CardDescription>
-      </CardHeader>
-      <CardContent className="space-y-6">
-        <h3 className="text-sm font-medium">Botão de Compra Principal</h3>
-        <div className="space-y-4">
-          <div className="space-y-2">
-            <label className="text-sm font-medium">Texto do Botão</label>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <Input
-                name="texto_botao"
-                value={config.texto_botao || ""}
-                onChange={handleConfigChange}
-                placeholder="Ex: COMPRAR AGORA"
-              />
-            </div>
-            <p className="text-xs text-gray-500">
-              Este texto será exibido no botão principal do checkout.
-            </p>
-          </div>
+    <div className="space-y-6">
+      <ButtonSectionCard 
+        title="Configurações de Botões" 
+        description="Configure os botões de ação e elementos interativos do checkout"
+      >
+        <div className="space-y-6">
+          <h3 className="font-medium">Botão de Compra Principal</h3>
+          <MainButtonSettings 
+            config={config}
+            handleConfigChange={handleConfigChange}
+          />
           
-          {/* Card Button Settings */}
+          <h3 className="font-medium">Botão de Cartão</h3>
           <CardButtonSettings 
             config={config}
             handleConfigChange={handleConfigChange}
           />
           
-          {/* PIX Button Settings */}
-          <PixButtonSettings 
+          <h3 className="font-medium">Botão PIX</h3>
+          <PixButtonSettings
             config={config}
             handleConfigChange={handleConfigChange}
           />
+          
+          <Separator />
+          
+          <SecurityMessageSettings
+            config={config}
+            handleConfigChange={handleConfigChange}
+            handleSwitchChange={handleSwitchChange}
+          />
+          
+          <Separator />
+          
+          <VisitorCounterSettings 
+            config={config}
+            handleConfigChange={handleConfigChange}
+            handleSwitchChange={handleSwitchChange}
+          />
         </div>
-        
-        {/* Visitor Counter Settings */}
-        <VisitorCounterSettings 
-          config={config}
-          handleConfigChange={handleConfigChange}
-          handleSwitchChange={handleSwitchChange}
-        />
-        
-        {/* Security Message Settings */}
-        <SecurityMessageSettings 
-          config={config}
-          handleConfigChange={handleConfigChange}
-          handleSwitchChange={handleSwitchChange}
-        />
-      </CardContent>
-    </Card>
+      </ButtonSectionCard>
+    </div>
   );
 }
-
-// Import Input component
-import { Input } from "@/components/ui/input";

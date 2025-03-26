@@ -71,7 +71,7 @@ export const useConfigSettings = (initialConfig: ConfigCheckout | null) => {
   // Save config function
   const handleSaveConfig = async (): Promise<ConfigCheckout | null> => {
     try {
-      console.log("handleSaveConfig: Iniciando salvamento");
+      console.log("handleSaveConfig: Iniciando salvamento", config);
       setIsSaving(true);
       
       // Call the saveConfig service

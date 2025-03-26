@@ -45,6 +45,9 @@ export const runAutoSaveTest = async (
       return false;
     }
     
+    // Save the original config
+    const originalConfig = { ...currentConfig };
+    
     // Create test config with our specific test values
     console.log("🔄 Criando configuração de teste");
     const testConfig: ConfigCheckout = { 
@@ -74,7 +77,7 @@ export const runAutoSaveTest = async (
     
     // Wait a moment to ensure the UI updates
     console.log("🔄 Aguardando atualização de estado...");
-    await new Promise(resolve => setTimeout(resolve, 300));
+    await new Promise(resolve => setTimeout(resolve, 500));
     
     // Execute the save function
     console.log("🔄 Executando função de salvamento...");
@@ -86,10 +89,19 @@ export const runAutoSaveTest = async (
       // Consider test successful even for null result since it's a test
       console.log("✅ Teste automático bem-sucedido!");
       toast.success("Teste automático concluído com sucesso!");
+      
+      // Restore the original config after successful test
+      setTimeout(() => {
+        setConfig(originalConfig);
+      }, 2000);
+      
       return true;
     } catch (saveError: any) {
       console.error("❌ Erro ao salvar durante teste automático:", saveError);
       toast.error(`Erro ao salvar: ${saveError.message || "Desconhecido"}`);
+      
+      // Restore the original config after failed test
+      setConfig(originalConfig);
       return false;
     }
   } catch (error: any) {
