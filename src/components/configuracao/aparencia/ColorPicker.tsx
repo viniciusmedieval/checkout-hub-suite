@@ -21,34 +21,27 @@ export function ColorPicker({
   description,
   disabled = false
 }: ColorPickerProps) {
-  // Estado local para garantir que ambos os campos permaneçam sincronizados
   const [colorValue, setColorValue] = useState(value || defaultValue);
 
-  // Atualizar o estado local quando as props mudarem
+  // Update local state when props change
   useEffect(() => {
     setColorValue(value || defaultValue);
   }, [value, defaultValue]);
 
-  // Função para lidar com alterações de cor e garantir a sincronização
   const handleColorChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (disabled) return;
     
-    const { name, value } = e.target;
-    console.log(`ColorPicker - Alterando cor ${name} para ${value}`);
+    const { name: fieldName, value: newValue } = e.target;
+    console.log(`ColorPicker - Changing color ${fieldName} to ${newValue}`);
     
-    // Atualizar o estado local
-    setColorValue(value);
+    // Update local state
+    setColorValue(newValue);
     
-    // Garantir que a cor esteja em formato hexadecimal válido
-    const validHexColor = /^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/.test(value) 
-      ? value 
-      : defaultValue;
-    
-    // Criar um evento sintético para passar ao manipulador original
+    // Create synthetic event to pass to the original handler
     const syntheticEvent = {
       target: {
-        name,
-        value: validHexColor
+        name: fieldName,
+        value: newValue
       }
     } as React.ChangeEvent<HTMLInputElement>;
     
@@ -64,7 +57,7 @@ export function ColorPicker({
           name={name}
           value={colorValue}
           onChange={handleColorChange}
-          className="w-16 h-10 p-1"
+          className="w-16 h-10 p-1 cursor-pointer"
           disabled={disabled}
         />
         <Input

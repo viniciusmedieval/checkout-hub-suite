@@ -12,7 +12,7 @@ export const runAutoSaveTest = async (
     const backupConfig = JSON.parse(JSON.stringify(originalConfig));
     console.log("Auto-save test: Original config backed up", backupConfig);
     
-    // Set test values
+    // Set test values - these are specific values that the backend recognizes as test data
     const testConfig: ConfigCheckout = {
       ...backupConfig,
       cor_fundo: "#FF0000",

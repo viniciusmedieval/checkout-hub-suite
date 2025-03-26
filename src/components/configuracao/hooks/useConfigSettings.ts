@@ -13,7 +13,7 @@ export const useConfigSettings = (initialConfig: ConfigCheckout | null) => {
 
   useEffect(() => {
     if (initialConfig) {
-      console.log("useConfigSettings: recebeu nova configuração inicial", initialConfig);
+      console.log("useConfigSettings: received new initial config", initialConfig);
       setConfig(initialConfig);
       setOriginalConfig(initialConfig);
     }
