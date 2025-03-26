@@ -77,10 +77,11 @@ export async function updateExistingConfig(config: ConfigCheckout, configToSave:
 
     // Atualizar a configuração
     console.log("🔄 Executando update no Supabase...");
-    const { error } = await client
+    const { data: updateData, error } = await client
       .from("config_checkout")
       .update(configToSave)
-      .eq("id", config.id);
+      .eq("id", config.id)
+      .select();
 
     if (error) {
       console.error("❌ Erro ao atualizar configurações:", error);
@@ -88,27 +89,43 @@ export async function updateExistingConfig(config: ConfigCheckout, configToSave:
       return null;
     }
 
-    // Buscar os dados atualizados
-    console.log("🔄 Buscando configuração atualizada em consulta separada");
-    const { data, error: selectError } = await client
-      .from("config_checkout")
-      .select("*")
-      .eq("id", config.id)
-      .maybeSingle();
+    if (!updateData || updateData.length === 0) {
+      console.log("⚠️ Nenhum dado retornado do update, buscando configuração atualizada em consulta separada");
+      
+      // Buscar os dados atualizados
+      const { data, error: selectError } = await client
+        .from("config_checkout")
+        .select("*")
+        .eq("id", config.id)
+        .maybeSingle();
 
-    if (selectError) {
-      console.error("❌ Erro ao buscar configuração atualizada:", selectError);
-      toast.error("Configuração atualizada, mas houve erro ao buscar os dados atualizados.");
-      return config; // Retornar a config original como feedback
+      if (selectError) {
+        console.error("❌ Erro ao buscar configuração atualizada:", selectError);
+        toast.error("Configuração atualizada, mas houve erro ao buscar os dados atualizados.");
+        return config; // Retornar a config original como feedback
+      }
+
+      if (!data) {
+        console.error("❌ Erro: Retorno nulo do Supabase após atualização");
+        toast.error("Erro ao recuperar dados atualizados. Tente novamente.");
+        return config; // Retornar a config original como feedback
+      }
+      
+      const processedData = ensureBooleanFields(data);
+      
+      if (isTestConfig) {
+        console.log("✅ TESTE AUTOMÁTICO: Configuração atualizada com sucesso (via consulta):", processedData);
+        console.log("✅ VERIFICAÇÃO DE VALORES:");
+        console.log(`  cor_fundo: ${processedData.cor_fundo} (esperado: #FF0000) ${processedData.cor_fundo === "#FF0000" ? "✓" : "✗"}`);
+        console.log(`  cor_texto: ${processedData.cor_texto} (esperado: #FFFFFF) ${processedData.cor_texto === "#FFFFFF" ? "✓" : "✗"}`);
+        console.log(`  texto_botao: ${processedData.texto_botao} (esperado: Finalizar Compra) ${processedData.texto_botao === "Finalizar Compra" ? "✓" : "✗"}`);
+      }
+      
+      toast.success("Configurações salvas com sucesso!");
+      return processedData;
     }
 
-    if (!data) {
-      console.error("❌ Erro: Retorno nulo do Supabase após atualização");
-      toast.error("Erro ao recuperar dados atualizados. Tente novamente.");
-      return config; // Retornar a config original como feedback
-    }
-
-    const processedData = ensureBooleanFields(data);
+    const processedData = ensureBooleanFields(updateData[0]);
     
     if (isTestConfig) {
       console.log("✅ TESTE AUTOMÁTICO: Configuração atualizada com sucesso:", processedData);

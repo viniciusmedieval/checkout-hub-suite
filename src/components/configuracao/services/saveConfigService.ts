@@ -90,12 +90,29 @@ export const saveConfig = async (config: ConfigCheckout): Promise<ConfigCheckout
     }
 
     // Determinar se vamos criar ou atualizar baseado na existência de um ID
+    let result: ConfigCheckout | null = null;
+    
     if (config.id) {
       console.log("🔄 ID encontrado, atualizando configuração existente");
-      return await updateExistingConfig(config, configToSave);
+      result = await updateExistingConfig(config, configToSave);
     } else {
       console.log("🔄 ID não encontrado, criando nova configuração");
-      return await createNewConfig(configToSave);
+      result = await createNewConfig(configToSave);
+    }
+    
+    // Final check to ensure we're returning data
+    if (result) {
+      console.log("✅ saveConfig concluído com sucesso, retornando:", result);
+      return result;
+    } else {
+      console.error("❌ saveConfig: Operações de banco de dados não retornaram dados válidos");
+      
+      if (isTestConfig) {
+        console.error("🧪 TESTE AUTOMÁTICO FALHOU: Operações de banco retornaram nulo");
+      }
+      
+      toast.error(`${isTestConfig ? "Teste: " : ""}Erro: Falha ao salvar configurações`);
+      return null;
     }
   } catch (error: any) {
     console.error("❌ Erro no saveConfig:", error);

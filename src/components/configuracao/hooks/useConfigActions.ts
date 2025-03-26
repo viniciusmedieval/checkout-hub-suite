@@ -36,6 +36,7 @@ export const useConfigActions = (
       console.log("🔄 Tentando salvar configuração...");
       
       const result = await handleSaveConfig();
+      console.log("DEBUG valor de result:", result);
       
       if (result) {
         console.log("✅ Configuração salva com sucesso:", result);
@@ -100,6 +101,7 @@ export const useConfigActions = (
         try {
           console.log("🔄 Tentando salvar configuração de teste...");
           const savedConfig = await handleSaveConfig();
+          console.log("DEBUG valor de k:", savedConfig);
           
           if (savedConfig) {
             console.log("✅ Teste automático - Configuração salva com sucesso:", savedConfig);
@@ -174,6 +176,7 @@ export const useConfigActions = (
         try {
           console.log("🔄 Estado atualizado, tentando salvar configuração de teste");
           const result = await handleSaveConfig();
+          console.log("DEBUG valor de k:", result);
           
           if (result) {
             console.log("✅ Teste automático concluído com sucesso!", result);
