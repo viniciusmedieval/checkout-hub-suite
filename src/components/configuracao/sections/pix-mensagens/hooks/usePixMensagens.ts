@@ -2,19 +2,15 @@
 import { useState, useEffect } from "react";
 import { PixMensagem } from "@/lib/types/database-types";
 import { toast } from "sonner";
-import {
-  fetchPixMensagens,
-  createPixMensagem,
-  updatePixMensagem,
-  deletePixMensagem,
-  updatePixMensagemOrder
+import { 
+  pixMensagensService 
 } from "../services/pixMensagensService";
 
 export const usePixMensagens = () => {
-  const [messages, setMessages] = useState<PixMensagem[]>([]);
+  const [mensagens, setMensagens] = useState<PixMensagem[]>([]);
   const [loading, setLoading] = useState(true);
-  const [editingMessage, setEditingMessage] = useState<PixMensagem | null>(null);
-  const [newMessage, setNewMessage] = useState<Partial<PixMensagem>>({
+  const [editingMensagem, setEditingMensagem] = useState<PixMensagem | null>(null);
+  const [newMensagem, setNewMensagem] = useState<Partial<PixMensagem>>({
     chave: "",
     titulo: "",
     texto: "",
@@ -23,46 +19,49 @@ export const usePixMensagens = () => {
   });
   const [isSaving, setIsSaving] = useState(false);
 
-  const loadMessages = async () => {
+  const loadMensagens = async () => {
     setLoading(true);
     try {
-      const data = await fetchPixMensagens();
-      setMessages(data);
+      const data = await pixMensagensService.fetchMessages();
+      setMensagens(data);
+    } catch (error) {
+      console.error("Error loading messages:", error);
+      toast.error("Erro ao carregar mensagens PIX");
     } finally {
       setLoading(false);
     }
   };
 
   useEffect(() => {
-    loadMessages();
+    loadMensagens();
   }, []);
 
-  const handleCreateMessage = async () => {
+  const handleCreateMensagem = async () => {
     try {
-      if (!newMessage.chave || !newMessage.titulo || !newMessage.texto) {
+      if (!newMensagem.chave || !newMensagem.titulo || !newMensagem.texto) {
         toast.error("Preencha todos os campos obrigatórios");
         return;
       }
 
       setIsSaving(true);
       
-      if (!newMessage.ordem) {
-        newMessage.ordem = messages.length > 0 
-          ? Math.max(...messages.map(msg => msg.ordem || 0)) + 1 
+      if (!newMensagem.ordem) {
+        newMensagem.ordem = mensagens.length > 0 
+          ? Math.max(...mensagens.map(msg => msg.ordem || 0)) + 1 
           : 1;
       }
 
-      const createdMessage = await createPixMensagem({
-        chave: newMessage.chave!,
-        titulo: newMessage.titulo!,
-        texto: newMessage.texto!,
-        ativo: newMessage.ativo ?? true,
-        ordem: newMessage.ordem
+      const createdMensagem = await pixMensagensService.createMessage({
+        chave: newMensagem.chave!,
+        titulo: newMensagem.titulo!,
+        texto: newMensagem.texto!,
+        ativo: newMensagem.ativo ?? true,
+        ordem: newMensagem.ordem
       });
 
-      if (createdMessage) {
-        setMessages([...messages, createdMessage]);
-        setNewMessage({
+      if (createdMensagem) {
+        setMensagens([...mensagens, createdMensagem]);
+        setNewMensagem({
           chave: "",
           titulo: "",
           texto: "",
@@ -71,46 +70,52 @@ export const usePixMensagens = () => {
         });
         toast.success("Mensagem PIX criada com sucesso");
       }
+    } catch (error) {
+      console.error("Error creating message:", error);
+      toast.error("Erro ao criar mensagem PIX");
     } finally {
       setIsSaving(false);
     }
   };
 
-  const handleUpdateMessage = async () => {
+  const handleUpdateMensagem = async () => {
     try {
-      if (!editingMessage || !editingMessage.id) {
+      if (!editingMensagem || !editingMensagem.id) {
         toast.error("Nenhuma mensagem selecionada para edição");
         return;
       }
 
-      if (!editingMessage.chave || !editingMessage.titulo || !editingMessage.texto) {
+      if (!editingMensagem.chave || !editingMensagem.titulo || !editingMensagem.texto) {
         toast.error("Preencha todos os campos obrigatórios");
         return;
       }
 
       setIsSaving(true);
       
-      const updatedMessage = await updatePixMensagem(editingMessage.id, {
-        chave: editingMessage.chave,
-        titulo: editingMessage.titulo,
-        texto: editingMessage.texto,
-        ativo: editingMessage.ativo,
-        ordem: editingMessage.ordem
+      const updatedMensagem = await pixMensagensService.updateMessage(editingMensagem.id, {
+        chave: editingMensagem.chave,
+        titulo: editingMensagem.titulo,
+        texto: editingMensagem.texto,
+        ativo: editingMensagem.ativo,
+        ordem: editingMensagem.ordem
       });
 
-      if (updatedMessage) {
-        setMessages(messages.map(msg => 
-          msg.id === editingMessage.id ? updatedMessage : msg
+      if (updatedMensagem) {
+        setMensagens(mensagens.map(msg => 
+          msg.id === editingMensagem.id ? updatedMensagem : msg
         ));
-        setEditingMessage(null);
+        setEditingMensagem(null);
         toast.success("Mensagem PIX atualizada com sucesso");
       }
+    } catch (error) {
+      console.error("Error updating message:", error);
+      toast.error("Erro ao atualizar mensagem PIX");
     } finally {
       setIsSaving(false);
     }
   };
 
-  const handleDeleteMessage = async (id: number) => {
+  const handleDeleteMensagem = async (id: number) => {
     try {
       if (!window.confirm("Tem certeza que deseja excluir esta mensagem?")) {
         return;
@@ -118,34 +123,37 @@ export const usePixMensagens = () => {
 
       setIsSaving(true);
       
-      const success = await deletePixMensagem(id);
+      const success = await pixMensagensService.deleteMessage(id);
 
       if (success) {
-        setMessages(messages.filter(msg => msg.id !== id));
+        setMensagens(mensagens.filter(msg => msg.id !== id));
         toast.success("Mensagem PIX excluída com sucesso");
       }
+    } catch (error) {
+      console.error("Error deleting message:", error);
+      toast.error("Erro ao excluir mensagem PIX");
     } finally {
       setIsSaving(false);
     }
   };
 
-  const handleMoveUp = async (message: PixMensagem) => {
+  const handleMoveUp = async (mensagem: PixMensagem) => {
     try {
-      const index = messages.findIndex(msg => msg.id === message.id);
+      const index = mensagens.findIndex(msg => msg.id === mensagem.id);
       if (index <= 0) return; // Already at the top
       
       setIsSaving(true);
       
-      const previousMessage = messages[index - 1];
+      const previousMensagem = mensagens[index - 1];
       
       const updates = [
-        { id: message.id, ordem: previousMessage.ordem },
-        { id: previousMessage.id, ordem: message.ordem }
+        { id: mensagem.id, ordem: previousMensagem.ordem },
+        { id: previousMensagem.id, ordem: mensagem.ordem }
       ];
       
       let success = true;
       for (const update of updates) {
-        const updated = await updatePixMensagemOrder(update.id, update.ordem);
+        const updated = await pixMensagensService.updateMessageOrder(update.id, update.ordem);
         if (!updated) {
           success = false;
           break;
@@ -153,37 +161,40 @@ export const usePixMensagens = () => {
       }
       
       if (success) {
-        const newMessages = [...messages];
-        newMessages[index] = { ...newMessages[index], ordem: previousMessage.ordem };
-        newMessages[index - 1] = { ...newMessages[index - 1], ordem: message.ordem };
+        const newMensagens = [...mensagens];
+        newMensagens[index] = { ...newMensagens[index], ordem: previousMensagem.ordem };
+        newMensagens[index - 1] = { ...newMensagens[index - 1], ordem: mensagem.ordem };
         
-        newMessages.sort((a, b) => (a.ordem || 0) - (b.ordem || 0));
-        setMessages(newMessages);
+        newMensagens.sort((a, b) => (a.ordem || 0) - (b.ordem || 0));
+        setMensagens(newMensagens);
         
         toast.success("Ordem atualizada com sucesso");
       }
+    } catch (error) {
+      console.error("Error moving message up:", error);
+      toast.error("Erro ao atualizar ordem da mensagem");
     } finally {
       setIsSaving(false);
     }
   };
   
-  const handleMoveDown = async (message: PixMensagem) => {
+  const handleMoveDown = async (mensagem: PixMensagem) => {
     try {
-      const index = messages.findIndex(msg => msg.id === message.id);
-      if (index >= messages.length - 1) return; // Already at the bottom
+      const index = mensagens.findIndex(msg => msg.id === mensagem.id);
+      if (index >= mensagens.length - 1) return; // Already at the bottom
       
       setIsSaving(true);
       
-      const nextMessage = messages[index + 1];
+      const nextMensagem = mensagens[index + 1];
       
       const updates = [
-        { id: message.id, ordem: nextMessage.ordem },
-        { id: nextMessage.id, ordem: message.ordem }
+        { id: mensagem.id, ordem: nextMensagem.ordem },
+        { id: nextMensagem.id, ordem: mensagem.ordem }
       ];
       
       let success = true;
       for (const update of updates) {
-        const updated = await updatePixMensagemOrder(update.id, update.ordem);
+        const updated = await pixMensagensService.updateMessageOrder(update.id, update.ordem);
         if (!updated) {
           success = false;
           break;
@@ -191,73 +202,79 @@ export const usePixMensagens = () => {
       }
       
       if (success) {
-        const newMessages = [...messages];
-        newMessages[index] = { ...newMessages[index], ordem: nextMessage.ordem };
-        newMessages[index + 1] = { ...newMessages[index + 1], ordem: message.ordem };
+        const newMensagens = [...mensagens];
+        newMensagens[index] = { ...newMensagens[index], ordem: nextMensagem.ordem };
+        newMensagens[index + 1] = { ...newMensagens[index + 1], ordem: mensagem.ordem };
         
-        newMessages.sort((a, b) => (a.ordem || 0) - (b.ordem || 0));
-        setMessages(newMessages);
+        newMensagens.sort((a, b) => (a.ordem || 0) - (b.ordem || 0));
+        setMensagens(newMensagens);
         
         toast.success("Ordem atualizada com sucesso");
       }
+    } catch (error) {
+      console.error("Error moving message down:", error);
+      toast.error("Erro ao atualizar ordem da mensagem");
     } finally {
       setIsSaving(false);
     }
   };
 
-  const handleToggleActive = async (message: PixMensagem) => {
+  const handleToggleActive = async (mensagem: PixMensagem) => {
     try {
       setIsSaving(true);
       
-      const updatedMessage = await updatePixMensagem(message.id, { 
-        ativo: !message.ativo 
+      const updatedMensagem = await pixMensagensService.updateMessage(mensagem.id, { 
+        ativo: !mensagem.ativo 
       });
         
-      if (updatedMessage) {
-        setMessages(messages.map(msg => 
-          msg.id === message.id ? updatedMessage : msg
+      if (updatedMensagem) {
+        setMensagens(mensagens.map(msg => 
+          msg.id === mensagem.id ? updatedMensagem : msg
         ));
-        toast.success(`Mensagem ${updatedMessage.ativo ? 'ativada' : 'desativada'} com sucesso`);
+        toast.success(`Mensagem ${updatedMensagem.ativo ? 'ativada' : 'desativada'} com sucesso`);
       }
+    } catch (error) {
+      console.error("Error toggling message status:", error);
+      toast.error("Erro ao alterar status da mensagem");
     } finally {
       setIsSaving(false);
     }
   };
 
-  const handleEditMessage = (message: PixMensagem) => {
-    setEditingMessage(message);
+  const handleEditMensagem = (mensagem: PixMensagem) => {
+    setEditingMensagem(mensagem);
   };
 
   const handleCancelEdit = () => {
-    setEditingMessage(null);
+    setEditingMensagem(null);
   };
 
-  const handleUpdateEditingMessage = (field: string, value: string | boolean) => {
-    if (editingMessage) {
-      setEditingMessage({...editingMessage, [field]: value});
+  const handleUpdateEditingMensagem = (field: string, value: string | boolean) => {
+    if (editingMensagem) {
+      setEditingMensagem({...editingMensagem, [field]: value});
     }
   };
 
-  const handleUpdateNewMessage = (field: string, value: string | boolean) => {
-    setNewMessage({...newMessage, [field]: value});
+  const handleUpdateNewMensagem = (field: string, value: string | boolean) => {
+    setNewMensagem({...newMensagem, [field]: value});
   };
 
   return {
-    messages,
+    mensagens,
     loading,
-    editingMessage,
-    newMessage,
+    editingMensagem,
+    newMensagem,
     isSaving,
-    handleCreateMessage,
-    handleUpdateMessage,
-    handleDeleteMessage,
+    handleCreateMensagem,
+    handleUpdateMensagem,
+    handleDeleteMensagem,
     handleMoveUp,
     handleMoveDown,
     handleToggleActive,
-    handleEditMessage,
+    handleEditMensagem,
     handleCancelEdit,
-    handleUpdateEditingMessage,
-    handleUpdateNewMessage,
-    refreshMessages: loadMessages
+    handleUpdateEditingMensagem,
+    handleUpdateNewMensagem,
+    refreshMensagens: loadMensagens
   };
 };

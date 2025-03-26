@@ -1,7 +1,7 @@
 
 // src/components/configuracao/services/saveConfigService.ts
 import { isSupabaseInitialized } from "@/lib/supabase";
-import { ConfigCheckout } from "@/lib/types/database-types"; // Import from database-types
+import { ConfigCheckout } from "@/lib/types/database-types"; 
 import { toast } from "sonner";
 import { prepareConfigForSave } from "./utils/configPreparer";
 import { createNewConfig } from "./operations/createConfig";
@@ -33,6 +33,33 @@ export const saveConfig = async (config: ConfigCheckout): Promise<ConfigCheckout
 
     const configToSave = prepareConfigForSave(config);
 
+    // Try to use the edge function for saving the config
+    try {
+      console.log("🔄 Tentando usar Edge Function para salvar configuração");
+      const response = await supabase.functions.invoke('save-config', {
+        body: configToSave
+      });
+
+      console.log("Edge function response:", response);
+      
+      if (response.error) {
+        console.error("❌ Erro na Edge Function:", response.error);
+        throw new Error(response.error.message || "Erro ao salvar via Edge Function");
+      }
+
+      if (response.data && response.data.success) {
+        console.log("✅ Configuração salva com sucesso via Edge Function:", response.data.data);
+        toast.success("Configurações salvas com sucesso!");
+        
+        // Return the first item if we got an array
+        const savedConfig = Array.isArray(response.data.data) ? response.data.data[0] : response.data.data;
+        return savedConfig;
+      }
+    } catch (edgeFuncError) {
+      // Log error but continue with fallback method
+      console.error("❌ Falha ao salvar via Edge Function, usando método direto:", edgeFuncError);
+    }
+
     // Validar dados antes de salvar
     if (!configToSave.texto_botao || !configToSave.cor_botao) {
       console.error("❌ Dados inválidos para salvar:", configToSave);
@@ -40,6 +67,9 @@ export const saveConfig = async (config: ConfigCheckout): Promise<ConfigCheckout
       return null;
     }
 
+    // Fallback: use direct database access if edge function fails
+    console.log("🔄 Usando método direto para salvar configuração");
+    
     // Determinar se vamos criar ou atualizar baseado na existência de um ID
     if (config.id) {
       return await updateExistingConfig(config, configToSave);
