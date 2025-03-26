@@ -18,7 +18,7 @@ import { InstallmentsTab } from "@/components/configuracao/sections/Installments
 import { toast } from "sonner";
 import { ConfigCheckout } from "@/lib/types/database-types";
 import { useEffect, useState } from "react";
-import { Save } from "lucide-react";
+import { CheckCircle, Save } from "lucide-react";
 
 const Configuracao = () => {
   const {
@@ -73,6 +73,11 @@ const Configuracao = () => {
         await reloadConfig();
         setSaveSuccess(true);
         toast.success("Configurações salvas com sucesso!");
+        
+        // Reset success state after 3 seconds
+        setTimeout(() => {
+          setSaveSuccess(false);
+        }, 3000);
       } else {
         console.error("Failed to save configuration");
         toast.error("Falha ao salvar configurações. Tente novamente.");
@@ -105,9 +110,7 @@ const Configuracao = () => {
             <>Processando...</>
           ) : saveSuccess ? (
             <>
-              <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-2" viewBox="0 0 20 20" fill="currentColor">
-                <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-              </svg>
+              <CheckCircle className="w-4 h-4 mr-2" />
               Salvo com Sucesso
             </>
           ) : (

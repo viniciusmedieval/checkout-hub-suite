@@ -28,11 +28,35 @@ serve(async (req) => {
     const requestData = await req.json();
     console.log('Received request data:', JSON.stringify(requestData));
 
-    // Validate required fields
-    if (!requestData.cor_fundo || !requestData.cor_texto || !requestData.texto_botao) {
-      console.error('Missing required fields in request data');
+    // Enhanced validation for required fields
+    const requiredFields = ['cor_fundo', 'cor_texto', 'texto_botao'];
+    const missingFields = requiredFields.filter(field => !requestData[field]);
+    
+    if (missingFields.length > 0) {
+      console.error(`Missing required fields: ${missingFields.join(', ')}`);
       return new Response(JSON.stringify({ 
-        error: 'Campos obrigatórios faltando. Verifique cor_fundo, cor_texto e texto_botao.' 
+        error: `Campos obrigatórios faltando: ${missingFields.join(', ')}` 
+      }), {
+        status: 400,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+      });
+    }
+
+    // Validate color format (hex)
+    const colorFields = ['cor_fundo', 'cor_texto', 'cor_botao', 'cor_texto_botao', 'cor_topo', 
+                        'cor_texto_topo', 'cor_titulo', 'cor_banner', 'cor_texto_contador',
+                        'cor_primaria_pix', 'cor_secundaria_pix', 'cor_botao_pix', 'cor_texto_botao_pix',
+                        'cor_botao_card', 'cor_texto_botao_card', 'cor_icones'];
+    
+    const hexColorRegex = /^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/;
+    
+    const invalidColorFields = colorFields
+      .filter(field => requestData[field] && !hexColorRegex.test(requestData[field]));
+    
+    if (invalidColorFields.length > 0) {
+      console.error(`Invalid color format in fields: ${invalidColorFields.join(', ')}`);
+      return new Response(JSON.stringify({ 
+        error: `Formato de cor inválido nos campos: ${invalidColorFields.join(', ')}. Use formato hexadecimal (#RRGGBB).` 
       }), {
         status: 400,
         headers: { ...corsHeaders, 'Content-Type': 'application/json' }
@@ -53,7 +77,7 @@ serve(async (req) => {
     
     const supabase = createClient(supabaseUrl, supabaseKey);
 
-    // Prepare data - include all possible fields
+    // Prepare data - include all possible fields from requestData
     const configData = {
       // Basic colors
       cor_fundo: requestData.cor_fundo,
@@ -192,13 +216,20 @@ serve(async (req) => {
     }
 
     console.log('Operation successful:', JSON.stringify(result));
-    return new Response(JSON.stringify({ success: true, data: result }), {
+    return new Response(JSON.stringify({ 
+      success: true, 
+      message: requestData.id ? 'Configuração atualizada com sucesso' : 'Configuração criada com sucesso',
+      data: result 
+    }), {
       status: 200,
       headers: { ...corsHeaders, 'Content-Type': 'application/json' }
     });
   } catch (error) {
     console.error('Error in save-config function:', error);
-    return new Response(JSON.stringify({ error: error.message }), {
+    return new Response(JSON.stringify({ 
+      error: true, 
+      message: `Erro ao salvar configurações: ${error.message || 'Erro desconhecido'}` 
+    }), {
       status: 500,
       headers: { ...corsHeaders, 'Content-Type': 'application/json' }
     });
