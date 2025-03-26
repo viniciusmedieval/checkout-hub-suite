@@ -44,6 +44,7 @@ export const runAutoSaveTest = async (
     }
     
     // Create test config with our specific test values
+    console.log("🔄 Criando configuração de teste");
     const testConfig = { ...currentConfig };
     testConfig.cor_fundo = "#FF0000";
     testConfig.cor_texto = "#FFFFFF";
@@ -56,10 +57,12 @@ export const runAutoSaveTest = async (
     console.log("----------------------------------------------");
     
     // Update the config state with test values
+    console.log("🔄 Atualizando estado com valores de teste");
     setConfig(testConfig);
     
     // Wait a moment to ensure the UI updates
-    await new Promise(resolve => setTimeout(resolve, 100));
+    console.log("🔄 Aguardando atualização de estado...");
+    await new Promise(resolve => setTimeout(resolve, 300));
     
     // Execute the save function
     console.log("🔄 Executando função de salvamento...");
@@ -71,57 +74,64 @@ export const runAutoSaveTest = async (
       }, 30000);
     });
     
-    const savedConfig = await Promise.race([
-      saveFunction(),
-      timeoutPromise
-    ]);
-    
-    if (savedConfig) {
-      console.log("✅ Teste automático bem-sucedido!");
-      console.log("✅ Configuração salva:", savedConfig);
-      console.log("----------------------------------------------");
+    try {
+      console.log("🔄 Iniciando processo de salvamento com timeout de 30s");
+      const savedConfig = await Promise.race([
+        saveFunction(),
+        timeoutPromise
+      ]);
       
-      // Verify the test values were saved correctly
-      const testPassed = 
-        savedConfig.cor_fundo === "#FF0000" && 
-        savedConfig.cor_texto === "#FFFFFF" && 
-        savedConfig.texto_botao === "Finalizar Compra";
-        
-      if (testPassed) {
-        console.log("✅ VALIDAÇÃO DE TESTE: Todos os valores foram salvos corretamente!");
-        console.log("✅ cor_fundo: " + savedConfig.cor_fundo + " (esperado: #FF0000) ✓");
-        console.log("✅ cor_texto: " + savedConfig.cor_texto + " (esperado: #FFFFFF) ✓");
-        console.log("✅ texto_botao: " + savedConfig.texto_botao + " (esperado: Finalizar Compra) ✓");
+      if (savedConfig) {
+        console.log("✅ Teste automático bem-sucedido!");
+        console.log("✅ Configuração salva:", savedConfig);
         console.log("----------------------------------------------");
         
-        toast.success("Teste automático concluído com sucesso!", {
-          description: "Todos os valores foram salvos corretamente"
-        });
-        return true;
+        // Verify the test values were saved correctly
+        const testPassed = 
+          savedConfig.cor_fundo === "#FF0000" && 
+          savedConfig.cor_texto === "#FFFFFF" && 
+          savedConfig.texto_botao === "Finalizar Compra";
+          
+        if (testPassed) {
+          console.log("✅ VALIDAÇÃO DE TESTE: Todos os valores foram salvos corretamente!");
+          console.log("✅ cor_fundo: " + savedConfig.cor_fundo + " (esperado: #FF0000) ✓");
+          console.log("✅ cor_texto: " + savedConfig.cor_texto + " (esperado: #FFFFFF) ✓");
+          console.log("✅ texto_botao: " + savedConfig.texto_botao + " (esperado: Finalizar Compra) ✓");
+          console.log("----------------------------------------------");
+          
+          toast.success("Teste automático concluído com sucesso!", {
+            description: "Todos os valores foram salvos corretamente"
+          });
+          return true;
+        } else {
+          console.error("❌ VALIDAÇÃO DE TESTE: Valores salvos não correspondem aos valores esperados:");
+          console.error("  Esperado:");
+          console.error("    cor_fundo: #FF0000");
+          console.error("    cor_texto: #FFFFFF");
+          console.error("    texto_botao: Finalizar Compra");
+          console.error("  Recebido:");
+          console.error("    cor_fundo: " + savedConfig.cor_fundo);
+          console.error("    cor_texto: " + savedConfig.cor_texto);
+          console.error("    texto_botao: " + savedConfig.texto_botao);
+          console.error("----------------------------------------------");
+          
+          toast.error("Teste automático falhou: valores não correspondem!", {
+            description: "Verifique o console para detalhes"
+          });
+          return false;
+        }
       } else {
-        console.error("❌ VALIDAÇÃO DE TESTE: Valores salvos não correspondem aos valores esperados:");
-        console.error("  Esperado:");
-        console.error("    cor_fundo: #FF0000");
-        console.error("    cor_texto: #FFFFFF");
-        console.error("    texto_botao: Finalizar Compra");
-        console.error("  Recebido:");
-        console.error("    cor_fundo: " + savedConfig.cor_fundo);
-        console.error("    cor_texto: " + savedConfig.cor_texto);
-        console.error("    texto_botao: " + savedConfig.texto_botao);
+        console.error("❌ Teste automático falhou: não foi possível salvar a configuração");
         console.error("----------------------------------------------");
         
-        toast.error("Teste automático falhou: valores não correspondem!", {
+        toast.error("Teste automático falhou: erro ao salvar!", {
           description: "Verifique o console para detalhes"
         });
         return false;
       }
-    } else {
-      console.error("❌ Teste automático falhou: não foi possível salvar a configuração");
-      console.error("----------------------------------------------");
-      
-      toast.error("Teste automático falhou: erro ao salvar!", {
-        description: "Verifique o console para detalhes"
-      });
+    } catch (saveError: any) {
+      console.error("❌ Erro ao salvar durante teste automático:", saveError);
+      toast.error(`Erro ao salvar: ${saveError.message || "Desconhecido"}`);
       return false;
     }
   } catch (error: any) {

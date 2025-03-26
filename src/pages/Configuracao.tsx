@@ -46,8 +46,11 @@ const Configuracao = () => {
   );
 
   useEffect(() => {
-    console.log("Configuracao component - Current config:", config);
-  }, [config]);
+    console.log("⭐ Configuracao component - Estado inicial carregado");
+    console.log("  - Config ID:", config?.id);
+    console.log("  - Loading:", loading);
+    console.log("  - Tem alterações não salvas:", hasUnsavedChanges());
+  }, [config, loading, hasUnsavedChanges]);
 
   useEffect(() => {
     // Get URL parameters
@@ -61,14 +64,22 @@ const Configuracao = () => {
       });
       // Small delay to ensure everything is loaded
       setTimeout(() => {
+        console.log("🔄 Executando teste automático após delay de carregamento");
         runAutomaticTest();
       }, 500);
     }
   }, [loading, isAutoTestRunning, runAutomaticTest]);
 
   if (loading) {
+    console.log("🔄 Componente Configuracao - Exibindo estado de carregamento");
     return <LoadingState />;
   }
+
+  console.log("🔄 Componente Configuracao - Renderizando conteúdo principal");
+  console.log("  - isSaving:", isSaving);
+  console.log("  - isSaveAttempted:", isSaveAttempted);
+  console.log("  - saveSuccess:", saveSuccess);
+  console.log("  - isAutoTestRunning:", isAutoTestRunning);
 
   const typedConfig = config as unknown as ConfigCheckout;
 

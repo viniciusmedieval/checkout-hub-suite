@@ -31,10 +31,14 @@ export const AutoTestRunner = ({ onComplete }: AutoTestRunnerProps) => {
           // Get client from the singleton to ensure we're using the latest instance
           const client = await getSupabaseClient();
           if (!client) {
+            console.error("❌ AutoTestRunner - Cliente Supabase não disponível");
             throw new Error("Não foi possível inicializar o cliente Supabase");
           }
           
+          console.log("✅ AutoTestRunner - Cliente Supabase inicializado com sucesso");
+          
           // Test with a simple existence check that won't cause parsing issues
+          console.log("🔄 AutoTestRunner - Verificando conexão com Supabase...");
           const { data, error } = await client
             .from('config_checkout')
             .select('id')  // Only select ID to avoid parsing issues

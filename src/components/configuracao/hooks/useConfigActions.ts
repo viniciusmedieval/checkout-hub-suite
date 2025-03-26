@@ -15,25 +15,54 @@ export const useConfigActions = (
   const [isTestSaving, setIsTestSaving] = useState(false);
   const [isAutoTestRunning, setIsAutoTestRunning] = useState(false);
 
+  console.log("🔄 useConfigActions hook inicializado", { 
+    configId: config?.id, 
+    hasUnsavedChanges: hasUnsavedChanges() 
+  });
+
   const onSaveClick = useCallback(async () => {
+    console.log("🔄 onSaveClick iniciado");
+    
+    // Verificar se há alterações para salvar
     if (!hasUnsavedChanges()) {
+      console.log("ℹ️ Sem alterações para salvar");
       toast.info("Não há alterações para salvar");
       return;
     }
 
-    setIsSaveAttempted(true);
-    const result = await handleSaveConfig();
-    setSaveSuccess(!!result);
-    
-    if (result) {
-      toast.success("Configurações salvas com sucesso!");
-    } else {
-      toast.error("Erro ao salvar configurações. Tente novamente.");
+    try {
+      setIsSaveAttempted(true);
+      console.log("🔄 Tentando salvar configuração...");
+      
+      const result = await handleSaveConfig();
+      
+      if (result) {
+        console.log("✅ Configuração salva com sucesso:", result);
+        setSaveSuccess(true);
+        toast.success("Configurações salvas com sucesso!");
+      } else {
+        console.error("❌ Erro ao salvar configurações: resultado nulo");
+        toast.error("Erro ao salvar configurações. Tente novamente.");
+      }
+    } catch (error) {
+      console.error("❌ Exceção ao salvar configurações:", error);
+      toast.error("Erro ao salvar: " + (error instanceof Error ? error.message : "Erro desconhecido"));
+    } finally {
+      console.log("🔄 Finalizando tentativa de salvamento");
+      setTimeout(() => {
+        setIsSaveAttempted(false);
+        // Resetar o estado de sucesso após alguns segundos
+        if (saveSuccess) {
+          setTimeout(() => setSaveSuccess(false), 3000);
+        }
+      }, 1000);
     }
-  }, [hasUnsavedChanges, handleSaveConfig]);
+  }, [hasUnsavedChanges, handleSaveConfig, saveSuccess]);
 
   const runTestSave = useCallback(async () => {
+    console.log("🔄 runTestSave iniciado");
     setIsTestSaving(true);
+    
     try {
       console.log("🔄 Iniciando teste automático de salvamento de configuração");
       console.log("🧪 Valores de teste configurados:");
@@ -43,47 +72,44 @@ export const useConfigActions = (
 
       // Backup original config
       const originalConfig = { ...config };
+      console.log("🔄 Backup da configuração original criado");
 
       // Set test values
-      setConfig(prevConfig => ({
-        ...prevConfig,
-        cor_fundo: "#FF0000",
-        cor_texto: "#FFFFFF",
-        texto_botao: "Finalizar Compra",
-      }));
+      console.log("🔄 Definindo valores de teste na configuração");
+      setConfig(prevConfig => {
+        const testConfig = {
+          ...prevConfig,
+          cor_fundo: "#FF0000",
+          cor_texto: "#FFFFFF",
+          texto_botao: "Finalizar Compra",
+        };
+        console.log("🔄 Nova configuração de teste:", testConfig);
+        return testConfig;
+      });
 
-      // Try to save directly - this might fail if we don't wait for state to update
-      try {
-        const savedConfig = await handleSaveConfig();
-        if (savedConfig) {
-          console.log("✅ Teste automático - Configuração salva com sucesso:", savedConfig);
-          toast.success("Teste: Configuração salva com sucesso!");
-          setIsSaveAttempted(true);
-          setSaveSuccess(true);
-          return;
-        }
-      } catch (error) {
-        console.error("❌ Não foi possível salvar a configuração de teste diretamente", error);
-      }
-
-      // If direct save fails, we need to wait for state update and try again
-      console.log("🔄 Iniciando teste automático de salvamento");
-      console.log("----------------------------------------------");
-      
-      // This will happen on the next render after state update
+      // Use setTimeout to ensure state has updated before saving
       setTimeout(async () => {
         try {
-          const result = await handleSaveConfig();
-          if (result) {
-            console.log("✅ Teste concluído com sucesso!");
+          console.log("🔄 Tentando salvar configuração de teste...");
+          const savedConfig = await handleSaveConfig();
+          
+          if (savedConfig) {
+            console.log("✅ Teste automático - Configuração salva com sucesso:", savedConfig);
             toast.success("Teste: Configuração salva com sucesso!");
             setIsSaveAttempted(true);
             setSaveSuccess(true);
+            
+            // Resetar estados após alguns segundos
+            setTimeout(() => {
+              setIsSaveAttempted(false);
+              setSaveSuccess(false);
+            }, 3000);
           } else {
-            console.error("❌ Teste falhou ao salvar configuração");
+            console.error("❌ Teste falhou ao salvar configuração: resultado nulo");
             toast.error("Teste: Erro ao salvar configuração");
             
             // Restore original config
+            console.log("🔄 Restaurando configuração original após falha");
             setConfig(originalConfig);
           }
         } catch (error) {
@@ -91,6 +117,7 @@ export const useConfigActions = (
           toast.error("Teste falhou: " + (error instanceof Error ? error.message : "Erro desconhecido"));
           
           // Restore original config
+          console.log("🔄 Restaurando configuração original após erro");
           setConfig(originalConfig);
         } finally {
           setIsTestSaving(false);
@@ -104,20 +131,28 @@ export const useConfigActions = (
   }, [config, setConfig, handleSaveConfig]);
 
   const runAutomaticTest = useCallback(async () => {
+    console.log("🔄 runAutomaticTest iniciado");
     setIsAutoTestRunning(true);
+    
     try {
       console.log("🔄 Iniciando teste de configuração automático");
       
       // Backup original config
       const originalConfig = { ...config };
+      console.log("🔄 Backup da configuração original criado");
       
       // Set test values
-      setConfig(prev => ({
-        ...prev,
-        cor_fundo: "#FF0000",
-        cor_texto: "#FFFFFF",
-        texto_botao: "Finalizar Compra"
-      }));
+      console.log("🔄 Definindo valores de teste na configuração");
+      setConfig(prev => {
+        const testConfig = {
+          ...prev,
+          cor_fundo: "#FF0000",
+          cor_texto: "#FFFFFF",
+          texto_botao: "Finalizar Compra"
+        };
+        console.log("🔄 Nova configuração de teste:", testConfig);
+        return testConfig;
+      });
       
       // Wait for state update
       setTimeout(async () => {
@@ -130,11 +165,18 @@ export const useConfigActions = (
             toast.success("Teste automático: Configuração salva com sucesso!");
             setIsSaveAttempted(true);
             setSaveSuccess(true);
+            
+            // Resetar estados após alguns segundos
+            setTimeout(() => {
+              setIsSaveAttempted(false);
+              setSaveSuccess(false);
+            }, 3000);
           } else {
-            console.error("❌ Teste automático falhou ao salvar");
+            console.error("❌ Teste automático falhou ao salvar: resultado nulo");
             toast.error("Teste automático: Erro ao salvar configuração");
             
             // Restore original config
+            console.log("🔄 Restaurando configuração original após falha");
             setConfig(originalConfig);
           }
         } catch (error) {
@@ -142,6 +184,7 @@ export const useConfigActions = (
           toast.error("Teste automático falhou: " + (error instanceof Error ? error.message : "Erro desconhecido"));
           
           // Restore original config
+          console.log("🔄 Restaurando configuração original após erro");
           setConfig(originalConfig);
         } finally {
           setIsAutoTestRunning(false);
