@@ -8,12 +8,44 @@ import { ensureBooleanFields } from "../utils/configValidation";
  * Creates a new configuration in the database
  */
 export async function createNewConfig(configToSave: any): Promise<ConfigCheckout | null> {
-  console.log("🔄 Criando nova configuração");
+  console.log("🔄 Criando nova configuração", configToSave);
 
   try {
     // Guarantee we have a valid Supabase client
     if (!supabase) {
       throw new Error("Cliente Supabase não disponível");
+    }
+
+    // Extra debug for test values
+    const isTestConfig = (
+      configToSave.cor_fundo === "#FF0000" && 
+      configToSave.cor_texto === "#FFFFFF" && 
+      configToSave.texto_botao === "Finalizar Compra"
+    );
+    
+    if (isTestConfig) {
+      console.log("🧪 TESTE AUTOMÁTICO: Detectado valores de teste na função createNewConfig");
+      console.log("🧪 Valores de teste:", { 
+        cor_fundo: configToSave.cor_fundo,
+        cor_texto: configToSave.cor_texto,
+        texto_botao: configToSave.texto_botao
+      });
+    }
+
+    // Validate connection to Supabase
+    try {
+      const { count, error: countError } = await supabase
+        .from('config_checkout')
+        .select('*', { count: 'exact', head: true });
+      
+      if (countError) {
+        throw new Error(`Falha na verificação da conexão: ${countError.message}`);
+      }
+      console.log(`✅ Conexão com Supabase verificada. Tabela tem ${count} registros.`);
+    } catch (connError: any) {
+      console.error("❌ Erro na verificação da conexão com Supabase:", connError);
+      toast.error(`Erro de conexão: ${connError.message}`);
+      throw connError;
     }
 
     // Inserir nova configuração
@@ -35,7 +67,17 @@ export async function createNewConfig(configToSave: any): Promise<ConfigCheckout
     }
 
     const processedData = ensureBooleanFields(insertedData[0]);
-    console.log("✅ Configuração criada com sucesso:", processedData);
+    
+    if (isTestConfig) {
+      console.log("✅ TESTE AUTOMÁTICO: Configuração criada com sucesso:", processedData);
+      console.log("✅ VERIFICAÇÃO DE VALORES:");
+      console.log(`  cor_fundo: ${processedData.cor_fundo} (esperado: #FF0000) ${processedData.cor_fundo === "#FF0000" ? "✓" : "✗"}`);
+      console.log(`  cor_texto: ${processedData.cor_texto} (esperado: #FFFFFF) ${processedData.cor_texto === "#FFFFFF" ? "✓" : "✗"}`);
+      console.log(`  texto_botao: ${processedData.texto_botao} (esperado: Finalizar Compra) ${processedData.texto_botao === "Finalizar Compra" ? "✓" : "✗"}`);
+    } else {
+      console.log("✅ Configuração criada com sucesso:", processedData);
+    }
+    
     toast.success("Configurações salvas com sucesso!");
     return processedData;
   } catch (error: any) {

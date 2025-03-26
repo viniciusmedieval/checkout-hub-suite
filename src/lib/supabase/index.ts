@@ -71,10 +71,12 @@ const initializeSupabaseClient = async (): Promise<SupabaseClient | null> => {
   }
 };
 
-// Initialize immediately
-initializeSupabaseClient().catch(err => {
-  console.error('❌ Erro ao inicializar cliente Supabase:', err);
-});
+// Ensure initialization happens once on module load
+if (typeof window !== 'undefined') {
+  initializeSupabaseClient().catch(err => {
+    console.error('❌ Erro ao inicializar cliente Supabase:', err);
+  });
+}
 
 /**
  * Checks if Supabase client is initialized
@@ -107,12 +109,11 @@ export const reinitializeSupabaseClient = (url: string, key: string): SupabaseCl
   }
 };
 
-// For backward compatibility, export the client directly
-// This allows existing code to continue working with minimal changes
+// For backward compatibility, export the client directly with a proxy to ensure it's initialized
 export const supabase = new Proxy({} as SupabaseClient, {
   get: (target, prop) => {
     if (!_supabaseInstance) {
-      console.warn('⚠️ Supabase client accessed before initialization. Initializing now...');
+      console.warn('⚠️ Accessing Supabase client before initialization. Initializing synchronously...');
       // Initialize synchronously for direct access compatibility
       const { url, key } = getSupabaseCredentials();
       _supabaseInstance = createSupabaseClient({ url, key });

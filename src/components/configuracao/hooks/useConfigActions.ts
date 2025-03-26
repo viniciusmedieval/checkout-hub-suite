@@ -106,7 +106,12 @@ export function useConfigActions(
       setConfig(testConfig);
       
       try {
+        // Pequena pausa para garantir que a UI atualize antes de salvar
+        await new Promise(resolve => setTimeout(resolve, 100));
+        
+        console.log("🧪 Tentando salvar configuração de teste diretamente...");
         const savedConfig = await handleSaveConfig();
+        
         if (savedConfig) {
           console.log("✅ Configuração de teste salva com sucesso!", savedConfig);
           setSaveSuccess(true);
@@ -119,11 +124,15 @@ export function useConfigActions(
           return;
         } else {
           console.error("❌ Não foi possível salvar a configuração de teste diretamente");
+          toast.error("Teste falhou: Não foi possível salvar a configuração.");
         }
       } catch (directError) {
         console.error("❌ Erro ao salvar configuração de teste diretamente:", directError);
+        toast.error("Erro ao executar teste: " + (directError instanceof Error ? directError.message : "Erro desconhecido"));
       }
       
+      // Tentar o método alternativo se o direto falhar
+      console.log("🧪 Tentando método alternativo de teste...");
       const testResult = await runAutoSaveTest(
         handleSaveConfig,
         setConfig,
@@ -139,6 +148,7 @@ export function useConfigActions(
         }, 3000);
       } else {
         console.error("❌ Teste automático falhou");
+        toast.error("Teste automático falhou. Verifique o console para mais detalhes.");
       }
     } catch (error) {
       console.error("❌ Erro durante execução do teste automático:", error);

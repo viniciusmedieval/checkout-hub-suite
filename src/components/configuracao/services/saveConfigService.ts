@@ -1,5 +1,5 @@
 
-import { supabase, isSupabaseInitialized } from "@/lib/supabase";
+import { supabase, isSupabaseInitialized, getSupabaseClient } from "@/lib/supabase";
 import { ConfigCheckout } from "@/lib/types/database-types"; 
 import { toast } from "sonner";
 import { prepareConfigForSave } from "./utils/configPreparer";
@@ -28,16 +28,20 @@ export const saveConfig = async (config: ConfigCheckout): Promise<ConfigCheckout
     }
 
     // Verificar se o cliente Supabase está inicializado corretamente
-    if (!isSupabaseInitialized() || !supabase) {
-      const errorMsg = "Cliente Supabase não inicializado. Verifique a conexão com o banco de dados.";
-      console.error("❌ " + errorMsg);
-      
-      if (isTestConfig) {
-        console.error("🧪 TESTE AUTOMÁTICO FALHOU: " + errorMsg);
+    if (!isSupabaseInitialized()) {
+      console.log("⚠️ Cliente Supabase não inicializado. Tentando inicializar...");
+      const client = await getSupabaseClient();
+      if (!client) {
+        const errorMsg = "Cliente Supabase não pôde ser inicializado. Verifique a conexão com o banco de dados.";
+        console.error("❌ " + errorMsg);
+        
+        if (isTestConfig) {
+          console.error("🧪 TESTE AUTOMÁTICO FALHOU: " + errorMsg);
+        }
+        
+        toast.error(isTestConfig ? "Teste: " + errorMsg : errorMsg);
+        throw new Error(errorMsg);
       }
-      
-      toast.error(isTestConfig ? "Teste: " + errorMsg : errorMsg);
-      throw new Error(errorMsg);
     }
 
     // Test Supabase connection explicitly
@@ -81,8 +85,10 @@ export const saveConfig = async (config: ConfigCheckout): Promise<ConfigCheckout
 
     // Determinar se vamos criar ou atualizar baseado na existência de um ID
     if (config.id) {
+      console.log("🔄 ID encontrado, atualizando configuração existente");
       return await updateExistingConfig(config, configToSave);
     } else {
+      console.log("🔄 ID não encontrado, criando nova configuração");
       return await createNewConfig(configToSave);
     }
   } catch (error: any) {

@@ -1,7 +1,7 @@
 
 import { ConfigCheckout } from "@/lib/types/database-types";
 import { toast } from "sonner";
-import { supabase } from "@/lib/supabase";
+import { supabase, getSupabaseClient } from "@/lib/supabase";
 
 /**
  * Automatically runs a save test with predefined values
@@ -18,8 +18,23 @@ export const runAutoSaveTest = async (
     console.log("🔄 Iniciando teste automático de salvamento");
     console.log("----------------------------------------------");
     
-    // First verify Supabase connection
+    // First verify Supabase client is available
     try {
+      console.log("🔄 Verificando cliente Supabase...");
+      const client = await getSupabaseClient();
+      if (!client) {
+        throw new Error("Cliente Supabase não disponível");
+      }
+      console.log("✅ Cliente Supabase disponível");
+    } catch (clientError) {
+      console.error("❌ Erro com cliente Supabase:", clientError);
+      toast.error("Falha no cliente Supabase. Verifique a conexão.");
+      return false;
+    }
+    
+    // Then verify Supabase connection
+    try {
+      console.log("🔄 Verificando conexão com Supabase...");
       const { data, error } = await supabase.from('config_checkout').select('count(*)', { count: 'exact' }).limit(1);
       if (error) {
         throw new Error("Erro de conexão com Supabase: " + error.message);
@@ -45,6 +60,9 @@ export const runAutoSaveTest = async (
     
     // Update the config state with test values
     setConfig(testConfig);
+    
+    // Wait a moment to ensure the UI updates
+    await new Promise(resolve => setTimeout(resolve, 100));
     
     // Execute the save function
     console.log("🔄 Executando função de salvamento...");
