@@ -54,13 +54,17 @@ export const saveConfig = async (config: ConfigCheckout): Promise<ConfigCheckout
         // Return the first item if we got an array
         const savedConfig = Array.isArray(response.data.data) ? response.data.data[0] : response.data.data;
         return savedConfig;
+      } else {
+        console.error("❌ Resposta da Edge Function sem dados de sucesso:", response);
+        throw new Error("Resposta inválida da Edge Function");
       }
     } catch (edgeFuncError) {
       // Log error but continue with fallback method
       console.error("❌ Falha ao salvar via Edge Function, usando método direto:", edgeFuncError);
+      toast.warning("Tentando método alternativo de salvamento...");
     }
 
-    // Validar dados antes de salvar
+    // Validar dados antes de salvar no método de fallback
     if (!configToSave.texto_botao || !configToSave.cor_botao) {
       console.error("❌ Dados inválidos para salvar:", configToSave);
       toast.error("Erro: Dados inválidos para salvar. Verifique os campos obrigatórios.");

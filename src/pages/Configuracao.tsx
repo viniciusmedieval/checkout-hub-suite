@@ -1,3 +1,4 @@
+
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useConfiguracao } from "@/components/configuracao/useConfiguracao";
@@ -40,6 +41,7 @@ const Configuracao = () => {
   } = useConfiguracao();
   
   const [isSaveAttempted, setIsSaveAttempted] = useState(false);
+  const [saveSuccess, setSaveSuccess] = useState(false);
 
   useEffect(() => {
     console.log("Configuracao component - Current config:", config);
@@ -53,6 +55,7 @@ const Configuracao = () => {
 
   const onSaveClick = async () => {
     setIsSaveAttempted(true);
+    setSaveSuccess(false);
     
     if (!hasUnsavedChanges()) {
       toast.info("Não há alterações para salvar");
@@ -68,6 +71,7 @@ const Configuracao = () => {
       if (savedConfig) {
         console.log("Configuration saved successfully:", savedConfig);
         await reloadConfig();
+        setSaveSuccess(true);
         toast.success("Configurações salvas com sucesso!");
       } else {
         console.error("Failed to save configuration");
@@ -88,7 +92,7 @@ const Configuracao = () => {
         <Button 
           onClick={onSaveClick} 
           disabled={isSaving || !hasUnsavedChanges() || isSaveAttempted}
-          className="bg-blue-600 hover:bg-blue-700"
+          className={`${saveSuccess ? 'bg-green-600 hover:bg-green-700' : 'bg-blue-600 hover:bg-blue-700'} transition-colors duration-300`}
         >
           {isSaving ? (
             <>
@@ -99,6 +103,13 @@ const Configuracao = () => {
             </>
           ) : isSaveAttempted ? (
             <>Processando...</>
+          ) : saveSuccess ? (
+            <>
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-2" viewBox="0 0 20 20" fill="currentColor">
+                <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+              </svg>
+              Salvo com Sucesso
+            </>
           ) : (
             <>
               <Save className="w-4 h-4 mr-2" />
