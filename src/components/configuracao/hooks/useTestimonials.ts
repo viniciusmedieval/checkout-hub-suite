@@ -1,31 +1,38 @@
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Depoimento } from '@/lib/types/database-types';
-import { supabase } from '@/lib/supabase';
 import { toast } from 'sonner';
+import { fetchTestimonials, deleteTestimonial as deleteTestimonialService, addTestimonial as addTestimonialService, updateTestimonial as updateTestimonialService } from '../services';
 
 export const useTestimonials = (initialDepoimentos: Depoimento[] = []) => {
   const [depoimentos, setDepoimentos] = useState<Depoimento[]>(initialDepoimentos);
   const [isLoading, setIsLoading] = useState(false);
 
+  // Sincronizar com depoimentos iniciais quando eles mudarem
+  useEffect(() => {
+    console.log("useTestimonials - initialDepoimentos atualizado:", initialDepoimentos);
+    if (Array.isArray(initialDepoimentos) && initialDepoimentos.length > 0) {
+      setDepoimentos(initialDepoimentos);
+    }
+  }, [initialDepoimentos]);
+
   const handleDeleteTestimonial = async (id: number): Promise<void> => {
     try {
       setIsLoading(true);
+      console.log("🗑️ Excluindo depoimento ID:", id);
       
-      const { error } = await supabase
-        .from('depoimentos')
-        .delete()
-        .eq('id', id);
+      // Utilizar o serviço para excluir o depoimento
+      const success = await deleteTestimonialService(id);
       
-      if (error) {
-        throw error;
+      if (success) {
+        // Update local state
+        setDepoimentos(prev => prev.filter(depoimento => depoimento.id !== id));
+        console.log("✅ Depoimento excluído com sucesso!");
+      } else {
+        throw new Error("Falha ao excluir depoimento");
       }
-      
-      // Update local state
-      setDepoimentos(prev => prev.filter(depoimento => depoimento.id !== id));
-      toast.success('Depoimento excluído com sucesso!');
     } catch (error: any) {
-      console.error('Erro ao excluir depoimento:', error);
+      console.error('❌ Erro ao excluir depoimento:', error);
       toast.error(`Erro ao excluir depoimento: ${error.message}`);
     } finally {
       setIsLoading(false);
@@ -35,23 +42,20 @@ export const useTestimonials = (initialDepoimentos: Depoimento[] = []) => {
   const handleAddTestimonial = async (depoimento: Omit<Depoimento, "id" | "criado_em">): Promise<void> => {
     try {
       setIsLoading(true);
+      console.log("➕ Adicionando novo depoimento:", depoimento);
       
-      const { data, error } = await supabase
-        .from('depoimentos')
-        .insert([depoimento])
-        .select();
+      // Utilizar o serviço para adicionar o depoimento
+      const novoDepoimento = await addTestimonialService(depoimento);
       
-      if (error) {
-        throw error;
-      }
-      
-      if (data && data.length > 0) {
+      if (novoDepoimento) {
         // Update local state with the new testimonial
-        setDepoimentos(prev => [...prev, data[0]]);
-        toast.success('Depoimento adicionado com sucesso!');
+        setDepoimentos(prev => [...prev, novoDepoimento]);
+        console.log("✅ Depoimento adicionado com sucesso:", novoDepoimento);
+      } else {
+        throw new Error("Falha ao adicionar depoimento");
       }
     } catch (error: any) {
-      console.error('Erro ao adicionar depoimento:', error);
+      console.error('❌ Erro ao adicionar depoimento:', error);
       toast.error(`Erro ao adicionar depoimento: ${error.message}`);
     } finally {
       setIsLoading(false);
@@ -61,27 +65,42 @@ export const useTestimonials = (initialDepoimentos: Depoimento[] = []) => {
   const handleUpdateTestimonial = async (id: number, depoimento: Partial<Depoimento>): Promise<void> => {
     try {
       setIsLoading(true);
+      console.log("🔄 Atualizando depoimento ID:", id, depoimento);
       
-      const { data, error } = await supabase
-        .from('depoimentos')
-        .update(depoimento)
-        .eq('id', id)
-        .select();
+      // Utilizar o serviço para atualizar o depoimento
+      const depoimentoAtualizado = await updateTestimonialService(id, depoimento);
       
-      if (error) {
-        throw error;
-      }
-      
-      if (data && data.length > 0) {
+      if (depoimentoAtualizado) {
         // Update local state
         setDepoimentos(prev => 
-          prev.map(item => item.id === id ? { ...item, ...data[0] } : item)
+          prev.map(item => item.id === id ? depoimentoAtualizado : item)
         );
-        toast.success('Depoimento atualizado com sucesso!');
+        console.log("✅ Depoimento atualizado com sucesso:", depoimentoAtualizado);
+      } else {
+        throw new Error("Falha ao atualizar depoimento");
       }
     } catch (error: any) {
-      console.error('Erro ao atualizar depoimento:', error);
+      console.error('❌ Erro ao atualizar depoimento:', error);
       toast.error(`Erro ao atualizar depoimento: ${error.message}`);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const reloadTestimonials = async (produtoId?: number): Promise<void> => {
+    try {
+      setIsLoading(true);
+      console.log("🔄 Recarregando depoimentos...");
+      
+      const depoimentosData = await fetchTestimonials(produtoId);
+      
+      if (depoimentosData) {
+        setDepoimentos(depoimentosData);
+        console.log("✅ Depoimentos recarregados com sucesso:", depoimentosData);
+      }
+    } catch (error: any) {
+      console.error('❌ Erro ao recarregar depoimentos:', error);
+      toast.error(`Erro ao recarregar depoimentos: ${error.message}`);
     } finally {
       setIsLoading(false);
     }
@@ -93,6 +112,7 @@ export const useTestimonials = (initialDepoimentos: Depoimento[] = []) => {
     isLoading,
     handleDeleteTestimonial,
     handleAddTestimonial,
-    handleUpdateTestimonial
+    handleUpdateTestimonial,
+    reloadTestimonials
   };
 };

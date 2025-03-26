@@ -3,7 +3,7 @@ import { useState, useEffect } from 'react';
 import { supabase } from '@/lib/supabase';
 import { ConfigCheckout, Depoimento } from "@/lib/types/database-types";
 import { defaultConfig } from '../utils/defaultConfig';
-import { fetchCheckoutConfig } from '../services';
+import { fetchCheckoutConfig, fetchTestimonials } from '../services';
 
 export interface ConfigLoaderResult {
   config: ConfigCheckout;
@@ -37,7 +37,7 @@ export const useConfigLoader = (slug?: string): ConfigLoaderResult => {
         setConfig(configFromService);
         
         // Fetch testimonials for this config (product)
-        await fetchTestimonials(configFromService.id);
+        await loadTestimonials(configFromService.id);
         
         setLoading(false);
         return configFromService;
@@ -67,7 +67,7 @@ export const useConfigLoader = (slug?: string): ConfigLoaderResult => {
           setConfig(configData);
           
           // Fetch testimonials for this config (product)
-          await fetchTestimonials(configData.id);
+          await loadTestimonials(configData.id);
           
           setLoading(false);
           return configData;
@@ -95,7 +95,7 @@ export const useConfigLoader = (slug?: string): ConfigLoaderResult => {
           setConfig(configData);
           
           // Fetch testimonials for this config (product)
-          await fetchTestimonials(configData.id);
+          await loadTestimonials(configData.id);
           
           setLoading(false);
           return configData;
@@ -115,9 +115,21 @@ export const useConfigLoader = (slug?: string): ConfigLoaderResult => {
     }
   };
 
-  const fetchTestimonials = async (configId?: number) => {
+  const loadTestimonials = async (configId?: number) => {
     try {
-      console.log("🔍 Buscando depoimentos...", configId ? `para o produto ID: ${configId}` : "gerais");
+      console.log("🔍 Carregando depoimentos para a configuração ID:", configId || "geral");
+      
+      // Usando o serviço centralizado
+      const testimonialsData = await fetchTestimonials(configId);
+      
+      if (testimonialsData && testimonialsData.length > 0) {
+        console.log(`✅ ${testimonialsData.length} depoimentos carregados com sucesso via serviço.`);
+        setDepoimentos(testimonialsData);
+        return;
+      }
+      
+      // Fallback - buscar diretamente do Supabase
+      console.log("ℹ️ Tentando buscar depoimentos diretamente do Supabase...");
       
       let query = supabase
         .from('depoimentos')
@@ -129,18 +141,30 @@ export const useConfigLoader = (slug?: string): ConfigLoaderResult => {
         query = query.eq('produto_id', configId);
       }
       
-      const { data, error } = await query.limit(10);
+      const { data, error } = await query;
       
       if (error) {
-        console.error('❌ Erro ao carregar depoimentos:', error);
-      } else if (data) {
-        console.log(`✅ ${data.length} depoimentos carregados com sucesso.`);
+        console.error('❌ Erro ao carregar depoimentos (fallback):', error);
+        // Not setting error state here as testimonials are secondary
+      } else if (data && data.length > 0) {
+        console.log(`✅ ${data.length} depoimentos carregados com sucesso (fallback direto).`);
         setDepoimentos(data);
       } else {
-        console.log("ℹ️ Nenhum depoimento encontrado.");
+        console.log("ℹ️ Nenhum depoimento encontrado. Usando depoimentos padrão.");
+        // Importar e usar depoimentos padrão
+        const { defaultTestimonials } = await import('@/components/checkout/testimonials/DefaultTestimonials');
+        setDepoimentos(defaultTestimonials);
       }
     } catch (error) {
       console.error('❌ Erro ao buscar depoimentos:', error);
+      // Carregar depoimentos padrão em caso de erro
+      try {
+        const { defaultTestimonials } = await import('@/components/checkout/testimonials/DefaultTestimonials');
+        setDepoimentos(defaultTestimonials);
+        console.log("ℹ️ Usando depoimentos padrão após erro.");
+      } catch (importError) {
+        console.error('❌ Erro ao importar depoimentos padrão:', importError);
+      }
     }
   };
 

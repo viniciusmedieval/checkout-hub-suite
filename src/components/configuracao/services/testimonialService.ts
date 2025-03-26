@@ -1,83 +1,46 @@
 
-import { supabase, Depoimento } from "@/lib/supabase";
+import { supabase } from "@/lib/supabase";
+import { Depoimento } from "@/lib/types/database-types";
 import { toast } from "sonner";
-import { getDefaultTestimonials } from "@/components/checkout/testimonials/DefaultTestimonials";
+import { defaultTestimonials } from "@/components/checkout/testimonials/DefaultTestimonials";
 
 /**
  * Fetches all testimonials from the database
- * If no testimonials are found, creates and returns default ones
+ * If no testimonials are found, returns default ones
  */
-export const fetchTestimonials = async (): Promise<Depoimento[]> => {
+export const fetchTestimonials = async (produtoId?: number): Promise<Depoimento[]> => {
   try {
-    const { data, error } = await supabase
+    console.log("🔍 Buscando depoimentos...", produtoId ? `para o produto ID: ${produtoId}` : "gerais");
+    
+    let query = supabase
       .from("depoimentos")
       .select("*")
-      .order('criado_em', { ascending: false });
+      .order('id', { ascending: false });
+    
+    // If we have a product ID, filter testimonials by that product ID
+    if (produtoId) {
+      query = query.eq('produto_id', produtoId);
+    }
+    
+    const { data, error } = await query;
       
     if (error) {
-      console.error("Erro ao carregar depoimentos:", error);
+      console.error("❌ Erro ao carregar depoimentos:", error);
       toast.error("Erro ao carregar depoimentos");
-      return [];
+      return defaultTestimonials;
     }
     
     if (!data || data.length === 0) {
-      console.log("Nenhum depoimento encontrado, adicionando depoimentos padrão");
-      const defaultTestimonials = getDefaultTestimonials();
-      
-      // Verificar se há produtos no sistema para evitar erros de chave estrangeira
-      const { data: produtos } = await supabase
-        .from("produtos")
-        .select("id")
-        .limit(1);
-        
-      const hasProdutos = produtos && produtos.length > 0;
-      
-      // Se não houver produtos, não definir produto_id para evitar erro de chave estrangeira
-      const depoimentosParaInserir = defaultTestimonials.map(dep => ({
-        nome: dep.nome,
-        texto: dep.texto,
-        estrelas: dep.estrelas,
-        foto_url: dep.foto_url,
-        produto_id: null, // Definido como null para evitar erros de chave estrangeira
-        criado_em: new Date().toISOString()
-      }));
-      
-      // Passo 1: Inserir depoimentos padrão
-      const { error: insertError } = await supabase
-        .from("depoimentos")
-        .insert(depoimentosParaInserir);
-        
-      if (insertError) {
-        console.error("Erro ao inserir depoimentos padrão:", insertError);
-        return [];
-      }
-      
-      // Passo 2: Buscar os depoimentos recém-inseridos em uma consulta separada
-      const { data: insertedData, error: selectError } = await supabase
-        .from("depoimentos")
-        .select("*")
-        .order('criado_em', { ascending: false });
-        
-      if (selectError) {
-        console.error("Erro ao buscar depoimentos inseridos:", selectError);
-        return [];
-      }
-      
-      if (!insertedData) {
-        console.error("Erro: Retorno nulo do Supabase após inserção de depoimentos");
-        return [];
-      }
-      
-      console.log("Depoimentos padrão adicionados com sucesso:", insertedData);
-      return insertedData || [];
+      console.log("ℹ️ Nenhum depoimento encontrado, retornando depoimentos padrão");
+      return defaultTestimonials;
     }
     
-    console.log("Depoimentos carregados do banco:", data);
-    return data || [];
+    console.log("✅ Depoimentos carregados com sucesso:", data);
+    return data;
   } catch (error) {
-    console.error("Erro ao carregar depoimentos:", error);
+    console.error("❌ Erro ao carregar depoimentos:", error);
     toast.error("Erro ao carregar depoimentos. Tente novamente mais tarde.");
-    return [];
+    return defaultTestimonials;
   }
 };
 
@@ -86,6 +49,8 @@ export const fetchTestimonials = async (): Promise<Depoimento[]> => {
  */
 export const deleteTestimonial = async (id: number): Promise<boolean> => {
   try {
+    console.log("🗑️ Excluindo depoimento ID:", id);
+    
     const { error } = await supabase
       .from("depoimentos")
       .delete()
@@ -93,10 +58,11 @@ export const deleteTestimonial = async (id: number): Promise<boolean> => {
       
     if (error) throw error;
     
+    console.log("✅ Depoimento excluído com sucesso!");
     toast.success("Depoimento excluído com sucesso!");
     return true;
   } catch (error) {
-    console.error("Erro ao excluir depoimento:", error);
+    console.error("❌ Erro ao excluir depoimento:", error);
     toast.error("Erro ao excluir depoimento. Tente novamente.");
     return false;
   }
@@ -107,33 +73,26 @@ export const deleteTestimonial = async (id: number): Promise<boolean> => {
  */
 export const addTestimonial = async (depoimento: Omit<Depoimento, "id" | "criado_em">): Promise<Depoimento | null> => {
   try {
-    // Passo 1: Inserir o novo depoimento
-    const { error } = await supabase
+    console.log("➕ Adicionando novo depoimento:", depoimento);
+    
+    const { data, error } = await supabase
       .from("depoimentos")
-      .insert([depoimento]);
+      .insert([depoimento])
+      .select();
       
     if (error) throw error;
     
-    // Passo 2: Buscar o depoimento recém-criado em uma consulta separada
-    const { data, error: selectError } = await supabase
-      .from("depoimentos")
-      .select("*")
-      .order('id', { ascending: false })
-      .limit(1)
-      .single();
-      
-    if (selectError) throw selectError;
-    
-    if (!data) {
-      console.error("Erro: Retorno nulo do Supabase após inserção de depoimento");
-      toast.error("Erro ao recuperar depoimento criado. Tente novamente.");
+    if (!data || data.length === 0) {
+      console.error("❌ Erro: Retorno nulo do Supabase após inserção de depoimento");
+      toast.error("Erro ao adicionar depoimento. Tente novamente.");
       return null;
     }
     
+    console.log("✅ Depoimento adicionado com sucesso:", data[0]);
     toast.success("Depoimento adicionado com sucesso!");
-    return data as Depoimento;
+    return data[0] as Depoimento;
   } catch (error) {
-    console.error("Erro ao adicionar depoimento:", error);
+    console.error("❌ Erro ao adicionar depoimento:", error);
     toast.error("Erro ao adicionar depoimento. Tente novamente.");
     return null;
   }
@@ -144,33 +103,27 @@ export const addTestimonial = async (depoimento: Omit<Depoimento, "id" | "criado
  */
 export const updateTestimonial = async (id: number, depoimento: Partial<Depoimento>): Promise<Depoimento | null> => {
   try {
-    // Passo 1: Atualizar o depoimento
-    const { error } = await supabase
+    console.log("🔄 Atualizando depoimento ID:", id, depoimento);
+    
+    const { data, error } = await supabase
       .from("depoimentos")
       .update(depoimento)
-      .eq('id', id);
+      .eq('id', id)
+      .select();
       
     if (error) throw error;
     
-    // Passo 2: Buscar o depoimento atualizado em uma consulta separada
-    const { data, error: fetchError } = await supabase
-      .from("depoimentos")
-      .select("*")
-      .eq('id', id)
-      .single();
-      
-    if (fetchError) throw fetchError;
-    
-    if (!data) {
-      console.error("Erro: Retorno nulo do Supabase após atualização de depoimento");
-      toast.error("Erro ao recuperar depoimento atualizado. Tente novamente.");
+    if (!data || data.length === 0) {
+      console.error("❌ Erro: Retorno nulo do Supabase após atualização de depoimento");
+      toast.error("Erro ao atualizar depoimento. Tente novamente.");
       return null;
     }
     
+    console.log("✅ Depoimento atualizado com sucesso:", data[0]);
     toast.success("Depoimento atualizado com sucesso!");
-    return data as Depoimento;
+    return data[0] as Depoimento;
   } catch (error) {
-    console.error("Erro ao atualizar depoimento:", error);
+    console.error("❌ Erro ao atualizar depoimento:", error);
     toast.error("Erro ao atualizar depoimento. Tente novamente.");
     return null;
   }
