@@ -41,7 +41,6 @@ export const useConfigLoader = (slug?: string): ConfigLoaderResult => {
           setLoading(false);
           return null;
         } else if (configData) {
-          console.log('✅ Configuração carregada com sucesso:', configData);
           setConfigData(configData);
           setConfig(configData);
           
@@ -96,8 +95,6 @@ export const useConfigLoader = (slug?: string): ConfigLoaderResult => {
 
   const fetchTestimonials = async (configId?: number) => {
     try {
-      console.log('🔄 Carregando depoimentos para configId:', configId);
-      
       let query = supabase
         .from('depoimentos')
         .select('*')
@@ -111,9 +108,8 @@ export const useConfigLoader = (slug?: string): ConfigLoaderResult => {
       const { data, error } = await query.limit(10);
       
       if (error) {
-        console.error('❌ Erro ao carregar depoimentos:', error);
+        console.error('Erro ao carregar depoimentos:', error);
       } else if (data) {
-        console.log('✅ Depoimentos carregados:', data.length);
         setDepoimentos(data);
       }
     } catch (error) {

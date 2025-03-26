@@ -8,11 +8,9 @@ export const useCheckoutConfig = () => {
 
   const fetchCheckoutConfig = async () => {
     try {
-      console.log("useCheckoutConfig - Buscando configuração do checkout...");
-      
       // Verificar se o cliente Supabase está inicializado
       if (!supabase) {
-        console.error("useCheckoutConfig - Cliente Supabase não inicializado");
+        console.error("Cliente Supabase não inicializado");
         throw new Error("Cliente Supabase não inicializado");
       }
       
@@ -23,11 +21,9 @@ export const useCheckoutConfig = () => {
         .limit(1);
         
       if (configError) {
-        console.error("useCheckoutConfig - Erro ao carregar configurações do checkout:", configError);
+        console.error("Erro ao carregar configurações do checkout:", configError);
         // Continuamos sem definir erro, apenas logar para não interromper o fluxo
       } else if (checkoutConfig && checkoutConfig.length > 0) {
-        console.log("useCheckoutConfig - Config carregada:", checkoutConfig[0]);
-        
         // Validar cores antes de aplicar
         if (checkoutConfig[0]) {
           const config = {...checkoutConfig[0]};
@@ -54,23 +50,9 @@ export const useCheckoutConfig = () => {
           // Ensure modo_random is a boolean
           config.modo_random = !!config.modo_random;
           
-          console.log("useCheckoutConfig - Valores validados:", {
-            corTopo: config.cor_topo,
-            corFundo: config.cor_fundo,
-            corBanner: config.cor_banner,
-            corTitulo: config.cor_titulo,
-            corBotao: config.cor_botao,
-            corTextoBotao: config.cor_texto_botao,
-            corTextoContador: config.cor_texto_contador,
-            redirectCardStatus: config.redirect_card_status,
-            modoRandom: config.modo_random
-          });
-          
           setConfigCheckout(config);
           return config;
         }
-      } else {
-        console.log("useCheckoutConfig - Nenhuma configuração encontrada");
       }
       
       // Definir configuração padrão como fallback
@@ -101,7 +83,7 @@ export const useCheckoutConfig = () => {
       setConfigCheckout(defaultConfig);
       return defaultConfig;
     } catch (error) {
-      console.error("useCheckoutConfig - Erro ao buscar configuração do checkout:", error);
+      console.error("Erro ao buscar configuração do checkout:", error);
       
       // Definir configuração padrão em caso de erro
       const defaultConfig: ConfigCheckout = {

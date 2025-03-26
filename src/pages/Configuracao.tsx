@@ -46,40 +46,24 @@ const Configuracao = () => {
   );
 
   useEffect(() => {
-    console.log("⭐ Configuracao component - Estado inicial carregado");
-    console.log("  - Config ID:", config?.id);
-    console.log("  - Loading:", loading);
-    console.log("  - Tem alterações não salvas:", hasUnsavedChanges());
-  }, [config, loading, hasUnsavedChanges]);
-
-  useEffect(() => {
     // Get URL parameters
     const params = new URLSearchParams(window.location.search);
     const shouldAutoTest = params.get("autotest") === "true";
     
     if (shouldAutoTest && !loading && !isAutoTestRunning) {
-      console.log("🔄 Parâmetro de URL 'autotest=true' detectado, iniciando teste automático...");
       toast.info("Iniciando teste automático via parâmetro de URL", {
         description: "Detectado parâmetro autotest=true na URL"
       });
       // Small delay to ensure everything is loaded
       setTimeout(() => {
-        console.log("🔄 Executando teste automático após delay de carregamento");
         runAutomaticTest();
       }, 500);
     }
   }, [loading, isAutoTestRunning, runAutomaticTest]);
 
   if (loading) {
-    console.log("🔄 Componente Configuracao - Exibindo estado de carregamento");
     return <LoadingState />;
   }
-
-  console.log("🔄 Componente Configuracao - Renderizando conteúdo principal");
-  console.log("  - isSaving:", isSaving);
-  console.log("  - isSaveAttempted:", isSaveAttempted);
-  console.log("  - saveSuccess:", saveSuccess);
-  console.log("  - isAutoTestRunning:", isAutoTestRunning);
 
   const typedConfig = config as unknown as ConfigCheckout;
 

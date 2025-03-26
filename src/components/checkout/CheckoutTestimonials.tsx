@@ -19,8 +19,6 @@ export function CheckoutTestimonials({ produto_id }: CheckoutTestimonialsProps) 
     const loadTestimonials = async () => {
       setLoading(true);
       try {
-        console.log("CheckoutTestimonials - Buscando depoimentos para produto_id:", produto_id);
-        
         // Tentar buscar depoimentos do Supabase
         let data: Depoimento[] = [];
         
@@ -37,7 +35,6 @@ export function CheckoutTestimonials({ produto_id }: CheckoutTestimonialsProps) 
             
             if (supabaseData && supabaseData.length > 0) {
               data = supabaseData;
-              console.log("CheckoutTestimonials - Depoimentos carregados do Supabase:", data.length);
             }
           } else {
             throw new Error("Cliente Supabase não inicializado");
@@ -48,13 +45,11 @@ export function CheckoutTestimonials({ produto_id }: CheckoutTestimonialsProps) 
           // Tentar usar o serviço de configuração como alternativa
           try {
             data = await fetchTestimonials();
-            console.log("CheckoutTestimonials - Depoimentos carregados via serviço:", data.length);
           } catch (serviceError) {
             console.error("Erro ao buscar depoimentos via serviço:", serviceError);
             
             // Último recurso: usar depoimentos padrão
             data = defaultTestimonials;
-            console.log("CheckoutTestimonials - Usando depoimentos padrão");
           }
         }
         

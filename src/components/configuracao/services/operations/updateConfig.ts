@@ -15,16 +15,9 @@ export async function updateExistingConfig(config: ConfigCheckout, configToSave:
     
     // Guarantee we have a valid Supabase client
     if (!client) {
-      console.error("❌ Cliente Supabase não disponível ao tentar atualizar configuração");
+      console.error("Cliente Supabase não disponível ao tentar atualizar configuração");
       throw new Error("Cliente Supabase não disponível");
     }
-
-    // Extra debug for test values
-    const isTestConfig = (
-      configToSave.cor_fundo === "#FF0000" && 
-      configToSave.cor_texto === "#FFFFFF" && 
-      configToSave.texto_botao === "Finalizar Compra"
-    );
 
     // Simplificar validação de conexão
     try {
@@ -34,11 +27,11 @@ export async function updateExistingConfig(config: ConfigCheckout, configToSave:
         .limit(1);
       
       if (queryError) {
-        console.error("❌ Falha na verificação da conexão:", queryError);
+        console.error("Falha na verificação da conexão:", queryError);
         throw new Error(`Falha na verificação da conexão: ${queryError.message}`);
       }
     } catch (connError: any) {
-      console.error("❌ Erro na verificação da conexão com Supabase:", connError);
+      console.error("Erro na verificação da conexão com Supabase:", connError);
       toast.error(`Erro de conexão: ${connError.message}`);
       throw connError;
     }
@@ -51,7 +44,7 @@ export async function updateExistingConfig(config: ConfigCheckout, configToSave:
       .maybeSingle();
 
     if (fetchError) {
-      console.error("❌ Configuração com ID não encontrada ou erro ao buscar:", fetchError);
+      console.error("Configuração com ID não encontrada ou erro ao buscar:", fetchError);
       
       if (fetchError.code === 'PGRST116') {
         // Erro de registro não encontrado, tentar criar nova configuração
@@ -67,10 +60,10 @@ export async function updateExistingConfig(config: ConfigCheckout, configToSave:
       .from("config_checkout")
       .update(configToSave)
       .eq("id", config.id)
-      .select("*"); // Garantir que o select seja chamado após o update
+      .select("*");
 
     if (error) {
-      console.error("❌ Erro ao atualizar configurações:", error);
+      console.error("Erro ao atualizar configurações:", error);
       toast.error("Erro ao atualizar configurações: " + error.message);
       return null;
     }
@@ -84,13 +77,13 @@ export async function updateExistingConfig(config: ConfigCheckout, configToSave:
         .maybeSingle();
 
       if (selectError) {
-        console.error("❌ Erro ao buscar configuração atualizada:", selectError);
+        console.error("Erro ao buscar configuração atualizada:", selectError);
         toast.error("Configuração atualizada, mas houve erro ao buscar os dados atualizados.");
         return config; // Retornar a config original como feedback
       }
 
       if (!data) {
-        console.error("❌ Erro: Retorno nulo do Supabase após atualização");
+        console.error("Erro: Retorno nulo do Supabase após atualização");
         toast.error("Erro ao recuperar dados atualizados. Tente novamente.");
         return config; // Retornar a config original como feedback
       }
@@ -104,7 +97,7 @@ export async function updateExistingConfig(config: ConfigCheckout, configToSave:
     toast.success("Configurações salvas com sucesso!");
     return processedData;
   } catch (error: any) {
-    console.error("❌ Erro ao atualizar configuração:", error);
+    console.error("Erro ao atualizar configuração:", error);
     toast.error("Erro ao atualizar configuração: " + (error.message || "Erro desconhecido"));
     return null;
   }

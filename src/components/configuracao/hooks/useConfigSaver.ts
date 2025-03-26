@@ -27,7 +27,7 @@ export const useConfigSaver = () => {
       try {
         const client = await getSupabaseClient();
         if (!client) {
-          console.error("❌ Cliente Supabase não inicializado");
+          console.error("Cliente Supabase não inicializado");
           throw new Error("Supabase client is not initialized");
         }
         
@@ -38,11 +38,11 @@ export const useConfigSaver = () => {
           .limit(1);
           
         if (connectionError) {
-          console.error("❌ Falha no teste de conexão:", connectionError);
+          console.error("Falha no teste de conexão:", connectionError);
           throw new Error(`Supabase connection test failed: ${connectionError.message}`);
         }
       } catch (connectionError: any) {
-        console.error("❌ Supabase connection error:", connectionError);
+        console.error("Supabase connection error:", connectionError);
         toast.error(`Problema de conexão com o banco de dados: ${connectionError.message}`);
         throw connectionError;
       }
@@ -77,7 +77,7 @@ export const useConfigSaver = () => {
         ? "Teste automático: Erro ao salvar configurações"
         : "Erro ao salvar configurações";
       
-      console.error("❌ " + errorMsg + " - saveConfigService retornou null");
+      console.error(errorMsg + " - saveConfigService retornou null");
       setSavingError(errorMsg);
       toast.error(errorMsg);
       return null;
@@ -93,7 +93,7 @@ export const useConfigSaver = () => {
       const errorPrefix = isTestError ? "Teste automático: " : "";
       const errorMsg = `${errorPrefix}Erro ao salvar configurações: ${error.message || "Erro desconhecido"}`;
       
-      console.error("❌ " + errorMsg, error);
+      console.error(errorMsg, error);
       
       setSavingError(errorMsg);
       toast.error(errorMsg);

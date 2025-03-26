@@ -35,7 +35,7 @@ export const AutoTestRunner = ({ onComplete }: AutoTestRunnerProps) => {
             .limit(1);
             
           if (connectionCheckError) {
-            console.error("❌ AutoTestRunner - Erro ao verificar conexão:", connectionCheckError);
+            console.error("AutoTestRunner - Erro ao verificar conexão:", connectionCheckError);
             throw new Error(`Erro de conexão: ${connectionCheckError.message}`);
           }
           
@@ -51,14 +51,14 @@ export const AutoTestRunner = ({ onComplete }: AutoTestRunnerProps) => {
             }
           }, 1000);
         } catch (connError: any) {
-          console.error("❌ AutoTestRunner - Falha na verificação da conexão:", connError);
+          console.error("AutoTestRunner - Falha na verificação da conexão:", connError);
           toast.error(`Falha na conexão com o banco de dados: ${connError.message}`);
           setTestStatus("failed");
           if (onComplete) onComplete();
         }
       } catch (error: any) {
         setTestStatus("failed");
-        console.error("❌ Erro ao executar teste automático:", error);
+        console.error("Erro ao executar teste automático:", error);
         toast.error(`Erro ao executar teste automático: ${error instanceof Error ? error.message : "Erro desconhecido"}`);
         
         if (onComplete) {

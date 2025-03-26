@@ -81,34 +81,23 @@ export const ConfiguracaoProvider: React.FC<ConfiguracaoProviderProps> = ({ chil
     handleUpdateTestimonial
   } = useTestimonials(depoimentos);
 
-  // Log current state
   useEffect(() => {
-    console.log("ConfiguracaoProvider - Current config:", currentConfig);
-    console.log("ConfiguracaoProvider - Current testimonials:", currentDepoimentos);
-  }, [currentConfig, currentDepoimentos]);
-
-  useEffect(() => {
-    console.log("ConfiguracaoProvider - Received config from loader:", config);
     setCurrentConfig(config);
   }, [config]);
 
   useEffect(() => {
-    console.log("ConfiguracaoProvider - Received testimonials from loader:", depoimentos);
     if (Array.isArray(depoimentos)) {
       setCurrentDepoimentos(depoimentos);
     }
   }, [depoimentos]);
 
   const setConfig = (newConfig: ConfigCheckout) => {
-    console.log("ConfiguracaoProvider - Setting new config:", newConfig);
     setCurrentConfig(newConfig);
   };
 
   const handleSaveConfig = async (): Promise<ConfigCheckout | null> => {
-    console.log("ConfiguracaoProvider - Saving config:", currentConfig);
     const savedConfig = await saveConfigSettings();
     if (savedConfig) {
-      console.log("ConfiguracaoProvider - Config saved successfully:", savedConfig);
       return savedConfig;
     }
     return null;

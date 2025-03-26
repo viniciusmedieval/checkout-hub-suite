@@ -41,12 +41,12 @@ export const useTestConfig = (
           if (savedConfig) {
             toast.success("Teste: Configuração salva com sucesso!");
           } else {
-            console.error("❌ Teste falhou ao salvar configuração: resultado nulo");
+            console.error("Teste falhou ao salvar configuração: resultado nulo");
             toast.error("Teste: Erro ao salvar configuração - resultado nulo");
             setConfig(originalConfig);
           }
         } catch (error) {
-          console.error("❌ Teste falhou com erro", error);
+          console.error("Teste falhou com erro", error);
           toast.error("Teste falhou: " + (error instanceof Error ? error.message : "Erro desconhecido"));
           setConfig(originalConfig);
         } finally {
@@ -54,7 +54,7 @@ export const useTestConfig = (
         }
       }, 500);
     } catch (error) {
-      console.error("❌ Erro ao executar teste", error);
+      console.error("Erro ao executar teste", error);
       toast.error("Erro ao executar teste: " + (error instanceof Error ? error.message : "Erro desconhecido"));
       setIsTestSaving(false);
     }

@@ -23,7 +23,7 @@ export const saveConfig = async (config: ConfigCheckout): Promise<ConfigCheckout
       const client = await getSupabaseClient();
       if (!client) {
         const errorMsg = "Cliente Supabase não pôde ser inicializado. Verifique a conexão com o banco de dados.";
-        console.error("❌ " + errorMsg);
+        console.error(errorMsg);
         toast.error(isTestConfig ? "Teste: " + errorMsg : errorMsg);
         throw new Error(errorMsg);
       }
@@ -46,7 +46,7 @@ export const saveConfig = async (config: ConfigCheckout): Promise<ConfigCheckout
         throw new Error(`Falha ao testar conexão: ${testError.message}`);
       }
     } catch (connError: any) {
-      console.error("❌ Falha ao testar conexão com Supabase:", connError);
+      console.error("Falha ao testar conexão com Supabase:", connError);
       const errorMsg = `Erro de conexão com banco de dados: ${connError.message}`;
       toast.error(isTestConfig ? "Teste: " + errorMsg : errorMsg);
       throw connError;
@@ -57,7 +57,7 @@ export const saveConfig = async (config: ConfigCheckout): Promise<ConfigCheckout
     // Validar dados antes de salvar
     if (!configToSave.texto_botao || !configToSave.cor_botao) {
       const errorMsg = "Dados inválidos para salvar. Verifique os campos obrigatórios.";
-      console.error("❌ " + errorMsg + " Dados:", configToSave);
+      console.error(errorMsg + " Dados:", configToSave);
       toast.error(`${isTestConfig ? "Teste: " : ""}Erro: ${errorMsg}`);
       throw new Error(errorMsg);
     }
@@ -75,12 +75,12 @@ export const saveConfig = async (config: ConfigCheckout): Promise<ConfigCheckout
     if (result) {
       return result;
     } else {
-      console.error("❌ saveConfig: Operações de banco de dados não retornaram dados válidos");
+      console.error("saveConfig: Operações de banco de dados não retornaram dados válidos");
       toast.error(`${isTestConfig ? "Teste: " : ""}Erro: Falha ao salvar configurações`);
       return null;
     }
   } catch (error: any) {
-    console.error("❌ Erro no saveConfig:", error);
+    console.error("Erro no saveConfig:", error);
     
     const isTestConfig = (
       config.cor_fundo === "#FF0000" && 
