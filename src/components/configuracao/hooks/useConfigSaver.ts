@@ -24,6 +24,14 @@ export const useConfigSaver = () => {
     try {
       console.log("💾 Saving configuration...", config);
       
+      // Add additional validation for the test values
+      if (config.cor_fundo === "#FF0000" && config.cor_texto === "#FFFFFF" && config.texto_botao === "Finalizar Compra") {
+        console.log("🧪 Valores de teste detectados - verificando antes de salvar:");
+        console.log("  cor_fundo: " + config.cor_fundo + " (esperado: #FF0000) ✓");
+        console.log("  cor_texto: " + config.cor_texto + " (esperado: #FFFFFF) ✓");
+        console.log("  texto_botao: " + config.texto_botao + " (esperado: Finalizar Compra) ✓");
+      }
+      
       // Call the saveConfig service
       const savedConfig = await saveConfigService(config);
       

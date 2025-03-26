@@ -145,6 +145,37 @@ const Configuracao = () => {
     console.log("🔄 Iniciando teste automático de salvamento de configuração");
     
     try {
+      const testConfig = { ...typedConfig };
+      testConfig.cor_fundo = "#FF0000";
+      testConfig.cor_texto = "#FFFFFF";
+      testConfig.texto_botao = "Finalizar Compra";
+      
+      console.log("🧪 Valores de teste configurados:");
+      console.log("  cor_fundo: #FF0000 (vermelho)");
+      console.log("  cor_texto: #FFFFFF (branco)");
+      console.log("  texto_botao: Finalizar Compra");
+      
+      setConfig(testConfig);
+      
+      try {
+        const savedConfig = await handleSaveConfig();
+        if (savedConfig) {
+          console.log("✅ Configuração de teste salva com sucesso!", savedConfig);
+          setSaveSuccess(true);
+          toast.success("Teste automático concluído com sucesso!");
+          await reloadConfig();
+          
+          setTimeout(() => {
+            setSaveSuccess(false);
+          }, 3000);
+          return;
+        } else {
+          console.error("❌ Não foi possível salvar a configuração de teste diretamente");
+        }
+      } catch (directError) {
+        console.error("❌ Erro ao salvar configuração de teste diretamente:", directError);
+      }
+      
       const testResult = await runAutoSaveTest(
         handleSaveConfig,
         setConfig,

@@ -1,6 +1,7 @@
 
 import { ConfigCheckout } from "@/lib/types/database-types";
 import { toast } from "sonner";
+import { supabase } from "@/lib/supabase";
 
 /**
  * Automatically runs a save test with predefined values
@@ -16,6 +17,19 @@ export const runAutoSaveTest = async (
   try {
     console.log("🔄 Iniciando teste automático de salvamento");
     console.log("----------------------------------------------");
+    
+    // First verify Supabase connection
+    try {
+      const { data, error } = await supabase.from('config_checkout').select('count(*)', { count: 'exact' }).limit(1);
+      if (error) {
+        throw new Error("Erro de conexão com Supabase: " + error.message);
+      }
+      console.log("✅ Conexão com Supabase verificada com sucesso");
+    } catch (connError) {
+      console.error("❌ Falha na verificação da conexão com Supabase:", connError);
+      toast.error("Falha na conexão com o banco de dados. Verifique as credenciais Supabase.");
+      return false;
+    }
     
     // Create test config with our specific test values
     const testConfig = { ...currentConfig };
@@ -34,7 +48,18 @@ export const runAutoSaveTest = async (
     
     // Execute the save function
     console.log("🔄 Executando função de salvamento...");
-    const savedConfig = await saveFunction();
+    
+    // Add timeout to handle potential promise rejection
+    const timeoutPromise = new Promise<null>((_, reject) => {
+      setTimeout(() => {
+        reject(new Error("Timeout ao salvar configuração (30s)"));
+      }, 30000);
+    });
+    
+    const savedConfig = await Promise.race([
+      saveFunction(),
+      timeoutPromise
+    ]);
     
     if (savedConfig) {
       console.log("✅ Teste automático bem-sucedido!");

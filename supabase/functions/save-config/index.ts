@@ -18,7 +18,7 @@ type ConfigCheckout = {
   id?: number;
   texto_botao?: string;
   cor_fundo?: string;
-  cor_texto?: string; // Make sure this field is included
+  cor_texto?: string;
   cor_botao?: string;
   [key: string]: any;  // Allow other properties
 }
@@ -76,46 +76,72 @@ Deno.serve(async (req) => {
     // Check if update or insert
     let result
     
-    if (config.id) {
-      console.log(`Updating config with ID: ${config.id}`)
-      
-      // Update existing config
-      const { data, error } = await supabase
-        .from('config_checkout')
-        .update(config)
-        .eq('id', config.id)
-        .select()
-      
-      if (error) throw error
-      result = data
-    } else {
-      console.log('Inserting new config')
-      
-      // Insert new config
-      const { data, error } = await supabase
-        .from('config_checkout')
-        .insert(config)
-        .select()
-      
-      if (error) throw error
-      result = data
-    }
-    
-    // Special log for test success
-    if (config.cor_fundo === '#FF0000' && config.cor_texto === '#FFFFFF' && config.texto_botao === 'Finalizar Compra') {
-      console.log('🧪 TESTE BEM-SUCEDIDO! Valores de teste foram salvos no banco de dados! ✅')
-    }
-    
-    return new Response(
-      JSON.stringify({
-        success: true,
-        message: 'Configuração salva com sucesso',
-        data: result
-      }),
-      {
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+    try {
+      if (config.id) {
+        console.log(`Updating config with ID: ${config.id}`)
+        
+        // Update existing config
+        const { data, error } = await supabase
+          .from('config_checkout')
+          .update(config)
+          .eq('id', config.id)
+          .select()
+        
+        if (error) {
+          console.error('Error updating config:', error)
+          throw error
+        }
+        
+        result = data
+      } else {
+        console.log('Inserting new config')
+        
+        // Insert new config
+        const { data, error } = await supabase
+          .from('config_checkout')
+          .insert(config)
+          .select()
+        
+        if (error) {
+          console.error('Error inserting config:', error)
+          throw error
+        }
+        
+        result = data
       }
-    )
+      
+      // Special log for test success
+      if (config.cor_fundo === '#FF0000' && config.cor_texto === '#FFFFFF' && config.texto_botao === 'Finalizar Compra') {
+        console.log('🧪 TESTE BEM-SUCEDIDO! Valores de teste foram salvos no banco de dados! ✅')
+        console.log('Saved config result:', result)
+      }
+      
+      return new Response(
+        JSON.stringify({
+          success: true,
+          message: 'Configuração salva com sucesso',
+          data: result
+        }),
+        {
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        }
+      )
+    } catch (dbError) {
+      console.error('Database error:', dbError)
+      
+      return new Response(
+        JSON.stringify({
+          success: false,
+          error: true,
+          message: `Erro de banco de dados: ${dbError.message || 'Erro desconhecido'}`,
+          details: dbError
+        }),
+        {
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+          status: 500,
+        }
+      )
+    }
   } catch (error) {
     console.error('Error in save-config function:', error)
     

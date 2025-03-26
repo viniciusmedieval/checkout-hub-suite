@@ -2,6 +2,7 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
+import { supabase } from "@/lib/supabase";
 
 interface AutoTestRunnerProps {
   onComplete?: () => void;
@@ -24,6 +25,22 @@ export const AutoTestRunner = ({ onComplete }: AutoTestRunnerProps) => {
         toast.info("Iniciando teste automático de configuração...", {
           description: "Testando salvamento com valores predefinidos"
         });
+        
+        // Check Supabase connection before redirecting
+        try {
+          const { data, error } = await supabase.from('config_checkout').select('count(*)', { count: 'exact' }).limit(1);
+          if (error) {
+            console.error("❌ AutoTestRunner - Erro ao verificar conexão com Supabase:", error);
+            throw new Error("Erro de conexão com o banco de dados: " + error.message);
+          }
+          console.log("✅ AutoTestRunner - Conexão com Supabase verificada com sucesso");
+        } catch (connError) {
+          console.error("❌ AutoTestRunner - Falha na verificação da conexão:", connError);
+          toast.error("Falha na conexão com o banco de dados. Verifique as credenciais Supabase.");
+          setTestStatus("failed");
+          if (onComplete) onComplete();
+          return;
+        }
         
         // Redirect to configuration page with autotest parameter
         navigate("/configuracao?autotest=true");
