@@ -31,12 +31,17 @@ export const useTestConfig = (
       console.log("  - cor_texto: #FFFFFF");
       console.log("  - texto_botao: Finalizar Compra");
       
-      setConfig(prev => ({
-        ...prev,
-        cor_fundo: "#FF0000",
-        cor_texto: "#FFFFFF",
-        texto_botao: "Finalizar Compra"
-      }));
+      // Atualizar a configuração com valores de teste
+      setConfig(prev => {
+        const testConfig = {
+          ...prev,
+          cor_fundo: "#FF0000",
+          cor_texto: "#FFFFFF",
+          texto_botao: "Finalizar Compra"
+        };
+        console.log("🔄 Config de teste definida:", testConfig);
+        return testConfig;
+      });
 
       // Adicionando um pequeno atraso para garantir que o estado seja atualizado
       setTimeout(async () => {
@@ -47,11 +52,16 @@ export const useTestConfig = (
           
           if (savedConfig) {
             console.log("✅ Teste automático - Configuração salva com sucesso:", savedConfig);
+            console.log("Verificando valores salvos:");
+            console.log(`- cor_fundo: ${savedConfig.cor_fundo} (esperado: #FF0000)`);
+            console.log(`- cor_texto: ${savedConfig.cor_texto} (esperado: #FFFFFF)`);
+            console.log(`- texto_botao: ${savedConfig.texto_botao} (esperado: Finalizar Compra)`);
             toast.success("Teste: Configuração salva com sucesso!");
           } else {
             console.error("❌ Teste falhou ao salvar configuração: resultado nulo");
             console.error("Verificar logs do serviço de salvamento para mais detalhes");
-            toast.error("Teste: Erro ao salvar configuração");
+            console.error("handleSaveConfig retornou:", savedConfig);
+            toast.error("Teste: Erro ao salvar configuração - resultado nulo");
             setConfig(originalConfig);
           }
         } catch (error) {

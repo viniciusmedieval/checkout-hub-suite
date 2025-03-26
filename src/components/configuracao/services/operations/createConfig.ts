@@ -59,7 +59,7 @@ export async function createNewConfig(configToSave: any): Promise<ConfigCheckout
     const { data: insertedData, error: insertError } = await client
       .from("config_checkout")
       .insert([configToSave])
-      .select();
+      .select("*"); // CORREÇÃO: Garantir que o select seja chamado após o insert
 
     if (insertError) {
       console.error("❌ Erro ao criar configurações:", insertError);

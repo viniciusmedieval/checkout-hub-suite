@@ -108,7 +108,7 @@ Deno.serve(async (req) => {
           .from('config_checkout')
           .update(config)
           .eq('id', config.id)
-          .select()
+          .select() // CORREÇÃO: Garantir que o select seja chamado após o update
         
         if (error) {
           console.error('Error updating config:', error)
@@ -123,7 +123,7 @@ Deno.serve(async (req) => {
         const { data, error } = await supabase
           .from('config_checkout')
           .insert(config)
-          .select()
+          .select() // CORREÇÃO: Garantir que o select seja chamado após o insert
         
         if (error) {
           console.error('Error inserting config:', error)
