@@ -2,7 +2,7 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
-import { supabase } from "@/lib/supabase";
+import { supabase, getSupabaseClient } from "@/lib/supabase";
 
 interface AutoTestRunnerProps {
   onComplete?: () => void;
@@ -28,7 +28,14 @@ export const AutoTestRunner = ({ onComplete }: AutoTestRunnerProps) => {
         
         // Check Supabase connection before redirecting
         try {
-          const { data, error } = await supabase.from('config_checkout').select('count(*)', { count: 'exact' }).limit(1);
+          const client = await getSupabaseClient();
+          if (!client) {
+            throw new Error("Não foi possível inicializar o cliente Supabase");
+          }
+          
+          // Test with a simpler query that won't cause parsing issues
+          const { error } = await client.from('config_checkout').select('id').limit(1);
+          
           if (error) {
             console.error("❌ AutoTestRunner - Erro ao verificar conexão com Supabase:", error);
             throw new Error("Erro de conexão com o banco de dados: " + error.message);

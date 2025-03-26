@@ -1,5 +1,5 @@
 
-import { supabase } from "@/lib/supabase";
+import { supabase, getSupabaseClient } from "@/lib/supabase";
 import { ConfigCheckout } from "@/lib/types/database-types";
 import { toast } from "sonner";
 import { ensureBooleanFields } from "../utils/configValidation";
@@ -12,8 +12,11 @@ export async function updateExistingConfig(config: ConfigCheckout, configToSave:
   console.log(`🔄 Atualizando configuração existente com ID ${config.id}`, configToSave);
 
   try {
+    // Get client from the singleton
+    const client = await getSupabaseClient();
+    
     // Guarantee we have a valid Supabase client
-    if (!supabase) {
+    if (!client) {
       throw new Error("Cliente Supabase não disponível");
     }
 
@@ -35,14 +38,16 @@ export async function updateExistingConfig(config: ConfigCheckout, configToSave:
 
     // Validate connection to Supabase
     try {
-      const { count, error: countError } = await supabase
+      // Use a simpler query instead of count(*) to avoid parsing issues
+      const { data, error: queryError } = await client
         .from('config_checkout')
-        .select('*', { count: 'exact', head: true });
+        .select('id')
+        .limit(1);
       
-      if (countError) {
-        throw new Error(`Falha na verificação da conexão: ${countError.message}`);
+      if (queryError) {
+        throw new Error(`Falha na verificação da conexão: ${queryError.message}`);
       }
-      console.log(`✅ Conexão com Supabase verificada. Tabela tem ${count} registros.`);
+      console.log(`✅ Conexão com Supabase verificada. Verificação de consulta simples concluída.`);
     } catch (connError: any) {
       console.error("❌ Erro na verificação da conexão com Supabase:", connError);
       toast.error(`Erro de conexão: ${connError.message}`);
@@ -50,11 +55,11 @@ export async function updateExistingConfig(config: ConfigCheckout, configToSave:
     }
 
     // Verificar se o registro existe antes de atualizar
-    const { data: existingConfig, error: fetchError } = await supabase
+    const { data: existingConfig, error: fetchError } = await client
       .from("config_checkout")
       .select("id")
       .eq("id", config.id)
-      .single();
+      .maybeSingle();
 
     if (fetchError) {
       console.error("❌ Configuração com ID não encontrada ou erro ao buscar:", fetchError);
@@ -70,7 +75,7 @@ export async function updateExistingConfig(config: ConfigCheckout, configToSave:
     }
 
     // Atualizar a configuração
-    const { error } = await supabase
+    const { error } = await client
       .from("config_checkout")
       .update(configToSave)
       .eq("id", config.id);
@@ -83,7 +88,7 @@ export async function updateExistingConfig(config: ConfigCheckout, configToSave:
 
     // Buscar os dados atualizados
     console.log("🔄 Buscando configuração atualizada em consulta separada");
-    const { data, error: selectError } = await supabase
+    const { data, error: selectError } = await client
       .from("config_checkout")
       .select("*")
       .eq("id", config.id)

@@ -1,5 +1,5 @@
 
-import { supabase } from "@/lib/supabase";
+import { supabase, getSupabaseClient } from "@/lib/supabase";
 import { ConfigCheckout } from "@/lib/types/database-types";
 import { toast } from "sonner";
 import { ensureBooleanFields } from "../utils/configValidation";
@@ -11,8 +11,11 @@ export async function createNewConfig(configToSave: any): Promise<ConfigCheckout
   console.log("🔄 Criando nova configuração", configToSave);
 
   try {
+    // Get client from the singleton
+    const client = await getSupabaseClient();
+    
     // Guarantee we have a valid Supabase client
-    if (!supabase) {
+    if (!client) {
       throw new Error("Cliente Supabase não disponível");
     }
 
@@ -34,14 +37,16 @@ export async function createNewConfig(configToSave: any): Promise<ConfigCheckout
 
     // Validate connection to Supabase
     try {
-      const { count, error: countError } = await supabase
+      // Use a simpler query instead of count(*) to avoid parsing issues
+      const { data, error: queryError } = await client
         .from('config_checkout')
-        .select('*', { count: 'exact', head: true });
+        .select('id')
+        .limit(1);
       
-      if (countError) {
-        throw new Error(`Falha na verificação da conexão: ${countError.message}`);
+      if (queryError) {
+        throw new Error(`Falha na verificação da conexão: ${queryError.message}`);
       }
-      console.log(`✅ Conexão com Supabase verificada. Tabela tem ${count} registros.`);
+      console.log(`✅ Conexão com Supabase verificada. Verificação de consulta simples concluída.`);
     } catch (connError: any) {
       console.error("❌ Erro na verificação da conexão com Supabase:", connError);
       toast.error(`Erro de conexão: ${connError.message}`);
@@ -49,7 +54,7 @@ export async function createNewConfig(configToSave: any): Promise<ConfigCheckout
     }
 
     // Inserir nova configuração
-    const { data: insertedData, error: insertError } = await supabase
+    const { data: insertedData, error: insertError } = await client
       .from("config_checkout")
       .insert([configToSave])
       .select(); // Aqui podemos usar .select() porque o Supabase retorna os dados inseridos
