@@ -1,99 +1,82 @@
 
-import { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
-import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-import { testMockClient } from "@/lib/mock/test-mock-client";
-import { CheckCircle, XCircle } from "lucide-react";
+import { useNavigate } from "react-router-dom";
+import { AutoTestRunner } from "@/components/configuracao/AutoTestRunner";
+import { useState } from "react";
+import { toast } from "sonner";
 
-const Index = () => {
-  const [testResults, setTestResults] = useState<Record<string, boolean> | null>(null);
-  const [isLoading, setIsLoading] = useState(false);
+export default function Index() {
+  const navigate = useNavigate();
+  const [isRunningTest, setIsRunningTest] = useState(false);
+  const [testComplete, setTestComplete] = useState(false);
   
-  const runTest = async () => {
-    setIsLoading(true);
-    try {
-      const results = await testMockClient();
-      setTestResults(results);
-    } catch (error) {
-      console.error("Error running tests:", error);
-    } finally {
-      setIsLoading(false);
-    }
+  // Check for URL param to start test automatically
+  const params = new URLSearchParams(window.location.search);
+  const autoRunTest = params.get("runConfigTest") === "true";
+  
+  if (autoRunTest && !isRunningTest && !testComplete) {
+    setIsRunningTest(true);
+    return <AutoTestRunner onComplete={() => setTestComplete(true)} />;
+  }
+  
+  const handleRunConfigTest = () => {
+    setIsRunningTest(true);
+    navigate("/configuracao?autotest=true");
   };
   
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center bg-gray-900 p-4">
-      <Card className="max-w-md w-full glass-card mb-4">
-        <CardContent className="p-6 space-y-6">
-          <h1 className="text-2xl font-bold text-center text-white">Checkout Digital</h1>
-          <p className="text-gray-300 text-center">
-            Uma plataforma completa para vendas online
-          </p>
-          
-          <div className="space-y-3">
-            <Button asChild className="w-full">
-              <Link to="/produtos">Ver Produtos</Link>
-            </Button>
-            
-            <Button asChild variant="outline" className="w-full">
-              <Link to="/dashboard">Ir para Dashboard</Link>
+    <div className="container mx-auto px-4 py-8">
+      <h1 className="text-3xl font-bold mb-6">Painel de Administração</h1>
+      
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-10">
+        <div className="p-6 bg-white rounded-lg shadow-md hover:shadow-lg transition-shadow">
+          <h2 className="text-xl font-semibold mb-2">Dashboard</h2>
+          <p className="text-gray-600 mb-4">Visualize estatísticas e métricas de vendas</p>
+          <Button onClick={() => navigate("/dashboard")} className="bg-blue-600 hover:bg-blue-700">
+            Acessar Dashboard
+          </Button>
+        </div>
+        
+        <div className="p-6 bg-white rounded-lg shadow-md hover:shadow-lg transition-shadow">
+          <h2 className="text-xl font-semibold mb-2">Produtos</h2>
+          <p className="text-gray-600 mb-4">Gerencie seus produtos e ofertas</p>
+          <Button onClick={() => navigate("/produtos")} className="bg-blue-600 hover:bg-blue-700">
+            Gerenciar Produtos
+          </Button>
+        </div>
+        
+        <div className="p-6 bg-white rounded-lg shadow-md hover:shadow-lg transition-shadow">
+          <h2 className="text-xl font-semibold mb-2">Configurações</h2>
+          <p className="text-gray-600 mb-4">Personalize seu checkout e páginas</p>
+          <Button onClick={() => navigate("/configuracao")} className="bg-blue-600 hover:bg-blue-700">
+            Editar Configurações
+          </Button>
+        </div>
+      </div>
+      
+      <div className="mt-8">
+        <h2 className="text-2xl font-bold mb-4">Recursos de Teste</h2>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div className="p-6 bg-white rounded-lg shadow-md border border-green-200">
+            <h3 className="text-lg font-semibold mb-2">Teste Automático de Configuração</h3>
+            <p className="text-gray-600 mb-4">
+              Executa automaticamente o teste de salvamento na página de configuração com valores predefinidos:
+              <ul className="list-disc list-inside mt-2">
+                <li><code>cor_fundo: #FF0000</code></li>
+                <li><code>cor_texto: #FFFFFF</code></li>
+                <li><code>texto_botao: Finalizar Compra</code></li>
+              </ul>
+            </p>
+            <Button 
+              onClick={handleRunConfigTest}
+              disabled={isRunningTest}
+              className="bg-green-600 hover:bg-green-700"
+            >
+              {isRunningTest ? "Executando teste..." : "Executar Teste Automático"}
             </Button>
           </div>
-        </CardContent>
-      </Card>
-      
-      <Card className="max-w-md w-full">
-        <CardContent className="p-6 space-y-4">
-          <h2 className="text-xl font-semibold">Teste do Mock Client</h2>
-          
-          <Button 
-            onClick={runTest} 
-            disabled={isLoading} 
-            className="w-full"
-          >
-            {isLoading ? "Executando testes..." : "Testar Mock Client"}
-          </Button>
-          
-          {testResults && (
-            <div className="space-y-2 mt-4">
-              <h3 className="font-medium">Resultados:</h3>
-              {Object.entries(testResults).map(([test, passed]) => (
-                <div key={test} className="flex items-center">
-                  {passed ? (
-                    <CheckCircle className="text-green-500 mr-2 h-5 w-5" />
-                  ) : (
-                    <XCircle className="text-red-500 mr-2 h-5 w-5" />
-                  )}
-                  <span>
-                    {test.replace(/Working$/, '')}: {passed ? "Ok" : "Falha"}
-                  </span>
-                </div>
-              ))}
-              
-              {Object.values(testResults).every(result => result) ? (
-                <Alert className="bg-green-500/20 border-green-500 mt-4">
-                  <AlertTitle>Sucesso!</AlertTitle>
-                  <AlertDescription>
-                    Todas as operações do mock client estão funcionando corretamente.
-                  </AlertDescription>
-                </Alert>
-              ) : (
-                <Alert className="bg-red-500/20 border-red-500 mt-4">
-                  <AlertTitle>Atenção!</AlertTitle>
-                  <AlertDescription>
-                    Algumas operações do mock client não estão funcionando corretamente.
-                    Verifique os imports e a implementação.
-                  </AlertDescription>
-                </Alert>
-              )}
-            </div>
-          )}
-        </CardContent>
-      </Card>
+        </div>
+      </div>
     </div>
   );
-};
-
-export default Index;
+}

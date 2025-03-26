@@ -35,6 +35,14 @@ Deno.serve(async (req) => {
     
     console.log('Received config data:', config)
     
+    // Special log for test values
+    if (config.cor_fundo === '#FF0000' && config.cor_texto === '#FFFFFF' && config.texto_botao === 'Finalizar Compra') {
+      console.log('🧪 TESTE DETECTADO! Valores de teste recebidos:')
+      console.log(`🧪 cor_fundo: ${config.cor_fundo} (esperado: #FF0000) ✅`)
+      console.log(`🧪 cor_texto: ${config.cor_texto} (esperado: #FFFFFF) ✅`)
+      console.log(`🧪 texto_botao: ${config.texto_botao} (esperado: Finalizar Compra) ✅`)
+    }
+    
     // Validate required fields for testing
     const validationErrors = []
     
@@ -43,11 +51,11 @@ Deno.serve(async (req) => {
     }
     
     // Validate color format for testing fields
-    if (config.cor_fundo && !config.cor_fundo.match(/^#[0-9A-F]{6}$/i)) {
+    if (config.cor_fundo && !config.cor_fundo.match(/^#([0-9A-F]{6}|[0-9A-F]{3})$/i)) {
       validationErrors.push('Cor de fundo deve estar no formato hexadecimal (#RRGGBB)')
     }
     
-    if (config.cor_texto && !config.cor_texto.match(/^#[0-9A-F]{6}$/i)) {
+    if (config.cor_texto && !config.cor_texto.match(/^#([0-9A-F]{6}|[0-9A-F]{3})$/i)) {
       validationErrors.push('Cor do texto deve estar no formato hexadecimal (#RRGGBB)')
     }
     
@@ -91,6 +99,11 @@ Deno.serve(async (req) => {
       
       if (error) throw error
       result = data
+    }
+    
+    // Special log for test success
+    if (config.cor_fundo === '#FF0000' && config.cor_texto === '#FFFFFF' && config.texto_botao === 'Finalizar Compra') {
+      console.log('🧪 TESTE BEM-SUCEDIDO! Valores de teste foram salvos no banco de dados! ✅')
     }
     
     return new Response(

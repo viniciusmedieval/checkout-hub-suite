@@ -1,4 +1,3 @@
-
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useConfiguracao } from "@/components/configuracao/useConfiguracao";
@@ -18,9 +17,12 @@ import { InstallmentsTab } from "@/components/configuracao/sections/Installments
 import { toast } from "sonner";
 import { ConfigCheckout } from "@/lib/types/database-types";
 import { useEffect, useState } from "react";
-import { CheckCircle, Save, BeakerIcon } from "lucide-react";
+import { CheckCircle, Save, BeakerIcon, Zap } from "lucide-react";
+import { runAutoSaveTest } from "@/components/configuracao/utils/autoTestSave";
+import { useNavigate } from "react-router-dom";
 
 const Configuracao = () => {
+  const navigate = useNavigate();
   const {
     config,
     loading,
@@ -44,10 +46,21 @@ const Configuracao = () => {
   const [isSaveAttempted, setIsSaveAttempted] = useState(false);
   const [saveSuccess, setSaveSuccess] = useState(false);
   const [isTestSaving, setIsTestSaving] = useState(false);
+  const [isAutoTestRunning, setIsAutoTestRunning] = useState(false);
 
   useEffect(() => {
     console.log("Configuracao component - Current config:", config);
   }, [config]);
+
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const shouldAutoTest = params.get("autotest") === "true";
+    
+    if (shouldAutoTest && !loading && !isAutoTestRunning) {
+      console.log("🔄 Parâmetro de URL 'autotest=true' detectado, iniciando teste automático...");
+      runAutomaticTest();
+    }
+  }, [loading]);
 
   if (loading) {
     return <LoadingState />;
@@ -76,7 +89,6 @@ const Configuracao = () => {
         setSaveSuccess(true);
         toast.success("Configurações salvas com sucesso!");
         
-        // Reset success state after 3 seconds
         setTimeout(() => {
           setSaveSuccess(false);
         }, 3000);
@@ -92,22 +104,18 @@ const Configuracao = () => {
     }
   };
 
-  // Add a test function to save specific values
   const runTestSave = async () => {
     setIsTestSaving(true);
     const testConfig = { ...typedConfig };
     
-    // Define our test values
     testConfig.cor_fundo = "#FF0000";
     testConfig.cor_texto = "#FFFFFF";
     testConfig.texto_botao = "Finalizar Compra";
     
     console.log("🧪 Executando teste de salvamento com valores específicos:", testConfig);
     
-    // Update the current config with test values
     setConfig(testConfig);
     
-    // Trigger the save function
     try {
       const savedConfig = await handleSaveConfig();
       
@@ -117,7 +125,6 @@ const Configuracao = () => {
         setSaveSuccess(true);
         toast.success("Teste: Configurações salvas com sucesso!");
         
-        // Reset success state after 3 seconds
         setTimeout(() => {
           setSaveSuccess(false);
         }, 3000);
@@ -133,14 +140,63 @@ const Configuracao = () => {
     }
   };
 
+  const runAutomaticTest = async () => {
+    setIsAutoTestRunning(true);
+    console.log("🔄 Iniciando teste automático de salvamento de configuração");
+    
+    try {
+      const testResult = await runAutoSaveTest(
+        handleSaveConfig,
+        setConfig,
+        typedConfig
+      );
+      
+      if (testResult) {
+        console.log("✅ Teste automático finalizado com sucesso!");
+        setSaveSuccess(true);
+        
+        setTimeout(() => {
+          setSaveSuccess(false);
+        }, 3000);
+      } else {
+        console.error("❌ Teste automático falhou");
+      }
+    } catch (error) {
+      console.error("❌ Erro durante execução do teste automático:", error);
+      toast.error("Erro durante teste automático: " + (error instanceof Error ? error.message : "Erro desconhecido"));
+    } finally {
+      setIsAutoTestRunning(false);
+    }
+  };
+
   return (
     <div className="space-y-6 animate-fade-in bg-white p-6 rounded-lg">
       <div className="flex justify-between items-center">
         <h1 className="text-3xl font-bold tracking-tight text-gray-900">Configuração do Checkout</h1>
         <div className="flex gap-2">
           <Button 
+            onClick={runAutomaticTest}
+            disabled={isAutoTestRunning}
+            className="bg-green-600 hover:bg-green-700 transition-colors duration-300"
+          >
+            {isAutoTestRunning ? (
+              <>
+                <span className="animate-spin mr-2">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-loader-2"><path d="M21 12a9 9 0 1 1-6.219-8.56"/></svg>
+                </span>
+                Executando Teste...
+              </>
+            ) : (
+              <>
+                <Zap className="w-4 h-4 mr-2" />
+                Teste Automático
+              </>
+            )}
+          </Button>
+          
+          <Button 
             onClick={runTestSave}
-            disabled={isTestSaving}
+            disabled={isTestSaving || isAutoTestRunning}
             className="bg-purple-600 hover:bg-purple-700 transition-colors duration-300"
           >
             {isTestSaving ? (
@@ -152,17 +208,18 @@ const Configuracao = () => {
               </>
             ) : (
               <>
-                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="mr-2"><path d="M9.4 16.6L4.8 12l4.6-4.6M14.6 16.6l4.6-4.6-4.6-4.6"/></svg>
+                <BeakerIcon className="w-4 h-4 mr-2" />
                 Testar Salvamento
               </>
             )}
           </Button>
+          
           <Button 
             onClick={onSaveClick} 
-            disabled={isSaving || !hasUnsavedChanges() || isSaveAttempted}
+            disabled={isSaving || !hasUnsavedChanges() || isSaveAttempted || isAutoTestRunning}
             className={`${saveSuccess ? 'bg-green-600 hover:bg-green-700' : 'bg-blue-600 hover:bg-blue-700'} transition-colors duration-300`}
           >
-            {isSaving ? (
+            {isSaving || isAutoTestRunning ? (
               <>
                 <span className="animate-spin mr-2">
                   <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-loader-2"><path d="M21 12a9 9 0 1 1-6.219-8.56"/></svg>
