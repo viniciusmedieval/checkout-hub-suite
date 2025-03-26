@@ -1,10 +1,9 @@
 
 import React from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Plus } from "lucide-react";
-import { usePixMensagens } from "./hooks/usePixMensagens";
-import { PixMensagemList } from "./components/PixMensagemList";
-import { AddPixMensagem } from "./components/AddPixMensagem";
+import { usePixMensagensManager } from "./hooks/usePixMensagensManager";
+import { MessageList } from "./components/MessageList";
+import { AddMessageForm } from "./components/AddMessageForm";
 
 export function PixMensagensManager() {
   const {
@@ -23,7 +22,7 @@ export function PixMensagensManager() {
     handleCancelEdit,
     handleUpdateEditingMessage,
     handleUpdateNewMessage
-  } = usePixMensagens();
+  } = usePixMensagensManager();
 
   return (
     <Card>
@@ -43,7 +42,7 @@ export function PixMensagensManager() {
             <div className="space-y-4">
               <h3 className="text-lg font-medium">Mensagens Existentes</h3>
               
-              <PixMensagemList
+              <MessageList
                 messages={messages}
                 editingMessage={editingMessage}
                 isSaving={isSaving}
@@ -58,7 +57,7 @@ export function PixMensagensManager() {
               />
             </div>
             
-            <AddPixMensagem
+            <AddMessageForm
               newMessage={newMessage}
               isSaving={isSaving}
               onChange={handleUpdateNewMessage}

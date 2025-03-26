@@ -3,7 +3,7 @@ import { PixMensagem } from "@/lib/types/database-types";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 
-export const fetchPixMensagens = async (): Promise<PixMensagem[]> => {
+const fetchMessages = async (): Promise<PixMensagem[]> => {
   try {
     const { data, error } = await supabase
       .from("pix_mensagens")
@@ -23,7 +23,7 @@ export const fetchPixMensagens = async (): Promise<PixMensagem[]> => {
   }
 };
 
-export const createPixMensagem = async (
+const createMessage = async (
   mensagem: Omit<PixMensagem, "id" | "criado_em">
 ): Promise<PixMensagem | null> => {
   try {
@@ -50,7 +50,7 @@ export const createPixMensagem = async (
   }
 };
 
-export const updatePixMensagem = async (
+const updateMessage = async (
   id: number,
   mensagem: Partial<PixMensagem>
 ): Promise<PixMensagem | null> => {
@@ -79,7 +79,7 @@ export const updatePixMensagem = async (
   }
 };
 
-export const deletePixMensagem = async (id: number): Promise<boolean> => {
+const deleteMessage = async (id: number): Promise<boolean> => {
   try {
     console.log("Deleting message id:", id);
 
@@ -101,7 +101,7 @@ export const deletePixMensagem = async (id: number): Promise<boolean> => {
   }
 };
 
-export const updatePixMensagemOrder = async (
+const updateMessageOrder = async (
   messageId: number,
   newOrder: number
 ): Promise<boolean> => {
@@ -122,4 +122,12 @@ export const updatePixMensagemOrder = async (
     toast.error("Erro ao atualizar ordem: " + error.message);
     return false;
   }
+};
+
+export const pixMensagensService = {
+  fetchMessages,
+  createMessage,
+  updateMessage,
+  deleteMessage,
+  updateMessageOrder
 };
