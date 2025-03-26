@@ -39,7 +39,7 @@ export const useConfigSettings = (initialConfig: ConfigCheckout | null) => {
   };
   
   // Handler for select changes (dropdown)
-  const handleSelectChange = (name: string, value: string) => {
+  const handleSelectChange = (name: string, value: string | number) => {
     console.log(`Select change: ${name} = ${value}`);
     setConfig(prev => ({ ...prev, [name]: value }));
   };

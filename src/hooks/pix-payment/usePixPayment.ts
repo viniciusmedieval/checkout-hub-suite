@@ -34,11 +34,13 @@ export function usePixPayment() {
         setLoadingPixSecao(true);
         let query = supabase.from("pix_secoes").select("*");
         
-        // If config has a specific section ID, use it (check if property exists first)
+        // If config has a specific section ID, use it
         if (configCheckout.pix_secao_id !== undefined && configCheckout.pix_secao_id !== null) {
+          console.log("Using specific pix_secao_id:", configCheckout.pix_secao_id);
           query = query.eq("id", configCheckout.pix_secao_id);
         } else {
           // Otherwise get the first active section
+          console.log("No specific pix_secao_id, getting first active section");
           query = query.eq("ativo", true).order("id").limit(1);
         }
         
@@ -47,7 +49,10 @@ export function usePixPayment() {
         if (error) {
           console.error("Erro ao carregar seção PIX:", error);
         } else if (data && data.length > 0) {
+          console.log("Loaded PIX section:", data[0]);
           setPixSecao(data[0]);
+        } else {
+          console.log("No PIX section found");
         }
       } catch (error) {
         console.error("Erro ao buscar seção PIX:", error);
