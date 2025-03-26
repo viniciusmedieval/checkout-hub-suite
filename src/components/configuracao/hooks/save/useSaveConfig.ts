@@ -24,6 +24,7 @@ export const useSaveConfig = (
       setIsSaveAttempted(true);
       toast.loading("Salvando configurações...");
       console.log("🔄 Tentando salvar configuração...");
+      console.log("🔄 Config atual:", config);
       
       const result = await handleSaveConfig();
       console.log("DEBUG valor de result:", result);
@@ -34,10 +35,12 @@ export const useSaveConfig = (
         toast.success("Configurações salvas com sucesso!");
       } else {
         console.error("❌ Erro ao salvar configurações: resultado nulo");
+        console.error("Verificar logs do serviço de salvamento para mais detalhes");
         toast.error("Erro ao salvar configurações. Tente novamente.");
       }
     } catch (error) {
       console.error("❌ Exceção ao salvar configurações:", error);
+      console.error("Stack trace:", error instanceof Error ? error.stack : "Sem stack trace");
       toast.error("Erro ao salvar: " + (error instanceof Error ? error.message : "Erro desconhecido"));
     } finally {
       console.log("🔄 Finalizando tentativa de salvamento");

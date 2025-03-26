@@ -42,6 +42,7 @@ export const saveConfig = async (config: ConfigCheckout): Promise<ConfigCheckout
         toast.error(isTestConfig ? "Teste: " + errorMsg : errorMsg);
         throw new Error(errorMsg);
       }
+      console.log("✅ Cliente Supabase inicializado com sucesso:", client);
     }
 
     // Simplificar teste de conexão com o Supabase
@@ -61,9 +62,10 @@ export const saveConfig = async (config: ConfigCheckout): Promise<ConfigCheckout
       if (testError) {
         throw new Error(`Falha ao testar conexão: ${testError.message}`);
       }
-      console.log("✅ Conexão com Supabase testada com sucesso");
+      console.log("✅ Conexão com Supabase testada com sucesso", testData);
     } catch (connError: any) {
       console.error("❌ Falha ao testar conexão com Supabase:", connError);
+      console.error("Detalhes do erro:", connError);
       
       if (isTestConfig) {
         console.error("🧪 TESTE AUTOMÁTICO FALHOU: Erro de conexão");
@@ -75,6 +77,7 @@ export const saveConfig = async (config: ConfigCheckout): Promise<ConfigCheckout
     }
 
     const configToSave = prepareConfigForSave(config);
+    console.log("🔄 Configuração preparada para salvar:", configToSave);
 
     // Validar dados antes de salvar
     if (!configToSave.texto_botao || !configToSave.cor_botao) {
@@ -93,7 +96,7 @@ export const saveConfig = async (config: ConfigCheckout): Promise<ConfigCheckout
     let result: ConfigCheckout | null = null;
     
     if (config.id) {
-      console.log("🔄 ID encontrado, atualizando configuração existente");
+      console.log("🔄 ID encontrado, atualizando configuração existente:", config.id);
       result = await updateExistingConfig(config, configToSave);
     } else {
       console.log("🔄 ID não encontrado, criando nova configuração");
@@ -116,6 +119,7 @@ export const saveConfig = async (config: ConfigCheckout): Promise<ConfigCheckout
     }
   } catch (error: any) {
     console.error("❌ Erro no saveConfig:", error);
+    console.error("Stack trace:", error instanceof Error ? error.stack : "Sem stack trace");
     
     const isTestConfig = (
       config.cor_fundo === "#FF0000" && 

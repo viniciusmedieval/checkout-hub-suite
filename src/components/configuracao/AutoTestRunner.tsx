@@ -63,6 +63,7 @@ export const AutoTestRunner = ({ onComplete }: AutoTestRunnerProps) => {
           }, 1000);
         } catch (connError: any) {
           console.error("❌ AutoTestRunner - Falha na verificação da conexão:", connError);
+          console.error("Detalhes do erro:", connError);
           toast.error(`Falha na conexão com o banco de dados: ${connError.message}`);
           setTestStatus("failed");
           if (onComplete) onComplete();
@@ -70,6 +71,7 @@ export const AutoTestRunner = ({ onComplete }: AutoTestRunnerProps) => {
       } catch (error: any) {
         setTestStatus("failed");
         console.error("❌ Erro ao executar teste automático:", error);
+        console.error("Stack trace:", error instanceof Error ? error.stack : "Sem stack trace");
         toast.error(`Erro ao executar teste automático: ${error instanceof Error ? error.message : "Erro desconhecido"}`);
         
         if (onComplete) {

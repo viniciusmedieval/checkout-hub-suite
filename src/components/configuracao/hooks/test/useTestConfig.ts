@@ -26,6 +26,11 @@ export const useTestConfig = (
     
     try {
       console.log("🔄 Iniciando teste automático de salvamento de configuração");
+      console.log("🔄 Valores de teste sendo definidos:");
+      console.log("  - cor_fundo: #FF0000");
+      console.log("  - cor_texto: #FFFFFF");
+      console.log("  - texto_botao: Finalizar Compra");
+      
       setConfig(prev => ({
         ...prev,
         cor_fundo: "#FF0000",
@@ -33,8 +38,10 @@ export const useTestConfig = (
         texto_botao: "Finalizar Compra"
       }));
 
+      // Adicionando um pequeno atraso para garantir que o estado seja atualizado
       setTimeout(async () => {
         try {
+          console.log("🔄 Chamando handleSaveConfig para salvar teste...");
           const savedConfig = await handleSaveConfig();
           console.log("DEBUG valor de savedConfig:", savedConfig);
           
@@ -43,11 +50,13 @@ export const useTestConfig = (
             toast.success("Teste: Configuração salva com sucesso!");
           } else {
             console.error("❌ Teste falhou ao salvar configuração: resultado nulo");
+            console.error("Verificar logs do serviço de salvamento para mais detalhes");
             toast.error("Teste: Erro ao salvar configuração");
             setConfig(originalConfig);
           }
         } catch (error) {
           console.error("❌ Teste falhou com erro", error);
+          console.error("Stack trace:", error instanceof Error ? error.stack : "Sem stack trace");
           toast.error("Teste falhou: " + (error instanceof Error ? error.message : "Erro desconhecido"));
           setConfig(originalConfig);
         } finally {
@@ -56,6 +65,7 @@ export const useTestConfig = (
       }, 500);
     } catch (error) {
       console.error("❌ Erro ao executar teste", error);
+      console.error("Stack trace:", error instanceof Error ? error.stack : "Sem stack trace");
       toast.error("Erro ao executar teste: " + (error instanceof Error ? error.message : "Erro desconhecido"));
       setIsTestSaving(false);
     }
