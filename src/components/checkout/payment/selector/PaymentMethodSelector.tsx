@@ -8,7 +8,6 @@ import { PaymentStatus } from '../types';
 import { PaymentMethodButton } from './PaymentMethodButton';
 import { PaymentMethodHeader } from './PaymentMethodHeader';
 import { usePaymentMethod } from '@/hooks/checkout/usePaymentMethod';
-import { CardFormButton } from '../CardFormButton';
 
 export type PaymentMethod = 'card' | 'pix';
 type PixProps = {
@@ -51,6 +50,7 @@ export function PaymentMethodSelector({
   } = usePaymentMethod({
     selectedMethod,
     onMethodChange: (method) => {
+      console.log("PaymentMethodSelector - Method changed:", method);
       // Call both method change handlers if provided
       if (onMethodChange) onMethodChange(method);
       if (onPaymentMethodChange) onPaymentMethodChange(method);
@@ -64,6 +64,7 @@ export function PaymentMethodSelector({
   
   useEffect(() => {
     if (produto) {
+      console.log("PaymentMethodSelector - Product data:", produto);
       // Default PIX values, ensuring they are strings
       const defaultPixData: PixProps = {
         tipo_chave_pix: produto.tipo_chave_pix || '',

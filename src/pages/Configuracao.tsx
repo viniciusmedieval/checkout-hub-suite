@@ -1,4 +1,3 @@
-
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useConfiguracao } from "@/components/configuracao/useConfiguracao";
@@ -44,8 +43,7 @@ const Configuracao = () => {
 
   useEffect(() => {
     console.log("Configuracao component - Current config:", config);
-    console.log("Configuracao component - Current testimonials:", depoimentos);
-  }, [config, depoimentos]);
+  }, [config]);
 
   if (loading) {
     return <LoadingState />;
@@ -62,7 +60,7 @@ const Configuracao = () => {
       return;
     }
     
-    console.log("Saving configuration...");
+    console.log("Saving configuration...", config);
     
     try {
       const savedConfig = await handleSaveConfig();
@@ -125,7 +123,6 @@ const Configuracao = () => {
           <TabsTrigger value="random" className="data-[state=active]:bg-white">Modo Teste</TabsTrigger>
         </TabsList>
 
-        {/* TabsContent sections */}
         <TabsContent value="visual" className="space-y-4 mt-4">
           <VisualTab 
             config={typedConfig} 

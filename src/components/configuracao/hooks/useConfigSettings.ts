@@ -13,6 +13,7 @@ export const useConfigSettings = (initialConfig: ConfigCheckout | null) => {
 
   useEffect(() => {
     if (initialConfig) {
+      console.log("useConfigSettings - Initializing with config:", initialConfig);
       setConfig(initialConfig);
       setOriginalConfig(initialConfig);
     }
@@ -59,8 +60,16 @@ export const useConfigSettings = (initialConfig: ConfigCheckout | null) => {
   const hasUnsavedChanges = () => {
     if (!originalConfig) return true;
 
+    // For debugging purposes
+    const stringifiedOriginal = JSON.stringify(originalConfig);
+    const stringifiedCurrent = JSON.stringify(config);
+    
+    console.log("hasUnsavedChanges - Checking for changes:");
+    console.log("  Original:", stringifiedOriginal.substring(0, 100) + "...");
+    console.log("  Current:", stringifiedCurrent.substring(0, 100) + "...");
+    
     // Compare original config with current config
-    return JSON.stringify(originalConfig) !== JSON.stringify(config);
+    return stringifiedOriginal !== stringifiedCurrent;
   };
 
   // Save config function
@@ -75,6 +84,8 @@ export const useConfigSettings = (initialConfig: ConfigCheckout | null) => {
       const savedConfig = await saveConfig(config);
       
       if (savedConfig) {
+        console.log("✅ Configuração salva com sucesso:", savedConfig);
+        
         // Ensure the redirect_card_status is properly typed
         const typedSavedConfig = {
           ...savedConfig,
@@ -84,14 +95,13 @@ export const useConfigSettings = (initialConfig: ConfigCheckout | null) => {
         // Update the original config to match the current config
         setOriginalConfig(typedSavedConfig);
         setConfig(typedSavedConfig);
-        toast.success("Configurações salvas com sucesso!");
         return typedSavedConfig;
       }
       
+      console.error("❌ Falha ao salvar configuração");
       return null;
     } catch (error) {
       console.error("❌ Erro ao salvar configurações:", error);
-      toast.error("Erro ao salvar configurações");
       return null;
     } finally {
       setIsSaving(false);

@@ -22,14 +22,14 @@ export const useConfigSaver = () => {
     setSavingError(undefined);
     
     try {
-      console.log("💾 Saving configuration...");
+      console.log("💾 Saving configuration...", config);
       
       // Call the saveConfig service
       const savedConfig = await saveConfigService(config);
       
       // Handle success case
       if (savedConfig) {
-        console.log("✅ Configuration saved successfully");
+        console.log("✅ Configuration saved successfully", savedConfig);
         toast.success("Configurações salvas com sucesso!");
         
         return {
@@ -48,7 +48,7 @@ export const useConfigSaver = () => {
     } catch (error: any) {
       // Handle exception case
       const errorMsg = `Erro ao salvar configurações: ${error.message || "Erro desconhecido"}`;
-      console.error("❌ " + errorMsg);
+      console.error("❌ " + errorMsg, error);
       setSavingError(errorMsg);
       toast.error(errorMsg);
       return null;
